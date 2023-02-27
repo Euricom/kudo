@@ -1,14 +1,13 @@
 import React from "react";
-import Document, { Html, Head, Main, NextScript } from "next/document";
+import Document, { Html, Head, Main, NextScript, type DocumentContext } from "next/document";
 import { CssBaseline } from "@nextui-org/react";
-import { type NextPageContext } from 'next'
 
-interface iProps {
+interface MyDocumentProps {
     userAgent?: string;
   }
 
-class MyDocument extends Document<iProps> {
-  static async getInitialProps(ctx) {
+class MyDocument extends Document<MyDocumentProps> {
+  static async getInitialProps(ctx: DocumentContext) {
     const initialProps = await Document.getInitialProps(ctx);
     return {
       ...initialProps,

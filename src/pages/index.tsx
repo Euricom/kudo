@@ -4,7 +4,8 @@ import Link from "next/link";
 import { signIn, signOut, useSession } from "next-auth/react";
 
 import { api } from "~/utils/api";
-import { useEffect, useState } from "react";
+import { useState } from "react";
+import { Button } from "@nextui-org/react";
 
 const Home: NextPage = () => {
   const [inputText, setInputText] = useState('');
@@ -78,7 +79,7 @@ const AuthShowcase: React.FC = () => {
       </p>
       <button
         className="rounded-full bg-white/10 px-10 py-3 font-semibold text-white no-underline transition hover:bg-white/20"
-        onClick={sessionData ? () => void signOut() : () => void signIn()}
+        onClick={sessionData ? () => void signOut() : () => void signIn("azure-ad")}
       >
         {sessionData ? "Sign out" : "Sign in"}
       </button>

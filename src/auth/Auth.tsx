@@ -1,5 +1,4 @@
 import { signIn, useSession } from "next-auth/react";
-import { Loading } from '@nextui-org/react';
 
 interface AuthProps  { 
   children?: React.ReactNode 
@@ -13,9 +12,9 @@ export function Auth({ children }: AuthProps) {
       await signIn("azure-ad");
     },
   });
-  if (status === "loading") {
-    return <Loading size="xl" type="gradient" className=""/>;
+  if (status === "loading" || true) {
+    return <progress className="progress progress-primary w-56"></progress>;
   }
 
-  return <>{children}</>;
+  // return <>{children}</>;
 }

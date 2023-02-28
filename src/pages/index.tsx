@@ -5,7 +5,6 @@ import { signIn, signOut, useSession } from "next-auth/react";
 
 import { api } from "~/utils/api";
 import { useState } from "react";
-import { Button } from "@nextui-org/react";
 
 const Home: NextPage = () => {
   const [inputText, setInputText] = useState('');

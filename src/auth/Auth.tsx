@@ -1,4 +1,5 @@
 import { signIn, useSession } from "next-auth/react";
+import { Loading } from '@nextui-org/react';
 
 interface AuthProps  { 
   children?: React.ReactNode 
@@ -13,7 +14,7 @@ export function Auth({ children }: AuthProps) {
     },
   });
   if (status === "loading") {
-    return <div>Loading...</div>;
+    return <Loading size="xl" type="gradient" className=""/>;
   }
 
   return <>{children}</>;

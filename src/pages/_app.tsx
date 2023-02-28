@@ -14,7 +14,9 @@ const MyApp: AppType<{ session: Session | null }> = ({
   return (
     <SessionProvider session={session}>
         <Auth>
+          <div className="h-screen">
           <Component {...pageProps} />
+          </div>
         </Auth>
     </SessionProvider>
   );

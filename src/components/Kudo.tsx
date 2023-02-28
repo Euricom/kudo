@@ -1,5 +1,5 @@
 
-
+//Voorlopig adhv card, moet Image worden naar de toekomst toe
 const Kudo = () => {
     return (
         <>

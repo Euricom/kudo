@@ -12,9 +12,15 @@ export function Auth({ children }: AuthProps) {
       await signIn("azure-ad");
     },
   });
-  if (status === "loading" || true) {
-    return <progress className="progress progress-primary w-56"></progress>;
+  if (status === "loading") {
+    return (
+      <>
+      <div className="h-screen grid place-items-center">
+        <progress className="progress progress-primary w-56"></progress>
+      </div>
+      </>
+    );
   }
 
-  // return <>{children}</>;
+  return <>{children}</>;
 }

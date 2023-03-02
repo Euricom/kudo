@@ -3,7 +3,7 @@
 const Kudo = () => {
     return (
         <>
-        <div className="card w-96 bg-base-200 shadow-xl">
+        <div className="card bg-base-200 shadow-xl aspect-[3/2]">
           <div className="card-body">
             <h2 className="card-title">Thank you!</h2>
             <div className="flex">

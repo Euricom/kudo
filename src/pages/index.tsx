@@ -19,8 +19,19 @@ const Home: NextPage = () => {
           <NavButtons />
         }
       >
-        <main className="flex h-full flex-col items-center justify-center">
-          <Kudo />
+        <main className="flex flex-col items-center justify-center overflow-y-scroll h-full">
+          <div className="flex flex-wrap gap-5 h-full justify-around p-5">
+            <Kudo />
+            <Kudo />
+            <Kudo />
+            <Kudo />
+            <Kudo />
+            <Kudo />
+            <Kudo />
+            <Kudo />
+            <Kudo />
+            <Kudo />
+          </div>
         </main>
         <FAB text={"Create Kudo"} icon={<GrAdd />}/>
       </NavBar>

@@ -2,9 +2,9 @@ const NavButtons = () => {
     return (
         <>
         <div className="btn-group">
-          <button className="btn btn-active">In</button>
-          <button className="btn">Out</button>
-          <button className="btn">All</button>
+          <button className="btn btn-secondary btn-active">In</button>
+          <button className="btn btn-secondary">Out</button>
+          <button className="btn btn-secondary">All</button>
         </div>
         </>
     );

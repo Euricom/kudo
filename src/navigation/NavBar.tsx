@@ -70,6 +70,7 @@ const NavBar = ({ children, titleContent }: NavBarProps) => {
                     </div>
                     <div className="divider"></div> 
                     <a className='grow'>Settings</a>
+                    <div className="divider"></div> 
                     <a>Sign out</a>
                 </div>
             </div>

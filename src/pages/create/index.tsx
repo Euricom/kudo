@@ -2,6 +2,8 @@ import { type NextPage } from "next";
 import Head from "next/head";
 import NavBar from "~/navigation/NavBar";
 import NavButtons from "~/navigation/NavButtons";
+import FAB from "~/navigation/FAB";
+import { GrNext } from "react-icons/gr"
 
 const New: NextPage = () => {
   return (
@@ -19,6 +21,7 @@ const New: NextPage = () => {
         <main className="flex flex-col items-center justify-center overflow-y-scroll h-full">
           New
         </main>
+        <FAB text={"Next"} icon={<GrNext />}/>
       </NavBar>
     </>
   );

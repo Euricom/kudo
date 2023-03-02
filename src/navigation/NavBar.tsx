@@ -60,10 +60,18 @@ const NavBar = ({ children, titleContent }: NavBarProps) => {
             <div className="drawer-side">
                 <label htmlFor="my-drawer-3" className="drawer-overlay">User</label> 
                 <div className="menu p-4 w-80 bg-base-100">
-                <a>Settings</a>
-                <a>Sign out</a>
+                    <div className='flex flex-col'>
+                        <div className="avatar">
+                            <div className="w-24 rounded-xl">
+                                <img src="/images/stock/photo-1534528741775-53994a69daeb.jpg" />
+                            </div>
+                        </div>
+                        <a>Username</a>
+                    </div>
+                    <div className="divider"></div> 
+                    <a className='grow'>Settings</a>
+                    <a>Sign out</a>
                 </div>
-                
             </div>
         </div>
         </>

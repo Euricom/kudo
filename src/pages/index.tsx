@@ -1,6 +1,8 @@
 import { type NextPage } from "next";
 import Head from "next/head";
 import Kudo from "~/components/Kudo";
+import NavBar from "~/navigation/NavBar";
+import NavButtons from "~/navigation/NavButtons";
 
 const Home: NextPage = () => {
   return (
@@ -10,9 +12,15 @@ const Home: NextPage = () => {
         <meta name="description" content="eKudo app" />
         <link rel="icon" href="/favicon.ico" />
       </Head>
-      <main className="flex h-full flex-col items-center justify-center">
-        <Kudo />
-      </main>
+      <NavBar
+        titleContent={
+          <NavButtons />
+        }
+      >
+        <main className="flex h-full flex-col items-center justify-center">
+          <Kudo />
+        </main>
+      </NavBar>
     </>
   );
 };

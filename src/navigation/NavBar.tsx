@@ -1,8 +1,9 @@
 interface NavBarProps  { 
+    titleContent?: React.ReactNode,
     children?: React.ReactNode 
   }
 
-const NavBar = ({ children }: NavBarProps) => {
+const NavBar = ({ children, titleContent }: NavBarProps) => {
     return (
         <>
         <div className="drawer">
@@ -17,7 +18,7 @@ const NavBar = ({ children }: NavBarProps) => {
                         </div>
                     </div>
                     <div className="navbar-center">
-                        <a className="btn btn-ghost normal-case text-xl">DaisyUI</a>
+                        <a className="normal-case text-xl">{titleContent}</a>
                     </div>
                     <div className="navbar-end">
                         <button className="btn btn-ghost btn-circle">
@@ -29,7 +30,7 @@ const NavBar = ({ children }: NavBarProps) => {
                             <span className="badge badge-xs badge-primary indicator-item"></span>
                             </div>
                         </button>
-                        <div className="flex-none hidden lg:block">
+                        <div className="hidden lg:block">
                             <button className="btn btn-ghost btn-circle">
                                 <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" /></svg>
                             </button>
@@ -42,12 +43,11 @@ const NavBar = ({ children }: NavBarProps) => {
                 {children}
             </div> 
             <div className="drawer-side">
-                <label htmlFor="my-drawer-3" className="drawer-overlay"></label> 
-                <ul className="menu p-4 w-80 bg-base-100">
-                <li><a>Settings</a></li>
-                <li><a>Sign out</a></li>
-                
-                </ul>
+                <label htmlFor="my-drawer-3" className="drawer-overlay">User</label> 
+                <div className="menu p-4 w-80 bg-base-100">
+                <a>Settings</a>
+                <a>Sign out</a>
+                </div>
                 
             </div>
         </div>

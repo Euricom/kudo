@@ -23,16 +23,16 @@ const New: NextPage = () => {
         }
       >
         <main className="flex flex-col items-center justify-center overflow-y-scroll h-full gap-5">
-            <FcPodiumWithSpeaker size={100} />
-            <Select label="Speaker" options={speakers}/>
-            <FcPodiumWithAudience size={100} />
-            <Select label="Session" options={sessions}/>
-            <label className="label cursor-pointer gap-5">
-              <input type="checkbox" className="checkbox" />
-              <span className="label-text">Hide my name.</span> 
-            </label>
+          <FcPodiumWithSpeaker size={100} />
+          <Select label="Speaker" options={speakers} />
+          <FcPodiumWithAudience size={100} />
+          <Select label="Session" options={sessions} />
+          <label className="label cursor-pointer gap-5">
+            <input type="checkbox" className="checkbox" />
+            <span className="label-text">Hide my name.</span>
+          </label>
         </main>
-        <FAB text={"Next"} icon={<GrNext />}/>
+        <FAB text={"Next"} icon={<GrNext />} url="/create/templates" />
       </NavBar>
     </>
   );

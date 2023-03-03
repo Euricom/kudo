@@ -19,9 +19,9 @@ const Editor: NextPage = () => {
         }
       >
         <main className="flex flex-col items-center justify-center overflow-y-scroll h-full">
-            Templates
+          Templates
         </main>
-        <FAB text={"Next"} icon={<GrNext />}/>
+        <FAB text={"Next"} icon={<GrNext />} url="/create/editor" />
       </NavBar>
     </>
   );

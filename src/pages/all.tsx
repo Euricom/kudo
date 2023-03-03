@@ -27,7 +27,7 @@ const All: NextPage = () => {
             ))}
           </div>
         </main>
-        <FAB text={"Create Kudo"} icon={<GrAdd />} />
+        <FAB text={"Create Kudo"} icon={<GrAdd />} url="/create" />
       </NavBar>
     </>
   );

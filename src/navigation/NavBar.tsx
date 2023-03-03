@@ -33,7 +33,7 @@ const NavBar = ({ children, titleContent }: NavBarProps) => {
         <div className="drawer">
             <input id="my-drawer-3" type="checkbox" className="drawer-toggle" /> 
             <div className="drawer-content flex flex-col">
-                <div className="w-full navbar bg-base-300">
+                <div className="w-full navbar bg-neutral">
                     <div className="navbar-start ">
                         <div className="flex-none lg:hidden">
                             <label htmlFor="my-drawer-3" className="btn btn-square btn-ghost">

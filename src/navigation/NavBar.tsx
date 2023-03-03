@@ -74,7 +74,7 @@ const NavBar = ({ children, titleContent }: NavBarProps) => {
                                     />
                                 </div>
                             </div>
-                            <a>Username</a>
+                            <a>Yi Long Ma</a>
                         </div>
                         <div className="divider"></div>
                         <div className='grow flex flex-col gap-3'>

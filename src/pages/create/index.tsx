@@ -4,6 +4,7 @@ import NavBar from "~/navigation/NavBar";
 import NavButtons from "~/navigation/NavButtons";
 import FAB from "~/navigation/FAB";
 import { GrNext } from "react-icons/gr"
+import { FcPodiumWithSpeaker, FcPodiumWithAudience } from "react-icons/fc"
 import Select from "~/input/Select";
 
 const New: NextPage = () => {
@@ -21,15 +22,15 @@ const New: NextPage = () => {
           <NavButtons />
         }
       >
-        <main className="flex flex-col items-center justify-center overflow-y-scroll h-full">
-          <div className="form-control">
+        <main className="flex flex-col items-center justify-center overflow-y-scroll h-full gap-5">
+            <FcPodiumWithSpeaker size={100} />
             <Select label="Speaker" options={speakers}/>
+            <FcPodiumWithAudience size={100} />
             <Select label="Session" options={sessions}/>
-            <label className="label cursor-pointer">
+            <label className="label cursor-pointer gap-5">
               <input type="checkbox" className="checkbox" />
               <span className="label-text">Hide my name.</span> 
             </label>
-          </div>
         </main>
         <FAB text={"Next"} icon={<GrNext />}/>
       </NavBar>

@@ -1,7 +1,6 @@
 import { type NextPage } from "next";
 import Head from "next/head";
 import NavBar from "~/navigation/NavBar";
-import NavButtons from "~/navigation/NavButtons";
 import FAB from "~/navigation/FAB";
 import { GrNext } from "react-icons/gr"
 

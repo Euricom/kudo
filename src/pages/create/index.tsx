@@ -1,7 +1,6 @@
 import { type NextPage } from "next";
 import Head from "next/head";
 import NavBar from "~/navigation/NavBar";
-import NavButtons from "~/navigation/NavButtons";
 import FAB from "~/navigation/FAB";
 import { GrNext } from "react-icons/gr"
 import { FcPodiumWithSpeaker, FcPodiumWithAudience } from "react-icons/fc"
@@ -22,7 +21,7 @@ const New: NextPage = () => {
           "Create new Kudo"
         }
       >
-        <main className="flex flex-col items-center justify-center overflow-y-scroll h-full gap-5">
+        <main className="flex flex-col items-center justify-center overflow-y-scroll h-full pb-10">
           <FcPodiumWithSpeaker size={100} />
           <Select label="Speaker" options={speakers} />
           <FcPodiumWithAudience size={100} />

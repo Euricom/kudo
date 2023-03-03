@@ -3,6 +3,8 @@ import { useRouter } from 'next/router';
 import { signOut } from 'next-auth/react';
 import { FiBell } from 'react-icons/fi';
 import { BsGearFill } from 'react-icons/bs'
+import Image from 'next/image';
+import avatar from '../contents/images/EMAvatar.jpg'
 
 function useVisibleNavbarActions() {
     const router = useRouter();
@@ -62,17 +64,32 @@ const NavBar = ({ children, titleContent }: NavBarProps) => {
                 </div>
                 <div className="drawer-side">
                     <label htmlFor="my-drawer-3" className="drawer-overlay">User</label>
-                    <div className="menu p-4 w-80 bg-base-100">
+                    <div className="menu p-4 w-80 bg-base-100 text-lg">
                         <div className='flex flex-col'>
                             <div className="avatar">
                                 <div className="w-24 rounded-xl">
-                                    <img src="/images/stock/photo-1534528741775-53994a69daeb.jpg" />
+                                    <Image 
+                                    src={avatar}
+                                    alt="Profile picture"  
+                                    />
                                 </div>
                             </div>
                             <a>Username</a>
                         </div>
                         <div className="divider"></div>
-                        <a className='grow'>Settings</a>
+                        <div className='grow flex flex-col gap-3'>
+                            <a>Settings</a>
+                            <div className="form-control">
+                                <label className="label cursor-pointer">
+                                    <span className="label-text">Notifications</span> 
+                                    <input type="checkbox" className="toggle" checked />
+                                </label>
+                                <label className="label cursor-pointer">
+                                    <span className="label-text">Darkmode</span> 
+                                    <input type="checkbox" className="toggle" checked />
+                                </label>
+                            </div>
+                        </div>
                         <div className="divider"></div>
                         <a onClick={() => void signOut()}>Sign out</a>
                     </div>

@@ -19,7 +19,7 @@ const New: NextPage = () => {
       </Head>
       <NavBar
         titleContent={
-          <NavButtons />
+          "Create new Kudo"
         }
       >
         <main className="flex flex-col items-center justify-center overflow-y-scroll h-full gap-5">

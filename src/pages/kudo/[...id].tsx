@@ -13,11 +13,11 @@ const KudoDetail: NextPage = () => {
       </Head>
       <NavBar
         titleContent={
-          <NavButtons />
+          "Kudo for Session: " + "Title"
         }
       >
         <main className="flex flex-col items-center justify-center overflow-y-scroll h-full">
-            KudoDetail
+          KudoDetail
         </main>
       </NavBar>
     </>

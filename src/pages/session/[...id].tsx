@@ -1,4 +1,4 @@
-import { type NextPage/*, type GetServerSideProps */} from "next";
+import { type NextPage/*, type GetServerSideProps */ } from "next";
 import Head from "next/head";
 import NavBar from "~/navigation/NavBar";
 import NavButtons from "~/navigation/NavButtons";
@@ -29,11 +29,11 @@ const Session: NextPage = () => {
       </Head>
       <NavBar
         titleContent={
-          <NavButtons />
+          "Session: " + "Title"
         }
       >
         <main className="flex flex-col items-center justify-center overflow-y-scroll h-full">
-            Session
+          Session
         </main>
       </NavBar>
     </>

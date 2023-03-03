@@ -23,7 +23,7 @@ const All: NextPage = () => {
         <main className="flex flex-col items-center justify-center overflow-y-scroll h-full">
           <div className="flex flex-wrap gap-8 h-full justify-center p-5">
             {sessions.map((x) => (
-              typeof (x) == 'string' ? <h1 className="justify-center w-full text-center text-3xl underline" key={x}>{x}</h1> : <Session key={x} />
+              typeof (x) == 'string' ? <h1 className="justify-center w-full text-center text-3xl underline" key={x}>{x}</h1> : <Session id={x} key={x} />
             ))}
           </div>
         </main>

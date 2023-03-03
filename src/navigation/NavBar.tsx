@@ -82,11 +82,11 @@ const NavBar = ({ children, titleContent }: NavBarProps) => {
                             <div className="form-control">
                                 <label className="label cursor-pointer">
                                     <span className="label-text">Notifications</span> 
-                                    <input type="checkbox" className="toggle" checked />
+                                    <input type="checkbox" className="toggle" />
                                 </label>
                                 <label className="label cursor-pointer">
                                     <span className="label-text">Darkmode</span> 
-                                    <input type="checkbox" className="toggle" checked />
+                                    <input type="checkbox" className="toggle" />
                                 </label>
                             </div>
                         </div>

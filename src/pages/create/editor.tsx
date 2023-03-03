@@ -3,6 +3,7 @@ import Head from "next/head";
 import NavBar from "~/navigation/NavBar";
 import FAB from "~/navigation/FAB";
 import { GrNext } from "react-icons/gr"
+import Kudo from "~/components/Kudo";
 
 const Editor: NextPage = () => {
   return (
@@ -18,7 +19,7 @@ const Editor: NextPage = () => {
         }
       >
         <main className="flex flex-col items-center justify-center overflow-y-scroll h-full">
-          Editor
+          <Kudo />
         </main>
         <FAB text={"Next"} icon={<GrNext />} url="/out" />
       </NavBar>

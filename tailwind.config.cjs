@@ -3,9 +3,15 @@ module.exports = {
   content: ["./src/**/*.{js,ts,jsx,tsx}"],
   theme: {
     extend: {
-      // no need to update theme
+      backgroundImage: {
+        'honeycomb': "url('../contents/images/HoneycombPatternEuricomGreen.png')",
+        },
+        backdropBlur: {
+          xs: '2px',
+        },
       // daisy-ui is handling the theme colors
       extend: {
+        
         fontFamily: {
           poppins: ['Poppins', 'serif'],
         },

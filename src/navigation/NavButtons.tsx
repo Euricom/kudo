@@ -1,13 +1,18 @@
+import Link from "next/link";
+import { useRouter } from 'next/router'
+
 const NavButtons = () => {
-    return (
-        <>
-        <div className="btn-group">
-          <button className="btn btn-secondary btn-active">In</button>
-          <button className="btn btn-secondary">Out</button>
-          <button className="btn btn-secondary">All</button>
-        </div>
-        </>
-    );
+  const router = useRouter()
+
+  return (
+    <>
+      <div className="btn-group">
+        <Link className={"btn btn-secondary " + (router.pathname == "/" ? "btn-active" : "")} href="/">In</Link>
+        <Link className={"btn btn-secondary " + (router.pathname == "/out" ? "btn-active" : "")} href="/out">Out</Link>
+        <Link className={"btn btn-secondary " + (router.pathname == "/all" ? "btn-active" : "")} href="/all">All</Link>
+      </div>
+    </>
+  );
 };
 
 export default NavButtons;

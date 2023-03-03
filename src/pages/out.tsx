@@ -5,8 +5,10 @@ import NavBar from "~/navigation/NavBar";
 import NavButtons from "~/navigation/NavButtons";
 import { GrAdd } from 'react-icons/gr';
 import Kudo from "~/components/Kudo";
+import useVisibleButtons from "~/hooks/useVisibleButtons";
 
 const Out: NextPage = () => {
+  const buttons = useVisibleButtons();
   const kudos = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20]
   return (
     <>

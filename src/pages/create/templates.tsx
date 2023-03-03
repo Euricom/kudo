@@ -15,7 +15,7 @@ const Editor: NextPage = () => {
       </Head>
       <NavBar
         titleContent={
-          <NavButtons />
+          "Templates"
         }
       >
         <main className="flex flex-col items-center justify-center overflow-y-scroll h-full">

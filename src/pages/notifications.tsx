@@ -13,11 +13,11 @@ const Notifications: NextPage = () => {
       </Head>
       <NavBar
         titleContent={
-          <NavButtons />
+          "Notifications"
         }
       >
         <main className="flex flex-col items-center justify-center overflow-y-scroll h-full">
-            Notifications
+          Notifications
         </main>
       </NavBar>
     </>

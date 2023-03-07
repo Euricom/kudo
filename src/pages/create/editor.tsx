@@ -2,7 +2,7 @@ import { type NextPage } from "next";
 import Head from "next/head";
 import FAB from "~/navigation/FAB";
 import { FiSend } from "react-icons/fi"
-import Kudo from "~/Kudos/Kudo";
+import Kudo from "~/kudos/Kudo";
 
 const Editor: NextPage = () => {
   return (

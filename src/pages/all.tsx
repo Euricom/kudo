@@ -2,7 +2,7 @@ import { type NextPage } from "next";
 import Head from "next/head";
 import FAB from "~/navigation/FAB";
 import { GrAdd } from 'react-icons/gr';
-import Session from "~/Sessions/Session";
+import Session from "~/sessions/Session";
 
 const All: NextPage = () => {
   const sessions = ["Today", 1, 2, "Yesterday", 3, 4, 5, 6, "26/02/2023", 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30]

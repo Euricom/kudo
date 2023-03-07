@@ -1,24 +1,25 @@
 import React from 'react';
 import { useRouter } from 'next/router';
 import { signOut } from 'next-auth/react';
-import { FiBell } from 'react-icons/fi';
+import { FiBell, FiMenu, FiDownload } from 'react-icons/fi';
 import { BsGearFill } from 'react-icons/bs'
 import Image from 'next/image';
 import avatar from '../contents/images/EMAvatar.jpg'
+import useVisibleButtons from '~/hooks/useVisibleButtons';
 
 function useVisibleNavbarActions() {
     const router = useRouter();
 
     return [
         {
-            Component: SearchIcon,
-            key: 'searchButton',
-            routes: ['/', '/out', '/all'],
-        },
-        {
             Component: NotificationIcon,
             key: 'notifButton',
             routes: ['/', '/out', '/all'],
+        },
+        {
+            Component: DownloadIcon,
+            key: 'downladButton',
+            routes: ['/session/[...id]'],
         },
     ].filter((item) => item.routes.includes(router.pathname));
 }
@@ -29,6 +30,7 @@ interface NavBarProps {
 }
 
 const NavBar = ({ children, titleContent }: NavBarProps) => {
+    const buttons = useVisibleButtons();
     const visibleNavbarActions = useVisibleNavbarActions();
     return (
         <>
@@ -39,7 +41,7 @@ const NavBar = ({ children, titleContent }: NavBarProps) => {
                         <div className="navbar-start ">
                             <div className="flex-none lg:hidden">
                                 <label htmlFor="my-drawer-3" className="btn btn-square btn-ghost">
-                                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" className="inline-block w-6 h-6 stroke-current"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 6h16M4 12h16M4 18h16"></path></svg>
+                                    <FiMenu size={25}/>
                                 </label>
                             </div>
                         </div>
@@ -60,6 +62,11 @@ const NavBar = ({ children, titleContent }: NavBarProps) => {
                             </div>
                         </div>
                     </div>
+                    <div className="absolute left-2/3 my-2 pt-16 z-50 flex">
+                        {buttons.map((x) => (
+                            <x.Component key={x.key} />
+                        ))}
+                    </div>
                     {children}
                 </div>
                 <div className="drawer-side">
@@ -74,7 +81,7 @@ const NavBar = ({ children, titleContent }: NavBarProps) => {
                                     />
                                 </div>
                             </div>
-                            <a>Username</a>
+                            <a>Yi Long Ma</a>
                         </div>
                         <div className="divider"></div>
                         <div className='grow flex flex-col gap-3'>
@@ -82,11 +89,11 @@ const NavBar = ({ children, titleContent }: NavBarProps) => {
                             <div className="form-control">
                                 <label className="label cursor-pointer">
                                     <span className="label-text">Notifications</span> 
-                                    <input type="checkbox" className="toggle" checked />
+                                    <input type="checkbox" className="toggle" />
                                 </label>
                                 <label className="label cursor-pointer">
                                     <span className="label-text">Darkmode</span> 
-                                    <input type="checkbox" className="toggle" checked />
+                                    <input type="checkbox" className="toggle" />
                                 </label>
                             </div>
                         </div>
@@ -99,16 +106,6 @@ const NavBar = ({ children, titleContent }: NavBarProps) => {
     );
 };
 
-function SearchIcon() {
-    return (
-        <>
-            <button className="btn btn-ghost btn-circle">
-                <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" /></svg>
-            </button>
-        </>
-    );
-}
-
 function NotificationIcon() {
     return (
         <>
@@ -117,6 +114,16 @@ function NotificationIcon() {
                     <FiBell size={20} />
                     <span className="badge badge-sm badge-error border border-collapse border-neutral indicator-item">12</span>
                 </div>
+            </button>
+        </>
+    );
+}
+
+function DownloadIcon() {
+    return (
+        <>
+            <button className="btn btn-ghost btn-circle">
+                <FiDownload size={20} />
             </button>
         </>
     );

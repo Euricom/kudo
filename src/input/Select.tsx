@@ -11,12 +11,12 @@ const Select = ({ label, options}: SelectProps) => {
         <label className="label">
             <span className="label-text">{label}</span>
         </label>
-        <select className="select select-bordered">
-            <option disabled selected>Pick one</option>
+        <input type="text" placeholder="Type here" className="input input-bordered w-full max-w-xs" list={label}/>
+        <datalist id={label} className=" data-[]">
             {options.map((x) => (
-                <option key={x} value={x}>{x}</option>
+                <option key={x} value={x} className="bg-black">{x}</option>
             ))}
-        </select>
+        </datalist>
         </div>
         </>
     );

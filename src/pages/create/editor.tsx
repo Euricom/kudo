@@ -3,6 +3,7 @@ import Head from "next/head";
 import NavBar from "~/navigation/NavBar";
 import FAB from "~/navigation/FAB";
 import { FiSend } from "react-icons/fi"
+import Kudo from "~/components/Kudo";
 
 const Editor: NextPage = () => {
   return (
@@ -18,7 +19,7 @@ const Editor: NextPage = () => {
         }
       >
         <main className="flex flex-col items-center justify-center overflow-y-scroll h-full">
-          Editor
+          <Kudo />
         </main>
         <FAB text={"Send"} icon={<FiSend />} url="/out" />
       </NavBar>

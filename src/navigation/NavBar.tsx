@@ -108,7 +108,7 @@ const NavBar = ({ children }: NavBarProps) => {
                             </div>
                         </div>
                     </div>
-                    <div className="absolute left-2/3 my-2 pt-16 z-50 flex">
+                    <div className="absolute right-1/4 my-2 pt-16 z-50 flex">
                         {buttons.map((x) => (
                             <x.Component key={x.key} />
                         ))}

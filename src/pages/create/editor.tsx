@@ -2,7 +2,6 @@ import { type NextPage } from "next";
 import Head from "next/head";
 import FAB from "~/navigation/FAB";
 import { FiSend } from "react-icons/fi"
-import Kudo from "~/kudos/Kudo";
 
 const Editor: NextPage = () => {
   return (
@@ -13,7 +12,7 @@ const Editor: NextPage = () => {
         <link rel="icon" href="/favicon.ico" />
       </Head>
       <main className="flex flex-col items-center justify-center overflow-y-scroll h-full">
-        <Kudo />
+
       </main>
       <FAB text={"Send"} icon={<FiSend />} url="/out" />
     </>

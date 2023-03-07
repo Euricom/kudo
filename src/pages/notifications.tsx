@@ -1,6 +1,5 @@
 import { type NextPage } from "next";
 import Head from "next/head";
-import NavBar from "~/navigation/NavBar";
 
 const Notifications: NextPage = () => {
   return (
@@ -10,15 +9,9 @@ const Notifications: NextPage = () => {
         <meta name="description" content="eKudo app" />
         <link rel="icon" href="/favicon.ico" />
       </Head>
-      <NavBar
-        titleContent={
-          "Notifications"
-        }
-      >
-        <main className="flex flex-col items-center justify-center overflow-y-scroll h-full">
-          Notifications
-        </main>
-      </NavBar>
+      <main className="flex flex-col items-center justify-center overflow-y-scroll h-full">
+        Notifications
+      </main>
     </>
   );
 };

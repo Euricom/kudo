@@ -2,10 +2,10 @@ import { type NextPage } from "next";
 import Head from "next/head";
 import FAB from "~/navigation/FAB";
 import { GrAdd } from 'react-icons/gr';
-import Session from "~/sessions/Session";
+import Kudo from "~/kudos/Kudo";
 
-const Home: NextPage = () => {
-  const sessions = ["Today", 1, 2, "Yesterday", 3, 4, 5, 6, "26/02/2023", 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30]
+const Out: NextPage = () => {
+  const kudos = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20]
   return (
     <>
       <Head>
@@ -14,9 +14,9 @@ const Home: NextPage = () => {
         <link rel="icon" href="/favicon.ico" />
       </Head>
       <main className="flex flex-col items-center justify-center overflow-y-scroll h-full">
-        <div className="flex flex-wrap gap-8 h-full justify-center p-5">
-          {sessions.map((x) => (
-            typeof (x) == 'string' ? <h1 className="justify-center w-full text-center text-3xl underline" key={x}>{x}</h1> : <Session id={x} key={x} />
+        <div className="flex flex-wrap gap-5 h-full justify-center p-5">
+          {kudos.map((x) => (
+            <Kudo key={x} />
           ))}
         </div>
       </main>
@@ -25,4 +25,4 @@ const Home: NextPage = () => {
   );
 };
 
-export default Home;
+export default Out;

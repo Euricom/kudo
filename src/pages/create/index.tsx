@@ -1,7 +1,5 @@
 import { type NextPage } from "next";
 import Head from "next/head";
-import NavBar from "~/navigation/NavBar";
-import NavButtons from "~/navigation/NavButtons";
 import FAB from "~/navigation/FAB";
 import { GrNext } from "react-icons/gr"
 import { FcPodiumWithSpeaker, FcPodiumWithAudience } from "react-icons/fc"
@@ -17,11 +15,6 @@ const New: NextPage = () => {
         <meta name="description" content="eKudo app" />
         <link rel="icon" href="/favicon.ico" />
       </Head>
-      <NavBar
-        titleContent={
-          "Create new Kudo"
-        }
-      >
         <main className="flex flex-col items-center justify-center overflow-y-scroll h-full gap-5">
           <FcPodiumWithSpeaker size={100} />
           <Select label="Speaker" options={speakers} />
@@ -33,7 +26,6 @@ const New: NextPage = () => {
           </label>
         </main>
         <FAB text={"Next"} icon={<GrNext />} url="/create/templates" />
-      </NavBar>
     </>
   );
 };

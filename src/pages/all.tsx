@@ -1,8 +1,6 @@
 import { type NextPage } from "next";
 import Head from "next/head";
 import FAB from "~/navigation/FAB";
-import NavBar from "~/navigation/NavBar";
-import NavButtons from "~/navigation/NavButtons";
 import { GrAdd } from 'react-icons/gr';
 import Session from "~/components/Session";
 
@@ -15,11 +13,6 @@ const All: NextPage = () => {
         <meta name="description" content="eKudo app" />
         <link rel="icon" href="/favicon.ico" />
       </Head>
-      <NavBar
-        titleContent={
-          <NavButtons />
-        }
-      >
         <main className="flex flex-col items-center justify-center overflow-y-scroll h-full">
           <div className="flex flex-wrap gap-8 h-full justify-center p-5">
             {sessions.map((x) => (
@@ -28,7 +21,6 @@ const All: NextPage = () => {
           </div>
         </main>
         <FAB text={"Create Kudo"} icon={<GrAdd />} url="/create" />
-      </NavBar>
     </>
   );
 };

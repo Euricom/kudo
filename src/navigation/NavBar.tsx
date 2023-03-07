@@ -6,6 +6,7 @@ import { BsGearFill } from 'react-icons/bs'
 import Image from 'next/image';
 import avatar from '../contents/images/EMAvatar.jpg'
 import useVisibleButtons from '~/hooks/useVisibleButtons';
+import NavButtons from './NavButtons';
 
 function useVisibleNavbarActions() {
     const router = useRouter();
@@ -24,14 +25,59 @@ function useVisibleNavbarActions() {
     ].filter((item) => item.routes.includes(router.pathname));
 }
 
+function useTitleContent() {
+    const router = useRouter();
+
+    return [
+        {
+            route: '/',
+            Component: () => <NavButtons />,
+        },
+        {
+            route: '/out',
+            Component: () => <NavButtons />,
+        },
+        {
+            route: '/all',
+            Component: () => <NavButtons />,
+        },
+        {
+            route: '/notifications',
+            Component: () => <>Notifications</>,
+        },
+        {
+            route: '/create',
+            Component: () => <>New Kudo</>,
+        },
+        {
+            route: '/create/templates',
+            Component: () => <>Templates</>,
+        },
+        {
+            route: '/create/editor',
+            Component: () => <>Editor</>,
+        },
+        {
+            route: '/kudo/*',
+            Component: () => <>Kudo: </>,
+        },
+        {
+            route: '/session/*',
+            Component: () => <>Session: </>,
+        },
+    ].filter((item) => item.route === router.pathname).pop();
+}
+
 interface NavBarProps {
-    titleContent?: React.ReactNode,
     children?: React.ReactNode
 }
 
-const NavBar = ({ children, titleContent }: NavBarProps) => {
+const NavBar = ({ children }: NavBarProps) => {
     const buttons = useVisibleButtons();
     const visibleNavbarActions = useVisibleNavbarActions();
+    const titleContent = useTitleContent();
+    console.log(titleContent);
+    
     return (
         <>
             <div className="drawer">
@@ -46,7 +92,7 @@ const NavBar = ({ children, titleContent }: NavBarProps) => {
                             </div>
                         </div>
                         <div className="navbar-center">
-                            <a className="normal-case text-xl">{titleContent}</a>
+                            <a className="normal-case text-xl">{titleContent? <titleContent.Component /> : ''}</a>
                         </div>
                         <div className="navbar-end">
                             {visibleNavbarActions.map((x) => (

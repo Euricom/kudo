@@ -1,6 +1,5 @@
 import { type NextPage } from "next";
 import Head from "next/head";
-import NavBar from "~/navigation/NavBar";
 import FAB from "~/navigation/FAB";
 import Kudo from "~/components/Kudo";
 import { GrNext } from "react-icons/gr"
@@ -14,11 +13,6 @@ const Editor: NextPage = () => {
         <meta name="description" content="eKudo app" />
         <link rel="icon" href="/favicon.ico" />
       </Head>
-      <NavBar
-        titleContent={
-          "Templates"
-        }
-      >
         <main className="flex flex-col items-center justify-center overflow-y-scroll h-full">
           <div className="flex flex-wrap gap-5 h-full justify-center p-5">
             {kudos.map((x) => (
@@ -27,7 +21,6 @@ const Editor: NextPage = () => {
           </div>
         </main>
         <FAB text={"Next"} icon={<GrNext />} url="/create/editor" />
-      </NavBar>
     </>
   );
 };

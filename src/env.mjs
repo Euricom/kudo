@@ -22,8 +22,6 @@ const server = z.object({
   AZURE_AD_CLIENT_ID: z.string(),
   AZURE_AD_CLIENT_SECRET: z.string(),
   AZURE_AD_TENANT_ID: z.string(),
-  username: z.string(),
-  password: z.string(),
 });
 
 /**
@@ -48,8 +46,6 @@ const processEnv = {
   AZURE_AD_CLIENT_ID: process.env.AZURE_AD_CLIENT_ID,
   AZURE_AD_CLIENT_SECRET: process.env.AZURE_AD_CLIENT_SECRET,
   AZURE_AD_TENANT_ID: process.env.AZURE_AD_TENANT_ID,
-  username: process.env.username,
-  password: process.env.password,
   // NEXT_PUBLIC_CLIENTVAR: process.env.NEXT_PUBLIC_CLIENTVAR,
 };
 

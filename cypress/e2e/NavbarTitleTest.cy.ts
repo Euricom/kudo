@@ -1,7 +1,8 @@
-import { env } from "~/env.mjs";
+import { Component } from 'react'
+
 describe('template spec', () => {
   it('passes', () => {
-    cy.login(env.username, env.password)
+    cy.login(Cypress.env('username') as string, Cypress.env('password') as string)
 
     cy.get('[data-cy=NavButtons]').should('exist')
 

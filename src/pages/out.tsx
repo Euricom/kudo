@@ -22,7 +22,7 @@ const Out: NextPage = () => {
       <main className="flex flex-col items-center justify-center overflow-y-scroll h-full">
         <div className="flex flex-wrap gap-5 h-full justify-center p-5">
           {kudos.map((x) => (
-            <Kudo key={x} />
+            <Kudo key={x} id={x} />
           ))}
         </div>
       </main>

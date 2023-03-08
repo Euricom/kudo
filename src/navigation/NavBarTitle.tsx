@@ -1,31 +1,11 @@
-import React, { Dispatch, SetStateAction } from "react";
+import React from "react";
 
-
-type TitleContextType = {
+type TitleContextValue = {
     title: React.ReactNode;
-    setTitle: Dispatch<SetStateAction<React.ReactNode | null>>;
+    setTitle: React.Dispatch<React.SetStateAction<React.ReactNode | null>>;
 }
 
-const iTitleContextType = {
-    title: <></>,
-    // eslint-disable-next-line @typescript-eslint/no-empty-function
-    setTitle: () => { }
-}
-
-interface useTitleProps {
-    newValue?: React.ReactNode;
-}
-
-
-interface NavigationBarContentProps {
-    props: React.PropsWithChildren<object>
-}
-
-
-
-
-
-const TitleContext = React.createContext<TitleContextType>(iTitleContextType);
+const TitleContext = React.createContext<TitleContextValue>({ title: <></>, setTitle: () => { /* do nothing */ } });
 
 export function TitleProvider(props: React.PropsWithChildren<object>) {
     const [title, setTitle] = React.useState<React.ReactNode | null>(null);
@@ -48,8 +28,6 @@ export function useTitle(newValue: (React.ReactNode | undefined)) {
 export function NavigationBarContent({ children }: {
     children: React.ReactNode;
 }) {
-    console.log(children);
-
     useTitle(children);
     return <></>;
 }

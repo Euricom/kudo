@@ -1,3 +1,4 @@
+import { Component } from 'react'
 describe('template spec', () => {
   it('passes', () => {
     cy.login('kobe.dehandschutter@euri.com', 'ert789dfg456cvb123*')

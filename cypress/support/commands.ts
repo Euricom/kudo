@@ -13,36 +13,7 @@
 // -- This is a parent command --
 // Cypress.Commands.add('login', (email, password) => { ... })
 //
-// Cypress.Commands.add('login', (email: string, password: string) => {
-//     cy.origin(
-//         'login.microsoftonline.com',
-//         {
-//             args: {
-//                 email,
-//             },
-//         },
-//         ({ email }) => {
-//             cy.get('input[type="email"]').type(email, {
-//                 log: false,
-//             })
-//             cy.get('input[type="submit"]').click()
-//         }
-//     )
-//     cy.origin(
-//         'login.live.com',
-//         {
-//             args: {
-//                 password,
-//             },
-//         },
-//         ({ password }) => {
-//             cy.get('input[type="password"]').type(password, {
-//                 log: false,
-//             })
-//             cy.get('input[type="submit"]').click()
-//         });
-// });
-
+import { Component } from 'react'
 
 function loginViaAAD(username: string, password: string) {
     cy.visit('http://localhost:3000/')
@@ -89,7 +60,7 @@ function loginViaAAD(username: string, password: string) {
 
 
 
-Cypress.Commands.add('login', (username: string, password: string) => {
+Cypress.Commands.add("login", (username: string, password: string) => {
     cy.visit('http://localhost:3000')
     cy.session(
         `aad-${username}`,

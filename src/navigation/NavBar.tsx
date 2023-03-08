@@ -2,13 +2,16 @@ import React from 'react';
 import { useRouter } from 'next/router';
 import { signOut } from 'next-auth/react';
 import { FiBell, FiMenu, FiDownload } from 'react-icons/fi';
-import { BsGearFill } from 'react-icons/bs'
+import { BsGearFill, BsArrowLeft } from 'react-icons/bs'
 import Image from 'next/image';
 import avatar from '../contents/images/EMAvatar.jpg'
 import useVisibleButtons from '~/hooks/useVisibleButtons';
-import NavButtons from './NavButtons';
 
-function useVisibleNavbarActions() {
+import { useTitle } from "./NavBarTitle";
+
+
+
+function useVisibleEndNavbarActions() {
     const router = useRouter();
 
     return [
@@ -19,54 +22,24 @@ function useVisibleNavbarActions() {
         },
         {
             Component: DownloadIcon,
-            key: 'downladButton',
+            key: 'downloadButton',
             routes: ['/session/[...id]'],
         },
     ].filter((item) => item.routes.includes(router.pathname));
 }
 
-function useTitleContent() {
+function useVisibleStartNavbarActions() {
     const router = useRouter();
 
     return [
         {
-            route: '/',
-            Component: () => <NavButtons />,
-        },
-        {
-            route: '/out',
-            Component: () => <NavButtons />,
-        },
-        {
-            route: '/all',
-            Component: () => <NavButtons />,
-        },
-        {
-            route: '/notifications',
-            Component: () => <>Notifications</>,
-        },
-        {
-            route: '/create',
-            Component: () => <>New Kudo</>,
-        },
-        {
-            route: '/create/templates',
-            Component: () => <>Templates</>,
-        },
-        {
-            route: '/create/editor',
-            Component: () => <>Editor</>,
-        },
-        {
-            route: '/kudo/*',
-            Component: () => <>Kudo: </>,
-        },
-        {
-            route: '/session/*',
-            Component: () => <>Session: </>,
-        },
-    ].filter((item) => item.route === router.pathname).pop();
+            Component: BackArrow,
+            key: 'backArrow',
+            routes: ['/session/[...id]', '/kudos/[...id]', '/notifications', '/create', '/create/editor', '/create/templates'],
+        }
+    ].filter((item) => item.routes.includes(router.pathname));
 }
+
 
 interface NavBarProps {
     children?: React.ReactNode
@@ -74,10 +47,12 @@ interface NavBarProps {
 
 const NavBar = ({ children }: NavBarProps) => {
     const buttons = useVisibleButtons();
-    const visibleNavbarActions = useVisibleNavbarActions();
-    const titleContent = useTitleContent();
-    console.log(titleContent);
-    
+    const visibleEndNavbarActions = useVisibleEndNavbarActions();
+    const visibleStartNavbarActions = useVisibleStartNavbarActions();
+    const title = useTitle(undefined);
+    console.log(title);
+
+
     return (
         <>
             <div className="drawer">
@@ -85,17 +60,22 @@ const NavBar = ({ children }: NavBarProps) => {
                 <div className="drawer-content flex flex-col">
                     <div className="w-full navbar bg-neutral text-neutral-content">
                         <div className="navbar-start ">
+
                             <div className="flex-none lg:hidden">
+
                                 <label htmlFor="my-drawer-3" className="btn btn-square btn-ghost">
-                                    <FiMenu size={25}/>
+                                    <FiMenu size={25} />
                                 </label>
                             </div>
+                            {visibleStartNavbarActions.map((x) => (
+                                <x.Component key={x.key} />
+                            ))}
                         </div>
-                        <div className="navbar-center">
-                            <a className="normal-case text-xl">{titleContent? <titleContent.Component /> : ''}</a>
+                        <div className="navbar-center text-2xl">
+                            <>{title}</>
                         </div>
                         <div className="navbar-end">
-                            {visibleNavbarActions.map((x) => (
+                            {visibleEndNavbarActions.map((x) => (
                                 <x.Component key={x.key} />
                             ))}
                             <div className="hidden lg:inline-flex">
@@ -121,9 +101,9 @@ const NavBar = ({ children }: NavBarProps) => {
                         <div className='flex flex-col'>
                             <div className="avatar">
                                 <div className="w-24 rounded-xl">
-                                    <Image 
-                                    src={avatar}
-                                    alt="Profile picture"  
+                                    <Image
+                                        src={avatar}
+                                        alt="Profile picture"
                                     />
                                 </div>
                             </div>
@@ -134,11 +114,11 @@ const NavBar = ({ children }: NavBarProps) => {
                             <a>Settings</a>
                             <div className="form-control">
                                 <label className="label cursor-pointer">
-                                    <span className="label-text">Notifications</span> 
+                                    <span className="label-text">Notifications</span>
                                     <input type="checkbox" className="toggle" />
                                 </label>
                                 <label className="label cursor-pointer">
-                                    <span className="label-text">Darkmode</span> 
+                                    <span className="label-text">Darkmode</span>
                                     <input type="checkbox" className="toggle" />
                                 </label>
                             </div>
@@ -174,5 +154,17 @@ function DownloadIcon() {
         </>
     );
 }
+function BackArrow() {
+    const router = useRouter();
+    return (
+        <>
+            <button className="btn btn-ghost btn-circle" onClick={() => router.back()}>
+                <BsArrowLeft size={20} />
+            </button>
+        </>
+    );
+}
+
+
 
 export default NavBar;

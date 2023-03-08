@@ -2,8 +2,10 @@ import { type NextPage } from "next";
 import Head from "next/head";
 import FAB from "~/navigation/FAB";
 import { FiSend } from "react-icons/fi"
+import Canvas from "~/kudos/Canvas";
 
 const Editor: NextPage = () => {
+
   return (
     <>
       <Head>
@@ -16,9 +18,7 @@ const Editor: NextPage = () => {
           <div className="kudo-header-container flex h-1/4 bg-red-500 items-center justify-center">
             <h1 className="kudo-header">Bedankt</h1>
           </div>
-          <canvas id="canvas" className="bg-white w-full h-3/4">
-
-          </canvas>
+          <Canvas />
         </div>
       </main>
       <FAB text={"Send"} icon={<FiSend />} url="/out" />

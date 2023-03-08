@@ -6,7 +6,6 @@ import { BsGearFill, BsArrowLeft } from 'react-icons/bs'
 import Image from 'next/image';
 import avatar from '../contents/images/EMAvatar.jpg'
 import { useUtilButtons } from '~/hooks/useUtilButtons';
-import NavButtons from './NavButtons';
 
 import { useTitle } from "./NavBarTitle";
 

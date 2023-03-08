@@ -56,7 +56,7 @@ const NavBar = ({ children }: NavBarProps) => {
             <div className="drawer">
                 <input id="my-drawer-3" type="checkbox" className="drawer-toggle" />
                 <div className="drawer-content flex flex-col">
-                    <div className="w-full navbar bg-neutral text-neutral-content">
+                    <div className="w-full navbar bg-neutral text-neutral-content z-50">
                         <div className="navbar-start ">
 
                             <div className="flex-none lg:hidden">
@@ -86,7 +86,7 @@ const NavBar = ({ children }: NavBarProps) => {
                             </div>
                         </div>
                     </div>
-                    <div className="absolute md:right-1/4 my-2 pt-16 z-50 flex self-center gap-2">
+                    <div className="absolute md:right-1/4 my-2 pt-16 z-40 flex self-center gap-2">
                         {buttons}
                     </div>
                     {children}

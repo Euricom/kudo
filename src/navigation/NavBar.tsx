@@ -76,7 +76,6 @@ const NavBar = ({ children }: NavBarProps) => {
     const buttons = useUtilButtons(undefined);
     const visibleNavbarActions = useVisibleNavbarActions();
     const titleContent = useTitleContent();
-    console.log(titleContent);
     
     return (
         <>
@@ -108,7 +107,7 @@ const NavBar = ({ children }: NavBarProps) => {
                             </div>
                         </div>
                     </div>
-                    <div className="absolute right-1/4 my-2 pt-16 z-50 flex">
+                    <div className="absolute md:right-1/4 my-2 pt-16 z-50 flex self-center gap-2">
                         {buttons}
                     </div>
                     {children}

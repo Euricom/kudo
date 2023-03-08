@@ -8,6 +8,7 @@ import "~/styles/globals.css";
 import { Auth } from "../auth/Auth";
 import NavBar from "~/navigation/NavBar";
 import { UtilButtonsProvider } from "~/hooks/useUtilButtons";
+import { TitleProvider } from "~/navigation/NavBarTitle";
 
 const MyApp: AppType<{ session: Session | null }> = ({
   Component,
@@ -15,13 +16,15 @@ const MyApp: AppType<{ session: Session | null }> = ({
 }) => {
   return (
     <SessionProvider session={session}>
-        <Auth>
+      <Auth>
+        <TitleProvider>
           <UtilButtonsProvider>
             <NavBar>
               <Component {...pageProps} />
             </NavBar>
           </UtilButtonsProvider>
-        </Auth>
+        </TitleProvider>
+      </Auth>
     </SessionProvider>
   );
 };

@@ -4,12 +4,16 @@ import FAB from "~/navigation/FAB";
 import { GrNext } from "react-icons/gr"
 import { FcPodiumWithSpeaker, FcPodiumWithAudience } from "react-icons/fc"
 import Select from "~/input/Select";
+import { NavigationBarContent } from "~/navigation/NavBarTitle";
 
 const New: NextPage = () => {
   const speakers = ["Steve Jobs", "Bill Gates", "Steven Universe"];
   const sessions = ["Ted talk 1", "Gaming", "???"];
   return (
     <>
+      <NavigationBarContent>
+        <h1>New</h1>
+      </NavigationBarContent>
       <Head>
         <title>eKudo</title>
         <meta name="description" content="eKudo app" />

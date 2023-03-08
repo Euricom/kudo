@@ -7,6 +7,7 @@ import { api } from "~/utils/api";
 import "~/styles/globals.css";
 import { Auth } from "../auth/Auth";
 import NavBar from "~/navigation/NavBar";
+import { UtilButtonsProvider } from "~/hooks/useUtilButtons";
 
 const MyApp: AppType<{ session: Session | null }> = ({
   Component,
@@ -15,9 +16,11 @@ const MyApp: AppType<{ session: Session | null }> = ({
   return (
     <SessionProvider session={session}>
         <Auth>
-          <NavBar>
-            <Component {...pageProps} />
-          </NavBar>
+          <UtilButtonsProvider>
+            <NavBar>
+              <Component {...pageProps} />
+            </NavBar>
+          </UtilButtonsProvider>
         </Auth>
     </SessionProvider>
   );

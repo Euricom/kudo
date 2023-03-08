@@ -5,7 +5,7 @@ import { FiBell, FiMenu, FiDownload } from 'react-icons/fi';
 import { BsGearFill } from 'react-icons/bs'
 import Image from 'next/image';
 import avatar from '../contents/images/EMAvatar.jpg'
-import useVisibleButtons from '~/hooks/useVisibleButtons';
+import { useUtilButtons } from '~/hooks/useUtilButtons';
 import NavButtons from './NavButtons';
 
 function useVisibleNavbarActions() {
@@ -73,7 +73,7 @@ interface NavBarProps {
 }
 
 const NavBar = ({ children }: NavBarProps) => {
-    const buttons = useVisibleButtons();
+    const buttons = useUtilButtons(undefined);
     const visibleNavbarActions = useVisibleNavbarActions();
     const titleContent = useTitleContent();
     console.log(titleContent);
@@ -109,9 +109,7 @@ const NavBar = ({ children }: NavBarProps) => {
                         </div>
                     </div>
                     <div className="absolute right-1/4 my-2 pt-16 z-50 flex">
-                        {buttons.map((x) => (
-                            <x.Component key={x.key} />
-                        ))}
+                        {buttons}
                     </div>
                     {children}
                 </div>

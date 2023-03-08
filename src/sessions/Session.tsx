@@ -6,7 +6,7 @@ interface SessionProps {
 const Session = ({ id }: SessionProps) => {
     return (
         <>
-            <Link className="card bg-base-200 shadow-xl w-full h-fit md:w-96 bg-honeycomb bg-cover" href={"/session/" + id.toString()} >
+            <Link className="card bg-base-200 shadow-xl w-full h-fit md:w-96 bg-honeycomb bg-cover" data-cy="Session" href={"/session/" + id.toString()} >
                 <div className="card bg-white bg-opacity-50 backdrop-blur-xs">
                     <div className="card-body">
                         <h2 className="card-title justify-center text-2xl bold text-black">Title Session</h2>

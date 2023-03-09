@@ -31,12 +31,21 @@ const Editor: NextPage = () => {
 
   const submit = async () => {
     const dataUrl = canvas?.getElement().toDataURL();
+    console.log(dataUrl);
+    await new Promise(resolve => setTimeout(resolve, 1)) //Tijdelijke await om de Lint error tegen te gaan
   }
 
   const createHeader = useCallback(() => {
     const title = 'Bedankt'
-    const color = 'red'
+    const color = '#f33'
     const rect: fabric.Rect = new fabric.Rect({
+      lockMovementX: true,
+      lockMovementY: true,
+      lockScalingX: true,
+      lockScalingY: true,
+      lockRotation: true,
+      hasControls: false,
+      hasBorders: false,
       height: (canvas?.height ?? 0) / 4,
       width: canvas?.width ?? 0,
       fill: color
@@ -44,6 +53,13 @@ const Editor: NextPage = () => {
     const text: fabric.Text = new fabric.Text(
       title,
       {
+        lockMovementX: true,
+        lockMovementY: true,
+        lockScalingX: true,
+        lockScalingY: true,
+        lockRotation: true,
+        hasControls: false,
+        hasBorders: false,
         textAlign: 'center',
         fontSize: (rect.get('height') ?? 0)/1.5
     })

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { type NextPage } from "next";
 import Head from "next/head";
 import FAB from "~/navigation/FAB";
@@ -12,6 +12,8 @@ import { NavigationBarContent } from "~/navigation/NavBarTitle";
 const Editor: NextPage = () => {
   const [message, setMessage] = useState('');
   const { editor, onReady } = useFabricJSEditor()
+  const canvas = editor?.canvas
+
   const onAddText = () => {
     editor?.addText(message)
     setMessage('')
@@ -23,6 +25,18 @@ const Editor: NextPage = () => {
   }
   const onClear = () => {
     editor?.deleteAll()
+    createHeader()
+  }
+
+  const submit = () => {
+    const dataUrl = canvas.lowerCanvasEl.toDataURL()
+    console.log(dataUrl);
+  }
+
+  const createHeader = () => {
+    const title = 'Bedankt'
+    editor?.addRectangle()
+    editor?.addText(title)
   }
 
   return (
@@ -71,16 +85,17 @@ const Editor: NextPage = () => {
       </div>
       {/* Main */}
       <main className="flex flex-col items-center justify-center overflow-y-scroll h-full" >
-        <div className="aspect-[3/2] w-full max-h-full max-w-5xl">
-          <div className="kudo-header-container flex h-1/4 bg-red-500 items-center justify-center">
+        <div id="kudo" className="aspect-[3/2] w-full max-h-full max-w-5xl" onKeyDown={onDeleteSelected} tabIndex={0}>
+          {/* <div className="kudo-header-container flex h-1/4 bg-red-500 items-center justify-center">
             <h1 className="kudo-header">Bedankt</h1>
           </div>
-          <div className="w-full h-3/4" onKeyDown={onDeleteSelected} tabIndex={0}>
+          <div className="w-full h-3/4" onKeyDown={onDeleteSelected} tabIndex={0}> */}
             <FabricJSCanvas className="w-full h-full bg-white" onReady={onReady} />
-          </div>
+          {/* </div> */}
         </div>
+        <button className='btn' onClick={submit}>Test submit zonder redirect</button>
       </main>
-      <FAB text={"Send"} icon={<FiSend />} url="/out" />
+      <FAB text={"Send"} icon={<FiSend />} url="/out" onClick={submit}/>
     </>
   );
 };

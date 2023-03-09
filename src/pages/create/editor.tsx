@@ -31,8 +31,8 @@ const Editor: NextPage = () => {
 
   const submit = async () => {
     const dataUrl = canvas?.getElement().toDataURL();
-    console.log(dataUrl);
-    await new Promise(resolve => setTimeout(resolve, 1)) //Tijdelijke await om de Lint error tegen te gaan
+    console.log('Test' + (dataUrl??-1).toString());
+    await new Promise(resolve => setTimeout(resolve, 1000)); //Tijdelijke await om de Lint error tegen te gaan
   }
 
   const createHeader = useCallback(() => {
@@ -125,9 +125,9 @@ const Editor: NextPage = () => {
         <div id="kudo" className="aspect-[3/2] w-full max-h-full max-w-5xl" onKeyDown={onDeleteSelected} tabIndex={0}>
             <FabricJSCanvas className="w-full h-full bg-white" onReady={onReady} />
         </div>
-        <button className='btn' onClick={() => submit}>Test submit zonder redirect</button>
+        <button className='btn' onClick={() => void submit()}>Test submit zonder redirect</button>
       </main>
-      <FAB text={"Send"} icon={<FiSend />} url="/out" onClick={() => submit}/>
+      <FAB text={"Send"} icon={<FiSend />} url="/out" onClick={() => void submit()}/>
     </>
   );
 };

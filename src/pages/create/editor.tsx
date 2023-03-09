@@ -47,7 +47,7 @@ const Editor: NextPage = () => {
       title,
       {
         textAlign: 'center',
-        fontSize: 100
+        fontSize: (rect.get('height') ?? 0)/1.5
     })
     text.set({
       left: ((canvas?.width ?? 0) / 2) - (text.get('width')?? 0) /2,
@@ -109,12 +109,7 @@ const Editor: NextPage = () => {
       {/* Main */}
       <main className="flex flex-col items-center justify-center overflow-y-scroll h-full" >
         <div id="kudo" className="aspect-[3/2] w-full max-h-full max-w-5xl" onKeyDown={onDeleteSelected} tabIndex={0}>
-          {/* <div className="kudo-header-container flex h-1/4 bg-red-500 items-center justify-center">
-            <h1 className="kudo-header">Bedankt</h1>
-          </div>
-          <div className="w-full h-3/4" onKeyDown={onDeleteSelected} tabIndex={0}> */}
             <FabricJSCanvas className="w-full h-full bg-white" onReady={onReady} />
-          {/* </div> */}
         </div>
         <button className='btn' onClick={submit}>Test submit zonder redirect</button>
       </main>

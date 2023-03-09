@@ -1,12 +1,34 @@
 import { type NextPage } from "next";
 import Head from "next/head";
 import FAB from "~/navigation/FAB";
-import Kudo from "~/kudos/Kudo";
 import { GrNext } from "react-icons/gr"
 import { NavigationBarContent } from "~/navigation/NavBarTitle";
+import { findAllTemplates } from "~/server/services/templateService";
+import { type Template } from "@prisma/client";
+import Link from "next/link";
 
-const Editor: NextPage = () => {
-  const kudos = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20]
+
+
+
+export async function getServerSideProps() {
+  const data: Template[] = await findAllTemplates()
+  return {
+    props: {
+      res: data,
+    }
+  }
+}
+
+type template = {
+  id: string,
+  Color: string,
+  Title: string,
+  Sticker: string,
+}
+
+
+
+const Editor: NextPage<{ res: Template[] }> = ({ res }) => {
   return (
     <>
       <NavigationBarContent>
@@ -19,8 +41,18 @@ const Editor: NextPage = () => {
       </Head>
       <main className="flex flex-col items-center justify-center overflow-y-scroll h-full">
         <div className="flex flex-wrap gap-5 h-full justify-center p-5">
-          {kudos.map((x) => (
-            <Kudo key={x} id={x} />
+          {res.map((x: template) => (
+            <Link className="card bg-white text-gray-800 shadow-xl aspect-[3/2] rounded-none w-80 h-52" data-cy="Kudo" href={{ pathname: "/create/editor", query: { template: x.id } }} key={x.id}>
+              <div className="card-body p-0">
+                <h2 className='card-title justify-center p-4' style={{ backgroundColor: x.Color }}>{x.Title}</h2>
+                <div className="flex p-8">
+                  <figure>
+                    {x.Sticker}
+                  </figure>
+                  <p></p>
+                </div>
+              </div>
+            </Link>
           ))}
         </div>
       </main>

@@ -12,7 +12,7 @@ interface KudoProps {
 const Kudo = ({ id }: KudoProps) => {
   return (
     <>
-      <Link className="card bg-white text-gray-800 shadow-xl aspect-[3/2] rounded-none" data-cy="Kudo" href={"/kudo/" + id.toString()}>
+      <Link className="card bg-white text-gray-800 shadow-xl aspect-[3/2] rounded-none w-80 h-52" data-cy="Kudo" href={"/kudo/" + id.toString()}>
         <div className="card-body p-0">
           <h2 className="card-title bg-red-500 justify-center p-4">Thank you!</h2>
           <div className="flex p-8">

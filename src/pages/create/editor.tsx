@@ -1,11 +1,25 @@
+/* eslint-disable @typescript-eslint/no-unsafe-member-access */
+/* eslint-disable @typescript-eslint/no-unsafe-assignment */
 import { type NextPage } from "next";
 import Head from "next/head";
 import FAB from "~/navigation/FAB";
 import { FiSend } from "react-icons/fi"
-import Kudo from "~/kudos/Kudo";
 import { NavigationBarContent } from "~/navigation/NavBarTitle";
+import { type Template } from "@prisma/client";
+import { findTemplateById } from "~/server/services/templateService";
 
-const Editor: NextPage = () => {
+
+export async function getServerSideProps(context: { query: { template: string; }; }) {
+  const id = context.query.template
+  const data: Template = await findTemplateById(id)
+  return {
+    props: {
+      res: data,
+    }
+  }
+}
+
+const Editor: NextPage<{ res: Template }> = ({ res }) => {
   return (
     <>
       <NavigationBarContent>
@@ -17,7 +31,17 @@ const Editor: NextPage = () => {
         <link rel="icon" href="/favicon.ico" />
       </Head>
       <main className="flex flex-col items-center justify-center overflow-y-scroll h-full">
-        <Kudo id={1} />
+        <div className="card bg-white text-gray-800 shadow-xl aspect-[3/2] rounded-none w-80 h-52" data-cy="Kudo">
+          <div className="card-body p-0">
+            <h2 className='card-title justify-center p-4' style={{ backgroundColor: res.Color }}>{res.Title}</h2>
+            <div className="flex p-8">
+              <figure>
+                {res.Sticker}
+              </figure>
+              <p></p>
+            </div>
+          </div>
+        </div>
       </main>
       <FAB text={"Send"} icon={<FiSend />} url="/out" />
     </>

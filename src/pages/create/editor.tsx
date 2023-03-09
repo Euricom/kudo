@@ -31,9 +31,9 @@ const Editor: NextPage<{ res: Template }> = ({ res }) => {
         <link rel="icon" href="/favicon.ico" />
       </Head>
       <main className="flex flex-col items-center justify-center overflow-y-scroll h-full">
-        <div className="card bg-white text-gray-800 shadow-xl aspect-[3/2] rounded-none w-80 h-52" data-cy="Kudo">
+        <div className="card bg-white text-gray-800 shadow-xl aspect-[3/2] rounded-none w-80 h-52" data-cy="EditorTemplate">
           <div className="card-body p-0">
-            <h2 className='card-title justify-center p-4' style={{ backgroundColor: res.Color }}>{res.Title}</h2>
+            <h2 className='card-title justify-center p-4' style={{ backgroundColor: res.Color }} data-cy="EditorTemplateTitle">{res.Title}</h2>
             <div className="flex p-8">
               <figure>
                 {res.Sticker}

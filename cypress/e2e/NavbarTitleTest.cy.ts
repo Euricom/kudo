@@ -1,6 +1,6 @@
 import { Component } from 'react'
 
-describe('template spec', () => {
+describe('navbar title spec', () => {
   it('passes', () => {
     cy.login(Cypress.env('username') as string, Cypress.env('password') as string)
 

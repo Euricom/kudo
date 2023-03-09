@@ -42,9 +42,9 @@ const Editor: NextPage<{ res: Template[] }> = ({ res }) => {
       <main className="flex flex-col items-center justify-center overflow-y-scroll h-full">
         <div className="flex flex-wrap gap-5 h-full justify-center p-5">
           {res.map((x: template) => (
-            <Link className="card bg-white text-gray-800 shadow-xl aspect-[3/2] rounded-none w-80 h-52" data-cy="Kudo" href={{ pathname: "/create/editor", query: { template: x.id } }} key={x.id}>
+            <Link className="card bg-white text-gray-800 shadow-xl aspect-[3/2] rounded-none w-80 h-52" data-cy="template" href={{ pathname: "/create/editor", query: { template: x.id } }} key={x.id}>
               <div className="card-body p-0">
-                <h2 className='card-title justify-center p-4' style={{ backgroundColor: x.Color }}>{x.Title}</h2>
+                <h2 className='card-title justify-center p-4' style={{ backgroundColor: x.Color }} data-cy="templateTitle">{x.Title}</h2>
                 <div className="flex p-8">
                   <figure>
                     {x.Sticker}

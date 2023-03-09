@@ -75,3 +75,10 @@ model Image {
     id          String   @id @default(cuid())
     dataUrl     String
 }
+
+model Kudo {
+  id        String     @id @default(cuid())
+  image     String
+  liked     Boolean
+  comment   String
+}

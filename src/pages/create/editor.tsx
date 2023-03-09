@@ -8,11 +8,17 @@ import { UtilButtonsContent } from "~/hooks/useUtilButtons";
 import { GrEmoji } from "react-icons/gr"
 import { BiPencil, BiPalette, BiText, BiTrash } from "react-icons/bi"
 import { NavigationBarContent } from "~/navigation/NavBarTitle";
+import { fabric } from 'fabric';
 
 const Editor: NextPage = () => {
   const [message, setMessage] = useState('');
   const { editor, onReady } = useFabricJSEditor()
-  const canvas = editor?.canvas
+  const [canvas, setCanvas] = useState<fabric.Canvas | undefined>();
+
+  useEffect(() => {
+    setCanvas(editor?.canvas);
+    createHeader()
+  }, [editor?.canvas]);
 
   const onAddText = () => {
     editor?.addText(message)
@@ -29,14 +35,30 @@ const Editor: NextPage = () => {
   }
 
   const submit = () => {
-    const dataUrl = canvas.lowerCanvasEl.toDataURL()
+    const dataUrl = canvas?.lowerCanvasEl.toDataURL()
     console.log(dataUrl);
   }
 
   const createHeader = () => {
     const title = 'Bedankt'
-    editor?.addRectangle()
-    editor?.addText(title)
+    const color = 'red'
+    const rect: fabric.Rect = new fabric.Rect({
+      height: (canvas?.height ?? 0) / 4,
+      width: canvas?.width ?? 0,
+      fill: color
+    })
+    const text: fabric.Text = new fabric.Text(
+      title,
+      {
+        textAlign: 'center',
+        fontSize: 100
+    })
+    text.set({
+      left: ((canvas?.width ?? 0) / 2) - text?.get('width')/2,
+      top: rect.get('height')/2 - text.get('height')/2,
+      fill: '#fff'
+    })
+    canvas?.add(rect, text)
   }
 
   return (

@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useCallback } from 'react';
 import { type NextPage } from "next";
 import Head from "next/head";
 import FAB from "~/navigation/FAB";
@@ -14,11 +14,6 @@ const Editor: NextPage = () => {
   const [message, setMessage] = useState('');
   const { editor, onReady } = useFabricJSEditor()
   const [canvas, setCanvas] = useState<fabric.Canvas | undefined>();
-
-  useEffect(() => {
-    setCanvas(editor?.canvas);
-    createHeader()
-  }, [editor?.canvas]);
 
   const onAddText = () => {
     editor?.addText(message)
@@ -39,7 +34,7 @@ const Editor: NextPage = () => {
     console.log(dataUrl);
   }
 
-  const createHeader = () => {
+  const createHeader = useCallback(() => {
     const title = 'Bedankt'
     const color = 'red'
     const rect: fabric.Rect = new fabric.Rect({
@@ -59,7 +54,12 @@ const Editor: NextPage = () => {
       fill: '#fff'
     })
     canvas?.add(rect, text)
-  }
+  }, [canvas])
+  
+  useEffect(() => {
+    setCanvas(editor?.canvas);
+    createHeader()
+  }, [editor?.canvas, createHeader]);
 
   return (
     <>

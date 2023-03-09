@@ -17,7 +17,7 @@ const Editor: NextPage = () => {
         <link rel="icon" href="/favicon.ico" />
       </Head>
       <main className="flex flex-col items-center justify-center overflow-y-scroll h-full">
-        <Kudo />
+        <Kudo id={1} />
       </main>
       <FAB text={"Send"} icon={<FiSend />} url="/out" />
     </>

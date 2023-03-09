@@ -30,7 +30,7 @@ const Session: NextPage = () => {
         <meta name="description" content="eKudo app" />
         <link rel="icon" href="/favicon.ico" />
       </Head>
-      <main className="flex flex-col items-center justify-center overflow-y-scroll h-full">
+      <main className="flex flex-col items-center justify-center overflow-y-scroll h-full" data-cy="Session">
         Session
       </main>
     </>

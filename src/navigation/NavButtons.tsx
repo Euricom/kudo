@@ -6,10 +6,10 @@ const NavButtons = () => {
 
   return (
     <>
-      <div className="btn-group">
-        <Link className={"btn btn-secondary " + (router.pathname == "/" ? "btn-active" : "")} href="/">In</Link>
-        <Link className={"btn btn-secondary " + (router.pathname == "/out" ? "btn-active" : "")} href="/out">Out</Link>
-        <Link className={"btn btn-secondary " + (router.pathname == "/all" ? "btn-active" : "")} href="/all">All</Link>
+      <div className="btn-group" data-cy='NavButtons'>
+        <Link className={"btn btn-secondary " + (router.pathname == "/" ? "btn-active" : "")} href="/" data-cy='In'>In</Link>
+        <Link className={"btn btn-secondary " + (router.pathname == "/out" ? "btn-active" : "")} href="/out" data-cy='Out'>Out</Link>
+        <Link className={"btn btn-secondary " + (router.pathname == "/all" ? "btn-active" : "")} href="/all" data-cy='All'>All</Link>
       </div>
     </>
   );

@@ -13,7 +13,7 @@ import { fabric } from 'fabric';
 const Editor: NextPage = () => {
   const [message, setMessage] = useState('');
   const { editor, onReady } = useFabricJSEditor()
-  const [canvas, setCanvas] = useState<fabric.Canvas | undefined>();
+  const [canvas, setCanvas] = useState<fabric.Canvas>();
 
   const onAddText = () => {
     editor?.addText(message)
@@ -30,7 +30,8 @@ const Editor: NextPage = () => {
   }
 
   const submit = () => {
-    const dataUrl = canvas?.lowerCanvasEl.toDataURL()
+    console.log(canvas);
+    const dataUrl = canvas?.getElement().toDataURL();
     console.log(dataUrl);
   }
 
@@ -49,8 +50,8 @@ const Editor: NextPage = () => {
         fontSize: 100
     })
     text.set({
-      left: ((canvas?.width ?? 0) / 2) - text?.get('width')/2,
-      top: rect.get('height')/2 - text.get('height')/2,
+      left: ((canvas?.width ?? 0) / 2) - (text.get('width')?? 0) /2,
+      top: (rect.get('height')?? 0)/2 - (text.get('height')?? 0)/2,
       fill: '#fff'
     })
     canvas?.add(rect, text)

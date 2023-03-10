@@ -50,7 +50,7 @@ const NavBar = ({ children }: NavBarProps) => {
     const visibleEndNavbarActions = useVisibleEndNavbarActions();
     const visibleStartNavbarActions = useVisibleStartNavbarActions();
     const title = useTitle(undefined);
-    
+
     return (
         <>
             <div className="drawer" data-cy='Navbar'>

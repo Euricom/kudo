@@ -1,3 +1,9 @@
+/* eslint-disable @typescript-eslint/no-unsafe-argument */
+/* eslint-disable @typescript-eslint/restrict-template-expressions */
+/* eslint-disable @typescript-eslint/no-unused-vars */
+/* eslint-disable @typescript-eslint/no-unsafe-member-access */
+/* eslint-disable @typescript-eslint/no-unsafe-call */
+/* eslint-disable @typescript-eslint/no-unsafe-assignment */
 import { type NextPage } from "next";
 import Head from "next/head";
 import FAB from "~/navigation/FAB";
@@ -5,20 +11,29 @@ import { GrNext } from "react-icons/gr"
 import { FcPodiumWithSpeaker, FcPodiumWithAudience } from "react-icons/fc"
 import Select from "~/input/Select";
 import { NavigationBarContent } from "~/navigation/NavBarTitle";
+import { env } from "~/env.mjs";
+import * as msal from '@azure/msal-node';
+import { useCallback, useEffect, useState } from "react";
+import { useSessionSpeaker } from "~/sessions/SelectedSessionAndSpeaker";
+import Link from "next/link";
 
-//{ "id": 1, "firstName": "Terry", "lastName": "Medhurst", "maidenName": "Smitham", "age": 50, "gender": "male", "email": "atuny0@sohu.com", "phone": "+63 791 675 8914", "username": "atuny0", "password": "9uQFF1Lh", "birthDate": "2000-12-25", "image": "https://robohash.org/hicveldicta.png", "bloodGroup": "A−", "height": 189, "weight": 75.4, "eyeColor": "Green", "hair": { "color": "Black", "type": "Strands" }, "domain": "slashdot.org", "ip": "117.29.86.254", "address": { "address": "1745 T Street Southeast", "city": "Washington", "coordinates": { "lat": 38.867033, "lng": -76.979235 }, "postalCode": "20020", "state": "DC" }, "macAddress": "13:69:BA:56:A3:74", "university": "Capitol University", "bank": { "cardExpire": "06/22", "cardNumber": "50380955204220685", "cardType": "maestro", "currency": "Peso", "iban": "NO17 0695 2754 967" }, "company": { "address": { "address": "629 Debbie Drive", "city": "Nashville", "coordinates": { "lat": 36.208114, "lng": -86.58621199999999 }, "postalCode": "37076", "state": "TN" }, "department": "Marketing", "name": "Blanda-O'Keefe", "title": "Help Desk Operator" }, "ein": "20-9487066", "ssn": "661-64-2976", "userAgent": "Mozilla/5.0 (Windows NT 6.1) AppleWebKit/534.24 (KHTML, like Gecko) Chrome/12.0.702.0 Safari/534.24" },
 
-type user = {
-  id: number,
-  firstName: string,
-  lastName: string,
-  maidenName: string,
+type session = {
+  Id: number,
+  Title: string,
+  Date: string,
+  SpeakerId: string,
+}
+
+type result = {
+  sessions: session[]
 }
 
 
 export async function getServerSideProps() {
-  const res = await fetch('https://dummyjson.com/users')
-  const data = res.json()
+  const result: result = await fetch('http://localhost:3000/api/sessions').then(result => result.json()) as result
+  const data: session[] = result.sessions
+
   return {
     props: {
       res: data,
@@ -27,10 +42,53 @@ export async function getServerSideProps() {
 }
 
 
+// export async function getServerSideProps() {
+//   const msalConfig = {
+//     auth: {
+//       clientId: env.AZURE_AD_CLIENT_ID,
+//       authority: `https://login.microsoftonline.com/${env.AZURE_AD_TENANT_ID}/`,
+//       clientSecret: env.AZURE_AD_CLIENT_SECRET,
+//     },
+//   };
+//   const tokenRequest = {
+//     scopes: ['https://graph.microsoft.com/.default'],
+//   };
 
-const New: NextPage<{ res: user[] }> = ({ res }) => {
-  const speakers = ["Steve Jobs", "Bill Gates", "Steven Universe"];
-  const sessions = ["Ted talk 1", "Gaming", "???"];
+//   const { accessToken } = await new msal.ConfidentialClientApplication(
+//     msalConfig,
+//   ).acquireTokenByClientCredential(tokenRequest);
+
+//   const options = {
+//     headers: {
+//       Authorization: `Bearer ${accessToken}`,
+//     },
+//   };
+
+// const result = await fetch('https://graph.microsoft.com/v1.0/users/0b53d2c1-bc55-4ab3-a161-927d289257f2', options)
+// const data = result
+// console.log("voor");
+// console.log(accessToken);
+// console.log("tussen");
+// console.log(result);
+// console.log("na");
+
+// return {
+//   props: {
+//     res: accessToken,
+//   }
+// }
+// }
+
+
+
+const New: NextPage<{ res: session[] }> = ({ res }) => {
+  console.log(res);
+
+  const [session, setSession] = useState<string>("");
+  const [speaker, setSpeaker] = useState<string>("");
+
+
+
   return (
     <>
       <NavigationBarContent>
@@ -43,15 +101,15 @@ const New: NextPage<{ res: user[] }> = ({ res }) => {
       </Head>
       <main className="flex flex-col items-center justify-center overflow-y-scroll h-full gap-5">
         <FcPodiumWithSpeaker size={100} />
-        <Select label="Speaker" options={speakers} />
+        <Select value={speaker} onChange={(e: React.ChangeEvent<HTMLInputElement>): void => setSession(e.target.value)} label="Speaker" options={res.map(x => x.SpeakerId)} />
         <FcPodiumWithAudience size={100} />
-        <Select label="Session" options={sessions} />
+        <Select value={session} onChange={(e: React.ChangeEvent<HTMLInputElement>): void => setSpeaker(e.target.value)} label="Session" options={res.map(x => x.Title)} />
         <label className="label cursor-pointer gap-5">
           <input type="checkbox" className="checkbox" />
           <span className="label-text">Hide my name.</span>
         </label>
       </main>
-      <FAB text={"Next"} icon={<GrNext />} url="/create/templates" />
+      <FAB text={"Next"} icon={<GrNext />} url="/geenUrl" urlWithParams={{ pathname: "/create/templates", query: { session: session, speaker: speaker }, auth: null, hash: null, host: null, hostname: null, href: "/create/templates", path: null, protocol: null, search: null, slashes: null, port: null }} />
     </>
   );
 };

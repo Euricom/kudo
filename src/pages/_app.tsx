@@ -8,6 +8,7 @@ import "~/styles/globals.css";
 import { Auth } from "../auth/Auth";
 import NavBar from "~/navigation/NavBar";
 import { TitleProvider } from "~/navigation/NavBarTitle";
+import { SessionSpeakerProvider } from "~/sessions/SelectedSessionAndSpeaker";
 
 const MyApp: AppType<{ session: Session | null }> = ({
   Component,
@@ -17,9 +18,11 @@ const MyApp: AppType<{ session: Session | null }> = ({
     <SessionProvider session={session}>
       <Auth>
         <TitleProvider>
-          <NavBar>
-            <Component {...pageProps} />
-          </NavBar>
+          <SessionSpeakerProvider>
+            <NavBar>
+              <Component {...pageProps} />
+            </NavBar>
+          </SessionSpeakerProvider>
         </TitleProvider>
       </Auth>
     </SessionProvider>

@@ -50,7 +50,6 @@ const NavBar = ({ children }: NavBarProps) => {
     const visibleEndNavbarActions = useVisibleEndNavbarActions();
     const visibleStartNavbarActions = useVisibleStartNavbarActions();
     const title = useTitle(undefined);
-    console.log(title);
 
 
     return (

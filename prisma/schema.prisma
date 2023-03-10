@@ -70,3 +70,10 @@ model VerificationToken {
 
     @@unique([identifier, token])
 }
+
+model Template {
+    id            String      @id @default(cuid())
+    Color         String   
+    Title         String
+    Sticker       String
+}

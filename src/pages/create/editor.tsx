@@ -9,8 +9,21 @@ import { GrEmoji } from "react-icons/gr"
 import { BiPencil, BiPalette, BiText, BiTrash } from "react-icons/bi"
 import { NavigationBarContent } from "~/navigation/NavBarTitle";
 import { fabric } from 'fabric';
+import { type Template } from "@prisma/client";
+import { findTemplateById } from "~/server/services/templateService";
 
-const Editor: NextPage = () => {
+
+export async function getServerSideProps(context: { query: { template: string; }; }) {
+  const id = context.query.template
+  const data: Template = await findTemplateById(id)
+  return {
+    props: {
+      res: data,
+    }
+  }
+}
+
+const Editor: NextPage<{ res: Template }> = ({ res }) => {
   const [message, setMessage] = useState('');
   const { editor, onReady } = useFabricJSEditor()
   const [canvas, setCanvas] = useState<fabric.Canvas>();
@@ -46,8 +59,8 @@ const Editor: NextPage = () => {
   }
 
   const createHeader = useCallback(() => {
-    const title = 'Bedankt'
-    const color = '#f33'
+    const title = res.Title
+    const color = res.Color
     const rect: fabric.Rect = new fabric.Rect({
       lockMovementX: true,
       lockMovementY: true,

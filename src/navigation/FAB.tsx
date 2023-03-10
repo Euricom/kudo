@@ -20,7 +20,7 @@ const FAB = ({ text, icon, url, onClick }: FabProps) => {
         </button>
         </div> */}
 
-            <div className="flex w-full fixed bottom-0 justify-center mb-5">
+            <div className="flex w-full fixed bottom-0 justify-center mb-5" data-cy='FAB'>
                 <Link href={url} className="btn btn-primary rounded-full" onClick={onClick}>
                     {width < 768 ?
                         icon :

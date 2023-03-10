@@ -8,8 +8,12 @@ import { FiSearch } from "react-icons/fi";
 import { BiSortDown } from "react-icons/bi";
 import { NavigationBarContent } from "~/navigation/NavBarTitle";
 import NavButtons from "~/navigation/NavButtons";
+import React from "react"
+
+
 
 const All: NextPage = () => {
+
   const sessions = ["Today", 1, 2, "Yesterday", 3, 4, 5, 6, "26/02/2023", 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30]
   return (
     <>
@@ -42,3 +46,4 @@ const All: NextPage = () => {
 };
 
 export default All;
+

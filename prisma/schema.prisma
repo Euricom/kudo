@@ -82,3 +82,9 @@ model Kudo {
   liked     Boolean
   comment   String
 }
+model Template {
+    id            String      @id @default(cuid())
+    Color         String   
+    Title         String
+    Sticker       String
+}

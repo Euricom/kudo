@@ -35,7 +35,7 @@ function useVisibleStartNavbarActions() {
         {
             Component: BackArrow,
             key: 'backArrow',
-            routes: ['/session/[...id]', '/kudos/[...id]', '/notifications', '/create', '/create/editor', '/create/templates'],
+            routes: ['/session/[...id]', '/kudo/[...id]', '/notifications', '/create', '/create/editor', '/create/templates'],
         }
     ].filter((item) => item.routes.includes(router.pathname));
 }
@@ -50,9 +50,10 @@ const NavBar = ({ children }: NavBarProps) => {
     const visibleEndNavbarActions = useVisibleEndNavbarActions();
     const visibleStartNavbarActions = useVisibleStartNavbarActions();
     const title = useTitle(undefined);
+    
     return (
         <>
-            <div className="drawer">
+            <div className="drawer" data-cy='Navbar'>
                 <input id="my-drawer-3" type="checkbox" className="drawer-toggle" />
                 <div className="drawer-content flex flex-col">
                     <div className="w-full navbar bg-neutral text-neutral-content z-50">
@@ -60,7 +61,7 @@ const NavBar = ({ children }: NavBarProps) => {
 
                             <div className="flex-none lg:hidden">
 
-                                <label htmlFor="my-drawer-3" className="btn btn-square btn-ghost">
+                                <label htmlFor="my-drawer-3" className="btn btn-square btn-ghost" data-cy="MenuButton">
                                     <FiMenu size={25} />
                                 </label>
                             </div>
@@ -68,7 +69,7 @@ const NavBar = ({ children }: NavBarProps) => {
                                 <x.Component key={x.key} />
                             ))}
                         </div>
-                        <div className="navbar-center text-2xl">
+                        <div className="navbar-center text-2xl" data-cy='NavbarTitle'>
                             <>{title}</>
                         </div>
                         <div className="navbar-end">
@@ -76,7 +77,7 @@ const NavBar = ({ children }: NavBarProps) => {
                                 <x.Component key={x.key} />
                             ))}
                             <div className="hidden lg:inline-flex">
-                                <button className="btn btn-ghost btn-circle">
+                                <button className="btn btn-ghost btn-circle" data-cy='SettingsButton'>
                                     <BsGearFill />
                                 </button>
                                 <button className="btn btn-ghost" onClick={() => void signOut()}>
@@ -130,7 +131,7 @@ const NavBar = ({ children }: NavBarProps) => {
 function NotificationIcon() {
     return (
         <>
-            <button className="btn btn-ghost btn-circle">
+            <button className="btn btn-ghost btn-circle" data-cy='notificationButton'>
                 <div className="indicator">
                     <FiBell size={20} />
                     <span className="badge badge-sm badge-error border border-collapse border-neutral indicator-item">12</span>
@@ -143,7 +144,7 @@ function NotificationIcon() {
 function DownloadIcon() {
     return (
         <>
-            <button className="btn btn-ghost btn-circle">
+            <button className="btn btn-ghost btn-circle" data-cy='DownloadButton'>
                 <FiDownload size={20} />
             </button>
         </>
@@ -153,7 +154,7 @@ function BackArrow() {
     const router = useRouter();
     return (
         <>
-            <button className="btn btn-ghost btn-circle" onClick={() => router.back()}>
+            <button className="btn btn-ghost btn-circle" onClick={() => router.back()} data-cy='BackArrow'>
                 <BsArrowLeft size={20} />
             </button>
         </>

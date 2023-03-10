@@ -1,5 +1,3 @@
-/* eslint-disable @typescript-eslint/no-unsafe-call */
-/* eslint-disable @typescript-eslint/no-unsafe-member-access */
 import { PrismaClient } from '@prisma/client'
 const prisma = new PrismaClient()
 

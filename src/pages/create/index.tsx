@@ -1,9 +1,3 @@
-/* eslint-disable @typescript-eslint/no-unsafe-argument */
-/* eslint-disable @typescript-eslint/restrict-template-expressions */
-/* eslint-disable @typescript-eslint/no-unused-vars */
-/* eslint-disable @typescript-eslint/no-unsafe-member-access */
-/* eslint-disable @typescript-eslint/no-unsafe-call */
-/* eslint-disable @typescript-eslint/no-unsafe-assignment */
 import { type NextPage } from "next";
 import Head from "next/head";
 import FAB from "~/navigation/FAB";
@@ -11,11 +5,9 @@ import { GrNext } from "react-icons/gr"
 import { FcPodiumWithSpeaker, FcPodiumWithAudience } from "react-icons/fc"
 import Select from "~/input/Select";
 import { NavigationBarContent } from "~/navigation/NavBarTitle";
-import { env } from "~/env.mjs";
-import * as msal from '@azure/msal-node';
-import { useCallback, useEffect, useState } from "react";
-import { useSessionSpeaker } from "~/sessions/SelectedSessionAndSpeaker";
-import Link from "next/link";
+// import { env } from "~/env.mjs";
+// import * as msal from '@azure/msal-node';
+import { useState } from "react";
 
 
 type session = {

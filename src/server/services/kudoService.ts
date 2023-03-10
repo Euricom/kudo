@@ -1,3 +1,4 @@
+import { type Kudo } from "@prisma/client";
 import { prisma } from "../db";
 
 type Image = {
@@ -5,22 +6,15 @@ type Image = {
     dataUrl: string
 }
 
-type Kudo = {
-  id: string
-  image: string
-  liked: boolean
-  comment: string
-}
-
-export const createKudo = async (dataUrl: string): Promise<Image> => {
+export const createKudo = async (dataUrl: string): Promise<Kudo> => {
     const image: Image = await createKudoImage(dataUrl)
-    const kudo: Kudo = (await prisma.kudo.create({
+    const kudo = (await prisma.kudo.create({
       data: {
         image: image.id,
         liked: false,
         comment: ''
       },
-    })) as Kudo;
+    }));
     return kudo;
 }
 

@@ -31,8 +31,18 @@ const Editor: NextPage = () => {
 
   const submit = async () => {
     const dataUrl = canvas?.getElement().toDataURL();
-    console.log('Test' + (dataUrl??-1).toString());
-    await new Promise(resolve => setTimeout(resolve, 1000)); //Tijdelijke await om de Lint error tegen te gaan
+    try {
+      await fetch('/api/kudo', 
+      {
+        body: JSON.stringify({ dataUrl: dataUrl }),
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        method: 'POST'
+      })
+    } catch (e) {
+      console.log(e);
+    }
   }
 
   const createHeader = useCallback(() => {

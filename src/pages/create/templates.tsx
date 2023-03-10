@@ -12,11 +12,12 @@ import { useSessionSpeaker } from "~/sessions/SelectedSessionAndSpeaker";
 
 
 export async function getServerSideProps(context: { query: { session: string, speaker: string; }; }) {
+
   const data: Template[] = await findAllTemplates()
   return {
     props: {
       res: data,
-      session: context.query.session,
+      sess: context.query.session,
       speaker: context.query.speaker
     }
   }
@@ -24,12 +25,12 @@ export async function getServerSideProps(context: { query: { session: string, sp
 
 
 
-const Editor: NextPage<{ res: Template[], session: string, speaker: string }> = ({ res, session, speaker }) => {
-  useSessionSpeaker(session, speaker)
-  if (session == undefined || speaker == undefined) {
-    // throw ERROR!
-    return <></>
-  }
+const Editor: NextPage<{ res: Template[], sess: string, speaker: string }> = ({ res, sess, speaker }) => {
+  useSessionSpeaker(sess, speaker)
+  // if (sess == undefined || speaker == undefined) {
+  //   // throw ERROR!
+  //   return <></>
+  // }
 
   return (
     <>

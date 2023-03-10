@@ -63,16 +63,17 @@ const Editor: NextPage<{ res: Template }> = ({ res }) => {
       width: stageRef.current?.width(),
       height: stageRef.current?.height()/4,
       fill: res.Color,
-      draggable: true
     });
     const headerText = new Konva.Text({
       x: stageRef.current?.width()/2,
       y: headerRect.height()/2,
       text: res.Title,
-      fontSize: 30,
+      fontSize: headerRect.height()/1.5,
       fontFamily: 'Calibri',
       fill: 'white',
     });
+    headerText.offsetX(headerText.width() / 2);
+    headerText.offsetY(headerText.height() / 3);
     layerRef.current?.add(headerRect, headerText)
   }, [res])
 
@@ -95,8 +96,8 @@ const Editor: NextPage<{ res: Template }> = ({ res }) => {
     // redraw the stage when the window is resized
     window.addEventListener('resize', handleResize);
     function handleResize() {
-      stage.width(window.innerWidth);
-      stage.height(window.innerHeight);
+      stage.width(containerRef.current?.offsetWidth ?? 0);
+      stage.height(containerRef.current?.offsetHeight ?? 0);
       stage.batchDraw();
     }
     return () => {
@@ -156,7 +157,7 @@ const Editor: NextPage<{ res: Template }> = ({ res }) => {
       {/* Main */}
       <main className="flex flex-col items-center justify-center overflow-y-scroll h-full" >
         <div id='kudo' ref={containerRef} className="aspect-[3/2] w-full max-h-full max-w-5xl bg-white" onKeyDown={onDeleteSelected} tabIndex={0}></div>
-        <button className='btn' onClick={() => void submit()}>Test submit zonder redirect</button>
+        {/* <button className='btn' onClick={() => void submit()}>Test submit zonder redirect</button> */}
       </main>
       <FAB text={"Send"} icon={<FiSend />} url="/out" onClick={() => void submit()}/>
     </>

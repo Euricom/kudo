@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-unsafe-call */
 import { defineConfig } from "cypress";
 
 export default defineConfig({

@@ -92,7 +92,7 @@ const Editor: NextPage<{ res: Template }> = ({ res }) => {
       fill: '#fff'
     })
     canvas?.add(rect, text)
-  }, [canvas])
+  }, [canvas, res])
   
   useEffect(() => {
     setCanvas(editor?.canvas);

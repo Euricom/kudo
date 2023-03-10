@@ -1,7 +1,5 @@
 import { type NextPage } from "next";
 import Head from "next/head";
-import FAB from "~/navigation/FAB";
-import { GrNext } from "react-icons/gr"
 import { NavigationBarContent } from "~/navigation/NavBarTitle";
 import { findAllTemplates } from "~/server/services/templateService";
 import { type Template } from "@prisma/client";
@@ -42,7 +40,11 @@ const Editor: NextPage<{ res: Template[], sess: string, speaker: string }> = ({ 
         <meta name="description" content="eKudo app" />
         <link rel="icon" href="/favicon.ico" />
       </Head>
+      <div className="w-full h-fit bg-secondary text-white p-1 text-center">
+        <h1 data-cy="session" className="lg:inline">&emsp;&emsp;&emsp;&emsp;Session: {sess}&emsp;&emsp;</h1><h1 data-cy="speaker" className="lg:inline"> Speaker: {speaker}</h1>
+      </div>
       <main className="flex flex-col items-center justify-center overflow-y-scroll h-full">
+
         <div className="flex flex-wrap gap-5 h-full justify-center p-5">
           {res.map((x: Template) => (
             <Link className="card bg-white text-gray-800 shadow-xl aspect-[3/2] rounded-none w-80 h-52" data-cy="template" href={{ pathname: "/create/editor", query: { template: x.id } }} key={x.id}>
@@ -59,7 +61,6 @@ const Editor: NextPage<{ res: Template[], sess: string, speaker: string }> = ({ 
           ))}
         </div>
       </main>
-      <FAB text={"Next"} icon={<GrNext />} url="/create/editor" />
     </>
   );
 };

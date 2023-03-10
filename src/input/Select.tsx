@@ -10,11 +10,11 @@ const Select = ({ label, options, value, onChange }: SelectProps) => {
 
     return (
         <>
-            <div className="form-control w-full max-w-xs">
+            <div className="form-control w-full max-w-xs" data-cy={label}>
                 <label className="label">
                     <span className="label-text">{label}</span>
                 </label>
-                <input value={value} onChange={onChange} type="text" placeholder="Type here" className="input input-bordered w-full max-w-xs" list={label} />
+                <input value={value} onChange={onChange} type="text" placeholder="Type here" className="input input-bordered w-full max-w-xs" list={label} data-cy="inputSelect" />
                 <datalist id={label} className=" data-[]">
                     {options.map((x) => (
                         <option key={x} value={x} className="bg-black">{x}</option>

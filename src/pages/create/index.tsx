@@ -101,9 +101,9 @@ const New: NextPage<{ res: session[] }> = ({ res }) => {
       </Head>
       <main className="flex flex-col items-center justify-center overflow-y-scroll h-full gap-5">
         <FcPodiumWithSpeaker size={100} />
-        <Select value={speaker} onChange={(e: React.ChangeEvent<HTMLInputElement>): void => setSpeaker(e.target.value)} label="Speaker" options={res.map(x => x.SpeakerId)} />
+        <Select data-cy="SelectSpeaker" value={speaker} onChange={(e: React.ChangeEvent<HTMLInputElement>): void => setSpeaker(e.target.value)} label="Speaker" options={res.map(x => x.SpeakerId)} />
         <FcPodiumWithAudience size={100} />
-        <Select value={session} onChange={(e: React.ChangeEvent<HTMLInputElement>): void => setSession(e.target.value)} label="Session" options={res.map(x => x.Title)} />
+        <Select data-cy="SelectSession" value={session} onChange={(e: React.ChangeEvent<HTMLInputElement>): void => setSession(e.target.value)} label="Session" options={res.map(x => x.Title)} />
         <label className="label cursor-pointer gap-5">
           <input type="checkbox" className="checkbox" />
           <span className="label-text">Hide my name.</span>

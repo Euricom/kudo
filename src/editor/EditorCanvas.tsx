@@ -76,7 +76,7 @@ const createStage = () => {
   useEffect(() => {
     createStage()
     createHeader(props.Color, props.Title, stageRef.current, layerRef.current)
-  }, []);
+  }, [props]);
 
   return (
     <>

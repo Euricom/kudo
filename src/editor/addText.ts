@@ -6,10 +6,10 @@ interface Document {
 
 const addText = (message: string, stage: Konva.Stage, layer: Konva.Layer) => {
   const textNode = new Konva.Text({
-    text: message,
-    x: 50,
-    y: 100,
-    fontSize: 20,
+    text: message!=''? message : 'Lorem',
+    x: stage.width()/2,
+    y: stage.height()/3,
+    fontSize: stage.height()/15,
     draggable: true,
   });
 
@@ -164,10 +164,6 @@ const addText = (message: string, stage: Konva.Stage, layer: Konva.Layer) => {
       window.addEventListener('click', handleOutsideClick);
     });
   });
-  return {
-    stage: stage,
-    layer: layer
-  }
 }
 
 export default addText;

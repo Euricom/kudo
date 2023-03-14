@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useState} from 'react';
 import { type NextPage } from "next";
 import Head from "next/head";
 import { UtilButtonsContent } from "~/hooks/useUtilButtons";
@@ -9,6 +9,11 @@ import { type Template } from "@prisma/client";
 import { findTemplateById } from "~/server/services/templateService";
 import EditorCanvas from '~/editor/EditorCanvas';
 
+enum SelectedButton {
+  Text = 'text',
+  Draw = 'draw',
+  Sticker = 'sticker',
+}
 
 export async function getServerSideProps(context: { query: { template: string; }; }) {
   const id = context.query.template
@@ -21,6 +26,7 @@ export async function getServerSideProps(context: { query: { template: string; }
 }
 
 const Editor: NextPage<{ res: Template }> = ({ res }) => {
+  const [selectedButton, setSelectedButton] = useState<SelectedButton>()
 
   return (
     <>
@@ -33,16 +39,16 @@ const Editor: NextPage<{ res: Template }> = ({ res }) => {
         <link rel="icon" href="/favicon.ico" />
       </Head>
       <UtilButtonsContent>
-          <label htmlFor="my-modal-text" className="btn btn-circle btn-secondary">
+          <button onClick={() => setSelectedButton(SelectedButton.Text)} className="btn btn-circle btn-secondary">
             <BiText size={20} />
-          </label>
-          <button  className="btn btn-circle btn-secondary">
+          </button>
+          <button onClick={() => setSelectedButton(SelectedButton.Draw)} className="btn btn-circle btn-secondary">
             <BiPencil size={20} />
           </button>
-          <button  className="btn btn-circle btn-secondary">
+          <button onClick={() => setSelectedButton(SelectedButton.Sticker)} className="btn btn-circle btn-secondary">
             <GrEmoji size={20} />
           </button>
-          <button  className="btn btn-circle btn-secondary">
+          <button className="btn btn-circle btn-secondary">
             <BiPalette size={20} />
           </button>
           <label htmlFor="my-modal-clear" className="btn btn-circle btn-secondary">
@@ -51,7 +57,7 @@ const Editor: NextPage<{ res: Template }> = ({ res }) => {
       </UtilButtonsContent>
       {/* Main */}
       <main className="flex flex-col items-center justify-center overflow-y-scroll h-full" >
-        <EditorCanvas {...res} />
+        <EditorCanvas button={selectedButton} template={res} />
       </main>
     </>
   );

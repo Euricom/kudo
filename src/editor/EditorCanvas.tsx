@@ -6,7 +6,18 @@ import FAB from "~/navigation/FAB";
 import { FiSend } from "react-icons/fi"
 import {createHeader} from './setUpCanvas'
 
-const EditorCanvas = (props: Template) => {
+enum SelectedButton {
+  Text = 'text',
+  Draw = 'draw',
+  Sticker = 'sticker',
+}
+
+type EditorCanvasProps = {
+  button: SelectedButton | undefined,
+  template: Template
+}
+
+const EditorCanvas = ({button, template}: EditorCanvasProps) => {
   const [message, setMessage] = useState('');
   
   const containerRef = useRef<HTMLDivElement>(null);
@@ -25,7 +36,7 @@ const EditorCanvas = (props: Template) => {
   }
   const onClear = () => {
     layerRef.current?.removeChildren()
-    createHeader(props.Color, props.Title, stageRef.current, layerRef.current)
+    createHeader(template.Color, template.Title, stageRef.current, layerRef.current)
   }
 
   const submit = async () => {
@@ -63,7 +74,6 @@ const createStage = () => {
   // update the component refs
   stageRef.current = newStage;
   layerRef.current = newLayer;
-
   
   fitStageIntoParentContainer();
   // redraw the stage when the window is resized
@@ -89,28 +99,23 @@ const createStage = () => {
 
   useEffect(() => {
     createStage()
-    createHeader(props.Color, props.Title, stageRef.current, layerRef.current)
-  }, [props]);
+    createHeader(template.Color, template.Title, stageRef.current, layerRef.current)
+  }, [template]);
+
+  useEffect(() => {
+    stageRef.current.on('click tap', function () {
+      switch (button) {
+        case SelectedButton.Text:
+          onAddText()
+      }
+    });
+  }, [button, onAddText]);
+
+  
 
   return (
     <>
     {/* Modal */}
-    <input type="checkbox" id="my-modal-text" className="modal-toggle" />
-    <div className="modal modal-bottom sm:modal-middle">
-      <div className="modal-box form-control">
-        <label className="label">
-          <span className="label-text">Message</span>
-        </label>
-        <textarea 
-          onChange={(e) => setMessage(e.target.value)}
-          placeholder="Message"
-          value={message}
-          className="textarea textarea-bordered h-24" />
-        <div className="modal-action">
-          <label htmlFor="my-modal-text" className="btn" onClick={onAddText}>Ok</label>
-        </div>
-      </div>
-    </div>
     <input type="checkbox" id="my-modal-clear" className="modal-toggle" />
     <div className="modal modal-bottom sm:modal-middle">
       <div className="modal-box form-control">

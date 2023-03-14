@@ -1,11 +1,11 @@
-import { type Session } from "@prisma/client";
 import {
     createTRPCRouter,
     protectedProcedure,
 } from "~/server/api/trpc";
+import { type Kudo } from "@prisma/client";
 
 type result = {
-    sessions: Session[]
+    sessions: Kudo[]
 }
 
 export const sessionRouter = createTRPCRouter({

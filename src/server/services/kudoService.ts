@@ -6,14 +6,14 @@ type Image = {
   dataUrl: string
 }
 
-export const createKudo = async (dataUrl: string, userId: string): Promise<Kudo> => {
+export const createKudo = async (dataUrl: string, sessionId: string): Promise<Kudo> => {
   const image: Image = await createKudoImage(dataUrl)
   const kudo = (await prisma.kudo.create({
     data: {
       image: image.id,
       liked: false,
       comment: '',
-      userId: userId
+      sessionId: sessionId,
     },
   }));
   return kudo;

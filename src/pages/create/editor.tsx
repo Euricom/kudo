@@ -11,6 +11,8 @@ import { NavigationBarContent } from "~/navigation/NavBarTitle";
 import { fabric } from 'fabric';
 import { type Template } from "@prisma/client";
 import { findTemplateById } from "~/server/services/templateService";
+import { useSessionSpeaker } from '~/sessions/SelectedSessionAndSpeaker';
+import { useRouter } from 'next/router';
 
 
 export async function getServerSideProps(context: { query: { template: string; }; }) {
@@ -24,9 +26,11 @@ export async function getServerSideProps(context: { query: { template: string; }
 }
 
 const Editor: NextPage<{ res: Template }> = ({ res }) => {
+
   const [message, setMessage] = useState('');
   const { editor, onReady } = useFabricJSEditor()
   const [canvas, setCanvas] = useState<fabric.Canvas>();
+
 
   const onAddText = () => {
     editor?.addText(message)
@@ -40,22 +44,6 @@ const Editor: NextPage<{ res: Template }> = ({ res }) => {
   const onClear = () => {
     editor?.deleteAll()
     createHeader()
-  }
-
-  const submit = async () => {
-    const dataUrl = canvas?.getElement().toDataURL();
-    try {
-      await fetch('/api/kudo',
-        {
-          body: JSON.stringify({ dataUrl: dataUrl }),
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          method: 'POST'
-        })
-    } catch (e) {
-      console.log(e);
-    }
   }
 
   const createHeader = useCallback(() => {
@@ -99,6 +87,34 @@ const Editor: NextPage<{ res: Template }> = ({ res }) => {
     createHeader()
   }, [editor?.canvas, createHeader]);
 
+  const sessionId: string | undefined = useSessionSpeaker(undefined, undefined).data.session
+  const speaker: string | undefined = useSessionSpeaker(undefined, undefined).data.speaker
+  const router = useRouter()
+  if (!sessionId || !speaker) {
+    router.back()
+  }
+  console.log(sessionId);
+
+  const submit = async () => {
+    const dataUrl = canvas?.getElement().toDataURL();
+
+
+    try {
+      await fetch('/api/kudo',
+        {
+          body: JSON.stringify({ dataUrl: dataUrl, sessionId: sessionId }),
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          method: 'POST'
+        })
+    } catch (e) {
+      console.log(e);
+    }
+  }
+
+
+
   return (
     <>
       <NavigationBarContent>
@@ -109,6 +125,9 @@ const Editor: NextPage<{ res: Template }> = ({ res }) => {
         <meta name="description" content="eKudo app" />
         <link rel="icon" href="/favicon.ico" />
       </Head>
+      {/* <div className="w-full h-fit bg-secondary text-white p-5 text-center">
+        <h1 data-cy="session" className="lg:inline">&emsp;&emsp;&emsp;&emsp;Session: {sessionId}&emsp;&emsp;</h1><h1 data-cy="speaker" className="lg:inline"> Speaker: {speaker}</h1>
+      </div> */}
       <UtilButtonsContent>
         <label htmlFor="my-modal-6" className="btn btn-circle btn-secondary">
           <BiText size={20} />

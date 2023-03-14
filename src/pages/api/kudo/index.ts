@@ -7,16 +7,17 @@ type ResponseData = {
 
 interface RequestData {
     dataUrl: string;
+    sessionId: string;
 }
 
-export default async function handler(req: NextApiRequest , res: NextApiResponse<ResponseData>) {
+export default async function handler(req: NextApiRequest, res: NextApiResponse<ResponseData>) {
     try {
         if (req.method === 'POST') {
-            const { dataUrl } = req.body as RequestData;
-            const result = await createKudo(dataUrl);
+            const { dataUrl, sessionId } = req.body as RequestData;
+            const result = await createKudo(dataUrl, sessionId);
             res.status(200).json({ result });
         } else {
-        //   getKudos()
+            //   getKudos()
         }
     } catch (e) {
         console.log(e);

@@ -6,8 +6,6 @@ interface SelectProps {
 }
 
 const Select = ({ label, options, value, onChange }: SelectProps) => {
-    console.log(options);
-
     return (
         <>
             <div className="form-control w-full max-w-xs" data-cy={label}>

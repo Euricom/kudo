@@ -19,12 +19,18 @@ export function SessionSpeakerProvider(props: React.PropsWithChildren<object>) {
     );
 }
 
+
 export function useSessionSpeaker(newSession: (string | undefined), newSpeaker: (string | undefined)) {
     const context = React.useContext(SessionContext);
-
     if (newSession !== undefined && newSpeaker !== undefined) {
         context.setSession(newSession);
         context.setSpeaker(newSpeaker);
     }
-    return context.session + " " + context.speaker;
+    return {
+        data: {
+            session: context.session,
+            speaker: context.speaker
+        }
+    }
+
 }

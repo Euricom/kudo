@@ -7,6 +7,9 @@ import Select from "~/input/Select";
 import { NavigationBarContent } from "~/navigation/NavBarTitle";
 // import { env } from "~/env.mjs";
 // import * as msal from '@azure/msal-node';
+
+import { trpc } from '~/utils/trpc';
+
 import { useState } from "react";
 
 
@@ -19,18 +22,6 @@ type session = {
 
 type result = {
   sessions: session[]
-}
-
-
-export async function getServerSideProps() {
-  const result: result = await fetch('http://localhost:3000/api/sessions').then(result => result.json()) as result
-  const data: session[] = result.sessions
-
-  return {
-    props: {
-      res: data,
-    }
-  }
 }
 
 
@@ -73,11 +64,17 @@ export async function getServerSideProps() {
 
 
 
-const New: NextPage<{ res: session[] }> = ({ res }) => {
-  console.log(res);
+const New: NextPage = () => {
 
   const [session, setSession] = useState<string>("");
   const [speaker, setSpeaker] = useState<string>("");
+
+  const result: result | undefined = trpc.sessions.getAll.useQuery().data
+  if (!result) {
+    return <div>Loading...</div>;
+  }
+  const data: session[] = result.sessions
+
 
 
 
@@ -93,9 +90,9 @@ const New: NextPage<{ res: session[] }> = ({ res }) => {
       </Head>
       <main className="flex flex-col items-center justify-center overflow-y-scroll h-full gap-5">
         <FcPodiumWithSpeaker size={100} />
-        <Select data-cy="SelectSpeaker" value={speaker} onChange={(e: React.ChangeEvent<HTMLInputElement>): void => setSpeaker(e.target.value)} label="Speaker" options={res.map(x => x.SpeakerId)} />
+        <Select data-cy="SelectSpeaker" value={speaker} onChange={(e: React.ChangeEvent<HTMLInputElement>): void => setSpeaker(e.target.value)} label="Speaker" options={data.map(x => x.SpeakerId)} />
         <FcPodiumWithAudience size={100} />
-        <Select data-cy="SelectSession" value={session} onChange={(e: React.ChangeEvent<HTMLInputElement>): void => setSession(e.target.value)} label="Session" options={res.map(x => x.Title)} />
+        <Select data-cy="SelectSession" value={session} onChange={(e: React.ChangeEvent<HTMLInputElement>): void => setSession(e.target.value)} label="Session" options={data.map(x => x.Title)} />
         <label className="label cursor-pointer gap-5">
           <input type="checkbox" className="checkbox" />
           <span className="label-text">Hide my name.</span>

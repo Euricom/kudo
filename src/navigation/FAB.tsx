@@ -1,13 +1,16 @@
 import Link from "next/link";
+import { type Url } from "url";
 import useWindowDimensions from "~/hooks/useWindowDimensions";
 interface FabProps {
     text?: string
     icon?: React.ReactNode
     url: string
     onClick?: () => void
+    urlWithParams?: Url | undefined
+
 }
 
-const FAB = ({ text, icon, url, onClick }: FabProps) => {
+const FAB = ({ text, icon, url, onClick, urlWithParams = undefined }: FabProps) => {
     const { width } = useWindowDimensions();
     return (
         <>
@@ -21,7 +24,7 @@ const FAB = ({ text, icon, url, onClick }: FabProps) => {
         </div> */}
 
             <div className="flex w-full fixed bottom-0 justify-center mb-5" data-cy='FAB'>
-                <Link href={url} className="btn btn-primary rounded-full" onClick={onClick}>
+                <Link href={urlWithParams == undefined ? url : urlWithParams} className="btn btn-primary rounded-full" onClick={onClick}>
                     {width < 768 ?
                         icon :
                         <>{text}</>

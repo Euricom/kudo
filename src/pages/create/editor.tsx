@@ -45,14 +45,14 @@ const Editor: NextPage<{ res: Template }> = ({ res }) => {
   const submit = async () => {
     const dataUrl = canvas?.getElement().toDataURL();
     try {
-      await fetch('/api/kudo', 
-      {
-        body: JSON.stringify({ dataUrl: dataUrl }),
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        method: 'POST'
-      })
+      await fetch('/api/kudo',
+        {
+          body: JSON.stringify({ dataUrl: dataUrl }),
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          method: 'POST'
+        })
     } catch (e) {
       console.log(e);
     }
@@ -84,16 +84,16 @@ const Editor: NextPage<{ res: Template }> = ({ res }) => {
         hasControls: false,
         hasBorders: false,
         textAlign: 'center',
-        fontSize: (rect.get('height') ?? 0)/1.5
-    })
+        fontSize: (rect.get('height') ?? 0) / 1.5
+      })
     text.set({
-      left: ((canvas?.width ?? 0) / 2) - (text.get('width')?? 0) /2,
-      top: (rect.get('height')?? 0)/2 - (text.get('height')?? 0)/2,
+      left: ((canvas?.width ?? 0) / 2) - (text.get('width') ?? 0) / 2,
+      top: (rect.get('height') ?? 0) / 2 - (text.get('height') ?? 0) / 2,
       fill: '#fff'
     })
     canvas?.add(rect, text)
   }, [canvas, res])
-  
+
   useEffect(() => {
     setCanvas(editor?.canvas);
     createHeader()
@@ -110,21 +110,21 @@ const Editor: NextPage<{ res: Template }> = ({ res }) => {
         <link rel="icon" href="/favicon.ico" />
       </Head>
       <UtilButtonsContent>
-          <label htmlFor="my-modal-6" className="btn btn-circle btn-secondary">
-            <BiText size={20} />
-          </label>
-          <button  className="btn btn-circle btn-secondary">
-            <BiPencil size={20} />
-          </button>
-          <button  className="btn btn-circle btn-secondary">
-            <GrEmoji size={20} />
-          </button>
-          <button  className="btn btn-circle btn-secondary">
-            <BiPalette size={20} />
-          </button>
-          <button onClick={onClear} className="btn btn-circle btn-secondary">
-            <BiTrash size={20} />
-          </button>
+        <label htmlFor="my-modal-6" className="btn btn-circle btn-secondary">
+          <BiText size={20} />
+        </label>
+        <button className="btn btn-circle btn-secondary">
+          <BiPencil size={20} />
+        </button>
+        <button className="btn btn-circle btn-secondary">
+          <GrEmoji size={20} />
+        </button>
+        <button className="btn btn-circle btn-secondary">
+          <BiPalette size={20} />
+        </button>
+        <button onClick={onClear} className="btn btn-circle btn-secondary">
+          <BiTrash size={20} />
+        </button>
       </UtilButtonsContent>
       {/* Modal */}
       <input type="checkbox" id="my-modal-6" className="modal-toggle" />
@@ -133,7 +133,7 @@ const Editor: NextPage<{ res: Template }> = ({ res }) => {
           <label className="label">
             <span className="label-text">Message</span>
           </label>
-          <textarea 
+          <textarea
             onChange={(e) => setMessage(e.target.value)}
             placeholder="Message"
             value={message}
@@ -146,11 +146,11 @@ const Editor: NextPage<{ res: Template }> = ({ res }) => {
       {/* Main */}
       <main className="flex flex-col items-center justify-center overflow-y-scroll h-full" >
         <div id="kudo" className="aspect-[3/2] w-full max-h-full max-w-5xl" onKeyDown={onDeleteSelected} tabIndex={0}>
-            <FabricJSCanvas className="w-full h-full bg-white" onReady={onReady} />
+          <FabricJSCanvas className="w-full h-full bg-white" onReady={onReady} />
         </div>
         <button className='btn' onClick={() => void submit()}>Test submit zonder redirect</button>
       </main>
-      <FAB text={"Send"} icon={<FiSend />} url="/out" onClick={() => void submit()}/>
+      <FAB text={"Send"} icon={<FiSend />} url="/out" onClick={() => void submit()} />
     </>
   );
 };

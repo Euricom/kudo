@@ -13,6 +13,8 @@ import { type Template } from "@prisma/client";
 import { findTemplateById } from "~/server/services/templateService";
 import { useSessionSpeaker } from '~/sessions/SelectedSessionAndSpeaker';
 import { useRouter } from 'next/router';
+import { useSession } from "next-auth/react";
+// import { trpc } from '~/utils/trpc';
 
 
 export async function getServerSideProps(context: { query: { template: string; }; }) {
@@ -26,6 +28,7 @@ export async function getServerSideProps(context: { query: { template: string; }
 }
 
 const Editor: NextPage<{ res: Template }> = ({ res }) => {
+  const userId: string | null | undefined = useSession().data?.user.id
 
   const [message, setMessage] = useState('');
   const { editor, onReady } = useFabricJSEditor()
@@ -97,12 +100,20 @@ const Editor: NextPage<{ res: Template }> = ({ res }) => {
 
   const submit = async () => {
     const dataUrl = canvas?.getElement().toDataURL();
-
+    // const input = {
+    //   image: dataUrl as string,
+    //   userId: userId as string,
+    //   liked: false,
+    //   comment: "",
+    //   sessionId: sessionId,
+    // }
 
     try {
+      // trpc.kudos.createKudo.useQuery(input).data
+
       await fetch('/api/kudo',
         {
-          body: JSON.stringify({ dataUrl: dataUrl, sessionId: sessionId }),
+          body: JSON.stringify({ dataUrl: dataUrl, sessionId: sessionId, userId: userId }),
           headers: {
             'Content-Type': 'application/json',
           },

@@ -1,31 +1,31 @@
+import { Kudo } from "@prisma/client";
+import Image from "next/image";
 import Link from "next/link";
 import { FcPodiumWithSpeaker } from "react-icons/fc"
+import { trpc } from "~/utils/trpc";
 
 //Voorlopig adhv card, moet Image worden naar de toekomst toe
 
 
 interface KudoProps {
-  id: number
+  kudo: Kudo
 }
 
 
-const Kudo = ({ id }: KudoProps) => {
+const KudoCard = ({ kudo }: KudoProps) => {
+  const image = trpc.kudos.getImageById.useQuery({ id: kudo.image }).data?.dataUrl
+  if (!image) {
+    return <></>
+  }
   return (
     <>
-      <Link className="card bg-white text-gray-800 shadow-xl aspect-[3/2] rounded-none w-80 h-52" data-cy="Kudo" href={"/kudo/" + id.toString()}>
-        <div className="card-body p-0">
-          <h2 className="card-title bg-red-500 justify-center p-4">Thank you!</h2>
-          <div className="flex p-8">
-            <figure>
-              <FcPodiumWithSpeaker size={100} />
-            </figure>
-            <p>This lecture was really enjoyable.</p>
-          </div>
-        </div>
+      <Link className="card bg-white text-gray-800 shadow-xl aspect-[3/2] rounded-none w-80 h-52" data-cy="Kudo" href={"/kudo/" + kudo.id}>
+
+        <Image src={image} width={80} height={52} alt="Kudo" />
       </Link>
     </>
   );
 };
 
-export default Kudo;
+export default KudoCard;
 

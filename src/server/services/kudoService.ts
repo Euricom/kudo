@@ -6,7 +6,11 @@ type Image = {
   dataUrl: string
 }
 
-export const createKudo = async (dataUrl: string, sessionId: string): Promise<Kudo> => {
+export const createKudo = async (dataUrl: string, sessionId: string, userId: string): Promise<Kudo> => {
+  console.log(dataUrl);
+  console.log(sessionId);
+  console.log(userId);
+
   const image: Image = await createKudoImage(dataUrl)
   const kudo = (await prisma.kudo.create({
     data: {
@@ -14,16 +18,19 @@ export const createKudo = async (dataUrl: string, sessionId: string): Promise<Ku
       liked: false,
       comment: '',
       sessionId: sessionId,
+      userId: userId,
     },
   }));
   return kudo;
 }
 
 export const createKudoImage = async (dataUrl: string): Promise<Image> => {
+  console.log(dataUrl);
   const image: Image = (await prisma.image.create({
     data: {
       dataUrl: dataUrl,
     },
   })) as Image;
+  console.log("na");
   return image;
 }

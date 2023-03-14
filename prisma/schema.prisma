@@ -81,6 +81,7 @@ model Kudo {
   image     String
   liked     Boolean
   comment   String
+  userId    String
 }
 model Template {
     id            String      @id @default(cuid())

@@ -4,9 +4,10 @@ interface FabProps {
     text?: string
     icon?: React.ReactNode
     url: string
+    onClick?: () => void
 }
 
-const FAB = ({ text, icon, url }: FabProps) => {
+const FAB = ({ text, icon, url, onClick }: FabProps) => {
     const { width } = useWindowDimensions();
     return (
         <>
@@ -20,10 +21,10 @@ const FAB = ({ text, icon, url }: FabProps) => {
         </div> */}
 
             <div className="flex w-full fixed bottom-0 justify-center mb-5" data-cy='FAB'>
-                <Link href={url} className="btn btn-primary rounded-full">
+                <Link href={url} className="btn btn-primary rounded-full" onClick={onClick}>
                     {width < 768 ?
                         icon :
-                        <><a>{text}</a></>
+                        <>{text}</>
                     }
                 </Link>
             </div>

@@ -1,12 +1,13 @@
-/* eslint-disable @typescript-eslint/no-unsafe-member-access */
-/* eslint-disable @typescript-eslint/no-unsafe-assignment */
+import React from 'react';
 import { type NextPage } from "next";
 import Head from "next/head";
-import FAB from "~/navigation/FAB";
-import { FiSend } from "react-icons/fi"
+import { UtilButtonsContent } from "~/hooks/useUtilButtons";
+import { GrEmoji } from "react-icons/gr"
+import { BiPencil, BiPalette, BiText, BiTrash } from "react-icons/bi"
 import { NavigationBarContent } from "~/navigation/NavBarTitle";
 import { type Template } from "@prisma/client";
 import { findTemplateById } from "~/server/services/templateService";
+import EditorCanvas from '~/editor/EditorCanvas';
 
 
 export async function getServerSideProps(context: { query: { template: string; }; }) {
@@ -20,6 +21,7 @@ export async function getServerSideProps(context: { query: { template: string; }
 }
 
 const Editor: NextPage<{ res: Template }> = ({ res }) => {
+
   return (
     <>
       <NavigationBarContent>
@@ -30,20 +32,27 @@ const Editor: NextPage<{ res: Template }> = ({ res }) => {
         <meta name="description" content="eKudo app" />
         <link rel="icon" href="/favicon.ico" />
       </Head>
-      <main className="flex flex-col items-center justify-center overflow-y-scroll h-full">
-        <div className="card bg-white text-gray-800 shadow-xl aspect-[3/2] rounded-none w-80 h-52" data-cy="EditorTemplate">
-          <div className="card-body p-0">
-            <h2 className='card-title justify-center p-4' style={{ backgroundColor: res.Color }} data-cy="EditorTemplateTitle">{res.Title}</h2>
-            <div className="flex p-8">
-              <figure>
-                {res.Sticker}
-              </figure>
-              <p></p>
-            </div>
-          </div>
-        </div>
+      <UtilButtonsContent>
+          <label htmlFor="my-modal-text" className="btn btn-circle btn-secondary">
+            <BiText size={20} />
+          </label>
+          <button  className="btn btn-circle btn-secondary">
+            <BiPencil size={20} />
+          </button>
+          <button  className="btn btn-circle btn-secondary">
+            <GrEmoji size={20} />
+          </button>
+          <button  className="btn btn-circle btn-secondary">
+            <BiPalette size={20} />
+          </button>
+          <label htmlFor="my-modal-clear" className="btn btn-circle btn-secondary">
+            <BiTrash size={20} />
+          </label>
+      </UtilButtonsContent>
+      {/* Main */}
+      <main className="flex flex-col items-center justify-center overflow-y-scroll h-full" >
+        <EditorCanvas {...res} />
       </main>
-      <FAB text={"Send"} icon={<FiSend />} url="/out" />
     </>
   );
 };

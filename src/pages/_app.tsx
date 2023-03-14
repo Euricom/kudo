@@ -7,6 +7,7 @@ import { api } from "~/utils/api";
 import "~/styles/globals.css";
 import { Auth } from "../auth/Auth";
 import NavBar from "~/navigation/NavBar";
+import { UtilButtonsProvider } from "~/hooks/useUtilButtons";
 import { TitleProvider } from "~/navigation/NavBarTitle";
 
 const MyApp: AppType<{ session: Session | null }> = ({
@@ -17,9 +18,11 @@ const MyApp: AppType<{ session: Session | null }> = ({
     <SessionProvider session={session}>
       <Auth>
         <TitleProvider>
-          <NavBar>
-            <Component {...pageProps} />
-          </NavBar>
+          <UtilButtonsProvider>
+            <NavBar>
+              <Component {...pageProps} />
+            </NavBar>
+          </UtilButtonsProvider>
         </TitleProvider>
       </Auth>
     </SessionProvider>

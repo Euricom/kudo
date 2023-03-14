@@ -3,6 +3,9 @@ import Head from "next/head";
 import FAB from "~/navigation/FAB";
 import { GrAdd } from 'react-icons/gr';
 import Session from "~/sessions/Session";
+import { UtilButtonsContent } from "~/hooks/useUtilButtons";
+import { FiSearch } from "react-icons/fi";
+import { BiSortDown } from "react-icons/bi";
 import { NavigationBarContent } from "~/navigation/NavBarTitle";
 import NavButtons from "~/navigation/NavButtons";
 
@@ -18,6 +21,14 @@ const Home: NextPage = () => {
         <meta name="description" content="eKudo app" />
         <link rel="icon" href="/favicon.ico" />
       </Head>
+      <UtilButtonsContent>
+        <button className="btn btn-ghost btn-circle">
+            <FiSearch size={20} />
+        </button>
+        <button className="btn btn-ghost btn-circle">
+            <BiSortDown size={20} />
+        </button>
+      </UtilButtonsContent>
       <main className="flex flex-col items-center justify-center overflow-y-scroll h-full">
         <div className="flex flex-wrap gap-8 h-full justify-center p-5">
           {sessions.map((x) => (

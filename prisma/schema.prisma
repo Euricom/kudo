@@ -71,6 +71,17 @@ model VerificationToken {
     @@unique([identifier, token])
 }
 
+model Image {
+    id          String   @id @default(cuid())
+    dataUrl     String
+}
+
+model Kudo {
+  id        String     @id @default(cuid())
+  image     String
+  liked     Boolean
+  comment   String
+}
 model Template {
     id            String      @id @default(cuid())
     Color         String   

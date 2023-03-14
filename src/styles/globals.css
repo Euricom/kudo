@@ -2,4 +2,13 @@
 @tailwind components;
 @tailwind utilities;
 
-@layer components {}
+@layer components {
+    .kudo-header {
+        @apply text-3xl;
+        font-size: 8cqw;
+    }
+}
+
+.kudo-header-container {
+    container-type: inline-size;
+}

@@ -56,7 +56,7 @@ const Editor: NextPage<{ res: Template[] }> = ({ res }) => {
           ))}
         </div>
       </main>
-      <FAB text={"Next"} icon={<GrNext />} url="/create/editor" />
+      <FAB text={"Next"} icon={<GrNext />} url={'/create/editor?template=' + (res[0]?.id.toString() ?? '')} />
     </>
   );
 };

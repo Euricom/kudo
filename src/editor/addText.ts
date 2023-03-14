@@ -7,9 +7,9 @@ interface Document {
 const addText = (message: string, stage: Konva.Stage, layer: Konva.Layer) => {
   const textNode = new Konva.Text({
     text: message!=''? message : 'Lorem',
-    x: stage.width()/2,
-    y: stage.height()/3,
-    fontSize: stage.height()/15,
+    x: stage.width()/(stage.scaleX() * 2),
+    y: stage.height()/(stage.scaleY() *3),
+    fontSize: stage.height()/(stage.scaleY() * 15),
     draggable: true,
   });
 
@@ -80,6 +80,7 @@ const addText = (message: string, stage: Konva.Stage, layer: Konva.Layer) => {
     textarea.style.transformOrigin = 'left top';
     textarea.style.textAlign = textNode.align();
     textarea.style.color = textNode.fill();
+    
     const rotation = textNode.rotation();
     let transform = '';
     if (rotation) {

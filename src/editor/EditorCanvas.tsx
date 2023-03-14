@@ -47,10 +47,13 @@ const EditorCanvas = (props: Template) => {
 
 const createStage = () => {
   // create the Konva stage, layer, and rectangle
+  const sceneWidth = containerRef.current?.offsetWidth ?? 0;
+  const sceneHeight = containerRef.current?.offsetHeight ?? 0;
+
   const newStage = new Konva.Stage({
       container: containerRef.current ?? 'kudo',
-      width: containerRef.current?.offsetWidth,
-      height: containerRef.current?.offsetHeight
+      width: sceneWidth,
+      height: sceneHeight
   });
   const newLayer = new Konva.Layer();
 
@@ -61,15 +64,26 @@ const createStage = () => {
   stageRef.current = newStage;
   layerRef.current = newLayer;
 
+  
+  fitStageIntoParentContainer();
   // redraw the stage when the window is resized
-  window.addEventListener('resize', handleResize);
-  function handleResize() {
-    newStage.width(containerRef.current?.offsetWidth ?? 0);
-    newStage.height(containerRef.current?.offsetHeight ?? 0);
-    newStage.batchDraw();
+  window.addEventListener('resize', fitStageIntoParentContainer);
+
+  function fitStageIntoParentContainer() {
+    // now we need to fit stage into parent container
+    const containerWidth = containerRef.current?.offsetWidth;
+
+    // but we also make the full scene visible
+    // so we need to scale all objects on canvas
+    const scale = (containerWidth ?? 0) / sceneWidth;
+
+    newStage.width(sceneWidth * scale);
+    newStage.height(sceneHeight * scale);
+    newStage.scale({ x: scale, y: scale });
   }
+
   return () => {
-      window.removeEventListener('resize', handleResize);
+      window.removeEventListener('resize', fitStageIntoParentContainer);
   };
 };
 

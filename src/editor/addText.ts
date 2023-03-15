@@ -5,8 +5,8 @@ interface Document {
   documentMode?: number;
 }
 
-const addText = (message: string, stage: Konva.Stage, layer: Konva.Layer) => {
-  const textNode = createTextNode(message, stage)
+const addText = (stage: Konva.Stage, layer: Konva.Layer) => {
+  const textNode = createTextNode(stage)
 
   layer.add(textNode);
 
@@ -29,9 +29,9 @@ const addText = (message: string, stage: Konva.Stage, layer: Konva.Layer) => {
 
 export default addText;
 
-const createTextNode = (message: string, stage: Konva.Stage) => {
+const createTextNode = (stage: Konva.Stage) => {
   const textNode = new Konva.Text({
-    text: message!=''? message : 'Lorem',
+    text: 'Dubble click to edit',
     x: stage.getPointerPosition()?.x,
     y: stage.getPointerPosition()?.y,
     fontSize: stage.height()/(stage.scaleY() * 15),

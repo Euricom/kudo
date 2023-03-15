@@ -32,7 +32,7 @@ const Editor: NextPage<{ res: Template }> = ({ res }) => {
   return (
     <>
       <NavigationBarContent>
-        <h1>Editor button: {selectedButton}</h1>
+        <h1>Editor</h1>
       </NavigationBarContent>
       <Head>
         <title>eKudo</title>

@@ -10,11 +10,13 @@ enum SelectedButton {
   Text = 'text',
   Draw = 'draw',
   Sticker = 'sticker',
+  None = 'none'
 }
 
 type EditorCanvasProps = {
   button: SelectedButton | undefined,
   template: Template
+  // setSelectedButton: (buttonstate :SelectedButton) => void
 }
 
 const EditorCanvas = ({button, template}: EditorCanvasProps) => {
@@ -23,11 +25,6 @@ const EditorCanvas = ({button, template}: EditorCanvasProps) => {
   const containerRef = useRef<HTMLDivElement>(null);
   const stageRef = useRef<Konva.Stage>() as MutableRefObject<Konva.Stage>;
   const layerRef = useRef<Konva.Layer>() as MutableRefObject<Konva.Layer>;
-
-  const onAddText = () => {
-    addText(message, stageRef.current, layerRef.current)
-    setMessage('')
-  }
 
   const onDeleteSelected = (e: React.KeyboardEvent<HTMLImageElement>) => {
     if (e.key === 'Delete') {
@@ -106,10 +103,16 @@ const createStage = () => {
     stageRef.current.on('click tap', function () {
       switch (button) {
         case SelectedButton.Text:
-          onAddText()
+          addText(message, stageRef.current, layerRef.current)
+          setMessage('')
+          button = SelectedButton.None
+        case SelectedButton.Draw:
+
+        case SelectedButton.Sticker:
+
       }
     });
-  }, [button, onAddText]);
+  }, [button, message]);
 
   
 

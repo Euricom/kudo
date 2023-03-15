@@ -13,6 +13,7 @@ enum SelectedButton {
   Text = 'text',
   Draw = 'draw',
   Sticker = 'sticker',
+  None = 'none'
 }
 
 export async function getServerSideProps(context: { query: { template: string; }; }) {
@@ -31,7 +32,7 @@ const Editor: NextPage<{ res: Template }> = ({ res }) => {
   return (
     <>
       <NavigationBarContent>
-        <h1>Editor</h1>
+        <h1>Editor button: {selectedButton}</h1>
       </NavigationBarContent>
       <Head>
         <title>eKudo</title>
@@ -39,13 +40,13 @@ const Editor: NextPage<{ res: Template }> = ({ res }) => {
         <link rel="icon" href="/favicon.ico" />
       </Head>
       <UtilButtonsContent>
-          <button onClick={() => setSelectedButton(SelectedButton.Text)} className="btn btn-circle btn-secondary">
+          <button onClick={() => setSelectedButton(SelectedButton.Text)} className={"btn btn-circle btn-secondary " + (selectedButton==SelectedButton.Text? "btn-accent":"")}>
             <BiText size={20} />
           </button>
-          <button onClick={() => setSelectedButton(SelectedButton.Draw)} className="btn btn-circle btn-secondary">
+          <button onClick={() => setSelectedButton(SelectedButton.Draw)} className={"btn btn-circle btn-secondary "+ (selectedButton==SelectedButton.Draw? "btn-accent":"")}>
             <BiPencil size={20} />
           </button>
-          <button onClick={() => setSelectedButton(SelectedButton.Sticker)} className="btn btn-circle btn-secondary">
+          <button onClick={() => setSelectedButton(SelectedButton.Sticker)} className={"btn btn-circle btn-secondary "+ (selectedButton==SelectedButton.Sticker? "btn-accent":"")}>
             <GrEmoji size={20} />
           </button>
           <button className="btn btn-circle btn-secondary">
@@ -57,7 +58,7 @@ const Editor: NextPage<{ res: Template }> = ({ res }) => {
       </UtilButtonsContent>
       {/* Main */}
       <main className="flex flex-col items-center justify-center overflow-y-scroll h-full" >
-        <EditorCanvas button={selectedButton} template={res} />
+        <EditorCanvas button={selectedButton} template={res} setSelectedButton={setSelectedButton} />
       </main>
     </>
   );

@@ -16,27 +16,28 @@ enum SelectedButton {
 type EditorCanvasProps = {
   button: SelectedButton | undefined,
   template: Template
-  // setSelectedButton: (buttonstate :SelectedButton) => void
+  setSelectedButton: (type: SelectedButton) => void
 }
 
-const EditorCanvas = ({button, template}: EditorCanvasProps) => {
+const EditorCanvas = ({button, template, setSelectedButton}: EditorCanvasProps) => {
   const [message, setMessage] = useState('');
   
   const containerRef = useRef<HTMLDivElement>(null);
   const stageRef = useRef<Konva.Stage>() as MutableRefObject<Konva.Stage>;
   const layerRef = useRef<Konva.Layer>() as MutableRefObject<Konva.Layer>;
 
-  const onDeleteSelected = (e: React.KeyboardEvent<HTMLImageElement>) => {
-    if (e.key === 'Delete') {
-      
-    }
-  }
   const onClear = () => {
     layerRef.current?.removeChildren()
     createHeader(template.Color, template.Title, stageRef.current, layerRef.current)
   }
 
   const submit = async () => {
+    layerRef.current.getChildren().forEach((e) => {
+      console.log(e.getClassName());
+      if (e.getClassName() == 'Transformer') {
+        e.hide() 
+      }
+    })
     const dataUrl = stageRef.current.toDataURL();
     try {
       await fetch('/api/kudo', 
@@ -105,14 +106,15 @@ const createStage = () => {
         case SelectedButton.Text:
           addText(message, stageRef.current, layerRef.current)
           setMessage('')
-          button = SelectedButton.None
+          setSelectedButton(SelectedButton.None)
         case SelectedButton.Draw:
 
         case SelectedButton.Sticker:
+          setSelectedButton(SelectedButton.None)
 
       }
     });
-  }, [button, message]);
+  }, [button, message, setSelectedButton]);
 
   
 
@@ -131,8 +133,8 @@ const createStage = () => {
         </div>
       </div>
     </div>
-    <div id='kudo' ref={containerRef} className="aspect-[3/2] w-full max-h-full max-w-5xl bg-white" onKeyDown={onDeleteSelected} tabIndex={0}></div>
     
+    <div id='kudo' ref={containerRef} className="aspect-[3/2] w-full max-h-full max-w-5xl bg-white"></div>
     <FAB text={"Send"} icon={<FiSend />} url="/out" onClick={() => void submit()}/>
     </>
   );

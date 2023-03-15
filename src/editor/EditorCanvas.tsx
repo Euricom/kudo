@@ -32,7 +32,6 @@ const EditorCanvas = ({button, template, setSelectedButton}: EditorCanvasProps) 
 
   const submit = async () => {
     layerRef.current.getChildren().forEach((e) => {
-      console.log(e.getClassName());
       if (e.getClassName() == 'Transformer') {
         e.hide() 
       }
@@ -55,6 +54,7 @@ const EditorCanvas = ({button, template, setSelectedButton}: EditorCanvasProps) 
 
 const createStage = () => {
   // create the Konva stage, layer, and rectangle
+  
   const sceneWidth = containerRef.current?.offsetWidth ?? 0;
   const sceneHeight = containerRef.current?.offsetHeight ?? 0;
 

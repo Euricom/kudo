@@ -7,6 +7,7 @@ import { FiSend } from "react-icons/fi"
 import { createHeader } from './setUpCanvas'
 import { useSession } from 'next-auth/react';
 import { useSessionSpeaker } from '~/sessions/SelectedSessionAndSpeaker';
+import { useRouter } from 'next/router';
 
 
 const EditorCanvas = (props: Template) => {
@@ -19,6 +20,7 @@ const EditorCanvas = (props: Template) => {
 
   const sessionId: string | undefined = useSessionSpeaker(undefined, undefined).data.session
   const speaker: string | undefined = useSessionSpeaker(undefined, undefined).data.speaker
+  const router = useRouter()
 
 
   const onAddText = () => {
@@ -47,7 +49,7 @@ const EditorCanvas = (props: Template) => {
           },
           method: 'POST'
         })
-      // await router.replace('/out')
+      await router.replace('/out')
     } catch (e) {
       console.log(e);
     }

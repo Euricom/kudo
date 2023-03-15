@@ -18,7 +18,7 @@ const KudoCard = ({ kudo }: KudoProps) => {
   }
   return (
     <>
-      <Link className="card bg-white text-gray-800 shadow-xl aspect-[3/2] rounded-none w-80 h-52" data-cy="Kudo" href={"/kudo/" + kudo.id}>
+      <Link className="card bg-white text-gray-800 shadow-xl aspect-[3/2] rounded-none w-80 h-52" data-cy="Kudo" href={"/kudo/" + kudo.id} id={kudo.sessionId}>
 
         <Image src={image} width={320} height={208} alt="Kudo" />
       </Link>

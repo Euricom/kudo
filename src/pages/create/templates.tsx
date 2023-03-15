@@ -5,6 +5,8 @@ import { findAllTemplates } from "~/server/services/templateService";
 import { type Template } from "@prisma/client";
 import Link from "next/link";
 import { useSessionSpeaker } from "~/sessions/SelectedSessionAndSpeaker";
+import FAB from "~/navigation/FAB";
+import { GrNext } from "react-icons/gr";
 
 
 
@@ -61,6 +63,7 @@ const Editor: NextPage<{ res: Template[], sess: string, speaker: string }> = ({ 
           ))}
         </div>
       </main>
+      <FAB text={"Next"} icon={<GrNext />} url={'/create/editor?template=' + (res[0]?.id.toString() ?? '')} />
     </>
   );
 };

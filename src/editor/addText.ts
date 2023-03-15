@@ -36,7 +36,7 @@ const onDoubleClick = (stage: Konva.Stage, textNode: Konva.Text, tr: Konva.Trans
 }
 const createTextNode = (stage: Konva.Stage) => {
   const textNode = new Konva.Text({
-    text: '',
+    text: 'Text',
     x: stage.getPointerPosition()?.x,
     y: stage.getPointerPosition()?.y,
     fontSize: stage.height()/(stage.scaleY() * 15),

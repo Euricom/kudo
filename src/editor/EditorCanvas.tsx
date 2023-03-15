@@ -106,8 +106,7 @@ const createStage = () => {
         case SelectedButton.Text:
           console.log('Text');
           addText(stageRef.current, layerRef.current)
-          button = SelectedButton.None
-          setSelectedButton(button)
+          setSelectedButton(SelectedButton.None)
           break
         case SelectedButton.Draw:
           console.log('Draw');

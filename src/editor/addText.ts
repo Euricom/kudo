@@ -15,23 +15,28 @@ const addText = (stage: Konva.Stage, layer: Konva.Layer) => {
   layer.add(tr);
 
   textNode.on('dblclick dbltap', () => {
-    textNode.hide();
-    tr.hide();
-
-    const textPosition = textNode.absolutePosition();
-    const areaPosition = getPosition(textPosition, stage);
-
-    const textarea = createTextArea(textNode, areaPosition, tr)
-
-    textarea.focus();
+    onDoubleClick(stage, textNode, tr)
   });
+  
+  onDoubleClick(stage, textNode, tr)
 }
 
 export default addText;
 
+const onDoubleClick = (stage: Konva.Stage, textNode: Konva.Text, tr: Konva.Transformer) => {
+  textNode.hide();
+  tr.hide();
+
+  const textPosition = textNode.absolutePosition();
+  const areaPosition = getPosition(textPosition, stage);
+
+  const textarea = createTextArea(textNode, areaPosition, tr)
+
+  textarea.focus();
+}
 const createTextNode = (stage: Konva.Stage) => {
   const textNode = new Konva.Text({
-    text: 'Double click to edit',
+    text: '',
     x: stage.getPointerPosition()?.x,
     y: stage.getPointerPosition()?.y,
     fontSize: stage.height()/(stage.scaleY() * 15),

@@ -7,7 +7,7 @@ import { FiSend } from "react-icons/fi"
 import { createHeader } from './setUpCanvas'
 import { useSession } from 'next-auth/react';
 import { useSessionSpeaker } from '~/sessions/SelectedSessionAndSpeaker';
-import { useRouter } from 'next/router';
+
 
 const EditorCanvas = (props: Template) => {
   const [message, setMessage] = useState('');
@@ -19,11 +19,7 @@ const EditorCanvas = (props: Template) => {
 
   const sessionId: string | undefined = useSessionSpeaker(undefined, undefined).data.session
   const speaker: string | undefined = useSessionSpeaker(undefined, undefined).data.speaker
-  const router = useRouter()
-  if (!sessionId || !speaker) {
-    router.back()
-  }
-  console.log(sessionId);
+
 
   const onAddText = () => {
     addText(message, stageRef.current, layerRef.current)
@@ -51,9 +47,12 @@ const EditorCanvas = (props: Template) => {
           },
           method: 'POST'
         })
+      // await router.replace('/out')
     } catch (e) {
       console.log(e);
     }
+
+
   }
 
 
@@ -90,6 +89,10 @@ const EditorCanvas = (props: Template) => {
     createHeader(props.Color, props.Title, stageRef.current, layerRef.current)
   }, [props]);
 
+  if (!sessionId || !speaker) {
+    console.log("een probleem");
+
+  }
   return (
     <>
       {/* Modal */}
@@ -123,7 +126,7 @@ const EditorCanvas = (props: Template) => {
       </div>
       <div id='kudo' ref={containerRef} className="aspect-[3/2] w-full max-h-full max-w-5xl bg-white" onKeyDown={onDeleteSelected} tabIndex={0}></div>
 
-      <FAB text={"Send"} icon={<FiSend />} url="/out" onClick={() => void submit()} />
+      <FAB text={"Send"} icon={<FiSend />} url={undefined} onClick={() => void submit()} />
     </>
   );
 };

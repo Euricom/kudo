@@ -10,7 +10,6 @@ import { NavigationBarContent } from "~/navigation/NavBarTitle";
 import NavButtons from "~/navigation/NavButtons";
 import { useSession } from "next-auth/react";
 import { trpc } from "~/utils/trpc";
-import { type Kudo } from "@prisma/client";
 
 
 
@@ -18,9 +17,20 @@ const Out: NextPage = () => {
 
   const userId = useSession().data?.user.id
   if (!userId) {
+    throw new Error("No user signed in")
+
+  }
+  const kudos = trpc.kudos.getKudosByUserId.useQuery({ id: userId }).data
+
+
+  if (!userId) {
     return <div>Loading...</div>
   }
-  const kudos: Kudo[] | undefined = trpc.kudos.getKudosById.useQuery({ id: userId }).data
+
+
+
+
+
   return (
     <>
       <NavigationBarContent>

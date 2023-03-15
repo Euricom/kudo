@@ -2,12 +2,7 @@ import {
     createTRPCRouter,
     protectedProcedure,
 } from "~/server/api/trpc";
-import { Kudo } from "@prisma/client";
-import { prisma } from "~/server/db";
 import { object, string, boolean } from "zod";
-type result = {
-    kudos: Kudo[]
-}
 
 const createKudoInput = object({
     image: string(),
@@ -47,7 +42,7 @@ export const kudoRouter = createTRPCRouter({
         return kudo;
     }),
 
-    getKudosById: protectedProcedure.input(inputGetById).query(({ input, ctx }) => {
+    getKudosByUserId: protectedProcedure.input(inputGetById).query(({ input, ctx }) => {
         return ctx.prisma.kudo.findMany({
             where: {
                 userId: input.id,
@@ -61,6 +56,19 @@ export const kudoRouter = createTRPCRouter({
                 id: input.id,
             }
         });
+    }),
+
+    getKudoById: protectedProcedure.input(inputGetById).query(({ input, ctx }) => {
+        console.log(input.id);
+
+        const kudo = ctx.prisma.kudo.findUnique({
+            where: {
+                id: input.id,
+            }
+        });
+
+        console.log(kudo);
+        return kudo
     }),
 
 

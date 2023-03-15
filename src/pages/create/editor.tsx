@@ -7,9 +7,6 @@ import { BiPencil, BiPalette, BiText, BiTrash } from "react-icons/bi"
 import { NavigationBarContent } from "~/navigation/NavBarTitle";
 import { type Template } from "@prisma/client";
 import { findTemplateById } from "~/server/services/templateService";
-import { useSessionSpeaker } from '~/sessions/SelectedSessionAndSpeaker';
-import { useRouter } from 'next/router';
-import { useSession } from "next-auth/react";
 // import { trpc } from '~/utils/trpc';
 import EditorCanvas from '~/editor/EditorCanvas';
 

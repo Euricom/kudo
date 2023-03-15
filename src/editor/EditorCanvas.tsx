@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useRef, type MutableRefObject } from 'react';
+import React, { useEffect, useRef, type MutableRefObject } from 'react';
 import { type Template } from "@prisma/client";
 import Konva from 'konva';
 import addText from './addText';
@@ -20,7 +20,6 @@ type EditorCanvasProps = {
 }
 
 const EditorCanvas = ({button, template, setSelectedButton}: EditorCanvasProps) => {
-  const [message, setMessage] = useState('');
   
   const containerRef = useRef<HTMLDivElement>(null);
   const stageRef = useRef<Konva.Stage>() as MutableRefObject<Konva.Stage>;
@@ -104,8 +103,7 @@ const createStage = () => {
     stageRef.current.on('click tap', function () {
       switch (button) {
         case SelectedButton.Text:
-          addText(message, stageRef.current, layerRef.current)
-          setMessage('')
+          addText(stageRef.current, layerRef.current)
           setSelectedButton(SelectedButton.None)
         case SelectedButton.Draw:
 
@@ -114,7 +112,7 @@ const createStage = () => {
 
       }
     });
-  }, [button, message, setSelectedButton]);
+  }, [button, setSelectedButton]);
 
   
 

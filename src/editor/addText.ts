@@ -31,7 +31,7 @@ export default addText;
 
 const createTextNode = (stage: Konva.Stage) => {
   const textNode = new Konva.Text({
-    text: 'Dubble click to edit',
+    text: 'Double click to edit',
     x: stage.getPointerPosition()?.x,
     y: stage.getPointerPosition()?.y,
     fontSize: stage.height()/(stage.scaleY() * 15),

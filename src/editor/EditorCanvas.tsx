@@ -100,16 +100,25 @@ const createStage = () => {
   }, [template]);
 
   useEffect(() => {
+    stageRef.current.removeEventListener('click tap')
     stageRef.current.on('click tap', function () {
       switch (button) {
         case SelectedButton.Text:
+          console.log('Text');
           addText(stageRef.current, layerRef.current)
-          setSelectedButton(SelectedButton.None)
+          button = SelectedButton.None
+          setSelectedButton(button)
+          break
         case SelectedButton.Draw:
-
+          console.log('Draw');
+          break
         case SelectedButton.Sticker:
+          console.log('Sticker');
           setSelectedButton(SelectedButton.None)
-
+          break
+        default:
+          console.log('None');
+        
       }
     });
   }, [button, setSelectedButton]);

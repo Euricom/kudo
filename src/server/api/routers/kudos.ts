@@ -2,45 +2,26 @@ import {
     createTRPCRouter,
     protectedProcedure,
 } from "~/server/api/trpc";
-import { object, string, boolean } from "zod";
+import { object, string } from "zod";
+import { type Kudo, type Image } from "@prisma/client";
 
 const createKudoInput = object({
     image: string(),
-    liked: boolean(),
-    comment: string(),
     sessionId: string(),
     userId: string(),
+})
+const createImageInput = object({
+    id: string(),
+    dataUrl: string(),
 })
 
 const inputGetById = object({
     id: string(),
 })
 
-type Image = {
-    id: string
-    dataUrl: string
-}
 
 export const kudoRouter = createTRPCRouter({
 
-    createKudo: protectedProcedure.input(createKudoInput).query(({ input, ctx }) => {
-
-        const image: Image = ctx.prisma.image.create({
-            data: {
-                dataUrl: input.image,
-            },
-        }) as unknown as Image;
-        const kudo = ctx.prisma.kudo.create({
-            data: {
-                image: image.id,
-                liked: false,
-                comment: '',
-                sessionId: input.sessionId,
-                userId: input.userId,
-            },
-        });
-        return kudo;
-    }),
 
     getKudosByUserId: protectedProcedure.input(inputGetById).query(({ input, ctx }) => {
         return ctx.prisma.kudo.findMany({
@@ -59,17 +40,69 @@ export const kudoRouter = createTRPCRouter({
     }),
 
     getKudoById: protectedProcedure.input(inputGetById).query(({ input, ctx }) => {
-        console.log(input.id);
-
         const kudo = ctx.prisma.kudo.findUnique({
             where: {
                 id: input.id,
             }
         });
-
-        console.log(kudo);
         return kudo
     }),
+
+    deleteKudoById: protectedProcedure.input(inputGetById).mutation(async ({ input, ctx }) => {
+        const kudo = await ctx.prisma.kudo.delete({
+            where: {
+                id: input.id,
+            }
+        });
+        console.log(kudo);
+
+        if (kudo == undefined) {
+            throw new Error()
+        }
+    }),
+
+    deleteImageById: protectedProcedure.input(inputGetById).mutation(async ({ input, ctx }) => {
+
+        const image = await ctx.prisma.image.delete({
+            where: {
+                id: input.id,
+            }
+        });
+
+        if (image == undefined) {
+            throw new Error()
+        }
+    }),
+
+
+    createKudo: protectedProcedure.input(createKudoInput).mutation(async ({ input, ctx }): Promise<Kudo> => {
+
+        const kudo = (await ctx.prisma.kudo.create({
+            data: {
+                image: input.image,
+                liked: false,
+                comment: '',
+                sessionId: input.sessionId,
+                userId: input.userId,
+            },
+        }));
+        return kudo;
+    }),
+
+    createKudoImage: protectedProcedure.input(createImageInput).mutation(async ({ input, ctx }): Promise<Image> => {
+        const image = (await ctx.prisma.image.create({
+            data: {
+                id: input.id,
+                dataUrl: input.dataUrl,
+            },
+        }));
+        return image;
+    }),
+
+
+
+
+
 
 
 });

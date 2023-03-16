@@ -8,15 +8,19 @@ import { createHeader } from './setUpCanvas'
 import { useSession } from 'next-auth/react';
 import { useSessionSpeaker } from '~/sessions/SelectedSessionAndSpeaker';
 import { useRouter } from 'next/router';
+import { trpc } from '~/utils/trpc';
+import { v4 } from "uuid";
 
 
 const EditorCanvas = (props: Template) => {
   const [message, setMessage] = useState('');
 
+  const createKudo = trpc.kudos.createKudo.useMutation()
+  const createImage = trpc.kudos.createKudoImage.useMutation()
   const containerRef = useRef<HTMLDivElement>(null);
   const stageRef = useRef<Konva.Stage>() as MutableRefObject<Konva.Stage>;
   const layerRef = useRef<Konva.Layer>() as MutableRefObject<Konva.Layer>;
-  const userId: string | null | undefined = useSession().data?.user.id
+  const userId: string = useSession().data?.user.id ?? "error"
 
   const sessionId: string | undefined = useSessionSpeaker(undefined, undefined).data.session
   const speaker: string | undefined = useSessionSpeaker(undefined, undefined).data.speaker
@@ -39,16 +43,15 @@ const EditorCanvas = (props: Template) => {
   }
 
   const submit = async () => {
+    const id: string = v4()
+    console.log(id);
+
     const dataUrl = stageRef.current.toDataURL();
     try {
-      await fetch('/api/kudo',
-        {
-          body: JSON.stringify({ dataUrl: dataUrl, sessionId: sessionId, userId: userId }),
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          method: 'POST'
-        })
+      createImage.mutate({ id: id, dataUrl: dataUrl })
+      createKudo.mutate({ image: id, sessionId: sessionId, userId: userId });
+
+
       await router.replace('/out')
     } catch (e) {
       console.log(e);
@@ -91,7 +94,7 @@ const EditorCanvas = (props: Template) => {
     createHeader(props.Color, props.Title, stageRef.current, layerRef.current)
   }, [props]);
 
-  if (!sessionId || !speaker) {
+  if (!userId || !sessionId || !speaker || userId == undefined) {
     console.log("een probleem");
 
   }

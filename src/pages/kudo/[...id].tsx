@@ -4,7 +4,10 @@ import Head from "next/head";
 import Image from "next/image";
 import { NavigationBarContent } from "~/navigation/NavBarTitle";
 import { trpc } from "~/utils/trpc";
-import { useEffect, useRef } from "react"
+import { useRef } from "react"
+import { FaTrashAlt } from "react-icons/fa";
+import { UtilButtonsContent } from "~/hooks/useUtilButtons";
+import Link from "next/link";
 
 
 export function getServerSideProps(context: { query: { id: string }; }) {
@@ -22,24 +25,37 @@ export function getServerSideProps(context: { query: { id: string }; }) {
 const KudoDetail: NextPage<{ id: string }> = ({ id }) => {
 
 
+  console.log("voor");
+  const deleteKudo = trpc.kudos.deleteKudoById.useMutation()
+  const deleteImage = trpc.kudos.deleteImageById.useMutation()
+  console.log(deleteKudo);
+  console.log("na");
+
+
   const kudo: Kudo | null | undefined = trpc.kudos.getKudoById.useQuery({ id: id }).data
   const containerRef = useRef<HTMLDivElement>(null)
-  useEffect(() => {
-    console.log(containerRef.current?.offsetWidth);
-  }, [containerRef])
   const image: string | undefined = trpc.kudos.getImageById.useQuery({ id: kudo?.image ?? "error" }).data?.dataUrl
 
   if (!image || !kudo) {
     return <div>Something is not right.</div>
   }
 
-
+  function del() {
+    console.log("test1");
+    deleteKudo.mutate({ id: kudo?.id ?? "error" })
+    deleteImage.mutate({ id: kudo?.image ?? "error" })
+  }
 
   return (
     <>
       <NavigationBarContent>
         <h1>Kudo {kudo.sessionId}</h1>
       </NavigationBarContent>
+      <UtilButtonsContent>
+        <Link className="btn btn-ghost btn-circle" onClick={del} href="/out" data-cy="deleteButton">
+          <FaTrashAlt size={20} />
+        </Link>
+      </UtilButtonsContent>
       <Head>
         <title>eKudo</title>
         <meta name="description" content="eKudo app" />
@@ -61,3 +77,4 @@ const KudoDetail: NextPage<{ id: string }> = ({ id }) => {
 };
 
 export default KudoDetail;
+

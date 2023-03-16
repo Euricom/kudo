@@ -11,9 +11,8 @@ interface SessionProps {
 }
 
 const Session = ({ session }: SessionProps) => {
-    console.log(session);
     if (!session) {
-        return <><div>Error</div></>
+        return <></>
     }
     return (
         <>

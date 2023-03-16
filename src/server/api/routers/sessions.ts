@@ -20,6 +20,11 @@ export const sessionRouter = createTRPCRouter({
         return await fetch('http://localhost:3000/api/sessions').then(result => result.json()) as result
     }),
 
+    //Nog aanpassen met sprekerId
+    getSessionsBySpeaker: protectedProcedure.query(async () => {
+        return await fetch('http://localhost:3000/api/sessions').then(result => result.json()) as result
+    }),
+
     getSession: protectedProcedure.query(() => {
         return "you can now see this secret message!";
     }),

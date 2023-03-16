@@ -8,9 +8,29 @@ import { FiSearch } from "react-icons/fi";
 import { BiSortDown } from "react-icons/bi";
 import { NavigationBarContent } from "~/navigation/NavBarTitle";
 import NavButtons from "~/navigation/NavButtons";
+import { trpc } from '~/utils/trpc';
+
+type session = {
+  id: number,
+  title: string,
+  date: string,
+  speakerId: string,
+}
 
 const Home: NextPage = () => {
-  const sessions = ["Today", 1, 2, "Yesterday", 3, 4, 5, 6, "26/02/2023", 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30]
+  const result = trpc.sessions.getAll.useQuery().data
+  if (!result) {
+    return <div>Loading...</div>;
+  }
+  const sessions: session[] = result.sessions
+  console.log(sessions);
+  
+  sessions.map((s) => console.log(`${s.id} ${s.date.toString()}`));
+
+  const dates = new Set(sessions.map((s) => s.date).sort((a,b) => a>=b?1:-1))
+  console.log(dates);
+  
+
   return (
     <>
       <NavigationBarContent>
@@ -32,8 +52,12 @@ const Home: NextPage = () => {
       <main className="flex flex-col items-center justify-center overflow-y-scroll h-full">
         <div className="flex flex-wrap gap-8 h-full justify-center p-5">
           {sessions.map((x) => (
-            typeof (x) == 'string' ? <h1 className="justify-center w-full text-center text-3xl underline" key={x}>{x}</h1> : <Session id={x} key={x} />
+            <Session session={x} key={x.id} />
           ))}
+
+          {/* {sessions.map((x) => (
+            typeof (x) == 'string' ? <h1 className="justify-center w-full text-center text-3xl underline" key={x}>{x}</h1> : <Session session={x} key={x.Id} />
+          ))} */}
         </div>
       </main>
       <FAB text={"Create Kudo"} icon={<GrAdd />} url="/create" />

@@ -9,7 +9,6 @@ import { useSession } from 'next-auth/react';
 import { useSessionSpeaker } from '~/sessions/SelectedSessionAndSpeaker';
 import { useRouter } from 'next/router';
 import { trpc } from '~/utils/trpc';
-import { v4 } from "uuid";
 
 
 const EditorCanvas = (props: Template) => {
@@ -43,13 +42,10 @@ const EditorCanvas = (props: Template) => {
   }
 
   const submit = async () => {
-    const id: string = v4()
-    console.log(id);
-
     const dataUrl = stageRef.current.toDataURL();
     try {
-      createImage.mutate({ id: id, dataUrl: dataUrl })
-      createKudo.mutate({ image: id, sessionId: sessionId, userId: userId });
+      const image = await createImage.mutateAsync({ dataUrl: dataUrl })
+      await createKudo.mutateAsync({ image: image.id, sessionId: sessionId, userId: userId });
 
 
       await router.replace('/out')

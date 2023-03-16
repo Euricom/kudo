@@ -11,7 +11,6 @@ const createKudoInput = object({
     userId: string(),
 })
 const createImageInput = object({
-    id: string(),
     dataUrl: string(),
 })
 
@@ -54,7 +53,6 @@ export const kudoRouter = createTRPCRouter({
                 id: input.id,
             }
         });
-        console.log(kudo);
 
         if (kudo == undefined) {
             throw new Error()
@@ -92,7 +90,6 @@ export const kudoRouter = createTRPCRouter({
     createKudoImage: protectedProcedure.input(createImageInput).mutation(async ({ input, ctx }): Promise<Image> => {
         const image = (await ctx.prisma.image.create({
             data: {
-                id: input.id,
                 dataUrl: input.dataUrl,
             },
         }));

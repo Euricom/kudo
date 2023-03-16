@@ -25,11 +25,8 @@ export function getServerSideProps(context: { query: { id: string }; }) {
 const KudoDetail: NextPage<{ id: string }> = ({ id }) => {
 
 
-  console.log("voor");
   const deleteKudo = trpc.kudos.deleteKudoById.useMutation()
   const deleteImage = trpc.kudos.deleteImageById.useMutation()
-  console.log(deleteKudo);
-  console.log("na");
 
 
   const kudo: Kudo | null | undefined = trpc.kudos.getKudoById.useQuery({ id: id }).data
@@ -41,7 +38,6 @@ const KudoDetail: NextPage<{ id: string }> = ({ id }) => {
   }
 
   function del() {
-    console.log("test1");
     deleteKudo.mutate({ id: kudo?.id ?? "error" })
     deleteImage.mutate({ id: kudo?.image ?? "error" })
   }

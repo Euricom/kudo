@@ -10,10 +10,10 @@ import { api } from "~/utils/api";
 
 
 type session = {
-  Id: number,
-  Title: string,
-  Date: string,
-  SpeakerId: string,
+  id: number,
+  title: string,
+  date: string,
+  speakerId: string,
 }
 
 type result = {
@@ -44,9 +44,9 @@ const New: NextPage = () => {
       </Head>
       <main className="flex flex-col items-center justify-center overflow-y-scroll h-full gap-5">
         <FcPodiumWithSpeaker size={100} />
-        <Select data-cy="SelectSpeaker" value={speaker} onChange={(e: React.ChangeEvent<HTMLInputElement>): void => setSpeaker(e.target.value)} label="Speaker" options={data.map(x => x.SpeakerId)} />
+        <Select data-cy="SelectSpeaker" value={speaker} onChange={(e: React.ChangeEvent<HTMLInputElement>): void => setSpeaker(e.target.value)} label="Speaker" options={data.map(x => x.speakerId)} />
         <FcPodiumWithAudience size={100} />
-        <Select data-cy="SelectSession" value={session} onChange={(e: React.ChangeEvent<HTMLInputElement>): void => setSession(e.target.value)} label="Session" options={data.map(x => x.Title)} />
+        <Select data-cy="SelectSession" value={session} onChange={(e: React.ChangeEvent<HTMLInputElement>): void => setSession(e.target.value)} label="Session" options={data.map(x => x.title)} />
         <label className="label cursor-pointer gap-5">
           <input type="checkbox" className="checkbox" />
           <span className="label-text">Hide my name.</span>

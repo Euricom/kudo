@@ -9,7 +9,6 @@ import { BiSortDown } from "react-icons/bi";
 import { NavigationBarContent } from "~/navigation/NavBarTitle";
 import NavButtons from "~/navigation/NavButtons";
 import { useSession } from "next-auth/react";
-import { type Kudo } from "@prisma/client";
 import { api } from "~/utils/api";
 
 
@@ -21,9 +20,7 @@ const Out: NextPage = () => {
     throw new Error("No user signed in")
 
   }
-  const reverseKudos = api.kudos.getKudosByUserId.useQuery({ id: userId }).data
-  const kudos: Kudo[] = []
-  reverseKudos?.forEach(k => kudos.unshift(k))
+  const kudos = api.kudos.getKudosByUserId.useQuery({ id: userId }).data
 
 
 

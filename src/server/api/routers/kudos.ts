@@ -26,6 +26,9 @@ export const kudoRouter = createTRPCRouter({
         return ctx.prisma.kudo.findMany({
             where: {
                 userId: input.id,
+            },
+            orderBy: {
+                id: 'desc'
             }
         });
     }),

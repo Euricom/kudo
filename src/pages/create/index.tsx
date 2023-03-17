@@ -8,9 +8,8 @@ import { NavigationBarContent } from "~/navigation/NavBarTitle";
 // import { env } from "~/env.mjs";
 // import * as msal from '@azure/msal-node';
 
-import { trpc } from '~/utils/trpc';
-
 import { useState } from "react";
+import { api } from "~/utils/api";
 
 
 type session = {
@@ -69,7 +68,7 @@ const New: NextPage = () => {
   const [session, setSession] = useState<string>("");
   const [speaker, setSpeaker] = useState<string>("");
 
-  const result: result | undefined = trpc.sessions.getAll.useQuery().data
+  const result: result | undefined = api.sessions.getAll.useQuery().data
   if (!result) {
     return <div>Loading...</div>;
   }

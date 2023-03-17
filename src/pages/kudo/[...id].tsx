@@ -3,7 +3,6 @@ import { type NextPage } from "next";
 import Head from "next/head";
 import Image from "next/image";
 import { NavigationBarContent } from "~/navigation/NavBarTitle";
-import { useRef } from "react"
 import { FaTrashAlt } from "react-icons/fa";
 import { UtilButtonsContent } from "~/hooks/useUtilButtons";
 import Link from "next/link";
@@ -30,7 +29,6 @@ const KudoDetail: NextPage<{ id: string }> = ({ id }) => {
 
 
   const kudo: Kudo | null | undefined = api.kudos.getKudoById.useQuery({ id: id }).data
-  const containerRef = useRef<HTMLDivElement>(null)
   const image: string | undefined = api.kudos.getImageById.useQuery({ id: kudo?.image ?? "error" }).data?.dataUrl
 
   if (!image || !kudo) {
@@ -64,8 +62,8 @@ const KudoDetail: NextPage<{ id: string }> = ({ id }) => {
       </div> */}
 
       <div className="flex flex-col items-center justify-center h-full">
-        <div className="aspect-[3/2] w-full max-h-full max-w-4xl bg-white" ref={containerRef}>
-          <Image className="shadow-2xl" src={image} width={containerRef.current?.offsetWidth ?? 600} height={containerRef.current?.offsetHeight ?? 400} alt="Kudo" />
+        <div className="aspect-[3/2] w-full max-h-full max-w-4xl bg-white relative">
+          <Image className="shadow-2xl" src={image} fill alt="Kudo" />
         </div>
       </div>
     </>

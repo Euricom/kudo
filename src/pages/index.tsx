@@ -7,8 +7,8 @@ import { FiSearch } from "react-icons/fi";
 import { BiSortDown } from "react-icons/bi";
 import { NavigationBarContent } from "~/navigation/NavBarTitle";
 import NavButtons from "~/navigation/NavButtons";
-import { trpc } from '~/utils/trpc';
 import SessionList from "~/sessions/SessionList";
+import { api } from "~/utils/api";
 
 type session = {
   id: number,
@@ -18,7 +18,7 @@ type session = {
 }
 
 const Home: NextPage = () => {
-  const result = trpc.sessions.getSessionsBySpeaker.useQuery().data
+  const result = api.sessions.getSessionsBySpeaker.useQuery().data
   if (!result) {
     return <div>Loading...</div>;
   }
@@ -36,10 +36,10 @@ const Home: NextPage = () => {
       </Head>
       <UtilButtonsContent>
         <button className="btn btn-ghost btn-circle">
-            <FiSearch size={20} />
+          <FiSearch size={20} />
         </button>
         <button className="btn btn-ghost btn-circle">
-            <BiSortDown size={20} />
+          <BiSortDown size={20} />
         </button>
       </UtilButtonsContent>
       <main className="flex flex-col items-center justify-center overflow-y-scroll h-full">

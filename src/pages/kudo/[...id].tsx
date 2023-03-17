@@ -3,11 +3,11 @@ import { type NextPage } from "next";
 import Head from "next/head";
 import Image from "next/image";
 import { NavigationBarContent } from "~/navigation/NavBarTitle";
-import { trpc } from "~/utils/trpc";
 import { useRef } from "react"
 import { FaTrashAlt } from "react-icons/fa";
 import { UtilButtonsContent } from "~/hooks/useUtilButtons";
 import Link from "next/link";
+import { api } from "~/utils/api";
 
 
 export function getServerSideProps(context: { query: { id: string }; }) {
@@ -25,13 +25,13 @@ export function getServerSideProps(context: { query: { id: string }; }) {
 const KudoDetail: NextPage<{ id: string }> = ({ id }) => {
 
 
-  const deleteKudo = trpc.kudos.deleteKudoById.useMutation()
-  const deleteImage = trpc.kudos.deleteImageById.useMutation()
+  const deleteKudo = api.kudos.deleteKudoById.useMutation()
+  const deleteImage = api.kudos.deleteImageById.useMutation()
 
 
-  const kudo: Kudo | null | undefined = trpc.kudos.getKudoById.useQuery({ id: id }).data
+  const kudo: Kudo | null | undefined = api.kudos.getKudoById.useQuery({ id: id }).data
   const containerRef = useRef<HTMLDivElement>(null)
-  const image: string | undefined = trpc.kudos.getImageById.useQuery({ id: kudo?.image ?? "error" }).data?.dataUrl
+  const image: string | undefined = api.kudos.getImageById.useQuery({ id: kudo?.image ?? "error" }).data?.dataUrl
 
   if (!image || !kudo) {
     return <div>Something is not right.</div>

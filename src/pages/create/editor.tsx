@@ -22,6 +22,7 @@ export async function getServerSideProps(context: { query: { template: string; }
 
 const Editor: NextPage<{ res: Template }> = ({ res }) => {
 
+
   return (
     <>
       <NavigationBarContent>
@@ -32,22 +33,25 @@ const Editor: NextPage<{ res: Template }> = ({ res }) => {
         <meta name="description" content="eKudo app" />
         <link rel="icon" href="/favicon.ico" />
       </Head>
+      {/* <div className="w-full h-fit bg-secondary text-white p-5 text-center">
+        <h1 data-cy="session" className="lg:inline">&emsp;&emsp;&emsp;&emsp;Session: {sessionId}&emsp;&emsp;</h1><h1 data-cy="speaker" className="lg:inline"> Speaker: {speaker}</h1>
+      </div> */}
       <UtilButtonsContent>
-          <label htmlFor="my-modal-text" className="btn btn-circle btn-secondary">
-            <BiText size={20} />
-          </label>
-          <button  className="btn btn-circle btn-secondary">
-            <BiPencil size={20} />
-          </button>
-          <button  className="btn btn-circle btn-secondary">
-            <GrEmoji size={20} />
-          </button>
-          <button  className="btn btn-circle btn-secondary">
-            <BiPalette size={20} />
-          </button>
-          <label htmlFor="my-modal-clear" className="btn btn-circle btn-secondary">
-            <BiTrash size={20} />
-          </label>
+        <label htmlFor="my-modal-text" className="btn btn-circle btn-secondary">
+          <BiText size={20} />
+        </label>
+        <button className="btn btn-circle btn-secondary">
+          <BiPencil size={20} />
+        </button>
+        <button className="btn btn-circle btn-secondary">
+          <GrEmoji size={20} />
+        </button>
+        <button className="btn btn-circle btn-secondary">
+          <BiPalette size={20} />
+        </button>
+        <label htmlFor="my-modal-clear" className="btn btn-circle btn-secondary">
+          <BiTrash size={20} />
+        </label>
       </UtilButtonsContent>
       {/* Main */}
       <main className="flex flex-col items-center justify-center overflow-y-scroll h-full" >

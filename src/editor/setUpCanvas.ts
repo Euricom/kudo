@@ -1,10 +1,10 @@
 import Konva from 'konva';
 
-const createStage: (container: HTMLDivElement) => {stage: Konva.Stage, layer: Konva.Layer, cleanUp: () => void} = (container: HTMLDivElement) => {
+const createStage: (container: HTMLDivElement | null) => {stage: Konva.Stage, layer: Konva.Layer, cleanUp: () => void} = (container: HTMLDivElement | null) => {
     // create the Konva stage, layer, and rectangle
 
-    const sceneWidth = container.offsetWidth ?? 0;
-    const sceneHeight = container.offsetHeight ?? 0;
+    const sceneWidth = container?.offsetWidth ?? 0;
+    const sceneHeight = container?.offsetHeight ?? 0;
 
     const newStage = new Konva.Stage({
         container: container ?? 'kudo',
@@ -22,7 +22,7 @@ const createStage: (container: HTMLDivElement) => {stage: Konva.Stage, layer: Ko
 
     function fitStageIntoParentContainer() {
         // now we need to fit stage into parent container
-        const containerWidth = container.offsetWidth;
+        const containerWidth = container?.offsetWidth;
 
         // but we also make the full scene visible
         // so we need to scale all objects on canvas

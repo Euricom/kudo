@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, type MutableRefObject } from 'react';
+import React, { useEffect, useRef, type MutableRefObject, useCallback } from 'react';
 import { type Template } from "@prisma/client";
 import type Konva from 'konva';
 import addText from './addText';
@@ -33,14 +33,14 @@ const EditorCanvas = ({editorFunction, template, setFunction, receiveDataUrl}: E
     setFunction(EditorFunctions.None)
   }
 
-  const getDataUrl = () => {
+  const getDataUrl = useCallback(() => {
     layerRef.current.getChildren().forEach((e) => {
       if (e.getClassName() == 'Transformer') {
         e.hide() 
       }
     })
     return stageRef.current.toDataURL();
-  }
+  }, [])
 
   useEffect(() => {
     const {stage, layer, cleanUp} = createStage(containerRef.current ?? new HTMLDivElement())
@@ -53,22 +53,26 @@ const EditorCanvas = ({editorFunction, template, setFunction, receiveDataUrl}: E
   }, [template]);
 
   useEffect(() => {
+    const onAddText = () => {
+      addText(stageRef.current, layerRef.current)
+      setFunction(EditorFunctions.None)
+    }
+
+    const onDraw = () => {
+      setFunction(EditorFunctions.None)
+    }
+
     switch (editorFunction) {
       case EditorFunctions.Text:
         console.log('Text');
-        stageRef.current.on('click tap', function () {
-          addText(stageRef.current, layerRef.current)
-          setFunction(EditorFunctions.None)
-        });
+        stageRef.current.on('click tap', onAddText);
         break
       case EditorFunctions.Draw:
         console.log('Draw');
         break
       case EditorFunctions.Sticker:
         console.log('Sticker');
-        stageRef.current.on('click tap', function () {
-          setFunction(EditorFunctions.None)
-        });
+        stageRef.current.on('click tap', onDraw);
         break
       case EditorFunctions.DataUrl:
         receiveDataUrl(getDataUrl())
@@ -79,16 +83,16 @@ const EditorCanvas = ({editorFunction, template, setFunction, receiveDataUrl}: E
     return () => {
       switch (editorFunction) {
         case EditorFunctions.Text:
-          stageRef.current.removeEventListener('click tap', )
+          stageRef.current.removeEventListener('click tap')
           break
         case EditorFunctions.Draw:
           break
         case EditorFunctions.Sticker:
-          stageRef.current.removeEventListener('click tap', )
+          stageRef.current.removeEventListener('click tap')
           break
       }
     }
-  }, [editorFunction, setFunction, receiveDataUrl]);
+  }, [editorFunction, setFunction, receiveDataUrl, getDataUrl]);
 
   
 

@@ -13,15 +13,9 @@ import Select from "~/input/Select";
 import { NavigationBarContent } from "~/navigation/NavBarTitle";
 import { env } from "~/env.mjs";
 import * as msal from "@azure/msal-node";
-import axios, { AxiosRequestConfig } from 'axios';
 
-
-// import { useMsal, useAccount } from "@azure/msal-react";
-
-// import { trpc } from '~/utils/trpc';
-// import { PublicClientApplication } from "@azure/msal-browser";
-import { useState, useEffect } from "react";
-import { trpc } from "~/utils/trpc";
+import { useState } from "react";
+import { api } from "~/utils/api";
 
 
 type session = {
@@ -157,13 +151,13 @@ const New: NextPage/*<{ res: any }>*/ = (/*{ res }*/) => {
 
 
 
-  console.log(res);
+  // console.log(res);
 
 
   const [session, setSession] = useState<string>("");
   const [speaker, setSpeaker] = useState<string>("");
 
-  const result: result | undefined = trpc.sessions.getAll.useQuery().data
+  const result: result | undefined = api.sessions.getAll.useQuery().data
   if (!result) {
     return <div>Loading...</div>;
   }

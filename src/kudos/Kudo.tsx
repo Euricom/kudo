@@ -1,7 +1,7 @@
 import { type Kudo } from "@prisma/client";
 import Image from "next/image";
 import Link from "next/link";
-import { trpc } from "~/utils/trpc";
+import { api } from "~/utils/api";
 
 //Voorlopig adhv card, moet Image worden naar de toekomst toe
 
@@ -12,7 +12,7 @@ interface KudoProps {
 
 
 const KudoCard = ({ kudo }: KudoProps) => {
-  const image = trpc.kudos.getImageById.useQuery({ id: kudo.image }).data?.dataUrl
+  const image = api.kudos.getImageById.useQuery({ id: kudo.image }).data?.dataUrl
   if (!image) {
     return <></>
   }

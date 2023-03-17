@@ -8,14 +8,14 @@ import { createHeader } from './setUpCanvas'
 import { useSession } from 'next-auth/react';
 import { useSessionSpeaker } from '~/sessions/SelectedSessionAndSpeaker';
 import { useRouter } from 'next/router';
-import { trpc } from '~/utils/trpc';
+import { api } from '~/utils/api';
 
 
 const EditorCanvas = (props: Template) => {
   const [message, setMessage] = useState('');
 
-  const createKudo = trpc.kudos.createKudo.useMutation()
-  const createImage = trpc.kudos.createKudoImage.useMutation()
+  const createKudo = api.kudos.createKudo.useMutation()
+  const createImage = api.kudos.createKudoImage.useMutation()
   const containerRef = useRef<HTMLDivElement>(null);
   const stageRef = useRef<Konva.Stage>() as MutableRefObject<Konva.Stage>;
   const layerRef = useRef<Konva.Layer>() as MutableRefObject<Konva.Layer>;

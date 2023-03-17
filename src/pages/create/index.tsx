@@ -5,9 +5,6 @@ import { GrNext } from "react-icons/gr"
 import { FcPodiumWithSpeaker, FcPodiumWithAudience } from "react-icons/fc"
 import Select from "~/input/Select";
 import { NavigationBarContent } from "~/navigation/NavBarTitle";
-// import { env } from "~/env.mjs";
-// import * as msal from '@azure/msal-node';
-
 import { useState } from "react";
 import { api } from "~/utils/api";
 
@@ -24,45 +21,6 @@ type result = {
 }
 
 
-// export async function getServerSideProps() {
-//   const msalConfig = {
-//     auth: {
-//       clientId: env.AZURE_AD_CLIENT_ID,
-//       authority: `https://login.microsoftonline.com/${env.AZURE_AD_TENANT_ID}/`,
-//       clientSecret: env.AZURE_AD_CLIENT_SECRET,
-//     },
-//   };
-//   const tokenRequest = {
-//     scopes: ['https://graph.microsoft.com/.default'],
-//   };
-
-//   const { accessToken } = await new msal.ConfidentialClientApplication(
-//     msalConfig,
-//   ).acquireTokenByClientCredential(tokenRequest);
-
-//   const options = {
-//     headers: {
-//       Authorization: `Bearer ${accessToken}`,
-//     },
-//   };
-
-// const result = await fetch('https://graph.microsoft.com/v1.0/users/0b53d2c1-bc55-4ab3-a161-927d289257f2', options)
-// const data = result
-// console.log("voor");
-// console.log(accessToken);
-// console.log("tussen");
-// console.log(result);
-// console.log("na");
-
-// return {
-//   props: {
-//     res: accessToken,
-//   }
-// }
-// }
-
-
-
 const New: NextPage = () => {
 
   const [session, setSession] = useState<string>("");
@@ -73,9 +31,6 @@ const New: NextPage = () => {
     return <div>Loading...</div>;
   }
   const data: session[] = result.sessions
-
-
-
 
   return (
     <>

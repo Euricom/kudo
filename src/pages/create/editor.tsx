@@ -7,14 +7,10 @@ import { BiPencil, BiPalette, BiText, BiTrash } from "react-icons/bi"
 import { NavigationBarContent } from "~/navigation/NavBarTitle";
 import { type Template } from "@prisma/client";
 import { findTemplateById } from "~/server/services/templateService";
+import FAB from "~/navigation/FAB";
+import { FiSend } from "react-icons/fi"
 import EditorCanvas from '~/editor/EditorCanvas';
-
-enum SelectedButton {
-  Text = 'text',
-  Draw = 'draw',
-  Sticker = 'sticker',
-  None = 'none'
-}
+import { EditorFunctions } from '~/editor/EditorCanvas';
 
 export async function getServerSideProps(context: { query: { template: string; }; }) {
   const id = context.query.template
@@ -27,7 +23,22 @@ export async function getServerSideProps(context: { query: { template: string; }
 }
 
 const Editor: NextPage<{ res: Template }> = ({ res }) => {
-  const [selectedButton, setSelectedButton] = useState<SelectedButton>()
+  const [selectedButton, setSelectedButton] = useState<EditorFunctions>()
+
+  const receiveDataUrl = async (dataUrl: string) => {
+    try {
+      await fetch('/api/kudo', 
+      {
+        body: JSON.stringify({ dataUrl: dataUrl }),
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        method: 'POST'
+      })
+    } catch (e) {
+      console.log(e);
+    }
+  }
 
   return (
     <>
@@ -40,26 +51,27 @@ const Editor: NextPage<{ res: Template }> = ({ res }) => {
         <link rel="icon" href="/favicon.ico" />
       </Head>
       <UtilButtonsContent>
-          <button onClick={() => setSelectedButton(SelectedButton.Text)} className={"btn btn-circle btn-secondary " + (selectedButton==SelectedButton.Text? "btn-accent":"")}>
+          <button onClick={() => setSelectedButton(EditorFunctions.Text)} className={"btn btn-circle btn-secondary " + (selectedButton==EditorFunctions.Text? "btn-accent":"")}>
             <BiText size={20} />
           </button>
-          <button onClick={() => setSelectedButton(SelectedButton.Draw)} className={"btn btn-circle btn-secondary "+ (selectedButton==SelectedButton.Draw? "btn-accent":"")}>
+          <button onClick={() => setSelectedButton(EditorFunctions.Draw)} className={"btn btn-circle btn-secondary "+ (selectedButton==EditorFunctions.Draw? "btn-accent":"")}>
             <BiPencil size={20} />
           </button>
-          <button onClick={() => setSelectedButton(SelectedButton.Sticker)} className={"btn btn-circle btn-secondary "+ (selectedButton==SelectedButton.Sticker? "btn-accent":"")}>
+          <button onClick={() => setSelectedButton(EditorFunctions.Sticker)} className={"btn btn-circle btn-secondary "+ (selectedButton==EditorFunctions.Sticker? "btn-accent":"")}>
             <GrEmoji size={20} />
           </button>
-          <button className="btn btn-circle btn-secondary">
+          <button onClick={() => setSelectedButton(EditorFunctions.Color)} className={"btn btn-circle btn-secondary "+ (selectedButton==EditorFunctions.Color? "btn-accent":"")}>
             <BiPalette size={20} />
           </button>
-          <label htmlFor="my-modal-clear" className="btn btn-circle btn-secondary">
+          <button onClick={() => setSelectedButton(EditorFunctions.Clear)} className={"btn btn-circle btn-secondary "+ (selectedButton==EditorFunctions.Clear? "btn-accent":"")}>
             <BiTrash size={20} />
-          </label>
+          </button>
       </UtilButtonsContent>
       {/* Main */}
       <main className="flex flex-col items-center justify-center overflow-y-scroll h-full" >
-        <EditorCanvas button={selectedButton} template={res} setSelectedButton={setSelectedButton} />
+        <EditorCanvas editorFunction={selectedButton} template={res} setFunction={setSelectedButton} receiveDataUrl={(data) => void receiveDataUrl(data)}/>
       </main>
+      <FAB text={"Send"} icon={<FiSend />} url="/out" onClick={() => setSelectedButton(EditorFunctions.DataUrl)}/>
     </>
   );
 };

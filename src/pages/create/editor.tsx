@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useState, useRef} from 'react';
 import { type NextPage } from "next";
 import Head from "next/head";
 import { UtilButtonsContent } from "~/hooks/useUtilButtons";
@@ -9,8 +9,8 @@ import { type Template } from "@prisma/client";
 import { findTemplateById } from "~/server/services/templateService";
 import FAB from "~/navigation/FAB";
 import { FiSend } from "react-icons/fi"
-import EditorCanvas from '~/editor/EditorCanvas';
-import { EditorFunctions } from '~/editor/EditorCanvas';
+import EditorCanvas, { EditorFunctions } from '~/editor/EditorCanvas';
+import dynamic from 'next/dynamic';
 
 export async function getServerSideProps(context: { query: { template: string; }; }) {
   const id = context.query.template
@@ -22,8 +22,14 @@ export async function getServerSideProps(context: { query: { template: string; }
   }
 }
 
+const CanvasTest = dynamic(
+  () => import('../../editor/CanvasTest'),
+  { ssr: false }
+);
+
 const Editor: NextPage<{ res: Template }> = ({ res }) => {
   const [selectedButton, setSelectedButton] = useState<EditorFunctions>()
+  const containerRef = useRef<HTMLDivElement>(null);
 
   const receiveDataUrl = async (dataUrl: string) => {
     try {
@@ -69,7 +75,11 @@ const Editor: NextPage<{ res: Template }> = ({ res }) => {
       </UtilButtonsContent>
       {/* Main */}
       <main className="flex flex-col items-center justify-center overflow-y-scroll h-full" >
-        <EditorCanvas editorFunction={selectedButton} template={res} setFunction={setSelectedButton} receiveDataUrl={(data) => void receiveDataUrl(data)}/>
+        {/* <EditorCanvas editorFunction={selectedButton} template={res} setFunction={setSelectedButton} receiveDataUrl={(data) => void receiveDataUrl(data)}/> */}
+        
+        <div ref={containerRef} id='kudo' className="aspect-[3/2] w-full max-h-full max-w-5xl bg-white">
+          <CanvasTest editorFunction={selectedButton} template={res} setFunction={setSelectedButton} receiveDataUrl={(data) => void receiveDataUrl(data)} container={containerRef.current}/>
+        </div>
       </main>
       <FAB text={"Send"} icon={<FiSend />} url="/out" onClick={() => setSelectedButton(EditorFunctions.DataUrl)}/>
     </>

@@ -130,6 +130,8 @@ const ConfirmationModal = ({onSubmit, onCancel}: ModalProps) => {
   )
 }
 
+export {ConfirmationModal};
+
 EditorCanvas.displayName = "EditorCanvas"
 
 export default EditorCanvas;

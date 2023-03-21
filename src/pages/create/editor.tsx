@@ -1,4 +1,4 @@
-import React, {useState, useRef, useEffect} from 'react';
+import React, {useState} from 'react';
 import { type NextPage } from "next";
 import Head from "next/head";
 import { UtilButtonsContent } from "~/hooks/useUtilButtons";
@@ -74,8 +74,8 @@ const Editor: NextPage<{ res: Template }> = ({ res }) => {
       </UtilButtonsContent>
       {/* Main */}
       <main className="flex flex-col items-center justify-center overflow-y-scroll h-full" >
-        {/* <EditorCanvas editorFunction={selectedButton} template={res} setFunction={setSelectedButton} receiveDataUrl={(data) => void receiveDataUrl(data)}/> */}
-          <CanvasTest editorFunction={selectedButton} template={res} setFunction={setSelectedButton} receiveDataUrl={(data) => void receiveDataUrl(data)}/>
+        <EditorCanvas editorFunction={selectedButton} template={res} setFunction={setSelectedButton} receiveDataUrl={(data) => void receiveDataUrl(data)}/>
+        {/* <CanvasTest editorFunction={selectedButton} template={res} setFunction={setSelectedButton} receiveDataUrl={(data) => void receiveDataUrl(data)}/> */}
       </main>
       <FAB text={"Send"} icon={<FiSend />} url="/out" onClick={() => setSelectedButton(EditorFunctions.DataUrl)}/>
     </>

@@ -32,11 +32,11 @@ const getToken = async () => {
     return options
 }
 
-type ObjectUsers = {
+type AADResponseUsers = {
     value: User[]
     '@odata.nextLink': string
 }
-type ObjectUser = {
+type AADResponseUser = {
     value: User
 }
 type User = {
@@ -58,7 +58,7 @@ export const findAllUsers = async (): Promise<User[]> => {
     let users: User[] = []
     let url = 'https://graph.microsoft.com/v1.0/users'
     while (url != undefined) {
-        const result: ObjectUsers = await fetch(url, options).then(r => r.json()) as ObjectUsers
+        const result: AADResponseUsers = await fetch(url, options).then(r => r.json()) as AADResponseUsers
         users = users.concat(result.value)
         url = result['@odata.nextLink'];
     }
@@ -67,6 +67,6 @@ export const findAllUsers = async (): Promise<User[]> => {
 
 export const findUserById = async (id: string): Promise<User> => {
     const options = await getToken()
-    const user: ObjectUser = await fetch('https://graph.microsoft.com/v1.0/users/' + id, options).then(r => r.json()) as ObjectUser
+    const user: AADResponseUser = await fetch('https://graph.microsoft.com/v1.0/users/' + id, options).then(r => r.json()) as AADResponseUser
     return user.value
 };

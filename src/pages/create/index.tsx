@@ -23,11 +23,12 @@ type result = {
 
 const New: NextPage = () => {
 
+  const speakers = api.users.getAllUsers.useQuery().data
   const [session, setSession] = useState<string>("");
   const [speaker, setSpeaker] = useState<string>("");
 
   const result: result | undefined = api.sessions.getAll.useQuery().data
-  if (!result) {
+  if (!result || !speakers) {
     return <div>Loading...</div>;
   }
   const data: session[] = result.sessions
@@ -44,9 +45,9 @@ const New: NextPage = () => {
       </Head>
       <main className="flex flex-col items-center justify-center overflow-y-scroll h-full gap-5">
         <FcPodiumWithSpeaker size={100} />
-        <Select data-cy="SelectSpeaker" value={speaker} onChange={(e: React.ChangeEvent<HTMLInputElement>): void => setSpeaker(e.target.value)} label="Speaker" options={data.map(x => x.speakerId)} />
+        <Select data-cy="SelectSpeaker" value={speaker} onChange={(e: React.ChangeEvent<HTMLInputElement>): void => setSpeaker(e.target.value)} label="Speaker" options={speakers.filter(x => (data.filter(x => x.title.toLowerCase().includes(session.toLowerCase()))).map(x => x.speakerId).includes(x.id)).map(x => x.displayName)} />
         <FcPodiumWithAudience size={100} />
-        <Select data-cy="SelectSession" value={session} onChange={(e: React.ChangeEvent<HTMLInputElement>): void => setSession(e.target.value)} label="Session" options={data.map(x => x.title)} />
+        <Select data-cy="SelectSession" value={session} onChange={(e: React.ChangeEvent<HTMLInputElement>): void => setSession(e.target.value)} label="Session" options={data.filter(x => (speakers.filter(x => x.displayName.toLowerCase().includes(speaker.toLowerCase())).map(x => x.id).includes(x.speakerId))).map(x => x.title)} />
         <label className="label cursor-pointer gap-5">
           <input type="checkbox" className="checkbox" />
           <span className="label-text">Hide my name.</span>

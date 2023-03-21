@@ -7,6 +7,7 @@ import Select from "~/input/Select";
 import { NavigationBarContent } from "~/navigation/NavBarTitle";
 import { useState } from "react";
 import { api } from "~/utils/api";
+import { useSession } from "next-auth/react";
 
 
 type Session = {
@@ -23,16 +24,23 @@ type Result = {
 
 const New: NextPage = () => {
 
-  const speakers = api.users.getAllUsers.useQuery().data
+  const users = api.users.getAllUsers.useQuery().data
   const [session, setSession] = useState<string>("");
   const [speaker, setSpeaker] = useState<string>("");
+  const me = useSession().data?.user.email
 
   const result: Result | undefined = api.sessions.getAll.useQuery().data
-  if (!result || !speakers) {
+  if (!result || !users) {
     return <div>Loading...</div>;
   }
   const data: Session[] = result.sessions
 
+  const visibleSpeakers = () => {
+    return users.filter(x => (x.mail !== me)).filter(x => (data.filter(x => x.Title.toLowerCase().includes(session.toLowerCase()))).map(x => x.SpeakerId).includes(x.id)).map(x => x.displayName)
+  }
+  const visibleSessions = () => {
+    return data.filter(x => (users.filter(x => x.displayName.toLowerCase().includes(speaker.toLowerCase())).map(x => x.id).includes(x.SpeakerId))).map(x => x.Title)
+  }
   return (
     <>
       <NavigationBarContent>
@@ -45,9 +53,9 @@ const New: NextPage = () => {
       </Head>
       <main className="flex flex-col items-center justify-center overflow-y-scroll h-full gap-5">
         <FcPodiumWithSpeaker size={100} />
-        <Select data-cy="SelectSpeaker" value={speaker} onChange={(e: React.ChangeEvent<HTMLInputElement>): void => setSpeaker(e.target.value)} label="Speaker" options={speakers.filter(x => (data.filter(x => x.Title.toLowerCase().includes(session.toLowerCase()))).map(x => x.SpeakerId).includes(x.id)).map(x => x.displayName)} />
+        <Select data-cy="SelectSpeaker" value={speaker} onChange={(e: React.ChangeEvent<HTMLInputElement>): void => setSpeaker(e.target.value)} label="Speaker" options={visibleSpeakers()} />
         <FcPodiumWithAudience size={100} />
-        <Select data-cy="SelectSession" value={session} onChange={(e: React.ChangeEvent<HTMLInputElement>): void => setSession(e.target.value)} label="Session" options={data.filter(x => (speakers.filter(x => x.displayName.toLowerCase().includes(speaker.toLowerCase())).map(x => x.id).includes(x.SpeakerId))).map(x => x.Title)} />
+        <Select data-cy="SelectSession" value={session} onChange={(e: React.ChangeEvent<HTMLInputElement>): void => setSession(e.target.value)} label="Session" options={visibleSessions()} />
         <label className="label cursor-pointer gap-5">
           <input type="checkbox" className="checkbox" />
           <span className="label-text">Hide my name.</span>

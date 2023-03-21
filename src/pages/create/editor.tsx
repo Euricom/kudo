@@ -1,4 +1,4 @@
-import React, {useState, useRef} from 'react';
+import React, {useState, useRef, useEffect} from 'react';
 import { type NextPage } from "next";
 import Head from "next/head";
 import { UtilButtonsContent } from "~/hooks/useUtilButtons";
@@ -29,7 +29,6 @@ const CanvasTest = dynamic(
 
 const Editor: NextPage<{ res: Template }> = ({ res }) => {
   const [selectedButton, setSelectedButton] = useState<EditorFunctions>()
-  const containerRef = useRef<HTMLDivElement>(null);
 
   const receiveDataUrl = async (dataUrl: string) => {
     try {
@@ -76,10 +75,7 @@ const Editor: NextPage<{ res: Template }> = ({ res }) => {
       {/* Main */}
       <main className="flex flex-col items-center justify-center overflow-y-scroll h-full" >
         {/* <EditorCanvas editorFunction={selectedButton} template={res} setFunction={setSelectedButton} receiveDataUrl={(data) => void receiveDataUrl(data)}/> */}
-        
-        <div ref={containerRef} id='kudo' className="aspect-[3/2] w-full max-h-full max-w-5xl bg-white">
-          <CanvasTest editorFunction={selectedButton} template={res} setFunction={setSelectedButton} receiveDataUrl={(data) => void receiveDataUrl(data)} container={containerRef.current}/>
-        </div>
+          <CanvasTest editorFunction={selectedButton} template={res} setFunction={setSelectedButton} receiveDataUrl={(data) => void receiveDataUrl(data)}/>
       </main>
       <FAB text={"Send"} icon={<FiSend />} url="/out" onClick={() => setSelectedButton(EditorFunctions.DataUrl)}/>
     </>

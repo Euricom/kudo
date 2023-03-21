@@ -1,28 +1,47 @@
-import React, { useRef, useCallback, useEffect, type MutableRefObject } from 'react'
+import React, { useRef, useCallback, useEffect, useState, useMemo, type MutableRefObject } from 'react'
 import { Stage, Layer, Rect, Text } from 'react-konva';
 import type Konva from 'konva'
 import { ConfirmationModal, EditorFunctions } from './EditorCanvas';
 import { type Template } from '@prisma/client';
-import { createHeader } from './setUpCanvas';
 import addText from './addText';
+import { type KonvaEventObject } from 'konva/lib/Node';
+import useDimensions from '~/hooks/useDimensions';
 
 type CanvasTestProps = {
     editorFunction: EditorFunctions | undefined,
     template: Template,
     setFunction: (type: EditorFunctions) => void,
-    receiveDataUrl: (dataUrl: string) => void,
-    container: HTMLDivElement | null
+    receiveDataUrl: (dataUrl: string) => void
 }
 
-const CanvasTest = ({editorFunction, template, setFunction, receiveDataUrl, container}: CanvasTestProps) => {
+const CanvasTest = ({editorFunction, template, setFunction, receiveDataUrl}: CanvasTestProps) => {
+    const containerRef = useRef<HTMLDivElement>(null);
     const stageRef = useRef<Konva.Stage>() as MutableRefObject<Konva.Stage>;
     const layerRef = useRef<Konva.Layer>() as MutableRefObject<Konva.Layer>;
-    console.log(container);
+    const [selectedId, selectShape] = useState(null);
+
+    const dimensions = useDimensions(containerRef);
+    const stageDimensions = useMemo(
+      () => ({
+        width: dimensions?.width,
+        height: dimensions?.height,
+      }),
+      [dimensions]
+    );
+
+    const canvasNodes: React.ReactFragment[] = []
+
     
+  const checkDeselect = (e: KonvaEventObject<Event>) => {
+    // deselect when clicked on empty area
+    const clickedOnEmpty = e.target === e.target?.getStage();
+    if (clickedOnEmpty) {
+      selectShape(null);
+    }
+  };
 
     const onClear = () => {
         layerRef.current?.removeChildren()
-        // createHeader(template.Color, template.Title, stageRef.current, layerRef.current)
         setFunction(EditorFunctions.None)
     }
 
@@ -34,11 +53,6 @@ const CanvasTest = ({editorFunction, template, setFunction, receiveDataUrl, cont
         })
         return stageRef.current.toDataURL();
     }, [])
-
-    
-//   useEffect(() => {
-//     createHeader(template.Color, template.Title, stageRef.current, layerRef.current)
-//   }, [template]);
 
   useEffect(() => {
     const onAddText = () => {
@@ -85,30 +99,48 @@ const CanvasTest = ({editorFunction, template, setFunction, receiveDataUrl, cont
     return (
     <>
     {editorFunction === EditorFunctions.Clear && <ConfirmationModal onSubmit={onClear} onCancel={() => void 0}/>}
-    <Stage ref={stageRef} width={container?.offsetWidth} height={container?.offsetHeight}>
-        <Layer ref={layerRef}>
-            <Header stage={stageRef.current} template={template}/>
-        </Layer>
-    </Stage>
+    
+    <div ref={containerRef} id='kudo' className="aspect-[3/2] w-full max-h-full max-w-5xl bg-green-200">
+      <Stage ref={stageRef} 
+        width={stageDimensions?.width} 
+        height={stageDimensions?.height}
+        onMouseDown={checkDeselect}
+        onTouchStart={checkDeselect}
+      >
+          <Layer>
+            <Rect
+                width={stageDimensions?.width}
+                height={stageDimensions?.height}
+                fill={'white'}
+            />
+            <Header width={stageDimensions?.width} height={stageDimensions?.height} template={template}/>
+          </Layer>
+          <Layer ref={layerRef}>
+
+          </Layer>
+      </Stage>
+    </div>
     </>
     )
 }
 
-const Header = ({stage, template}: {stage: Konva.Stage, template:Template}) => {
+const Header = ({width, height, template}: {width: number | undefined, height: number|undefined, template:Template}) => {
     return (
         <>
             <Rect
-                width={stage?.width()}
-                height={stage?.height()/4}
+                width={width}
+                height={(height??0)/4}
                 fill={template.Color}
             />
             <Text 
-                x={stage?.width()/2}
-                y={stage?.height()/8}
+                width={width}
+                height={(height??0)/4}
                 text={template.Title}
-                fontSize={stage?.height()/6}
+                fontSize={(height??0)/6}
                 fontFamily='Calibri'
                 fill='white'
+                align='center'
+                verticalAlign='middle'
             />
         </>
     )

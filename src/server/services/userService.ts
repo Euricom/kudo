@@ -50,7 +50,8 @@ type User = {
     preferredLanguage: string,
     surname: string,
     userPrincipalName: string,
-    id: string
+    id: string,
+    type: string
 }
 
 export const findAllUsers = async (): Promise<User[]> => {
@@ -62,11 +63,13 @@ export const findAllUsers = async (): Promise<User[]> => {
         users = users.concat(result.value)
         url = result['@odata.nextLink'];
     }
+    users.map(x => x.type = "user")
     return users
 };
 
 export const findUserById = async (id: string): Promise<User> => {
     const options = await getToken()
     const user: AADResponseUser = await fetch('https://graph.microsoft.com/v1.0/users/' + id, options).then(r => r.json()) as AADResponseUser
+    user.value.type = "user"
     return user.value
 };

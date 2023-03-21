@@ -10,6 +10,7 @@ type session = {
     Title: string,
     Date: string,
     SpeakerId: string,
+    type: string,
 }
 type result = {
     sessions: session[]
@@ -18,6 +19,8 @@ type result = {
 export const sessionRouter = createTRPCRouter({
 
     getAll: protectedProcedure.query(async () => {
-        return await fetch(`${env.SESSION_URL}`).then(result => result.json()) as result
+        const result = await fetch(`${env.SESSION_URL}`).then(result => result.json()) as result
+        result.sessions.map(x => x.type = "session")
+        return result.sessions
     })
 });

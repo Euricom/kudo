@@ -1,9 +1,5 @@
-interface SelectProps {
-    label: string,
-    options: Array<string>,
-    value: string | undefined,
-    onChange: (event: React.ChangeEvent<HTMLInputElement>) => void
-}
+import { type SelectProps } from "~/types";
+
 
 const Select = ({ label, options, value, onChange }: SelectProps) => {
     return (

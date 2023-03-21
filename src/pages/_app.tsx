@@ -9,6 +9,7 @@ import { Auth } from "../auth/Auth";
 import NavBar from "~/navigation/NavBar";
 import { UtilButtonsProvider } from "~/hooks/useUtilButtons";
 import { TitleProvider } from "~/navigation/NavBarTitle";
+import { SessionSpeakerProvider } from "~/sessions/SelectedSessionAndSpeaker";
 
 const MyApp: AppType<{ session: Session | null }> = ({
   Component,
@@ -19,9 +20,11 @@ const MyApp: AppType<{ session: Session | null }> = ({
       <Auth>
         <TitleProvider>
           <UtilButtonsProvider>
-            <NavBar>
-              <Component {...pageProps} />
-            </NavBar>
+            <SessionSpeakerProvider>
+              <NavBar>
+                <Component {...pageProps} />
+              </NavBar>
+            </SessionSpeakerProvider>
           </UtilButtonsProvider>
         </TitleProvider>
       </Auth>

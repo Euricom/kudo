@@ -3,6 +3,7 @@
 
 generator client {
     provider = "prisma-client-js"
+    engineType = "binary"
 }
 
 datasource db {
@@ -81,6 +82,8 @@ model Kudo {
   image     String
   liked     Boolean
   comment   String
+  sessionId String
+  userId    String
 }
 model Template {
     id            String      @id @default(cuid())

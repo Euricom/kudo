@@ -22,7 +22,7 @@ type EditorCanvasProps = {
 }
 
 const EditorCanvas = ({editorFunction, template, setFunction, receiveDataUrl}: EditorCanvasProps) => {
-  
+
   const containerRef = useRef<HTMLDivElement>(null);
   const stageRef = useRef<Konva.Stage>() as MutableRefObject<Konva.Stage>;
   const layerRef = useRef<Konva.Layer>() as MutableRefObject<Konva.Layer>;
@@ -39,6 +39,8 @@ const EditorCanvas = ({editorFunction, template, setFunction, receiveDataUrl}: E
         e.hide() 
       }
     })
+    
+    console.log(`DataURL canvas`);
     return stageRef.current.toDataURL();
   }, [])
 
@@ -74,8 +76,6 @@ const EditorCanvas = ({editorFunction, template, setFunction, receiveDataUrl}: E
         console.log('Sticker');
         stageRef.current.on('click tap', onDraw);
         break
-      case EditorFunctions.DataUrl:
-        receiveDataUrl(getDataUrl())
       default:
         console.log('None');
     }
@@ -92,9 +92,7 @@ const EditorCanvas = ({editorFunction, template, setFunction, receiveDataUrl}: E
           break
       }
     }
-  }, [editorFunction, setFunction, receiveDataUrl, getDataUrl]);
-
-  
+  }, [editorFunction, setFunction]);
 
   return (
     <>

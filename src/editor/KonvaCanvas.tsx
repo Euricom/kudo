@@ -1,20 +1,20 @@
 import React, { useRef, useCallback, useEffect, useState, useMemo, type MutableRefObject } from 'react'
 import { Stage, Layer, Rect, Text } from 'react-konva';
 import type Konva from 'konva'
-import { ConfirmationModal, EditorFunctions } from './EditorCanvas';
 import { type Template } from '@prisma/client';
 import addText from './addText';
 import { type KonvaEventObject } from 'konva/lib/Node';
 import useDimensions from '~/hooks/useDimensions';
+import { EditorFunctions } from '~/pages/create/editor';
 
-type CanvasTestProps = {
+type KonvaCanvasProps = {
     editorFunction: EditorFunctions | undefined,
     template: Template,
     setFunction: (type: EditorFunctions) => void,
     receiveDataUrl: (dataUrl: string) => void
 }
 
-const CanvasTest = ({editorFunction, template, setFunction, receiveDataUrl}: CanvasTestProps) => {
+const KonvaCanvas = ({editorFunction, template, setFunction, receiveDataUrl}: KonvaCanvasProps) => {
     const containerRef = useRef<HTMLDivElement>(null);
     const stageRef = useRef<Konva.Stage>() as MutableRefObject<Konva.Stage>;
     const layerRef = useRef<Konva.Layer>() as MutableRefObject<Konva.Layer>;
@@ -149,4 +149,30 @@ const Header = ({width, height, template}: {width: number | undefined, height: n
     )
 }
 
-export default CanvasTest
+type ModalProps = {
+  onSubmit: () => void, 
+  onCancel: () => void
+}
+
+//Later in aparte component folder
+const ConfirmationModal = ({onSubmit, onCancel}: ModalProps) => {
+  return (
+    <>
+      {/* Modal */}
+      <input type="checkbox" className="modal-toggle" checked readOnly/>
+      <div className="modal modal-bottom sm:modal-middle">
+        <div className="modal-box form-control">
+          <label className="label">
+            <span className="label-text">Are you sure you want to clear the canvas?</span>
+          </label>
+          <div className="modal-action">
+            <button className="btn" onClick={onCancel}>No</button>
+            <button className="btn text-error" onClick={onSubmit}>Yes</button>
+          </div>
+        </div>
+      </div>
+    </>
+  )
+}
+
+export default KonvaCanvas

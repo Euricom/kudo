@@ -9,7 +9,6 @@ import { type Template } from "@prisma/client";
 import { findTemplateById } from "~/server/services/templateService";
 import FAB from "~/navigation/FAB";
 import { FiSend } from "react-icons/fi"
-import EditorCanvas, { EditorFunctions } from '~/editor/EditorCanvas';
 import { useRouter } from 'next/router';
 import { api } from '~/utils/api';
 import dynamic from 'next/dynamic';
@@ -26,8 +25,18 @@ export async function getServerSideProps(context: { query: { template: string; }
   }
 }
 
-const CanvasTest = dynamic(
-  () => import('../../editor/CanvasTest'),
+export enum EditorFunctions {
+  Text = 'text',
+  Draw = 'draw',
+  Sticker = 'sticker',
+  Color = 'color',
+  Clear = 'clear',
+  DataUrl = 'dataurl',
+  None = 'none'
+}
+
+const KonvaCanvas = dynamic(
+  () => import('../../editor/KonvaCanvas'),
   { ssr: false }
 );
 
@@ -90,7 +99,7 @@ const Editor: NextPage<{ res: Template }> = ({ res }) => {
       </UtilButtonsContent>
       {/* Main */}
       <main className="flex flex-col items-center justify-center overflow-y-scroll h-full" >
-        <CanvasTest editorFunction={selectedButton} template={res} setFunction={setSelectedButton} receiveDataUrl={(data) => void receiveDataUrl(data)}/>
+        <KonvaCanvas editorFunction={selectedButton} template={res} setFunction={setSelectedButton} receiveDataUrl={(data) => void receiveDataUrl(data)}/>
       </main>
       <FAB text={"Send"} icon={<FiSend />} url="/out" onClick={() => setSelectedButton(EditorFunctions.DataUrl)}/>
     </>

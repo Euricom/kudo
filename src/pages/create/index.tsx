@@ -9,34 +9,29 @@ import { useState } from "react";
 import { api } from "~/utils/api";
 
 
-type session = {
+type Session = {
   Id: number,
   Title: string,
   Date: string,
   SpeakerId: string,
 }
 
-type result = {
-  sessions: session[]
+type Result = {
+  sessions: Session[]
 }
 
 
 const New: NextPage = () => {
 
-  const users = api.users.getAllUsers.useQuery().data?.value
+  const speakers = api.users.getAllUsers.useQuery().data
   const [session, setSession] = useState<string>("");
   const [speaker, setSpeaker] = useState<string>("");
 
-  const result: result | undefined = api.sessions.getAll.useQuery().data
-  if (!result || !users) {
+  const result: Result | undefined = api.sessions.getAll.useQuery().data
+  if (!result || !speakers) {
     return <div>Loading...</div>;
   }
-  const data: session[] = result.sessions
-
-
-  const speakers = users.filter(user => user.givenName !== null || user.surname !== null)
-  console.log(speakers);
-
+  const data: Session[] = result.sessions
 
   return (
     <>
@@ -50,9 +45,9 @@ const New: NextPage = () => {
       </Head>
       <main className="flex flex-col items-center justify-center overflow-y-scroll h-full gap-5">
         <FcPodiumWithSpeaker size={100} />
-        <Select data-cy="SelectSpeaker" value={speaker} onChange={(e: React.ChangeEvent<HTMLInputElement>): void => setSpeaker(e.target.value)} label="Speaker" options={speakers.map(x => x.displayName)} />
+        <Select data-cy="SelectSpeaker" value={speaker} onChange={(e: React.ChangeEvent<HTMLInputElement>): void => setSpeaker(e.target.value)} label="Speaker" options={speakers.filter(x => (data.filter(x => x.Title.toLowerCase().includes(session.toLowerCase()))).map(x => x.SpeakerId).includes(x.id)).map(x => x.displayName)} />
         <FcPodiumWithAudience size={100} />
-        <Select data-cy="SelectSession" value={session} onChange={(e: React.ChangeEvent<HTMLInputElement>): void => setSession(e.target.value)} label="Session" options={data.map(x => x.Title)} />
+        <Select data-cy="SelectSession" value={session} onChange={(e: React.ChangeEvent<HTMLInputElement>): void => setSession(e.target.value)} label="Session" options={data.filter(x => (speakers.filter(x => x.displayName.toLowerCase().includes(speaker.toLowerCase())).map(x => x.id).includes(x.SpeakerId))).map(x => x.Title)} />
         <label className="label cursor-pointer gap-5">
           <input type="checkbox" className="checkbox" />
           <span className="label-text">Hide my name.</span>

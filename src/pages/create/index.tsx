@@ -36,7 +36,11 @@ const New: NextPage = () => {
   const data: Session[] = result.sessions
 
   const visibleSpeakers = () => {
-    return users.filter(x => (x.mail !== me)).filter(x => (data.filter(x => x.Title.toLowerCase().includes(session.toLowerCase()))).map(x => x.SpeakerId).includes(x.id)).map(x => x.displayName)
+    const visible = users.filter(x => (x.mail !== me)).filter(x => (data.filter(x => x.Title.toLowerCase().includes(session.toLowerCase()))).map(x => x.SpeakerId).includes(x.id)).map(x => x.displayName)
+    if (visible.length === 1 && speaker !== visible[0]) {
+      setSpeaker(visible[0] ?? "");
+    }
+    return visible
   }
   const visibleSessions = () => {
     return data.filter(x => (users.filter(x => x.displayName.toLowerCase().includes(speaker.toLowerCase())).map(x => x.id).includes(x.SpeakerId))).map(x => x.Title)
@@ -51,11 +55,11 @@ const New: NextPage = () => {
         <meta name="description" content="eKudo app" />
         <link rel="icon" href="/favicon.ico" />
       </Head>
-      <main className="flex flex-col items-center justify-center overflow-y-scroll h-full gap-5">
-        <FcPodiumWithSpeaker size={100} />
-        <Select data-cy="SelectSpeaker" value={speaker} onChange={(e: React.ChangeEvent<HTMLInputElement>): void => setSpeaker(e.target.value)} label="Speaker" options={visibleSpeakers()} />
+      <main className="flex flex-col items-center justify-center overflow-y-scroll h-full gap-4">
         <FcPodiumWithAudience size={100} />
         <Select data-cy="SelectSession" value={session} onChange={(e: React.ChangeEvent<HTMLInputElement>): void => setSession(e.target.value)} label="Session" options={visibleSessions()} />
+        <FcPodiumWithSpeaker size={100} />
+        <Select data-cy="SelectSpeaker" value={speaker} onChange={(e: React.ChangeEvent<HTMLInputElement>): void => setSpeaker(e.target.value)} label="Speaker" options={visibleSpeakers()} />
         <label className="label cursor-pointer gap-5">
           <input type="checkbox" className="checkbox" />
           <span className="label-text">Hide my name.</span>

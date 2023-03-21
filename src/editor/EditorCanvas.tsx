@@ -96,7 +96,7 @@ const EditorCanvas = ({editorFunction, template, setFunction, receiveDataUrl}: E
 
   return (
     <>
-    {editorFunction === EditorFunctions.Clear && <ConfirmationModal onSubmit={onClear} onCancel={() => void 0}/>}
+    {editorFunction === EditorFunctions.Clear && <ConfirmationModal onSubmit={() => console.log('test')} onCancel={() => setFunction(EditorFunctions.None)}/>}
     <div id='kudo' ref={containerRef} className="aspect-[3/2] w-full max-h-full max-w-5xl bg-white"></div>
     </>
   );
@@ -112,15 +112,15 @@ const ConfirmationModal = ({onSubmit, onCancel}: ModalProps) => {
   return (
     <>
       {/* Modal */}
-      <input type="checkbox" className="modal-toggle" checked={true}/>
+      <input type="checkbox" className="modal-toggle" checked readOnly/>
       <div className="modal modal-bottom sm:modal-middle">
         <div className="modal-box form-control">
           <label className="label">
             <span className="label-text">Are you sure you want to clear the canvas?</span>
           </label>
           <div className="modal-action">
-            <label htmlFor="my-modal-clear" className="btn" onClick={onCancel}>No</label>
-            <label htmlFor="my-modal-clear" className="btn text-error" onClick={onSubmit}>Yes</label>
+            <button className="btn" onClick={onCancel}>No</button>
+            <button className="btn text-error" onClick={onSubmit}>Yes</button>
           </div>
         </div>
       </div>

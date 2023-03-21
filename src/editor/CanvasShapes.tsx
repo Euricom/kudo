@@ -117,8 +117,7 @@ const CanvasText = ({ shapeProps, isSelected, onSelect, onChange } : CanvasTextP
         onClick={onSelect}
         onTap={onSelect}
         ref={shapeRef}
-        text={"Text"}
-        x={}
+        {...shapeProps}
         draggable
         onDragEnd={(e) => {
           onChange({

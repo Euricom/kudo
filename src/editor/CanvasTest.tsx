@@ -25,6 +25,7 @@ const CanvasTest = ({editorFunction, template, setFunction, receiveDataUrl}: Can
       () => ({
         width: dimensions?.width,
         height: dimensions?.height,
+        scale: dimensions?.scale
       }),
       [dimensions]
     );
@@ -55,8 +56,9 @@ const CanvasTest = ({editorFunction, template, setFunction, receiveDataUrl}: Can
     }, [])
 
   useEffect(() => {
+    const stage = stageRef.current
     const onAddText = () => {
-      addText(stageRef.current, layerRef.current)
+      addText(stage, layerRef.current)
       setFunction(EditorFunctions.None)
     }
 
@@ -67,14 +69,14 @@ const CanvasTest = ({editorFunction, template, setFunction, receiveDataUrl}: Can
     switch (editorFunction) {
       case EditorFunctions.Text:
         console.log('Text');
-        stageRef.current.on('click tap', onAddText);
+        stage.on('click tap', onAddText);
         break
       case EditorFunctions.Draw:
         console.log('Draw');
         break
       case EditorFunctions.Sticker:
         console.log('Sticker');
-        stageRef.current.on('click tap', onDraw);
+        stage.on('click tap', onDraw);
         break
       case EditorFunctions.DataUrl:
         receiveDataUrl(getDataUrl())
@@ -85,12 +87,12 @@ const CanvasTest = ({editorFunction, template, setFunction, receiveDataUrl}: Can
     return () => {
       switch (editorFunction) {
         case EditorFunctions.Text:
-          stageRef.current.removeEventListener('click tap')
+          stage.removeEventListener('click tap')
           break
         case EditorFunctions.Draw:
           break
         case EditorFunctions.Sticker:
-          stageRef.current.removeEventListener('click tap')
+          stage.removeEventListener('click tap')
           break
       }
     }
@@ -98,12 +100,13 @@ const CanvasTest = ({editorFunction, template, setFunction, receiveDataUrl}: Can
 
     return (
     <>
-    {editorFunction === EditorFunctions.Clear && <ConfirmationModal onSubmit={onClear} onCancel={() => void 0}/>}
+    {editorFunction === EditorFunctions.Clear && <ConfirmationModal onSubmit={onClear} onCancel={() => setFunction(EditorFunctions.None)}/>}
     
     <div ref={containerRef} id='kudo' className="aspect-[3/2] w-full max-h-full max-w-5xl bg-green-200">
       <Stage ref={stageRef} 
         width={stageDimensions?.width} 
         height={stageDimensions?.height}
+        // scale={stageDimensions.scale}
         onMouseDown={checkDeselect}
         onTouchStart={checkDeselect}
       >

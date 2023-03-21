@@ -90,8 +90,7 @@ const Editor: NextPage<{ res: Template }> = ({ res }) => {
       </UtilButtonsContent>
       {/* Main */}
       <main className="flex flex-col items-center justify-center overflow-y-scroll h-full" >
-        <EditorCanvas editorFunction={selectedButton} template={res} setFunction={setSelectedButton} receiveDataUrl={(data) => void receiveDataUrl(data)}/>
-        {/* <CanvasTest editorFunction={selectedButton} template={res} setFunction={setSelectedButton} receiveDataUrl={(data) => void receiveDataUrl(data)}/> */}
+        <CanvasTest editorFunction={selectedButton} template={res} setFunction={setSelectedButton} receiveDataUrl={(data) => void receiveDataUrl(data)}/>
       </main>
       <FAB text={"Send"} icon={<FiSend />} url="/out" onClick={() => setSelectedButton(EditorFunctions.DataUrl)}/>
     </>

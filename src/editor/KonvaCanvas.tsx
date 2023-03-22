@@ -2,7 +2,7 @@ import React, { useRef, useCallback, useEffect, useState, useMemo, type MutableR
 import { Stage, Layer, Rect, Text } from 'react-konva';
 import type Konva from 'konva'
 import { type Template } from '@prisma/client';
-import addText from './addText';
+import addText from './editText';
 import { type KonvaEventObject } from 'konva/lib/Node';
 import useDimensions from '~/hooks/useDimensions';
 import { EditorFunctions } from '~/pages/create/editor';

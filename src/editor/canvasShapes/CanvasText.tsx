@@ -3,7 +3,7 @@ import { Transformer, Text } from 'react-konva';
 import type Konva from 'konva';
 import { type Vector2d } from 'konva/lib/types';
 import { type CanvasShapes } from '../KonvaCanvas';
-import editText from '../addText';
+import editText from '../editText';
 
 type TextProps = {
   type: CanvasShapes,

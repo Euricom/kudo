@@ -54,8 +54,7 @@ const New: NextPage = () => {
     return visible
   }
   const visibleSessions = () => {
-    //return sessions.filter(session => speaker ? speaker.id === session.SpeakerId : true)
-    return sessions.filter(x => (users.filter(x => x.displayName.toLowerCase().includes(speaker?.displayName.toLowerCase() ?? "")).map(x => x.id).includes(x.SpeakerId)))
+    return sessions.filter(session => speaker ? speaker.id === session.SpeakerId : true)
   }
   return (
     <>
@@ -69,9 +68,9 @@ const New: NextPage = () => {
       </Head>
       <main className="flex flex-col items-center justify-center overflow-y-scroll h-full gap-4">
         <FcPodiumWithAudience size={100} />
-        <Select data-cy="SelectSession" value={session} onChange={(e: React.ChangeEvent<HTMLInputElement>): void => setSession(sessions.find(s => s.Title === e.target.value))} label="Session" options={visibleSessions()} displayLabel="Title" valueLabel="Id" />
+        <Select data-cy="SelectSession" value={session?.Title} onChange={(e: React.ChangeEvent<HTMLInputElement>): void => setSession(sessions.find(s => s.Title === e.target.value))} label="Session" options={visibleSessions()} displayLabel="Title" valueLabel="Id" />
         <FcPodiumWithSpeaker size={100} />
-        <Select data-cy="SelectSpeaker" value={speaker} onChange={(e: React.ChangeEvent<HTMLInputElement>): void => setSpeaker(users.find(u => u.displayName === e.target.value))} label="Speaker" options={visibleSpeakers()} displayLabel="displayName" valueLabel="id" />
+        <Select data-cy="SelectSpeaker" value={speaker?.displayName} onChange={(e: React.ChangeEvent<HTMLInputElement>): void => setSpeaker(users.find(u => u.displayName === e.target.value))} label="Speaker" options={visibleSpeakers()} displayLabel="displayName" valueLabel="id" />
         <label className="label cursor-pointer gap-5">
           <input type="checkbox" className="checkbox" />
           <span className="label-text">Hide my name.</span>

@@ -8,9 +8,16 @@ import { FiSearch } from "react-icons/fi";
 import { BiSortDown } from "react-icons/bi";
 import { NavigationBarContent } from "~/navigation/NavBarTitle";
 import NavButtons from "~/navigation/NavButtons";
+import { useSession } from "next-auth/react";
 
 const Home: NextPage = () => {
   const sessions = ["Today", 1, 2, "Yesterday", 3, 4, 5, 6, "26/02/2023", 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30]
+
+  const me = useSession()
+  console.log(me);
+
+
+
   return (
     <>
       <NavigationBarContent>
@@ -23,14 +30,15 @@ const Home: NextPage = () => {
       </Head>
       <UtilButtonsContent>
         <button className="btn btn-ghost btn-circle">
-            <FiSearch size={20} />
+          <FiSearch size={20} />
         </button>
         <button className="btn btn-ghost btn-circle">
-            <BiSortDown size={20} />
+          <BiSortDown size={20} />
         </button>
       </UtilButtonsContent>
       <main className="flex flex-col items-center justify-center overflow-y-scroll h-full">
         <div className="flex flex-wrap gap-8 h-full justify-center p-5">
+          <img src={me} ></img>
           {sessions.map((x) => (
             typeof (x) == 'string' ? <h1 className="justify-center w-full text-center text-3xl underline" key={x}>{x}</h1> : <Session id={x} key={x} />
           ))}

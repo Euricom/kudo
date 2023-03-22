@@ -11,22 +11,23 @@ import { GrNext } from "react-icons/gr";
 
 
 
-export async function getServerSideProps(context: { query: { session: string, speaker: string; }; }) {
+export async function getServerSideProps(context: { query: { session: string, speaker: string, anonymous: string }; }) {
 
   const data: Template[] = await findAllTemplates()
   return {
     props: {
       res: data,
       sess: context.query.session,
-      speaker: context.query.speaker
+      speaker: context.query.speaker,
+      anonymous: context.query.anonymous
     }
   }
 }
 
 
 
-const Editor: NextPage<{ res: Template[], sess: string, speaker: string }> = ({ res, sess, speaker }) => {
-  useSessionSpeaker(sess, speaker)
+const Editor: NextPage<{ res: Template[], sess: string, speaker: string, anonymous: string }> = ({ res, sess, speaker, anonymous }) => {
+  useSessionSpeaker(sess, speaker, anonymous)
   // if (sess == undefined || speaker == undefined) {
   //   // throw ERROR!
   //   return <></>

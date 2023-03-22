@@ -21,6 +21,7 @@ const KudoCard = ({ kudo }: KudoProps) => {
       <Link className="card bg-white text-gray-800 shadow-xl aspect-[3/2] rounded-none w-80 h-52" data-cy="Kudo" href={"/kudo/" + kudo.id} id={kudo.sessionId}>
 
         <Image src={image} width={320} height={208} alt="Kudo" />
+        <h1>Sent by {kudo.anonymous ? "" : kudo.userId}</h1>
       </Link>
     </>
   );

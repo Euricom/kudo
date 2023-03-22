@@ -21,8 +21,9 @@ const EditorCanvas = (props: Template) => {
   const layerRef = useRef<Konva.Layer>() as MutableRefObject<Konva.Layer>;
   const userId: string = useSession().data?.user.id ?? "error"
 
-  const sessionId: string | undefined = useSessionSpeaker(undefined, undefined).data.session
-  const speaker: string | undefined = useSessionSpeaker(undefined, undefined).data.speaker
+  const sessionId: string | undefined = useSessionSpeaker(undefined, undefined, undefined).data.session
+  const speaker: string | undefined = useSessionSpeaker(undefined, undefined, undefined).data.speaker
+  const anonymous: boolean | undefined = useSessionSpeaker(undefined, undefined, undefined).data.anonymous
   const router = useRouter()
 
 
@@ -45,7 +46,10 @@ const EditorCanvas = (props: Template) => {
     const dataUrl = stageRef.current.toDataURL();
     try {
       const image = await createImage.mutateAsync({ dataUrl: dataUrl })
-      await createKudo.mutateAsync({ image: image.id, sessionId: sessionId, userId: userId });
+      console.log(1);
+      console.log(anonymous);
+
+      await createKudo.mutateAsync({ image: image.id, sessionId: sessionId, userId: userId, anonymous: anonymous });
 
 
       await router.replace('/out')
@@ -90,7 +94,7 @@ const EditorCanvas = (props: Template) => {
     createHeader(props.Color, props.Title, stageRef.current, layerRef.current)
   }, [props]);
 
-  if (!userId || !sessionId || !speaker || userId == undefined) {
+  if (!userId || !sessionId || !speaker || userId == undefined || anonymous === undefined) {
     console.log("een probleem");
 
   }

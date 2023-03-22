@@ -27,11 +27,17 @@ const New: NextPage = () => {
   const [session, setSession] = useState<string>("");
   const [speaker, setSpeaker] = useState<string>("");
 
+  const [anonymous, setAnonymous] = useState<boolean>(false);
+
   const result: Result | undefined = api.sessions.getAll.useQuery().data
   if (!result || !speakers) {
     return <div>Loading...</div>;
   }
   const data: Session[] = result.sessions
+
+  function onclick() {
+    setAnonymous(!anonymous)
+  }
 
   return (
     <>
@@ -49,11 +55,11 @@ const New: NextPage = () => {
         <FcPodiumWithAudience size={100} />
         <Select data-cy="SelectSession" value={session} onChange={(e: React.ChangeEvent<HTMLInputElement>): void => setSession(e.target.value)} label="Session" options={data.filter(x => (speakers.filter(x => x.displayName.toLowerCase().includes(speaker.toLowerCase())).map(x => x.id).includes(x.SpeakerId))).map(x => x.Title)} />
         <label className="label cursor-pointer gap-5">
-          <input type="checkbox" className="checkbox" />
+          <input type="checkbox" checked={anonymous} className="checkbox" onClick={onclick} />
           <span className="label-text">Hide my name.</span>
         </label>
       </main>
-      <FAB text={"Next"} icon={<GrNext />} url="/geenUrl" urlWithParams={{ pathname: "/create/templates", query: { session: session, speaker: speaker }, auth: null, hash: null, host: null, hostname: null, href: "/create/templates", path: null, protocol: null, search: null, slashes: null, port: null }} />
+      <FAB text={"Next"} icon={<GrNext />} url="/geenUrl" urlWithParams={{ pathname: "/create/templates", query: { session: session, speaker: speaker, anonymous: anonymous.toString() }, auth: null, hash: null, host: null, hostname: null, href: "/create/templates", path: null, protocol: null, search: null, slashes: null, port: null }} />
     </>
   );
 };

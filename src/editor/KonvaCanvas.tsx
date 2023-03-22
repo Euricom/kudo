@@ -2,15 +2,16 @@ import React, { useRef, useCallback, useEffect, useState, useMemo, type MutableR
 import { Stage, Layer, Rect, Text } from 'react-konva';
 import type Konva from 'konva'
 import { type Template } from '@prisma/client';
-import addText from './editText';
 import { type KonvaEventObject } from 'konva/lib/Node';
 import useDimensions from '~/hooks/useDimensions';
 import { EditorFunctions } from '~/pages/create/editor';
 import CanvasText from './canvasShapes/CanvasText';
 import Rectangle from './canvasShapes/Rectangle';
+import { type Vector2d } from 'konva/lib/types';
 
 export enum CanvasShapes {
   Text,
+  Sticker,
   Rect
 }
 
@@ -21,35 +22,18 @@ type KonvaCanvasProps = {
     receiveDataUrl: (dataUrl: string) => void
 }
 
-const initialShapes = [
-  {
-    type: CanvasShapes.Rect,
-    x: 50,
-    y: 50,
-    width: 100,
-    height: 100,
-    fill: "blue",
-    id: "rect1"
-  },
-  {
-    type: CanvasShapes.Rect,
-    x: 150,
-    y: 150,
-    width: 100,
-    height: 100,
-    fill: "green",
-    id: "rect2"
-  },
-  {
-    type: CanvasShapes.Text,
-    id: "text1",
-    text: "Lorem ipsum",
-    width: 100,
-    height: 20,
-    x: 150,
-    y: 150,
-  }
-];
+type Shapes = {
+  type: CanvasShapes,
+  id: string,
+  x: number,
+  y: number,
+  width?: number,
+  height?: number,
+  fill?: string,
+  text?: string,
+}
+
+const initialShapes: Shapes[] = [];
 
 const KonvaCanvas = ({editorFunction, template, setFunction, receiveDataUrl}: KonvaCanvasProps) => {
     const containerRef = useRef<HTMLDivElement>(null);
@@ -77,61 +61,58 @@ const KonvaCanvas = ({editorFunction, template, setFunction, receiveDataUrl}: Ko
     }
   };
 
-    const onClear = () => {
-        layerRef.current?.removeChildren()
-        setFunction(EditorFunctions.None)
-    }
-
-    const getDataUrl = useCallback(() => {
-        layerRef.current.getChildren().forEach((e) => {
-            if (e.getClassName() == 'Transformer') {
-            e.hide() 
-            }
-        })
-        return stageRef.current.toDataURL();
-    }, [])
-
-  useEffect(() => {
-    const stage = stageRef.current
-    const onAddText = () => {
+  const onClear = () => {
+      layerRef.current?.removeChildren()
       setFunction(EditorFunctions.None)
-    }
+  }
 
-    const onDraw = () => {
-      setFunction(EditorFunctions.None)
-    }
+  const getDataUrl = useCallback(() => {
+      layerRef.current.getChildren().forEach((e) => {
+          if (e.getClassName() == 'Transformer') {
+          e.hide() 
+          }
+      })
+      return stageRef.current.toDataURL();
+  }, [])
 
+  const clickListener = () => {
     switch (editorFunction) {
       case EditorFunctions.Text:
         console.log('Text');
-        stage.on('click tap', onAddText);
+        addText(stageRef.current.getPointerPosition()??{x: 50, y: 50})
         break
       case EditorFunctions.Draw:
         console.log('Draw');
+        draw()
         break
       case EditorFunctions.Sticker:
         console.log('Sticker');
-        stage.on('click tap', onDraw);
+        addSticker()
         break
-      case EditorFunctions.DataUrl:
-        receiveDataUrl(getDataUrl())
       default:
         console.log('None');
     }
-
-    return () => {
-      switch (editorFunction) {
-        case EditorFunctions.Text:
-          stage.removeEventListener('click tap')
-          break
-        case EditorFunctions.Draw:
-          break
-        case EditorFunctions.Sticker:
-          stage.removeEventListener('click tap')
-          break
-      }
+  }
+  
+  const addText = (pos: Vector2d) => {
+    const text = {
+      id: '1',
+      type: CanvasShapes.Text,
+      text: 'Text',
+      x: pos.x,
+      y: pos.y,
     }
-  }, [editorFunction, setFunction, receiveDataUrl, getDataUrl]);
+    shapes.push(text)
+    setFunction(EditorFunctions.None)
+  }
+
+  const addSticker = () => {
+    setFunction(EditorFunctions.None)
+  }
+
+  const draw = () => {
+    setFunction(EditorFunctions.None)
+  }
 
   return (
   <>
@@ -144,6 +125,7 @@ const KonvaCanvas = ({editorFunction, template, setFunction, receiveDataUrl}: Ko
       // scale={stageDimensions.scale}
       onMouseDown={checkDeselect}
       onTouchStart={checkDeselect}
+      onClick={clickListener}
     >
         <Layer>
           <Rect
@@ -161,6 +143,7 @@ const KonvaCanvas = ({editorFunction, template, setFunction, receiveDataUrl}: Ko
                   <CanvasText
                     key={i}
                     shapeProps={s}
+                    fontSize={(stageDimensions?.height??0)/15}
                     isSelected={s.id === selectedId}
                     onSelect={() => {
                       selectShape(s.id);

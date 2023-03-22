@@ -20,10 +20,11 @@ type CanvasTextProps = {
   isSelected: boolean, 
   onSelect: () => void, 
   onChange: (shapeProps: TextProps) => void,
-  areaPosition: Vector2d
+  areaPosition: Vector2d,
+  fontSize: number,
 }
 
-const CanvasText = ({ shapeProps, isSelected, onSelect, onChange, areaPosition } : CanvasTextProps) => {
+const CanvasText = ({ shapeProps, isSelected, onSelect, onChange, areaPosition, fontSize } : CanvasTextProps) => {
   const shapeRef = useRef<Konva.Text>() as MutableRefObject<Konva.Text>;
   const trRef = useRef<Konva.Transformer>() as MutableRefObject<Konva.Transformer>;
   // const [isEditing, setIsEditing] = useState(false)
@@ -51,6 +52,7 @@ const CanvasText = ({ shapeProps, isSelected, onSelect, onChange, areaPosition }
         onDblTap={onDoubleClick}
         ref={shapeRef}
         {...shapeProps}
+        fontSize={fontSize}
         draggable
         onDragEnd={(e) => {
           onChange({
@@ -84,7 +86,7 @@ const CanvasText = ({ shapeProps, isSelected, onSelect, onChange, areaPosition }
       {isSelected && (
         <Transformer
           ref={trRef}
-          enabledAnchors={['middle-left', 'middle-right']}
+          enabledAnchors={['middle-left', 'middle-right', 'bottom-center']}
           boundBoxFunc={(oldBox, newBox) => {
             newBox.width = Math.max(30, newBox.width);
             return newBox;

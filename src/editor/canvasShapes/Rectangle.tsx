@@ -1,5 +1,5 @@
-import React, { useRef, type MutableRefObject, useState, useEffect } from 'react';
-import { Transformer, Rect, Text } from 'react-konva';
+import React, { useRef, type MutableRefObject, useEffect } from 'react';
+import { Transformer, Rect } from 'react-konva';
 import type Konva from 'konva';
 import { type CanvasShapes } from '../KonvaCanvas';
 

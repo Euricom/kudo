@@ -6,8 +6,8 @@ import { type CanvasShapes } from '../KonvaCanvas';
 import editText from '../editText';
 
 type TextProps = {
-  type: CanvasShapes,
   id: string,
+  type: CanvasShapes,
   text: string,
   x: number,
   y: number,

@@ -8,6 +8,8 @@ import { EditorFunctions } from '~/pages/create/editor';
 import CanvasText from './canvasShapes/CanvasText';
 import Rectangle from './canvasShapes/Rectangle';
 import { type Vector2d } from 'konva/lib/types';
+import { randomUUID } from 'crypto';
+import { v4 } from 'uuid';
 
 export enum CanvasShapes {
   Text,
@@ -96,7 +98,7 @@ const KonvaCanvas = ({editorFunction, template, setFunction, receiveDataUrl}: Ko
   
   const addText = (pos: Vector2d) => {
     const text = {
-      id: '1',
+      id: v4(),
       type: CanvasShapes.Text,
       text: 'Text',
       x: pos.x,
@@ -127,54 +129,54 @@ const KonvaCanvas = ({editorFunction, template, setFunction, receiveDataUrl}: Ko
       onTouchStart={checkDeselect}
       onClick={clickListener}
     >
-        <Layer>
-          <Rect
-              width={stageDimensions?.width}
-              height={stageDimensions?.height}
-              fill={'white'}
-          />
-          <Header width={stageDimensions?.width} height={stageDimensions?.height} template={template}/>
-        </Layer>
-        <Layer ref={layerRef}>
-          {shapes.map((s, i) => {
-            switch (s.type) {
-              case CanvasShapes.Text:
-                return (
-                  <CanvasText
-                    key={i}
-                    shapeProps={s}
-                    fontSize={(stageDimensions?.height??0)/15}
-                    isSelected={s.id === selectedId}
-                    onSelect={() => {
-                      selectShape(s.id);
-                    }}
-                    onChange={(newAttrs) => {
-                      const newShapes = shapes.slice();
-                      newShapes[i] = newAttrs;
-                      setShapes(newShapes);
-                    }}
-                    areaPosition={{
-                      x: (stageRef.current?.container().offsetLeft??0) + s.x,
-                      y: (stageRef.current?.container().offsetTop??0) + s.y,
-                    }}
-                  />
-                );
-              case CanvasShapes.Rect:
-                return (
-                  <Rectangle
-                    key={i}
-                    shapeProps={s}
-                    isSelected={s.id === selectedId}
-                    onSelect={() => {
-                      selectShape(s.id);
-                    }}
-                    onChange={(newAttrs) => {
-                      const newShapes = shapes.slice();
-                      newShapes[i] = newAttrs;
-                      setShapes(newShapes);
-                    }}
-                  />
-                );
+      <Layer>
+        <Rect
+            width={stageDimensions?.width}
+            height={stageDimensions?.height}
+            fill={'white'}
+        />
+        <Header width={stageDimensions?.width} height={stageDimensions?.height} template={template}/>
+      </Layer>
+      <Layer ref={layerRef}>
+        {shapes.map((s, i) => {
+          switch (s.type) {
+            case CanvasShapes.Text:
+              return (
+                <CanvasText
+                  key={i}
+                  shapeProps={s}
+                  fontSize={(stageDimensions?.height??0)/15}
+                  isSelected={s.id === selectedId}
+                  onSelect={() => {
+                    selectShape(s.id);
+                  }}
+                  onChange={(newAttrs) => {
+                    const newShapes = shapes.slice();
+                    newShapes[i] = newAttrs;
+                    setShapes(newShapes);
+                  }}
+                  areaPosition={{
+                    x: (stageRef.current?.container().offsetLeft??0) + s.x,
+                    y: (stageRef.current?.container().offsetTop??0) + s.y,
+                  }}
+                />
+              );
+            case CanvasShapes.Rect:
+              return (
+                <Rectangle
+                  key={i}
+                  shapeProps={s}
+                  isSelected={s.id === selectedId}
+                  onSelect={() => {
+                    selectShape(s.id);
+                  }}
+                  onChange={(newAttrs) => {
+                    const newShapes = shapes.slice();
+                    newShapes[i] = newAttrs;
+                    setShapes(newShapes);
+                  }}
+                />
+              );
             }
           })}
         </Layer>

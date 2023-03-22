@@ -4,13 +4,13 @@ import type Konva from 'konva';
 import { type CanvasShapes } from '../KonvaCanvas';
 
 type RectProps = {
+    id: string,
     type: CanvasShapes,
     x: number,
     y: number,
     width: number,
     height: number,
     fill: string,
-    id: string
 }
 
 type RectangleProps = {

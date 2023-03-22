@@ -9,20 +9,15 @@ import { NavigationBarContent } from "~/navigation/NavBarTitle";
 import NavButtons from "~/navigation/NavButtons";
 import SessionList from "~/sessions/SessionList";
 import { api } from "~/utils/api";
+import { type Session } from "~/types";
 
-type session = {
-  id: number,
-  title: string,
-  date: string,
-  speakerId: string,
-}
 
 const Home: NextPage = () => {
   const result = api.sessions.getSessionsBySpeaker.useQuery().data
   if (!result) {
     return <div>Loading...</div>;
   }
-  const sessions: session[] = result.sessions
+  const sessions: Session[] = result.sessions
 
   return (
     <>

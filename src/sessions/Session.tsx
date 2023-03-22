@@ -1,14 +1,7 @@
 import Link from "next/link";
+import { type SessionProps } from "~/types";
 
-type session = {
-    id: number,
-    title: string,
-    date: string,
-    speakerId: string,
-}
-interface SessionProps {
-    session: session
-}
+
 
 const Session = ({ session }: SessionProps) => {
     if (!session) {

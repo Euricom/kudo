@@ -39,3 +39,57 @@ export type TitleContextValue = {
     title: React.ReactNode;
     setTitle: React.Dispatch<React.SetStateAction<React.ReactNode | null>>;
 }
+
+export type Session = {
+    id: number,
+    title: string,
+    date: string,
+    speakerId: string,
+}
+
+export type SessionArray = {
+    sessions: Session[]
+}
+
+export type temp = {
+    id: string,
+    Color: string,
+    Title: string,
+    Sticker: string,
+}
+
+export type AADResponseUsers = {
+    value: User[]
+    '@odata.nextLink': string
+}
+export type AADResponseUser = {
+    value: User
+}
+export type User = {
+    businessPhones: string[],
+    displayName: string,
+    givenName: string,
+    jobTitle: string,
+    mail: string,
+    mobilePhone: string,
+    officeLocation: string,
+    preferredLanguage: string,
+    surname: string,
+    userPrincipalName: string,
+    id: string
+}
+export type SessionContextValue = {
+    session: string;
+    setSession: React.Dispatch<React.SetStateAction<string>>;
+    speaker: string;
+    setSpeaker: React.Dispatch<React.SetStateAction<string>>;
+}
+export type session = {
+    id: number,
+    title: string,
+    date: string,
+    speakerId: string,
+}
+export type SessionProps = {
+    session: session
+}

@@ -7,18 +7,7 @@ import Select from "~/input/Select";
 import { NavigationBarContent } from "~/navigation/NavBarTitle";
 import { useState } from "react";
 import { api } from "~/utils/api";
-
-
-type session = {
-  id: number,
-  title: string,
-  date: string,
-  speakerId: string,
-}
-
-type result = {
-  sessions: session[]
-}
+import { type Session, type SessionArray } from "~/types";
 
 
 const New: NextPage = () => {
@@ -27,11 +16,11 @@ const New: NextPage = () => {
   const [session, setSession] = useState<string>("");
   const [speaker, setSpeaker] = useState<string>("");
 
-  const result: result | undefined = api.sessions.getAll.useQuery().data
+  const result: SessionArray | undefined = api.sessions.getAll.useQuery().data
   if (!result || !speakers) {
     return <div>Loading...</div>;
   }
-  const data: session[] = result.sessions
+  const data: Session[] = result.sessions
 
   return (
     <>

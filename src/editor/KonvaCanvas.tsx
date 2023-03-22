@@ -6,6 +6,13 @@ import addText from './addText';
 import { type KonvaEventObject } from 'konva/lib/Node';
 import useDimensions from '~/hooks/useDimensions';
 import { EditorFunctions } from '~/pages/create/editor';
+import CanvasText from './canvasShapes/CanvasText';
+import Rectangle from './canvasShapes/Rectangle';
+
+export enum CanvasShapes {
+  Text,
+  Rect
+}
 
 type KonvaCanvasProps = {
     editorFunction: EditorFunctions | undefined,
@@ -14,11 +21,42 @@ type KonvaCanvasProps = {
     receiveDataUrl: (dataUrl: string) => void
 }
 
+const initialShapes = [
+  {
+    type: CanvasShapes.Rect,
+    x: 50,
+    y: 50,
+    width: 100,
+    height: 100,
+    fill: "blue",
+    id: "rect1"
+  },
+  {
+    type: CanvasShapes.Rect,
+    x: 150,
+    y: 150,
+    width: 100,
+    height: 100,
+    fill: "green",
+    id: "rect2"
+  },
+  {
+    type: CanvasShapes.Text,
+    id: "text1",
+    text: "Lorem ipsum",
+    width: 100,
+    height: 20,
+    x: 150,
+    y: 150,
+  }
+];
+
 const KonvaCanvas = ({editorFunction, template, setFunction, receiveDataUrl}: KonvaCanvasProps) => {
     const containerRef = useRef<HTMLDivElement>(null);
     const stageRef = useRef<Konva.Stage>() as MutableRefObject<Konva.Stage>;
     const layerRef = useRef<Konva.Layer>() as MutableRefObject<Konva.Layer>;
-    const [selectedId, selectShape] = useState(null);
+    const [shapes, setShapes] = useState(initialShapes);
+    const [selectedId, selectShape] = useState<string | null>(null);
 
     const dimensions = useDimensions(containerRef);
     const stageDimensions = useMemo(
@@ -29,8 +67,6 @@ const KonvaCanvas = ({editorFunction, template, setFunction, receiveDataUrl}: Ko
       }),
       [dimensions]
     );
-
-    const canvasNodes: React.ReactFragment[] = []
 
     
   const checkDeselect = (e: KonvaEventObject<Event>) => {
@@ -58,7 +94,6 @@ const KonvaCanvas = ({editorFunction, template, setFunction, receiveDataUrl}: Ko
   useEffect(() => {
     const stage = stageRef.current
     const onAddText = () => {
-      addText(stage, layerRef.current)
       setFunction(EditorFunctions.None)
     }
 
@@ -98,33 +133,72 @@ const KonvaCanvas = ({editorFunction, template, setFunction, receiveDataUrl}: Ko
     }
   }, [editorFunction, setFunction, receiveDataUrl, getDataUrl]);
 
-    return (
-    <>
-    {editorFunction === EditorFunctions.Clear && <ConfirmationModal onSubmit={onClear} onCancel={() => setFunction(EditorFunctions.None)}/>}
-    
-    <div ref={containerRef} id='kudo' className="aspect-[3/2] w-full max-h-full max-w-5xl bg-green-200">
-      <Stage ref={stageRef} 
-        width={stageDimensions?.width} 
-        height={stageDimensions?.height}
-        // scale={stageDimensions.scale}
-        onMouseDown={checkDeselect}
-        onTouchStart={checkDeselect}
-      >
-          <Layer>
-            <Rect
-                width={stageDimensions?.width}
-                height={stageDimensions?.height}
-                fill={'white'}
-            />
-            <Header width={stageDimensions?.width} height={stageDimensions?.height} template={template}/>
-          </Layer>
-          <Layer ref={layerRef}>
-
-          </Layer>
-      </Stage>
-    </div>
-    </>
-    )
+  return (
+  <>
+  {editorFunction === EditorFunctions.Clear && <ConfirmationModal onSubmit={onClear} onCancel={() => setFunction(EditorFunctions.None)}/>}
+  
+  <div ref={containerRef} id='kudo' className="aspect-[3/2] w-full max-h-full max-w-5xl bg-green-200">
+    <Stage ref={stageRef} 
+      width={stageDimensions?.width} 
+      height={stageDimensions?.height}
+      // scale={stageDimensions.scale}
+      onMouseDown={checkDeselect}
+      onTouchStart={checkDeselect}
+    >
+        <Layer>
+          <Rect
+              width={stageDimensions?.width}
+              height={stageDimensions?.height}
+              fill={'white'}
+          />
+          <Header width={stageDimensions?.width} height={stageDimensions?.height} template={template}/>
+        </Layer>
+        <Layer ref={layerRef}>
+          {shapes.map((s, i) => {
+            switch (s.type) {
+              case CanvasShapes.Text:
+                return (
+                  <CanvasText
+                    key={i}
+                    shapeProps={s}
+                    isSelected={s.id === selectedId}
+                    onSelect={() => {
+                      selectShape(s.id);
+                    }}
+                    onChange={(newAttrs) => {
+                      const newShapes = shapes.slice();
+                      newShapes[i] = newAttrs;
+                      setShapes(newShapes);
+                    }}
+                    areaPosition={{
+                      x: (stageRef.current?.container().offsetLeft??0) + s.x,
+                      y: (stageRef.current?.container().offsetTop??0) + s.y,
+                    }}
+                  />
+                );
+              case CanvasShapes.Rect:
+                return (
+                  <Rectangle
+                    key={i}
+                    shapeProps={s}
+                    isSelected={s.id === selectedId}
+                    onSelect={() => {
+                      selectShape(s.id);
+                    }}
+                    onChange={(newAttrs) => {
+                      const newShapes = shapes.slice();
+                      newShapes[i] = newAttrs;
+                      setShapes(newShapes);
+                    }}
+                  />
+                );
+            }
+          })}
+        </Layer>
+    </Stage>
+  </div>
+  </>
+  )
 }
 
 const Header = ({width, height, template}: {width: number | undefined, height: number|undefined, template:Template}) => {

@@ -1,79 +1,14 @@
-import Konva from "konva";
+import type Konva from "konva";
 import { type Vector2d } from "konva/lib/types";
 
-interface Document {
+type Document = {
   documentMode?: number;
 }
 
-const addText = (stage: Konva.Stage, layer: Konva.Layer) => {
-  const textNode = createTextNode(stage)
-
-  layer.add(textNode);
-
-  const tr = createTransformer(textNode)
-
-  layer.add(tr);
-
-  textNode.on('dblclick dbltap', () => {
-    onDoubleClick(stage, textNode, tr)
-  });
-  
-  onDoubleClick(stage, textNode, tr)
-}
-
-export default addText;
-
-const onDoubleClick = (stage: Konva.Stage, textNode: Konva.Text, tr: Konva.Transformer) => {
-  textNode.hide();
-  tr.hide();
-
-  const textPosition = textNode.absolutePosition();
-  const areaPosition = getPosition(textPosition, stage);
-
+const editText = (areaPosition: Vector2d, textNode: Konva.Text, tr: Konva.Transformer) => {
   const textarea = createTextArea(textNode, areaPosition, tr)
 
   textarea.focus();
-}
-const createTextNode = (stage: Konva.Stage) => {
-  const textNode = new Konva.Text({
-    text: 'Text',
-    x: stage.getPointerPosition()?.x,
-    y: stage.getPointerPosition()?.y,
-    fontSize: stage.height()/(stage.scaleY() * 15),
-    draggable: true,
-  });
-
-  textNode.on('transform', function () {
-    // reset scale, so only with is changing by transformer
-    textNode.setAttrs({
-      width: textNode.width() * textNode.scaleX(),
-      scaleX: 1,
-    });
-  });
-
-  return textNode;
-};
-
-const createTransformer = (textNode: Konva.Text) => {
-  const tr = new Konva.Transformer({
-    enabledAnchors: ['middle-left', 'middle-right'],
-    // set minimum width of text
-    boundBoxFunc: function (oldBox, newBox) {
-      newBox.width = Math.max(30, newBox.width);
-      return newBox;
-    },
-  });
-
-  tr.nodes([textNode]);
-
-  return tr;
-};
-
-function getPosition(textPosition: Vector2d, stage: Konva.Stage) {
-  return {
-    x: stage.container().offsetLeft + textPosition.x,
-    y: stage.container().offsetTop + textPosition.y,
-  };
 }
 
 const createTextArea = (textNode: Konva.Text, areaPosition: Vector2d, tr: Konva.Transformer) => {
@@ -191,3 +126,6 @@ function setTextareaWidth(newWidth: number, textNode: Konva.Text, textarea: HTML
   }
   textarea.style.width = newWidth.toString() + 'px';
 }
+
+
+export default editText;

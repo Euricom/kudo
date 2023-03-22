@@ -9,15 +9,21 @@ import { NavigationBarContent } from "~/navigation/NavBarTitle";
 import NavButtons from "~/navigation/NavButtons";
 import SessionList from "~/sessions/SessionList";
 import { api } from "~/utils/api";
-import { type Session } from "~/types";
+import { type User, type Session } from "~/types";
+import { useSession } from "next-auth/react";
 
 
 const Home: NextPage = () => {
-  const result = api.sessions.getSessionsBySpeaker.useQuery().data
-  if (!result) {
+  const me = useSession().data?.user.email
+  const user: User | undefined = api.users.getUserByEmail.useQuery({ id: me ?? "error" }).data
+  console.log("user");
+  console.log(user);
+
+
+  const sessions: Session[] | undefined = api.sessions.getSessionsBySpeaker.useQuery({ id: user?.id ?? "error" }).data
+  if (!sessions) {
     return <div>Loading...</div>;
   }
-  const sessions: Session[] = result.sessions
 
   return (
     <>

@@ -16,12 +16,10 @@ export const sessionRouter = createTRPCRouter({
         return await fetch('http://localhost:3000/api/sessions').then(result => result.json()) as SessionArray
     }),
 
-    //Nog aanpassen met sprekerId
-    getSessionsBySpeaker: protectedProcedure.query(async () => {
-        return await fetch('http://localhost:3000/api/sessions').then(result => result.json()) as SessionArray
-        //dit zal het moeten worden
-        // getSessionsBySpeaker: protectedProcedure.input(inputGetById).query(async ({ input }) => {
-        // return await fetch('http://localhost:3000/api/sessions').then(result => result.json()).then((result: result) => result.sessions.filter((r: session) => r.speakerId === input.id)) as result
+    getSessionsBySpeaker: protectedProcedure.input(inputGetById).query(async ({ input }) => {
+        console.log(input.id);
+
+        return await fetch('http://localhost:3000/api/sessions').then(result => result.json()).then((result: SessionArray) => result.sessions.filter((r: Session) => r.speakerId === input.id))
     }),
 
     getSessionById: protectedProcedure.input(inputGetById).query(async ({ input }) => {

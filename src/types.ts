@@ -62,9 +62,6 @@ export type AADResponseUsers = {
     value: User[]
     '@odata.nextLink': string
 }
-export type AADResponseUser = {
-    value: User
-}
 export type User = {
     businessPhones: string[],
     displayName: string,

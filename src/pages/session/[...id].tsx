@@ -26,7 +26,7 @@ const Session: NextPage<{ id: string }> = ({ id }) => {
     <>
 
       <NavigationBarContent>
-        <h1>Session {session?.title}</h1>
+        <h1>Session: {session?.title}</h1>
       </NavigationBarContent>
       <Head>
         <title>eKudo</title>

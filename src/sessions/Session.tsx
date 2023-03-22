@@ -1,10 +1,15 @@
 import Link from "next/link";
-import { type SessionProps } from "~/types";
+import { type User, type SessionProps } from "~/types";
+import { api } from "~/utils/api";
 
 
 
 const Session = ({ session }: SessionProps) => {
-    if (!session) {
+    const speaker: User | undefined = api.users.getUserById.useQuery({ id: session.speakerId }).data
+
+
+
+    if (!session || !speaker) {
         return <></>
     }
     return (
@@ -14,7 +19,7 @@ const Session = ({ session }: SessionProps) => {
                     <div className="card-body">
                         <h2 className="card-title justify-center text-2xl bold text-black">{session.title}</h2>
                         <div className="flex justify-between w-full">
-                            <a className="text-lg">{session.speakerId}</a>
+                            <a className="text-lg">{speaker.displayName}</a>
                             <a className="text-lg">{new Date(session.date).toLocaleDateString()}</a>
                         </div>
                     </div>

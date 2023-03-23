@@ -40,6 +40,7 @@ const KonvaCanvas = ({editorFunction, template, setFunction, setStage}: KonvaCan
     const containerRef = useRef<HTMLDivElement>(null);
     const stageRef = useRef<Konva.Stage>() as MutableRefObject<Konva.Stage>;
     const layerRef = useRef<Konva.Layer>() as MutableRefObject<Konva.Layer>;
+    const staticLayerRef = useRef<Konva.Layer>() as MutableRefObject<Konva.Layer>;
     const [shapes, setShapes] = useState(initialShapes);
     const [selectedId, selectShape] = useState<string | null>(null);
 
@@ -56,7 +57,10 @@ const KonvaCanvas = ({editorFunction, template, setFunction, setStage}: KonvaCan
     
   const checkDeselect = (e: KonvaEventObject<Event>) => {
     // deselect when clicked on empty area
-    const clickedOnEmpty = e.target === e.target?.getStage();
+    
+    // selectShape(null);
+    const clickedOnEmpty = e.target?.getLayer() === staticLayerRef.current
+    
     if (clickedOnEmpty) {
       selectShape(null);
     }
@@ -114,7 +118,7 @@ const KonvaCanvas = ({editorFunction, template, setFunction, setStage}: KonvaCan
   <>
   {editorFunction === EditorFunctions.Clear && <ConfirmationModal onSubmit={onClear} onCancel={() => setFunction(EditorFunctions.None)}/>}
   
-  <div ref={containerRef} id='kudo' className="aspect-[3/2] w-full max-h-full max-w-5xl bg-green-200">
+  <div ref={containerRef} id='kudo' className="aspect-[3/2] w-full max-h-full max-w-5xl bg-neutral">
     <Stage ref={stageRef} 
       width={stageDimensions?.width} 
       height={stageDimensions?.height}
@@ -123,7 +127,7 @@ const KonvaCanvas = ({editorFunction, template, setFunction, setStage}: KonvaCan
       onTouchStart={checkDeselect}
       onClick={clickListener}
     >
-      <Layer>
+      <Layer ref={staticLayerRef}>
         <Rect
             width={stageDimensions?.width}
             height={stageDimensions?.height}

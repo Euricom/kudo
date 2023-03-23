@@ -60,16 +60,11 @@ const Editor: NextPage<{ res: Template }> = ({ res }) => {
   const submit = async () => {
     if(!stage){
       console.log("Stage doesn't exist.");
-      
       return
     }
     try {
-      console.log('Voor image');
-      
       const image = await createImage.mutateAsync({ dataUrl: stage.toDataURL() })
-      console.log('Na image');
       await createKudo.mutateAsync({ image: image.id, sessionId: sessionId, userId: userId });
-      console.log('Na kudo');
 
       await router.replace('/out')
     } catch (e) {

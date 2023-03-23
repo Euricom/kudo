@@ -4,10 +4,8 @@ import { api } from "~/utils/api";
 
 
 
-const Session = ({ session }: SessionProps) => {
+const SessionCard = ({ session }: SessionProps) => {
     const speaker: User | undefined = api.users.getUserById.useQuery({ id: session.speakerId }).data
-
-
 
     if (!session || !speaker) {
         return <></>
@@ -29,4 +27,4 @@ const Session = ({ session }: SessionProps) => {
     );
 };
 
-export default Session;
+export default SessionCard;

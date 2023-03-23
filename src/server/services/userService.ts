@@ -67,6 +67,6 @@ export const findAllUsers = async (): Promise<User[]> => {
 
 export const findUserById = async (id: string): Promise<User> => {
     const options = await getToken()
-    const user: AADResponseUser = await fetch('https://graph.microsoft.com/v1.0/users/' + id, options).then(r => r.json()) as AADResponseUser
-    return user.value
+    const user: User = await fetch('https://graph.microsoft.com/v1.0/users/' + id, options).then(r => r.json()) as User
+    return user
 };

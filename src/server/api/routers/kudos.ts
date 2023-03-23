@@ -79,9 +79,6 @@ export const kudoRouter = createTRPCRouter({
 
     createKudo: protectedProcedure.input(createKudoInput).mutation(async ({ input, ctx }): Promise<Kudo> => {
 
-        console.log(2);
-        console.log(input.anonymous);
-
         const kudo = (await ctx.prisma.kudo.create({
             data: {
                 image: input.image,

@@ -124,6 +124,7 @@ const NavBar = ({ children }: NavBarProps) => {
                     </div>
                 </div>
             </div>
+
         </>
     );
 };

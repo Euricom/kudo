@@ -15,7 +15,6 @@ type Session = {
   Title: string,
   Date: string,
   SpeakerId: string,
-  type: string,
 }
 
 type User = {
@@ -30,7 +29,6 @@ type User = {
   surname: string,
   userPrincipalName: string,
   id: string,
-  type: string
 }
 
 
@@ -68,7 +66,7 @@ const New: NextPage = () => {
       </Head>
       <main className="flex flex-col items-center justify-center overflow-y-scroll h-full gap-4">
         <FcPodiumWithAudience size={100} />
-        <Select data-cy="SelectSession" value={session?.Title} onChange={(e: React.ChangeEvent<HTMLInputElement>): void => setSession(sessions.find(s => s.Title === e.target.value))} label="Session" options={visibibleSessions} displayLabel="Title" valueLabel="Id" />
+        <Select data-cy="SelectSession" value={session?.Title} onChange={(e: React.ChangeEvent<HTMLInputElement>): void => setSession(sessions.find(s => s.Title === e.target.value) ? sessions.find(s => s.Title === e.target.value) : { Id: 100, Title: e.target.value, Date: "0", SpeakerId: "no" })} label="Session" options={visibibleSessions} displayLabel="Title" valueLabel="Id" />
         <FcPodiumWithSpeaker size={100} />
         <Select data-cy="SelectSpeaker" value={speaker?.displayName} onChange={(e: React.ChangeEvent<HTMLInputElement>): void => setSpeaker(users.find(u => u.displayName === e.target.value))} label="Speaker" options={visibleSpeakers()} displayLabel="displayName" valueLabel="id" />
         <label className="label cursor-pointer gap-5">

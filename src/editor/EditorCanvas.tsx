@@ -46,9 +46,6 @@ const EditorCanvas = (props: Template) => {
     const dataUrl = stageRef.current.toDataURL();
     try {
       const image = await createImage.mutateAsync({ dataUrl: dataUrl })
-      console.log(1);
-      console.log(anonymous);
-
       await createKudo.mutateAsync({ image: image.id, sessionId: sessionId, userId: userId, anonymous: anonymous });
 
 

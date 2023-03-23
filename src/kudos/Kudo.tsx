@@ -15,7 +15,6 @@ const KudoCard = ({ kudo }: KudoProps) => {
   const image = api.kudos.getImageById.useQuery({ id: kudo.image }).data?.dataUrl
   const user = api.users.getUserById.useQuery({ id: kudo.userId }).data?.displayName
 
-
   if (!image || !user) {
     return <></>
   }

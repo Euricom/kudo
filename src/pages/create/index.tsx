@@ -11,7 +11,7 @@ import { useSession } from "next-auth/react";
 
 
 type Session = {
-  Id: number,
+  id: string,
   Title: string,
   Date: string,
   SpeakerId: string,
@@ -54,6 +54,8 @@ const New: NextPage = () => {
 
   const visibibleSessions = sessions.filter(session => speaker ? speaker.id === session.SpeakerId : true)
 
+
+
   return (
     <>
       <NavigationBarContent>
@@ -66,7 +68,7 @@ const New: NextPage = () => {
       </Head>
       <main className="flex flex-col items-center justify-center overflow-y-scroll h-full gap-4">
         <FcPodiumWithAudience size={100} />
-        <Select data-cy="SelectSession" value={session?.Title} onChange={(e: React.ChangeEvent<HTMLInputElement>): void => setSession(sessions.find(s => s.Title === e.target.value) ? sessions.find(s => s.Title === e.target.value) : { Id: 100, Title: e.target.value, Date: "0", SpeakerId: "no" })} label="Session" options={visibibleSessions} displayLabel="Title" valueLabel="Id" />
+        <Select data-cy="SelectSession" value={session?.Title} onChange={(e: React.ChangeEvent<HTMLInputElement>): void => setSession(sessions.find(s => s.Title === e.target.value) ? sessions.find(s => s.Title === e.target.value) : { id: "0", Title: e.target.value, Date: "0", SpeakerId: "no" })} label="Session" options={visibibleSessions} displayLabel="Title" valueLabel="id" />
         <FcPodiumWithSpeaker size={100} />
         <Select data-cy="SelectSpeaker" value={speaker?.displayName} onChange={(e: React.ChangeEvent<HTMLInputElement>): void => setSpeaker(users.find(u => u.displayName === e.target.value))} label="Speaker" options={visibleSpeakers()} displayLabel="displayName" valueLabel="id" />
         <label className="label cursor-pointer gap-5">
@@ -74,7 +76,7 @@ const New: NextPage = () => {
           <span className="label-text">Hide my name.</span>
         </label>
       </main>
-      <FAB text={"Next"} icon={<GrNext />} url="/geenUrl" urlWithParams={{ pathname: "/create/templates", query: { session: session?.Title, speaker: speaker?.displayName }, auth: null, hash: null, host: null, hostname: null, href: "/create/templates", path: null, protocol: null, search: null, slashes: null, port: null }} />
+      <FAB text={"Next"} icon={<GrNext />} url="/geenUrl" urlWithParams={{ pathname: "/create/templates", query: { session: session?.id, speaker: speaker?.displayName }, auth: null, hash: null, host: null, hostname: null, href: "/create/templates", path: null, protocol: null, search: null, slashes: null, port: null }} />
     </>
   );
 };

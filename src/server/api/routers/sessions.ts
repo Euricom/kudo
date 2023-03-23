@@ -17,8 +17,6 @@ export const sessionRouter = createTRPCRouter({
     }),
 
     getSessionsBySpeaker: protectedProcedure.input(inputGetById).query(async ({ input }) => {
-        console.log(input.id);
-
         return await fetch('http://localhost:3000/api/sessions').then(result => result.json()).then((result: SessionArray) => result.sessions.filter((r: Session) => r.speakerId === input.id))
     }),
 

@@ -51,6 +51,11 @@ export const authOptions: NextAuthOptions = {
       clientId: env.AZURE_AD_CLIENT_ID,
       clientSecret: env.AZURE_AD_CLIENT_SECRET,
       tenantId: env.AZURE_AD_TENANT_ID,
+      authorization: {
+        params: {
+          userId: "test",
+        }
+      }
     }),
     /**
      * ...add more providers here.

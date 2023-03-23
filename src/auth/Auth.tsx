@@ -1,7 +1,7 @@
 import { signIn, useSession } from "next-auth/react";
 
-interface AuthProps  { 
-  children?: React.ReactNode 
+interface AuthProps {
+  children?: React.ReactNode
 }
 
 export function Auth({ children }: AuthProps) {
@@ -9,15 +9,15 @@ export function Auth({ children }: AuthProps) {
   const { status } = useSession({
     required: true,
     async onUnauthenticated() {
-      await signIn("azure-ad");
+      await signIn("azure-ad", {}, { userId: "test" });
     },
   });
   if (status === "loading") {
     return (
       <>
-      <div className="h-screen grid place-items-center">
-        <progress className="progress progress-primary w-56"></progress>
-      </div>
+        <div className="h-screen grid place-items-center">
+          <progress className="progress progress-primary w-56"></progress>
+        </div>
       </>
     );
   }

@@ -14,6 +14,7 @@ import { api } from '~/utils/api';
 import dynamic from 'next/dynamic';
 import { useSession } from 'next-auth/react';
 import { useSessionSpeaker } from '~/sessions/SelectedSessionAndSpeaker';
+import type Konva from 'konva';
 
 export async function getServerSideProps(context: { query: { template: string; }; }) {
   const id = context.query.template
@@ -42,6 +43,7 @@ const KonvaCanvas = dynamic(
 
 const Editor: NextPage<{ res: Template }> = ({ res }) => {
   const [selectedButton, setSelectedButton] = useState<EditorFunctions>()
+  const [stage, setStage] = useState<Konva.Stage>()
   const createKudo = api.kudos.createKudo.useMutation()
   const createImage = api.kudos.createKudoImage.useMutation()
   const router = useRouter()
@@ -55,10 +57,19 @@ const Editor: NextPage<{ res: Template }> = ({ res }) => {
 
   }
 
-  const receiveDataUrl = async (dataUrl: string) => {
+  const submit = async () => {
+    if(!stage){
+      console.log("Stage doesn't exist.");
+      
+      return
+    }
     try {
-      // const image = await createImage.mutateAsync({ dataUrl: dataUrl })
-      // await createKudo.mutateAsync({ image: image.id, sessionId: sessionId, userId: userId });
+      console.log('Voor image');
+      
+      const image = await createImage.mutateAsync({ dataUrl: stage.toDataURL() })
+      console.log('Na image');
+      await createKudo.mutateAsync({ image: image.id, sessionId: sessionId, userId: userId });
+      console.log('Na kudo');
 
       await router.replace('/out')
     } catch (e) {
@@ -99,9 +110,9 @@ const Editor: NextPage<{ res: Template }> = ({ res }) => {
       </UtilButtonsContent>
       {/* Main */}
       <main className="flex flex-col items-center justify-center overflow-y-scroll h-full" >
-        <KonvaCanvas editorFunction={selectedButton} template={res} setFunction={setSelectedButton} receiveDataUrl={(data) => void receiveDataUrl(data)}/>
+        <KonvaCanvas editorFunction={selectedButton} template={res} setFunction={setSelectedButton} setStage={setStage}/>
       </main>
-      <FAB text={"Send"} icon={<FiSend />} url="/out" onClick={() => setSelectedButton(EditorFunctions.DataUrl)}/>
+      <FAB text={"Send"} icon={<FiSend />} url="/out" onClick={() => void submit()}/>
     </>
   );
 };

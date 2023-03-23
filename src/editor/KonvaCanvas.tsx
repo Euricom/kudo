@@ -1,4 +1,4 @@
-import React, { useRef, useCallback, useEffect, useState, useMemo, type MutableRefObject } from 'react'
+import React, { useRef, useState, useEffect, useMemo, type MutableRefObject } from 'react'
 import { Stage, Layer, Rect, Text } from 'react-konva';
 import type Konva from 'konva'
 import { type Template } from '@prisma/client';
@@ -8,7 +8,6 @@ import { EditorFunctions } from '~/pages/create/editor';
 import CanvasText from './canvasShapes/CanvasText';
 import Rectangle from './canvasShapes/Rectangle';
 import { type Vector2d } from 'konva/lib/types';
-import { randomUUID } from 'crypto';
 import { v4 } from 'uuid';
 
 export enum CanvasShapes {
@@ -21,7 +20,7 @@ type KonvaCanvasProps = {
     editorFunction: EditorFunctions | undefined,
     template: Template,
     setFunction: (type: EditorFunctions) => void,
-    receiveDataUrl: (dataUrl: string) => void
+    setStage: (stage: Konva.Stage) => void
 }
 
 type Shapes = {
@@ -37,7 +36,7 @@ type Shapes = {
 
 const initialShapes: Shapes[] = [];
 
-const KonvaCanvas = ({editorFunction, template, setFunction, receiveDataUrl}: KonvaCanvasProps) => {
+const KonvaCanvas = ({editorFunction, template, setFunction, setStage}: KonvaCanvasProps) => {
     const containerRef = useRef<HTMLDivElement>(null);
     const stageRef = useRef<Konva.Stage>() as MutableRefObject<Konva.Stage>;
     const layerRef = useRef<Konva.Layer>() as MutableRefObject<Konva.Layer>;
@@ -67,15 +66,6 @@ const KonvaCanvas = ({editorFunction, template, setFunction, receiveDataUrl}: Ko
       layerRef.current?.removeChildren()
       setFunction(EditorFunctions.None)
   }
-
-  const getDataUrl = useCallback(() => {
-      layerRef.current.getChildren().forEach((e) => {
-          if (e.getClassName() == 'Transformer') {
-          e.hide() 
-          }
-      })
-      return stageRef.current.toDataURL();
-  }, [])
 
   const clickListener = () => {
     switch (editorFunction) {
@@ -115,6 +105,10 @@ const KonvaCanvas = ({editorFunction, template, setFunction, receiveDataUrl}: Ko
   const draw = () => {
     setFunction(EditorFunctions.None)
   }
+
+  useEffect(() => {
+    setStage(stageRef.current)
+  }, [setStage])
 
   return (
   <>

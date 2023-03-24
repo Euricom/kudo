@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, { useState } from 'react';
 import { type NextPage } from "next";
 import Head from "next/head";
 import { UtilButtonsContent } from "~/hooks/useUtilButtons";
@@ -47,8 +47,8 @@ const Editor: NextPage<{ res: Template }> = ({ res }) => {
   const router = useRouter()
 
   const userId: string = useSession().data?.user.id ?? "error"
-  const sessionId: string | undefined = useSessionSpeaker(undefined, undefined).data.session
-  const speaker: string | undefined = useSessionSpeaker(undefined, undefined).data.speaker
+  const sessionId: string | undefined = useSessionSpeaker(undefined, undefined, undefined).data.session
+  const speaker: string | undefined = useSessionSpeaker(undefined, undefined, undefined).data.speaker
 
   if (!userId || !sessionId || !speaker || userId == undefined) {
     console.log("een probleem");
@@ -81,27 +81,27 @@ const Editor: NextPage<{ res: Template }> = ({ res }) => {
         <h1 data-cy="session" className="lg:inline">&emsp;&emsp;&emsp;&emsp;Session: {sessionId}&emsp;&emsp;</h1><h1 data-cy="speaker" className="lg:inline"> Speaker: {speaker}</h1>
       </div> */}
       <UtilButtonsContent>
-          <button onClick={() => setSelectedButton(EditorFunctions.Text)} className={"btn btn-circle btn-secondary " + (selectedButton==EditorFunctions.Text? "btn-accent":"")}>
-            <BiText size={20} />
-          </button>
-          <button onClick={() => setSelectedButton(EditorFunctions.Draw)} className={"btn btn-circle btn-secondary "+ (selectedButton==EditorFunctions.Draw? "btn-accent":"")}>
-            <BiPencil size={20} />
-          </button>
-          <button onClick={() => setSelectedButton(EditorFunctions.Sticker)} className={"btn btn-circle btn-secondary "+ (selectedButton==EditorFunctions.Sticker? "btn-accent":"")}>
-            <GrEmoji size={20} />
-          </button>
-          <button onClick={() => setSelectedButton(EditorFunctions.Color)} className={"btn btn-circle btn-secondary "+ (selectedButton==EditorFunctions.Color? "btn-accent":"")}>
-            <BiPalette size={20} />
-          </button>
-          <button onClick={() => setSelectedButton(EditorFunctions.Clear)} className={"btn btn-circle btn-secondary "+ (selectedButton==EditorFunctions.Clear? "btn-accent":"")}>
-            <BiTrash size={20} />
-          </button>
+        <button onClick={() => setSelectedButton(EditorFunctions.Text)} className={"btn btn-circle btn-secondary " + (selectedButton == EditorFunctions.Text ? "btn-accent" : "")}>
+          <BiText size={20} />
+        </button>
+        <button onClick={() => setSelectedButton(EditorFunctions.Draw)} className={"btn btn-circle btn-secondary " + (selectedButton == EditorFunctions.Draw ? "btn-accent" : "")}>
+          <BiPencil size={20} />
+        </button>
+        <button onClick={() => setSelectedButton(EditorFunctions.Sticker)} className={"btn btn-circle btn-secondary " + (selectedButton == EditorFunctions.Sticker ? "btn-accent" : "")}>
+          <GrEmoji size={20} />
+        </button>
+        <button onClick={() => setSelectedButton(EditorFunctions.Color)} className={"btn btn-circle btn-secondary " + (selectedButton == EditorFunctions.Color ? "btn-accent" : "")}>
+          <BiPalette size={20} />
+        </button>
+        <button onClick={() => setSelectedButton(EditorFunctions.Clear)} className={"btn btn-circle btn-secondary " + (selectedButton == EditorFunctions.Clear ? "btn-accent" : "")}>
+          <BiTrash size={20} />
+        </button>
       </UtilButtonsContent>
       {/* Main */}
       <main className="flex flex-col items-center justify-center overflow-y-scroll h-full" >
-        <KonvaCanvas editorFunction={selectedButton} template={res} setFunction={setSelectedButton} receiveDataUrl={(data) => void receiveDataUrl(data)}/>
+        <KonvaCanvas editorFunction={selectedButton} template={res} setFunction={setSelectedButton} receiveDataUrl={(data) => void receiveDataUrl(data)} />
       </main>
-      <FAB text={"Send"} icon={<FiSend />} url="/out" onClick={() => setSelectedButton(EditorFunctions.DataUrl)}/>
+      <FAB text={"Send"} icon={<FiSend />} url="/out" onClick={() => setSelectedButton(EditorFunctions.DataUrl)} />
     </>
   );
 };

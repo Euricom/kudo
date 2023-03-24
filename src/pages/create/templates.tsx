@@ -12,24 +12,24 @@ import { api } from "~/utils/api";
 
 
 
-export async function getServerSideProps(context: { query: { session: string, speaker: string; }; }) {
+export async function getServerSideProps(context: { query: { session: string, speaker: string, anonymous: string }; }) {
+
   const data: Template[] = await findAllTemplates()
   return {
     props: {
       res: data,
       sess: context.query.session,
-      speaker: context.query.speaker
+      speaker: context.query.speaker,
+      anonymous: context.query.anonymous
     }
   }
 }
 
 
 
-const Editor: NextPage<{ res: Template[], sess: string, speaker: string }> = ({ res, sess, speaker }) => {
+const Editor: NextPage<{ res: Template[], sess: string, speaker: string, anonymous: string }> = ({ res, sess, speaker, anonymous }) => {
   const title = api.sessions.getSessionById.useQuery({ id: sess }).data?.title
-  useSessionSpeaker(sess, speaker)
-
-
+  useSessionSpeaker(sess, speaker, anonymous)
   // if (sess == undefined || speaker == undefined) {
   //   // throw ERROR!
   //   return <></>

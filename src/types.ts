@@ -82,6 +82,8 @@ export type SessionContextValue = {
     setSession: React.Dispatch<React.SetStateAction<string>>;
     speaker: string;
     setSpeaker: React.Dispatch<React.SetStateAction<string>>;
+    anonymous: boolean;
+    setAnonymous: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
 export type SessionProps = {

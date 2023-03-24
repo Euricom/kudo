@@ -4,7 +4,7 @@ import useWindowDimensions from "~/hooks/useWindowDimensions";
 interface FabProps {
     text?: string
     icon?: React.ReactNode
-    url: string | undefined
+    url?: string
     onClick?: () => void
     urlWithParams?: Url | undefined
 

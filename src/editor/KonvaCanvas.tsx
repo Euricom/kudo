@@ -9,6 +9,7 @@ import CanvasText from './canvasShapes/CanvasText';
 import Rectangle from './canvasShapes/Rectangle';
 import { type Vector2d } from 'konva/lib/types';
 import { v4 } from 'uuid';
+import ConfirmationModal from '~/input/ConfirmationModel';
 
 export enum CanvasShapes {
   Text,
@@ -37,22 +38,28 @@ type Shapes = {
 const initialShapes: Shapes[] = [];
 
 const KonvaCanvas = ({editorFunction, template, setFunction, setStage}: KonvaCanvasProps) => {
-    const containerRef = useRef<HTMLDivElement>(null);
-    const stageRef = useRef<Konva.Stage>() as MutableRefObject<Konva.Stage>;
-    const layerRef = useRef<Konva.Layer>() as MutableRefObject<Konva.Layer>;
-    const staticLayerRef = useRef<Konva.Layer>() as MutableRefObject<Konva.Layer>;
-    const [shapes, setShapes] = useState(initialShapes);
-    const [selectedId, selectShape] = useState<string | null>(null);
+  const containerRef = useRef<HTMLDivElement>(null);
+  const stageRef = useRef<Konva.Stage>() as MutableRefObject<Konva.Stage>;
+  const layerRef = useRef<Konva.Layer>() as MutableRefObject<Konva.Layer>;
+  const staticLayerRef = useRef<Konva.Layer>() as MutableRefObject<Konva.Layer>;
+  const [shapes, setShapes] = useState(initialShapes);
+  const [selectedId, selectShape] = useState<string | null>(null);
 
-    const dimensions = useDimensions(containerRef);
-    const stageDimensions = useMemo(
-      () => ({
-        width: dimensions?.width,
-        height: dimensions?.height,
-        scale: dimensions?.scale
-      }),
-      [dimensions]
-    );
+  const dimensions = useDimensions(containerRef);
+  const stageDimensions = useMemo(
+    () => ({
+      width: dimensions?.width,
+      height: dimensions?.height,
+      scale: dimensions?.scale
+    }),
+    [dimensions]
+  );
+
+  useEffect(() => {
+    if (editorFunction === EditorFunctions.Submit) {
+      selectShape(null);
+    }
+  }, [editorFunction]);
 
     
   const checkDeselect = (e: KonvaEventObject<Event>) => {
@@ -116,7 +123,15 @@ const KonvaCanvas = ({editorFunction, template, setFunction, setStage}: KonvaCan
 
   return (
   <>
-  {editorFunction === EditorFunctions.Clear && <ConfirmationModal onSubmit={onClear} onCancel={() => setFunction(EditorFunctions.None)}/>}
+  {editorFunction === EditorFunctions.Clear &&
+    <ConfirmationModal
+      prompt={"Are you sure you want to clear the canvas?"}
+      onCancel={() => setFunction(EditorFunctions.None)}
+      cancelLabel={"No"}
+      onSubmit={onClear}
+      submitLabel={"Yes"}
+    />
+  }
   
   <div ref={containerRef} id='kudo' className="aspect-[3/2] w-full max-h-full max-w-5xl bg-neutral">
     <Stage ref={stageRef} 
@@ -204,32 +219,6 @@ const Header = ({width, height, template}: {width: number | undefined, height: n
             />
         </>
     )
-}
-
-type ModalProps = {
-  onSubmit: () => void, 
-  onCancel: () => void
-}
-
-//Later in aparte component folder
-const ConfirmationModal = ({onSubmit, onCancel}: ModalProps) => {
-  return (
-    <>
-      {/* Modal */}
-      <input type="checkbox" className="modal-toggle" checked readOnly/>
-      <div className="modal modal-bottom sm:modal-middle">
-        <div className="modal-box form-control">
-          <label className="label">
-            <span className="label-text">Are you sure you want to clear the canvas?</span>
-          </label>
-          <div className="modal-action">
-            <button className="btn" onClick={onCancel}>No</button>
-            <button className="btn text-error" onClick={onSubmit}>Yes</button>
-          </div>
-        </div>
-      </div>
-    </>
-  )
 }
 
 export default KonvaCanvas

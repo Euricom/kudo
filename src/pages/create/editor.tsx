@@ -15,6 +15,7 @@ import dynamic from 'next/dynamic';
 import { useSession } from 'next-auth/react';
 import { useSessionSpeaker } from '~/sessions/SelectedSessionAndSpeaker';
 import type Konva from 'konva';
+import ConfirmationModal from '~/input/ConfirmationModel';
 
 export async function getServerSideProps(context: { query: { template: string; }; }) {
   const id = context.query.template
@@ -32,7 +33,7 @@ export enum EditorFunctions {
   Sticker = 'sticker',
   Color = 'color',
   Clear = 'clear',
-  DataUrl = 'dataurl',
+  Submit = 'submit',
   None = 'none'
 }
 
@@ -103,11 +104,21 @@ const Editor: NextPage<{ res: Template }> = ({ res }) => {
             <BiTrash size={20} />
           </button>
       </UtilButtonsContent>
+      
+      {selectedButton === EditorFunctions.Submit && 
+        <ConfirmationModal 
+          prompt={"Is your Kudo ready to be sent?"}
+          onCancel={() => setSelectedButton(EditorFunctions.None)}
+          cancelLabel={"No"}
+          onSubmit={() => void submit()}
+          submitLabel={"Yes"}
+        />
+      }
       {/* Main */}
       <main className="flex flex-col items-center justify-center overflow-y-scroll h-full" >
         <KonvaCanvas editorFunction={selectedButton} template={res} setFunction={setSelectedButton} setStage={setStage}/>
       </main>
-      <FAB text={"Send"} icon={<FiSend />} url="/out" onClick={() => void submit()}/>
+      <FAB text={"Send"} icon={<FiSend />} onClick={() => setSelectedButton(EditorFunctions.Submit)}/>
     </>
   );
 };

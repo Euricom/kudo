@@ -49,7 +49,7 @@ const NavBar = () => {
 
     return (
         <>
-            <div className="w-full navbar bg-neutral text-neutral-content fixed z-50">
+            <div className="w-full navbar bg-neutral text-neutral-content fixed z-50" data-cy="Navbar">
                 <div className="navbar-start ">
 
                     <div className="flex-none lg:hidden">

@@ -18,7 +18,7 @@ const Menu = ({ children }: MenuProps) => {
             <div className="drawer-side w-full ">
                 <label htmlFor="my-drawer-3" className="drawer-overlay">User</label>
                 <div className="menu p-4 w-full bg-base-100 text-lg">
-                    <label className='btn btn-circle absolute top-3 right-3 btn-ghost text-2xl' htmlFor="my-drawer-3">X</label>
+                    <label className='btn btn-circle absolute top-3 right-3 btn-ghost text-2xl' htmlFor="my-drawer-3" data-cy='CloseMenu'>X</label>
                     <div className='flex flex-col w-fit'>
                         <div className="avatar ">
                             <div className="w-24 rounded-xl">
@@ -46,7 +46,7 @@ const Menu = ({ children }: MenuProps) => {
                         </div>
                     </div>
                     <div className="divider"></div>
-                    <a onClick={() => void signOut()}>Sign out</a>
+                    <a onClick={() => void signOut()} data-cy='SignOut'>Sign out</a>
                 </div>
             </div>
         </div>

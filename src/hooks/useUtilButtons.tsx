@@ -6,7 +6,7 @@ import { UtilButtonsContext } from "~/types";
 const UtilButtonsContext = React.createContext<UtilButtonsContext>({ buttons: <></>, setButtons: () => { /* do nothing */ } });
 
 export function UtilButtonsProvider(props: React.PropsWithChildren<object>) {
-    const [buttons, setButtons] = React.useState<React.ReactNode | null>(null);
+    const [buttons, setButtons] = React.useState<React.ReactNode>('');
     return (
         <UtilButtonsContext.Provider value={{ buttons, setButtons }}>
             {props.children}

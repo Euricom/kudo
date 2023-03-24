@@ -4,7 +4,7 @@ import { type TitleContextValue } from "~/types";
 const TitleContext = React.createContext<TitleContextValue>({ title: <></>, setTitle: () => { /* do nothing */ } });
 
 export function TitleProvider(props: React.PropsWithChildren<object>) {
-    const [title, setTitle] = React.useState<React.ReactNode | null>(null);
+    const [title, setTitle] = React.useState<React.ReactNode>('');
     return (
         <TitleContext.Provider value={{ title, setTitle }}>
             {props.children}

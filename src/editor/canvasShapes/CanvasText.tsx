@@ -86,6 +86,8 @@ const CanvasText = ({ shapeProps, isSelected, onSelect, onChange, areaPosition, 
       {isSelected && (
         <Transformer
           ref={trRef}
+          anchorX={0.5}
+          anchorY={0.5}
           enabledAnchors={['middle-left', 'middle-right', 'bottom-center']}
           boundBoxFunc={(oldBox, newBox) => {
             newBox.width = Math.max(30, newBox.width);

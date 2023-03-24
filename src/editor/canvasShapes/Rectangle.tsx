@@ -15,12 +15,13 @@ type RectProps = {
 
 type RectangleProps = {
   shapeProps: RectProps,
+  scale: number,
   isSelected: boolean,
   onSelect: () => void,
   onChange: (shapeProps: RectProps) => void
 }
 
-const Rectangle = ({ shapeProps, isSelected, onSelect, onChange }: RectangleProps) => {
+const Rectangle = ({ shapeProps, scale, isSelected, onSelect, onChange }: RectangleProps) => {
   const shapeRef = useRef<Konva.Rect>() as MutableRefObject<Konva.Rect>;
   const trRef = useRef<Konva.Transformer>() as MutableRefObject<Konva.Transformer>;
 
@@ -39,6 +40,8 @@ const Rectangle = ({ shapeProps, isSelected, onSelect, onChange }: RectangleProp
         onTap={onSelect}
         ref={shapeRef}
         {...shapeProps}
+        x={shapeProps.x * scale}
+        y={shapeProps.y * scale}
         draggable
         onDragEnd={(e) => {
           onChange({

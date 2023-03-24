@@ -140,6 +140,7 @@ const KonvaCanvas = ({editorFunction, template, setFunction, setStage}: KonvaCan
       onMouseDown={checkDeselect}
       onTouchStart={checkDeselect}
       onClick={clickListener}
+      onTap={clickListener}
     >
       <Layer ref={staticLayerRef}>
         <Rect
@@ -157,6 +158,7 @@ const KonvaCanvas = ({editorFunction, template, setFunction, setStage}: KonvaCan
                 <CanvasText
                   key={i}
                   shapeProps={s}
+                  scale={stageDimensions.scale?.x??1}
                   fontSize={(stageDimensions?.height??0)/15}
                   isSelected={s.id === selectedId}
                   onSelect={() => {
@@ -178,6 +180,7 @@ const KonvaCanvas = ({editorFunction, template, setFunction, setStage}: KonvaCan
                 <Rectangle
                   key={i}
                   shapeProps={s}
+                  scale={stageDimensions.scale?.x??1}
                   isSelected={s.id === selectedId}
                   onSelect={() => {
                     selectShape(s.id);

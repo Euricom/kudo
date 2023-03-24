@@ -1,18 +1,24 @@
 import Link from "next/link";
-interface SessionProps {
-    id: number
-}
+import { type User, type SessionProps } from "~/types";
+import { api } from "~/utils/api";
 
-const Session = ({ id }: SessionProps) => {
+
+
+const SessionCard = ({ session }: SessionProps) => {
+    const speaker: User | undefined = api.users.getUserById.useQuery({ id: session.speakerId }).data
+
+    if (!session || !speaker) {
+        return <></>
+    }
     return (
         <>
-            <Link className="card bg-base-200 shadow-xl w-full h-fit md:w-96 bg-honeycomb bg-cover" data-cy="Session" href={"/session/" + id.toString()} >
+            <Link className="card bg-base-200 shadow-xl w-full h-fit md:w-96 bg-honeycomb bg-cover" data-cy="Session" href={"/session/" + session.id.toString()} >
                 <div className="card bg-white bg-opacity-50 backdrop-blur-xs">
                     <div className="card-body">
-                        <h2 className="card-title justify-center text-2xl bold text-black">Title Session</h2>
-                        <div className="flex">
-                            <p className="text-lg">Name Speaker</p>
-                            <p className="text-lg">Time slot</p>
+                        <h2 className="card-title justify-center text-2xl bold text-black">{session.title}</h2>
+                        <div className="flex justify-between w-full">
+                            <a className="text-lg">{speaker.displayName}</a>
+                            <a className="text-lg">{new Date(session.date).toLocaleDateString()}</a>
                         </div>
                     </div>
                 </div>
@@ -21,4 +27,4 @@ const Session = ({ id }: SessionProps) => {
     );
 };
 
-export default Session;
+export default SessionCard;

@@ -10,26 +10,7 @@ import { api } from "~/utils/api";
 import { useSession } from "next-auth/react";
 
 
-type Session = {
-  id: string,
-  Title: string,
-  Date: string,
-  SpeakerId: string,
-}
-
-type User = {
-  businessPhones: string[],
-  displayName: string,
-  givenName: string,
-  jobTitle: string,
-  mail: string,
-  mobilePhone: string,
-  officeLocation: string,
-  preferredLanguage: string,
-  surname: string,
-  userPrincipalName: string,
-  id: string,
-}
+import { type Session, type User } from "~/types";
 
 
 const New: NextPage = () => {
@@ -45,14 +26,14 @@ const New: NextPage = () => {
   }
 
   const visibleSpeakers = () => {
-    const visible = users.filter(x => (x.mail !== me)).filter(x => (sessions.filter(x => x.Title.toLowerCase().includes(session?.Title.toLowerCase() ?? ""))).map(x => x.SpeakerId).includes(x.id))
+    const visible = users.filter(x => (x.mail !== me)).filter(x => (sessions.filter(x => x.title.toLowerCase().includes(session?.title.toLowerCase() ?? ""))).map(x => x.speakerId).includes(x.id))
     if (visible.length === 1 && speaker !== visible[0]) {
       setSpeaker(visible[0]);
     }
     return visible
   }
 
-  const visibibleSessions = sessions.filter(session => speaker ? speaker.id === session.SpeakerId : true)
+  const visibibleSessions = sessions.filter(session => speaker ? speaker.id === session.speakerId : true)
 
 
 
@@ -68,7 +49,7 @@ const New: NextPage = () => {
       </Head>
       <main className="flex flex-col items-center justify-center overflow-y-scroll h-full gap-4">
         <FcPodiumWithAudience size={100} />
-        <Select data-cy="SelectSession" value={session?.Title} onChange={(e: React.ChangeEvent<HTMLInputElement>): void => setSession(sessions.find(s => s.Title === e.target.value) ? sessions.find(s => s.Title === e.target.value) : { id: "0", Title: e.target.value, Date: "0", SpeakerId: "no" })} label="Session" options={visibibleSessions} displayLabel="Title" valueLabel="id" />
+        <Select data-cy="SelectSession" value={session?.title} onChange={(e: React.ChangeEvent<HTMLInputElement>): void => setSession(sessions.find(s => s.title === e.target.value) ? sessions.find(s => s.title === e.target.value) : { id: "0", title: e.target.value, date: "0", speakerId: "no" })} label="Session" options={visibibleSessions} displayLabel="title" valueLabel="id" />
         <FcPodiumWithSpeaker size={100} />
         <Select data-cy="SelectSpeaker" value={speaker?.displayName} onChange={(e: React.ChangeEvent<HTMLInputElement>): void => setSpeaker(users.find(u => u.displayName === e.target.value))} label="Speaker" options={visibleSpeakers()} displayLabel="displayName" valueLabel="id" />
         <label className="label cursor-pointer gap-5">

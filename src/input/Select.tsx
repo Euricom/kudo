@@ -1,11 +1,6 @@
-interface SelectProps<T> {
-    label: string,
-    options: Array<T>,
-    value: string | undefined,
-    onChange: (event: React.ChangeEvent<HTMLInputElement>) => void,
-    displayLabel: keyof T,
-    valueLabel: keyof T,
-}
+
+import { type SelectProps } from "~/types";
+
 
 
 function Select<T>({ label, options, value, onChange, displayLabel, valueLabel }: SelectProps<T>) {

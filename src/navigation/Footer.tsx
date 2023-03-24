@@ -1,6 +1,7 @@
 import React from 'react';
 import { useRouter } from 'next/router';
 import { signOut } from 'next-auth/react';
+import { MdHomeFilled, MdAccountCircle } from 'react-icons/md';
 import { FiBell, FiMenu, FiDownload } from 'react-icons/fi';
 import { BsGearFill, BsArrowLeft } from 'react-icons/bs'
 import Image from 'next/image';
@@ -8,6 +9,7 @@ import avatar from '../contents/images/EMAvatar.jpg'
 import { useUtilButtons } from '~/hooks/useUtilButtons';
 
 import { useTitle } from "./NavBarTitle";
+import Link from 'next/link';
 
 
 
@@ -53,17 +55,22 @@ const Footer = ({ children }: NavBarProps) => {
 
     return (
         <>
-            <footer className="w-full h-fit footer text-neutral-content lg:hidden border-solid border-neutral border-spacing-6">
-                <div className="footer-start ">
-                    <div className="flex-none ">
-                        <label htmlFor="my-drawer-3" className="btn btn-square btn-ghost" data-cy="MenuButton">
-                            <FiMenu size={25} />
+            <div className='divider'></div>
+            <footer className="w-full h-14 footer footer-center lg:hidden">
+                <Link href={"/"} className="grid grid-cols-2 footer-start w-full">
+                    <Link href={"/"} className="footer-center w-1/2 " onClick={() => alert("hier")}>
+                        <div className="mb-4 btn btn-square btn-ghost justify-center mr-5" data-cy="MenuButton">
+                            <MdHomeFilled size={25} />
+                            <h1>Home</h1>
+                        </div>
+                    </Link>
+                    <div className="grid w-1/2 footer-center">
+                        <label className=" mb-4 btn btn-square btn-ghost ml-5" data-cy="MenuButton">
+                            <MdAccountCircle size={25} />
+                            <h1>Account</h1>
                         </label>
                     </div>
-                    {visibleStartNavbarActions.map((x) => (
-                        <x.Component key={x.key} />
-                    ))}
-                </div>
+                </Link>
             </footer>
 
         </>

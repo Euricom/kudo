@@ -17,14 +17,14 @@ const FAB = ({ text, icon, url, onClick, urlWithParams = undefined }: FabProps) 
         <>
             <div className="flex w-full fixed bottom-0 justify-center mb-5" data-cy='FAB'>
                 {url == undefined ?
-                    <div className="btn btn-primary rounded-full" onClick={onClick}>
+                    <div className="btn btn-accent rounded-full" onClick={onClick}>
                         {width < 768 ?
                             icon :
                             <>{text}</>
                         }
                     </div>
                     :
-                    <Link href={urlWithParams == undefined ? url : urlWithParams} className="btn btn-primary rounded-full" onClick={onClick}>
+                    <Link href={urlWithParams == undefined ? url : urlWithParams} className="btn btn-accent rounded-full" onClick={onClick}>
                         {width < 768 ?
                             icon :
                             <>{text}</>

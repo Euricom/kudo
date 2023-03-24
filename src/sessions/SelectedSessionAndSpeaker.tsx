@@ -16,7 +16,7 @@ export function SessionSpeakerProvider(props: React.PropsWithChildren<object>) {
 }
 
 
-export function useSessionSpeaker(newSession: (string | undefined), newSpeaker: (string | undefined), anonymous: (string | undefined)) {
+export function useSessionSpeaker(newSession?: string, newSpeaker?: string, anonymous?: string) {
     const context = React.useContext(SessionContext);
     if (newSession !== undefined && newSpeaker !== undefined && anonymous !== undefined) {
         context.setSession(newSession);

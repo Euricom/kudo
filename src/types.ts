@@ -29,9 +29,9 @@ export type KudoProps = {
 export type FabProps = {
     text?: string
     icon?: React.ReactNode
-    url: string | undefined
+    url?: string
     onClick?: () => void
-    urlWithParams?: Url | undefined
+    urlWithParams?: Url
 }
 export type MenuProps = {
     children?: React.ReactNode

@@ -14,6 +14,8 @@ import { api } from '~/utils/api';
 import dynamic from 'next/dynamic';
 import { useSession } from 'next-auth/react';
 import { useSessionSpeaker } from '~/sessions/SelectedSessionAndSpeaker';
+import type Konva from 'konva';
+import ConfirmationModal from '~/input/ConfirmationModel';
 
 export async function getServerSideProps(context: { query: { template: string; }; }) {
   const id = context.query.template
@@ -31,7 +33,7 @@ export enum EditorFunctions {
   Sticker = 'sticker',
   Color = 'color',
   Clear = 'clear',
-  DataUrl = 'dataurl',
+  Submit = 'submit',
   None = 'none'
 }
 
@@ -42,23 +44,28 @@ const KonvaCanvas = dynamic(
 
 const Editor: NextPage<{ res: Template }> = ({ res }) => {
   const [selectedButton, setSelectedButton] = useState<EditorFunctions>()
+  const [stage, setStage] = useState<Konva.Stage>()
   const createKudo = api.kudos.createKudo.useMutation()
   const createImage = api.kudos.createKudoImage.useMutation()
   const router = useRouter()
 
   const userId: string = useSession().data?.user.id ?? "error"
-  const sessionId: string | undefined = useSessionSpeaker(undefined, undefined, undefined).data.session
-  const speaker: string | undefined = useSessionSpeaker(undefined, undefined, undefined).data.speaker
 
-  if (!userId || !sessionId || !speaker || userId == undefined) {
+  const { session, speaker, anonymous } = useSessionSpeaker().data
+
+  if (!userId || !session || !speaker || userId == undefined) {
     console.log("een probleem");
 
   }
 
-  const receiveDataUrl = async (dataUrl: string) => {
+  const submit = async () => {
+    if(!stage){
+      console.log("Stage doesn't exist.");
+      return
+    }
     try {
-      // const image = await createImage.mutateAsync({ dataUrl: dataUrl })
-      // await createKudo.mutateAsync({ image: image.id, sessionId: sessionId, userId: userId });
+      const image = await createImage.mutateAsync({ dataUrl: stage.toDataURL() })
+      await createKudo.mutateAsync({ image: image.id, sessionId: session, userId: userId, anonymous: anonymous});
 
       await router.replace('/out')
     } catch (e) {
@@ -97,11 +104,21 @@ const Editor: NextPage<{ res: Template }> = ({ res }) => {
           <BiTrash size={20} />
         </button>
       </UtilButtonsContent>
+      
+      {selectedButton === EditorFunctions.Submit && 
+        <ConfirmationModal 
+          prompt={"Is your Kudo ready to be sent?"}
+          onCancel={() => setSelectedButton(EditorFunctions.None)}
+          cancelLabel={"No"}
+          onSubmit={() => void submit()}
+          submitLabel={"Yes"}
+        />
+      }
       {/* Main */}
-      <main className="flex flex-col items-center justify-center h-full" >
-        <KonvaCanvas editorFunction={selectedButton} template={res} setFunction={setSelectedButton} receiveDataUrl={(data) => void receiveDataUrl(data)} />
+      <main className="flex flex-col items-center justify-center h-full z-50" >
+        <KonvaCanvas editorFunction={selectedButton} template={res} setFunction={setSelectedButton} setStage={setStage}/>
       </main>
-      <FAB text={"Send"} icon={<FiSend />} url="/out" onClick={() => setSelectedButton(EditorFunctions.DataUrl)} />
+      <FAB text={"Send"} icon={<FiSend />} onClick={() => setSelectedButton(EditorFunctions.Submit)}/>
     </>
   );
 };

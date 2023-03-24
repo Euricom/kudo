@@ -1,26 +1,24 @@
-interface SelectProps {
-    label: string,
-    options: Array<string>,
-    value: string | undefined,
-    onChange: (event: React.ChangeEvent<HTMLInputElement>) => void
-}
 
-const Select = ({ label, options, value, onChange }: SelectProps) => {
+import { type SelectProps } from "~/types";
+
+
+
+function Select<T>({ label, options, value, onChange, displayLabel, valueLabel }: SelectProps<T>) {
     return (
         <>
             <div className="form-control w-full max-w-xs" data-cy={label}>
                 <label className="label">
                     <span className="label-text">{label}</span>
                 </label>
-                <input value={value} onChange={onChange} type="text" placeholder="Type here" className="input input-bordered w-full max-w-xs" list={label} data-cy="inputSelect" />
+                <input value={value as string} onChange={onChange} type="text" placeholder="Type here" className="input input-bordered w-full max-w-xs" list={label} data-cy="inputSelect" />
                 <datalist id={label} className=" data-[]">
-                    {options.map((x) => (
-                        <option key={x} value={x} className="bg-black">{x}</option>
+                    {options.map((x: T) => (
+                        <option key={x[valueLabel] as string} value={x[displayLabel] as string} className="bg-black">{x[displayLabel] as string}</option>
                     ))}
                 </datalist>
             </div>
         </>
     );
-};
+}
 
 export default Select;

@@ -8,6 +8,7 @@ import avatar from '../contents/images/EMAvatar.jpg'
 import { useUtilButtons } from '~/hooks/useUtilButtons';
 
 import { useTitle } from "./NavBarTitle";
+import { type NavBarProps } from '~/types';
 
 
 
@@ -41,9 +42,7 @@ function useVisibleStartNavbarActions() {
 }
 
 
-interface NavBarProps {
-    children?: React.ReactNode
-}
+
 
 const NavBar = ({ children }: NavBarProps) => {
     const buttons = useUtilButtons(undefined);
@@ -69,7 +68,7 @@ const NavBar = ({ children }: NavBarProps) => {
                                 <x.Component key={x.key} />
                             ))}
                         </div>
-                        <div className="navbar-center text-2xl" data-cy='NavbarTitle'>
+                        <div className="navbar-end sm:navbar-center w-1/2 sm:w-fit h-fit text-base sm:text-2xl" data-cy='NavbarTitle'>
                             <>{title}</>
                         </div>
                         <div className="navbar-end">

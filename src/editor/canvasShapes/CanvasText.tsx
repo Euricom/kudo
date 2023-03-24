@@ -8,23 +8,23 @@ import editText from '../editText';
 type TextProps = {
   id: string,
   type: CanvasShapes,
-  text: string,
+  text?: string,
   x: number,
   y: number,
-  width: number,
-  height: number,
+  width?: number,
+  height?: number,
 }
 
 type CanvasTextProps = {
-  shapeProps: TextProps, 
-  isSelected: boolean, 
-  onSelect: () => void, 
+  shapeProps: TextProps,
+  isSelected: boolean,
+  onSelect: () => void,
   onChange: (shapeProps: TextProps) => void,
   areaPosition: Vector2d,
   fontSize: number,
 }
 
-const CanvasText = ({ shapeProps, isSelected, onSelect, onChange, areaPosition, fontSize } : CanvasTextProps) => {
+const CanvasText = ({ shapeProps, isSelected, onSelect, onChange, areaPosition, fontSize }: CanvasTextProps) => {
   const shapeRef = useRef<Konva.Text>() as MutableRefObject<Konva.Text>;
   const trRef = useRef<Konva.Transformer>() as MutableRefObject<Konva.Transformer>;
   // const [isEditing, setIsEditing] = useState(false)
@@ -32,8 +32,8 @@ const CanvasText = ({ shapeProps, isSelected, onSelect, onChange, areaPosition, 
   useEffect(() => {
     if (isSelected) {
       // we need to attach transformer manually
-        trRef.current?.nodes([shapeRef.current]);
-        trRef.current?.getLayer()?.batchDraw();
+      trRef.current?.nodes([shapeRef.current]);
+      trRef.current?.getLayer()?.batchDraw();
     }
   }, [isSelected]);
 
@@ -110,7 +110,7 @@ type Document = {
   documentMode?: number;
 }
 
-const TextEdit = ({textNode, tr, areaPosition}: EditProps) => {
+const TextEdit = ({ textNode, tr, areaPosition }: EditProps) => {
   const textAreaRef = useRef<HTMLTextAreaElement>() as MutableRefObject<HTMLTextAreaElement>
 
   const style = {
@@ -131,7 +131,7 @@ const TextEdit = ({textNode, tr, areaPosition}: EditProps) => {
     if (rotation) {
       transform += 'rotateZ(' + rotation.toString() + 'deg)';
     }
-  
+
     let px = 0;
     // also we need to slightly move textarea on firefox
     // because it jumps a bit
@@ -140,16 +140,16 @@ const TextEdit = ({textNode, tr, areaPosition}: EditProps) => {
       px += 2 + Math.round(textNode.fontSize() / 20);
     }
     transform += 'translateY(-' + px.toString() + 'px)';
-  
+
     textAreaRef.current.style.transform = transform;
-  
+
     // reset height
     textAreaRef.current.style.height = 'auto';
     // after browsers resized it we can set actual value
     textAreaRef.current.style.height = (textAreaRef.current.scrollHeight + 3).toString() + 'px';
-  
-    
-  
+
+
+
     textAreaRef.current.addEventListener('keydown', function (e) {
       // hide on enter
       // but don't hide on shift + enter
@@ -162,22 +162,22 @@ const TextEdit = ({textNode, tr, areaPosition}: EditProps) => {
         removeTextarea(textNode, textAreaRef.current, tr);
       }
     });
-  
+
     textAreaRef.current.addEventListener('keydown', function () {
       const scale = textNode.getAbsoluteScale().x;
       setTextareaWidth(textNode.width() * scale, textNode, textAreaRef.current);
       textAreaRef.current.style.height = 'auto';
       textAreaRef.current.style.height =
-      textAreaRef.current.scrollHeight.toString() + textNode.fontSize().toString() + 'px';
+        textAreaRef.current.scrollHeight.toString() + textNode.fontSize().toString() + 'px';
     });
-    
+
     function handleOutsideClick(e: Event) {
       if (e.target !== textAreaRef.current) {
         textNode.text(textAreaRef.current.value);
         removeTextarea(textNode, textAreaRef.current, tr);
       }
     }
-  
+
     function removeTextarea(textNode: Konva.Text, textarea: HTMLTextAreaElement, tr: Konva.Transformer) {
       textarea.parentNode?.removeChild(textarea);
       window.removeEventListener('click', handleOutsideClick);
@@ -185,7 +185,7 @@ const TextEdit = ({textNode, tr, areaPosition}: EditProps) => {
       tr.show();
       tr.forceUpdate();
     }
-    
+
     setTimeout(() => {
       window.addEventListener('click', handleOutsideClick);
     });
@@ -205,21 +205,21 @@ const TextEdit = ({textNode, tr, areaPosition}: EditProps) => {
     if (isSafari || isFirefox) {
       newWidth = Math.ceil(newWidth);
     }
-  
+
     const isEdge = (document as Document).documentMode || /Edge/.test(navigator.userAgent);
     if (isEdge) {
       newWidth += 1;
     }
     textarea.style.width = newWidth.toString() + 'px';
   }
-  
+
   return (
     <>
-    <textarea ref={textAreaRef}
-      value={textNode.text()} 
-      className={`absolute border-none p-0 m-0 overflow-hidden bg-none outline-none resize-none origin-top-left`}
-      style={style}
-    />
+      <textarea ref={textAreaRef}
+        value={textNode.text()}
+        className={`absolute border-none p-0 m-0 overflow-hidden bg-none outline-none resize-none origin-top-left`}
+      //style={style}
+      />
     </>
   )
 }

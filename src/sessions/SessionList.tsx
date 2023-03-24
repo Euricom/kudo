@@ -1,12 +1,8 @@
 import SessionCard from "~/sessions/Session";
-import { type Session, type SessionArray } from "~/types";
+import { type newSession, type SessionArray } from "~/types";
 
 
-type newSession =
-    {
-        date: string,
-        sessions: Session[]
-    }
+
 
 
 const SessionList = ({ sessions }: SessionArray) => {

@@ -1,3 +1,4 @@
+import { env } from "~/env.mjs";
 import {
     createTRPCRouter,
     protectedProcedure,
@@ -13,14 +14,15 @@ const inputGetById = object({
 export const sessionRouter = createTRPCRouter({
 
     getAll: protectedProcedure.query(async () => {
-        return await fetch('http://localhost:3000/api/sessions').then(result => result.json()) as SessionArray
+        const result = await fetch(`${env.SESSION_URL}`).then(result => result.json()) as SessionArray
+        return result.sessions
     }),
 
     getSessionsBySpeaker: protectedProcedure.input(inputGetById).query(async ({ input }) => {
-        return await fetch('http://localhost:3000/api/sessions').then(result => result.json()).then((result: SessionArray) => result.sessions.filter((r: Session) => r.speakerId === input.id))
+        return await fetch(`${env.SESSION_URL}`).then(result => result.json()).then((result: SessionArray) => result.sessions.filter((r: Session) => r.speakerId === input.id))
     }),
 
     getSessionById: protectedProcedure.input(inputGetById).query(async ({ input }) => {
-        return await fetch('http://localhost:3000/api/sessions').then(result => result.json()).then((result: SessionArray) => result.sessions.find(r => r.id.toString() === input.id)) as Session
+        return await fetch(`${env.SESSION_URL}`).then(result => result.json()).then((result: SessionArray) => result.sessions.find(r => r.id.toString() === input.id)) as Session
     }),
 });

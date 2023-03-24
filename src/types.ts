@@ -14,11 +14,13 @@ export type UtilButtonsContext = {
     setButtons: React.Dispatch<React.SetStateAction<React.ReactNode | null>>
 }
 
-export type SelectProps = {
+export type SelectProps<T> = {
     label: string,
-    options: Array<string>,
+    options: Array<T>,
     value: string | undefined,
-    onChange: (event: React.ChangeEvent<HTMLInputElement>) => void
+    onChange: (event: React.ChangeEvent<HTMLInputElement>) => void,
+    displayLabel: keyof T,
+    valueLabel: keyof T,
 }
 export type KudoProps = {
     kudo: Kudo
@@ -41,7 +43,7 @@ export type TitleContextValue = {
 }
 
 export type Session = {
-    id: number,
+    id: string,
     title: string,
     date: string,
     speakerId: string,
@@ -81,12 +83,12 @@ export type SessionContextValue = {
     speaker: string;
     setSpeaker: React.Dispatch<React.SetStateAction<string>>;
 }
-export type session = {
-    id: number,
-    title: string,
-    date: string,
-    speakerId: string,
-}
+
 export type SessionProps = {
-    session: session
+    session: Session
+}
+
+export type newSession = {
+    date: string,
+    sessions: Session[]
 }

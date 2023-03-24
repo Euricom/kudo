@@ -4,31 +4,31 @@ import type Konva from 'konva';
 import { type CanvasShapes } from '../KonvaCanvas';
 
 type RectProps = {
-    id: string,
-    type: CanvasShapes,
-    x: number,
-    y: number,
-    width: number,
-    height: number,
-    fill: string,
+  id: string,
+  type: CanvasShapes,
+  x: number,
+  y: number,
+  width?: number,
+  height?: number,
+  fill?: string,
 }
 
 type RectangleProps = {
-    shapeProps: RectProps, 
-    isSelected: boolean, 
-    onSelect: () => void, 
-    onChange: (shapeProps: RectProps) => void
+  shapeProps: RectProps,
+  isSelected: boolean,
+  onSelect: () => void,
+  onChange: (shapeProps: RectProps) => void
 }
 
-const Rectangle = ({ shapeProps, isSelected, onSelect, onChange } : RectangleProps) => {
+const Rectangle = ({ shapeProps, isSelected, onSelect, onChange }: RectangleProps) => {
   const shapeRef = useRef<Konva.Rect>() as MutableRefObject<Konva.Rect>;
   const trRef = useRef<Konva.Transformer>() as MutableRefObject<Konva.Transformer>;
 
   useEffect(() => {
     if (isSelected) {
       // we need to attach transformer manually
-        trRef.current?.nodes([shapeRef.current]);
-        trRef.current?.getLayer()?.batchDraw();
+      trRef.current?.nodes([shapeRef.current]);
+      trRef.current?.getLayer()?.batchDraw();
     }
   }, [isSelected]);
 

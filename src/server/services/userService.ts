@@ -34,7 +34,6 @@ const getToken = async () => {
 }
 
 
-
 export const findAllUsers = async (): Promise<User[]> => {
     const options = await getToken()
     let users: User[] = []

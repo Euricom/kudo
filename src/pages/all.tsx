@@ -10,16 +10,14 @@ import NavButtons from "~/navigation/NavButtons";
 import React from "react"
 import SessionList from "~/sessions/SessionList";
 import { api } from "~/utils/api";
-import { type Session } from "~/types";
 
 
 
 const All: NextPage = () => {
-  const result = api.sessions.getAll.useQuery().data
-  if (!result) {
+  const sessions = api.sessions.getAll.useQuery().data
+  if (!sessions) {
     return <div>Loading...</div>;
   }
-  const sessions: Session[] = result.sessions
 
   return (
     <>

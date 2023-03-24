@@ -62,7 +62,7 @@ const New: NextPage = () => {
           <span className="label-text">Hide my name.</span>
         </label>
       </main>
-      <FAB text={"Next"} icon={<GrNext />} url="/geenUrl" urlWithParams={{ pathname: "/create/templates", query: { session: session?.id, speaker: speaker?.displayName, anonymous: anonymous.toString() }, auth: null, hash: null, host: null, hostname: null, href: "/create/templates", path: null, protocol: null, search: null, slashes: null, port: null }} />
+      <FAB text={"Next"} icon={<GrNext />} urlWithParams={{ pathname: "/create/templates", query: { session: session?.id, speaker: speaker?.displayName, anonymous: anonymous.toString() }, auth: null, hash: null, host: null, hostname: null, href: "/create/templates", path: null, protocol: null, search: null, slashes: null, port: null }} />
     </>
   );
 };

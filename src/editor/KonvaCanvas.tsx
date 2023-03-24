@@ -61,7 +61,6 @@ const KonvaCanvas = ({editorFunction, template, setFunction, setStage}: KonvaCan
     }
   }, [editorFunction]);
 
-    
   const checkDeselect = (e: KonvaEventObject<Event>) => {
     // deselect when clicked on empty area
     
@@ -74,15 +73,15 @@ const KonvaCanvas = ({editorFunction, template, setFunction, setStage}: KonvaCan
   };
 
   const onClear = () => {
-      layerRef.current?.removeChildren()
-      setFunction(EditorFunctions.None)
+    layerRef.current?.removeChildren()
+    setFunction(EditorFunctions.None)
   }
 
   const clickListener = () => {
     switch (editorFunction) {
       case EditorFunctions.Text:
         console.log('Text');
-        addText(stageRef.current.getPointerPosition()??{x: 50, y: 50})
+        addText(stageRef.current.getPointerPosition() ?? { x: 50, y: 50 })
         break
       case EditorFunctions.Draw:
         console.log('Draw');
@@ -96,7 +95,7 @@ const KonvaCanvas = ({editorFunction, template, setFunction, setStage}: KonvaCan
         console.log('None');
     }
   }
-  
+
   const addText = (pos: Vector2d) => {
     const text = {
       id: v4(),
@@ -199,26 +198,26 @@ const KonvaCanvas = ({editorFunction, template, setFunction, setStage}: KonvaCan
   )
 }
 
-const Header = ({width, height, template}: {width: number | undefined, height: number|undefined, template:Template}) => {
-    return (
-        <>
-            <Rect
-                width={width}
-                height={(height??0)/4}
-                fill={template.Color}
-            />
-            <Text 
-                width={width}
-                height={(height??0)/4}
-                text={template.Title}
-                fontSize={(height??0)/6}
-                fontFamily='Calibri'
-                fill='white'
-                align='center'
-                verticalAlign='middle'
-            />
-        </>
-    )
+const Header = ({ width, height, template }: { width: number | undefined, height: number | undefined, template: Template }) => {
+  return (
+    <>
+      <Rect
+        width={width}
+        height={(height ?? 0) / 4}
+        fill={template.Color}
+      />
+      <Text
+        width={width}
+        height={(height ?? 0) / 4}
+        text={template.Title}
+        fontSize={(height ?? 0) / 6}
+        fontFamily='Calibri'
+        fill='white'
+        align='center'
+        verticalAlign='middle'
+      />
+    </>
+  )
 }
 
 export default KonvaCanvas

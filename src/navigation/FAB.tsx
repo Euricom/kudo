@@ -1,14 +1,7 @@
 import Link from "next/link";
-import { type Url } from "url";
 import useWindowDimensions from "~/hooks/useWindowDimensions";
-interface FabProps {
-    text?: string
-    icon?: React.ReactNode
-    url?: string
-    onClick?: () => void
-    urlWithParams?: Url | undefined
+import { type FabProps } from "~/types";
 
-}
 
 const FAB = ({ text, icon, url, onClick, urlWithParams = undefined }: FabProps) => {
     const { width } = useWindowDimensions();

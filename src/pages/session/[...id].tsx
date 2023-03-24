@@ -1,29 +1,32 @@
-import { type NextPage/*, type GetServerSideProps */ } from "next";
+import { type NextPage } from "next";
 import Head from "next/head";
+import KudoCard from "~/kudos/Kudo";
 import { NavigationBarContent } from "~/navigation/NavBarTitle";
+import { api } from "~/utils/api";
 
-// export const getServerSideProps: GetServerSideProps = async ({ params }) => {
-//     const post = await prisma.post.findUnique({
-//       where: {
-//         id: String(params?.id),
-//       },
-//       include: {
-//         author: {
-//           select: { name: true },
-//         },
-//       },
-//     });
-//     return {
-//       props: params?.id,
-//     };
-// };
+export function getServerSideProps(context: { query: { id: string }; }) {
+  return {
+    props: {
+      id: context.query.id[0],
+    }
+  }
+}
 
-const Session: NextPage = () => {
+
+const Session: NextPage<{ id: string }> = ({ id }) => {
+
+  const session = api.sessions.getSessionById.useQuery({ id: id }).data
+  if (!session) {
+    const kudos = api.kudos.getKudosBySessionId.useQuery({ id: "error" }).data
+    kudos?.length
+    return <></>
+  }
+  const kudos = api.kudos.getKudosBySessionId.useQuery({ id: session.title }).data
   return (
     <>
 
       <NavigationBarContent>
-        <h1>Session [ID]</h1>
+        <h1>Session: {session?.title}</h1>
       </NavigationBarContent>
       <Head>
         <title>eKudo</title>
@@ -31,7 +34,12 @@ const Session: NextPage = () => {
         <link rel="icon" href="/favicon.ico" />
       </Head>
       <main className="flex flex-col items-center justify-center overflow-y-scroll h-full" data-cy="Session">
-        Session
+        <div className="flex flex-wrap gap-5 h-full justify-center p-5">
+          {kudos == undefined || kudos.length == 0 ? <h1>No Kudos received Yet</h1> :
+            kudos.map((kudo) => (
+              <KudoCard key={kudo.id} kudo={kudo} />
+            ))}
+        </div>
       </main>
     </>
   );

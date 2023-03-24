@@ -2,13 +2,14 @@ import {
     createTRPCRouter,
     protectedProcedure,
 } from "~/server/api/trpc";
-import { object, string } from "zod";
+import { boolean, object, string } from "zod";
 import { type Kudo, type Image } from "@prisma/client";
 
 const createKudoInput = object({
     image: string(),
     sessionId: string(),
     userId: string(),
+    anonymous: boolean(),
 })
 const createImageInput = object({
     dataUrl: string(),
@@ -26,6 +27,19 @@ export const kudoRouter = createTRPCRouter({
         return ctx.prisma.kudo.findMany({
             where: {
                 userId: input.id,
+            },
+            orderBy: {
+                id: 'desc'
+            }
+        });
+    }),
+
+    getKudosBySessionId: protectedProcedure.input(inputGetById).query(({ input, ctx }) => {
+        console.log(input.id);
+
+        return ctx.prisma.kudo.findMany({
+            where: {
+                sessionId: input.id,
             },
             orderBy: {
                 id: 'desc'
@@ -85,6 +99,7 @@ export const kudoRouter = createTRPCRouter({
                 comment: '',
                 sessionId: input.sessionId,
                 userId: input.userId,
+                anonymous: input.anonymous,
             },
         }));
         return kudo;
@@ -98,12 +113,4 @@ export const kudoRouter = createTRPCRouter({
         }));
         return image;
     }),
-
-
-
-
-
-
-
 });
-

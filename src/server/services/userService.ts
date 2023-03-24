@@ -1,6 +1,7 @@
 
 import { env } from "~/env.mjs";
 import * as msal from "@azure/msal-node";
+import { type AADResponseUsers, type User } from "~/types";
 
 
 const msalConfig = {
@@ -32,26 +33,6 @@ const getToken = async () => {
     return options
 }
 
-type AADResponseUsers = {
-    value: User[]
-    '@odata.nextLink': string
-}
-type AADResponseUser = {
-    value: User
-}
-type User = {
-    businessPhones: string[],
-    displayName: string,
-    givenName: string,
-    jobTitle: string,
-    mail: string,
-    mobilePhone: string,
-    officeLocation: string,
-    preferredLanguage: string,
-    surname: string,
-    userPrincipalName: string,
-    id: string
-}
 
 export const findAllUsers = async (): Promise<User[]> => {
     const options = await getToken()
@@ -67,6 +48,6 @@ export const findAllUsers = async (): Promise<User[]> => {
 
 export const findUserById = async (id: string): Promise<User> => {
     const options = await getToken()
-    const user: AADResponseUser = await fetch('https://graph.microsoft.com/v1.0/users/' + id, options).then(r => r.json()) as AADResponseUser
-    return user.value
+    const user: User = await fetch('https://graph.microsoft.com/v1.0/users/' + id, options).then(r => r.json()) as User
+    return user
 };

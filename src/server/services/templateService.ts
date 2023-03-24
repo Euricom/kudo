@@ -1,11 +1,7 @@
 import { prisma } from "~/server/db";
+import { type temp } from "~/types";
 
-type temp = {
-    id: string,
-    Color: string,
-    Title: string,
-    Sticker: string,
-}
+
 
 
 export const findAllTemplates = async (): Promise<temp[]> => {

@@ -1,11 +1,6 @@
 import React from "react";
+import { type SessionContextValue } from "~/types";
 
-type SessionContextValue = {
-    session: string;
-    setSession: React.Dispatch<React.SetStateAction<string>>;
-    speaker: string;
-    setSpeaker: React.Dispatch<React.SetStateAction<string>>;
-}
 
 const SessionContext = React.createContext<SessionContextValue>({ session: "", setSession: () => { /* do nothing */ }, speaker: "", setSpeaker: () => { /* do nothing */ } });
 

@@ -1,15 +1,13 @@
 import Konva from "konva";
+import { type Document } from "~/types";
 
-interface Document {
-  documentMode?: number;
-}
 
 const addText = (message: string, stage: Konva.Stage, layer: Konva.Layer) => {
   const textNode = new Konva.Text({
-    text: message!=''? message : 'Lorem',
-    x: stage.width()/2,
-    y: stage.height()/3,
-    fontSize: stage.height()/15,
+    text: message != '' ? message : 'Lorem',
+    x: stage.width() / 2,
+    y: stage.height() / 3,
+    fontSize: stage.height() / 15,
     draggable: true,
   });
 
@@ -25,7 +23,7 @@ const addText = (message: string, stage: Konva.Stage, layer: Konva.Layer) => {
   });
 
   tr.nodes([textNode])
-  
+
   textNode.on('transform', function () {
     // reset scale, so only with is changing by transformer
     textNode.setAttrs({

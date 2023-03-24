@@ -115,7 +115,7 @@ const Editor: NextPage<{ res: Template }> = ({ res }) => {
         />
       }
       {/* Main */}
-      <main className="flex flex-col items-center justify-center overflow-y-scroll h-full" >
+      <main className="flex flex-col items-center justify-center h-full z-50" >
         <KonvaCanvas editorFunction={selectedButton} template={res} setFunction={setSelectedButton} setStage={setStage}/>
       </main>
       <FAB text={"Send"} icon={<FiSend />} onClick={() => setSelectedButton(EditorFunctions.Submit)}/>

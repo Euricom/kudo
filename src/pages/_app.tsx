@@ -10,6 +10,8 @@ import NavBar from "~/navigation/NavBar";
 import { UtilButtonsProvider } from "~/hooks/useUtilButtons";
 import { TitleProvider } from "~/navigation/NavBarTitle";
 import { SessionSpeakerProvider } from "~/sessions/SelectedSessionAndSpeaker";
+import Footer from "~/navigation/Footer";
+import Menu from "~/navigation/Menu";
 
 const MyApp: AppType<{ session: Session | null }> = ({
   Component,
@@ -21,9 +23,13 @@ const MyApp: AppType<{ session: Session | null }> = ({
         <TitleProvider>
           <UtilButtonsProvider>
             <SessionSpeakerProvider>
-              <NavBar>
-                <Component {...pageProps} />
-              </NavBar>
+              <Menu>
+                <NavBar/>
+                <div className="pt-14 pb-32 h-full">
+                  <Component {...pageProps} />
+                </div>
+                <Footer/>
+              </Menu>
             </SessionSpeakerProvider>
           </UtilButtonsProvider>
         </TitleProvider>

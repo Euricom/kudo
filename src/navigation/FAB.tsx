@@ -8,23 +8,22 @@ const FAB = ({ text, icon, url, onClick, urlWithParams}: FabProps) => {
 
     return (
         <>
-            <div className="flex w-full fixed bottom-0 justify-center mb-5" data-cy='FAB'>
+            <div className=" fixed bottom-7 left-1/2 -translate-x-1/2 z-50" data-cy='FAB'>
                 {(!url && !urlWithParams) ? 
-                    <div className="btn btn-primary rounded-full" onClick={onClick}>
+                    <div className="btn btn-accent rounded-full h-16 w-16 md:w-fit" onClick={onClick}>
                         {width < 768 ?
                             icon :
                             <>{text}</>
                         }
                     </div>
                     :
-                    <Link href={urlWithParams ? urlWithParams : url??''} className="btn btn-primary rounded-full" onClick={onClick}>
+                    <Link href={urlWithParams ? urlWithParams : url??''} className="btn btn-accent rounded-full h-16 w-16 md:w-fit" onClick={onClick}>
                         {width < 768 ?
                             icon :
                             <>{text}</>
                         }
                     </Link>
                 }
-
             </div>
         </>
     );

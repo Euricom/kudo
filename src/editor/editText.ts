@@ -25,6 +25,7 @@ const createTextArea = (textNode: Konva.Text, areaPosition: Vector2d, tr: Konva.
   textarea.style.width = (textNode.width() - textNode.padding() * 2).toString() + 'px';
   textarea.style.height =
     (textNode.height() - textNode.padding() * 2 + 5).toString() + 'px';
+    
   textarea.style.fontSize = textNode.fontSize().toString() + 'px';
   textarea.style.border = 'none';
   textarea.style.padding = '0px';
@@ -58,10 +59,10 @@ const createTextArea = (textNode: Konva.Text, areaPosition: Vector2d, tr: Konva.
 
   // reset height
   textarea.style.height = 'auto';
+  
   // after browsers resized it we can set actual value
   textarea.style.height = (textarea.scrollHeight + 3).toString() + 'px';
 
-  
 
   textarea.addEventListener('keydown', function (e) {
     // hide on enter
@@ -81,7 +82,7 @@ const createTextArea = (textNode: Konva.Text, areaPosition: Vector2d, tr: Konva.
     setTextareaWidth(textNode.width() * scale, textNode, textarea);
     textarea.style.height = 'auto';
     textarea.style.height =
-      textarea.scrollHeight.toString() + textNode.fontSize().toString() + 'px';
+      Math.min(300, textarea.scrollHeight + textNode.fontSize()).toString() + 'px';
   });
   
   function handleOutsideClick(e: Event) {

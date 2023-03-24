@@ -42,7 +42,7 @@ const Out: NextPage = () => {
           <BiSortDown size={20} />
         </button>
       </UtilButtonsContent>
-      <main className="flex flex-col items-center justify-center overflow-y-scroll h-full">
+      <main className="flex flex-col items-center justify-center h-full">
         <div className="flex flex-wrap gap-5 h-full justify-center p-5">
           {kudos == undefined || kudos.length == 0 ? <h1>No Kudos Sent Yet</h1> :
             kudos.map((kudo) => (

@@ -95,8 +95,8 @@ const createTextArea = (textNode: Konva.Text, areaPosition: Vector2d, tr: Konva.
     textarea.parentNode?.removeChild(textarea);
     window.removeEventListener('click', handleOutsideClick);
     textNode.show();
+    
     tr.show();
-    tr.forceUpdate();
   }
   
   setTimeout(() => {

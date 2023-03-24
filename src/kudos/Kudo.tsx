@@ -1,14 +1,10 @@
-import { type Kudo } from "@prisma/client";
+
 import Image from "next/image";
 import Link from "next/link";
+import { type KudoProps } from "~/types";
 import { api } from "~/utils/api";
 
-//Voorlopig adhv card, moet Image worden naar de toekomst toe
 
-
-interface KudoProps {
-  kudo: Kudo
-}
 
 
 const KudoCard = ({ kudo }: KudoProps) => {

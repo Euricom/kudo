@@ -1,9 +1,5 @@
 import React from "react";
-
-type TitleContextValue = {
-    title: React.ReactNode;
-    setTitle: React.Dispatch<React.SetStateAction<React.ReactNode | null>>;
-}
+import { type TitleContextValue } from "~/types";
 
 const TitleContext = React.createContext<TitleContextValue>({ title: <></>, setTitle: () => { /* do nothing */ } });
 

@@ -101,8 +101,8 @@ const KonvaCanvas = ({editorFunction, template, setFunction, setStage}: KonvaCan
       id: v4(),
       type: CanvasShapes.Text,
       text: 'Text',
-      x: pos.x,
-      y: pos.y,
+      x: pos.x / (stageDimensions.scale?.x??1),
+      y: pos.y / (stageDimensions.scale?.y??1),
     }
     shapes.push(text)
     setFunction(EditorFunctions.None)
@@ -134,9 +134,9 @@ const KonvaCanvas = ({editorFunction, template, setFunction, setStage}: KonvaCan
   
   <div ref={containerRef} id='kudo' className="aspect-[3/2] w-full max-h-full max-w-5xl bg-neutral">
     <Stage ref={stageRef} 
-      width={stageDimensions?.width} 
-      height={stageDimensions?.height}
-      // scale={stageDimensions.scale}
+      width={(stageDimensions?.width??1) * (stageDimensions.scale?.x??1)} 
+      height={(stageDimensions?.height??1) * (stageDimensions.scale?.y??1)}
+      scale={stageDimensions.scale}
       onMouseDown={checkDeselect}
       onTouchStart={checkDeselect}
       onClick={clickListener}

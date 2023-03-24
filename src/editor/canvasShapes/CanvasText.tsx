@@ -53,8 +53,6 @@ const CanvasText = ({ shapeProps, scale, isSelected, onSelect, onChange, areaPos
         onDblTap={onDoubleClick}
         ref={shapeRef}
         {...shapeProps}
-        x={shapeProps.x * scale}
-        y={shapeProps.y * scale}
         fontSize={fontSize}
         draggable
         onDragEnd={(e) => {

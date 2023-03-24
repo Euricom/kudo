@@ -37,7 +37,7 @@ const All: NextPage = () => {
           <BiSortDown size={20} />
         </button>
       </UtilButtonsContent>
-      <main className="flex flex-col items-center justify-center overflow-y-scroll h-full">
+      <main className="flex flex-col items-center justify-center h-full">
         <SessionList sessions={sessions} />
       </main>
       <FAB text={"Create Kudo"} icon={<GrAdd />} url="/create" />

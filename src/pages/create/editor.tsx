@@ -98,7 +98,7 @@ const Editor: NextPage<{ res: Template }> = ({ res }) => {
         </button>
       </UtilButtonsContent>
       {/* Main */}
-      <main className="flex flex-col items-center justify-center overflow-y-scroll h-full" >
+      <main className="flex flex-col items-center justify-center h-full" >
         <KonvaCanvas editorFunction={selectedButton} template={res} setFunction={setSelectedButton} receiveDataUrl={(data) => void receiveDataUrl(data)} />
       </main>
       <FAB text={"Send"} icon={<FiSend />} url="/out" onClick={() => setSelectedButton(EditorFunctions.DataUrl)} />

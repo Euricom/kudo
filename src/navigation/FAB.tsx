@@ -8,7 +8,7 @@ const FAB = ({ text, icon, url, onClick, urlWithParams = undefined }: FabProps) 
 
     return (
         <>
-            <div className="flex w-full fixed bottom-0 justify-center mb-5" data-cy='FAB'>
+            <div className=" fixed bottom-7 left-1/2 -translate-x-1/2 z-50" data-cy='FAB'>
                 {url == undefined ?
                     <div className="btn btn-accent rounded-full" onClick={onClick}>
                         {width < 768 ?
@@ -17,7 +17,7 @@ const FAB = ({ text, icon, url, onClick, urlWithParams = undefined }: FabProps) 
                         }
                     </div>
                     :
-                    <Link href={urlWithParams == undefined ? url : urlWithParams} className="btn btn-accent rounded-full" onClick={onClick}>
+                    <Link href={urlWithParams == undefined ? url : urlWithParams} className="btn btn-accent rounded-full h-16 w-16 md:w-fit" onClick={onClick}>
                         {width < 768 ?
                             icon :
                             <>{text}</>

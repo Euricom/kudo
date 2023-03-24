@@ -33,7 +33,7 @@ const Session: NextPage<{ id: string }> = ({ id }) => {
         <meta name="description" content="eKudo app" />
         <link rel="icon" href="/favicon.ico" />
       </Head>
-      <main className="flex flex-col items-center justify-center overflow-y-scroll h-full" data-cy="Session">
+      <main className="flex flex-col items-center justify-center h-full" data-cy="Session">
         <div className="flex flex-wrap gap-5 h-full justify-center p-5">
           {kudos == undefined || kudos.length == 0 ? <h1>No Kudos received Yet</h1> :
             kudos.map((kudo) => (

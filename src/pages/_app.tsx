@@ -11,6 +11,7 @@ import { UtilButtonsProvider } from "~/hooks/useUtilButtons";
 import { TitleProvider } from "~/navigation/NavBarTitle";
 import { SessionSpeakerProvider } from "~/sessions/SelectedSessionAndSpeaker";
 import Footer from "~/navigation/Footer";
+import Menu from "~/navigation/Menu";
 
 const MyApp: AppType<{ session: Session | null }> = ({
   Component,
@@ -22,10 +23,13 @@ const MyApp: AppType<{ session: Session | null }> = ({
         <TitleProvider>
           <UtilButtonsProvider>
             <SessionSpeakerProvider>
-              <NavBar>
-                <Component {...pageProps} />
+              <Menu>
+                <NavBar>
+                    <Footer/>
+                    <Component {...pageProps} />
+                </NavBar>
                 <Footer />
-              </NavBar>
+              </Menu>
             </SessionSpeakerProvider>
           </UtilButtonsProvider>
         </TitleProvider>

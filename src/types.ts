@@ -36,6 +36,9 @@ export type FabProps = {
 export type NavBarProps = {
     children?: React.ReactNode
 }
+export type MenuProps = {
+    children?: React.ReactNode
+}
 
 export type TitleContextValue = {
     title: React.ReactNode;

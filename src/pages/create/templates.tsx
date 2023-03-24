@@ -7,6 +7,7 @@ import Link from "next/link";
 import { useSessionSpeaker } from "~/sessions/SelectedSessionAndSpeaker";
 import FAB from "~/navigation/FAB";
 import { GrNext } from "react-icons/gr";
+import { api } from "~/utils/api";
 
 
 
@@ -27,6 +28,7 @@ export async function getServerSideProps(context: { query: { session: string, sp
 
 
 const Editor: NextPage<{ res: Template[], sess: string, speaker: string, anonymous: string }> = ({ res, sess, speaker, anonymous }) => {
+  const title = api.sessions.getSessionById.useQuery({ id: sess }).data?.title
   useSessionSpeaker(sess, speaker, anonymous)
   // if (sess == undefined || speaker == undefined) {
   //   // throw ERROR!
@@ -44,7 +46,7 @@ const Editor: NextPage<{ res: Template[], sess: string, speaker: string, anonymo
         <link rel="icon" href="/favicon.ico" />
       </Head>
       <div className="w-full h-fit bg-secondary text-white p-1 text-center">
-        <h1 data-cy="session" className="lg:inline">&emsp;&emsp;&emsp;&emsp;Session: {sess}&emsp;&emsp;</h1><h1 data-cy="speaker" className="lg:inline"> Speaker: {speaker}</h1>
+        <h1 data-cy="session" className="lg:inline">&emsp;&emsp;&emsp;&emsp;Session: {title}&emsp;&emsp;</h1><h1 data-cy="speaker" className="lg:inline"> Speaker: {speaker}</h1>
       </div>
       <main className="flex flex-col items-center justify-center overflow-y-scroll h-full">
 

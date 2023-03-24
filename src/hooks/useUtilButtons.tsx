@@ -1,9 +1,7 @@
 import React from "react";
+import { UtilButtonsContext } from "~/types";
 
-type UtilButtonsContext = {
-    buttons: React.ReactNode,
-    setButtons: React.Dispatch<React.SetStateAction<React.ReactNode | null>>
-}
+
 
 const UtilButtonsContext = React.createContext<UtilButtonsContext>({ buttons: <></>, setButtons: () => { /* do nothing */ } });
 

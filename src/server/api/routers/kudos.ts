@@ -34,6 +34,19 @@ export const kudoRouter = createTRPCRouter({
         });
     }),
 
+    getKudosBySessionId: protectedProcedure.input(inputGetById).query(({ input, ctx }) => {
+        console.log(input.id);
+
+        return ctx.prisma.kudo.findMany({
+            where: {
+                sessionId: input.id,
+            },
+            orderBy: {
+                id: 'desc'
+            }
+        });
+    }),
+
     getImageById: protectedProcedure.input(inputGetById).query(({ input, ctx }) => {
         return ctx.prisma.image.findUnique({
             where: {
@@ -100,12 +113,4 @@ export const kudoRouter = createTRPCRouter({
         }));
         return image;
     }),
-
-
-
-
-
-
-
 });
-

@@ -18,20 +18,11 @@ const Out: NextPage = () => {
   const userId = useSession().data?.user.id
   if (!userId) {
     throw new Error("No user signed in")
-
   }
   const kudos = api.kudos.getKudosByUserId.useQuery({ id: userId }).data
-
-
-
-
   if (!userId) {
     return <div>Loading...</div>
   }
-
-
-
-
 
   return (
     <>
@@ -53,7 +44,7 @@ const Out: NextPage = () => {
       </UtilButtonsContent>
       <main className="flex flex-col items-center justify-center overflow-y-scroll h-full">
         <div className="flex flex-wrap gap-5 h-full justify-center p-5">
-          {kudos == undefined ? <h1>No Kudos Sent Yet</h1> :
+          {kudos == undefined || kudos.length == 0 ? <h1>No Kudos Sent Yet</h1> :
             kudos.map((kudo) => (
               <KudoCard key={kudo.id} kudo={kudo} />
             ))}

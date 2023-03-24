@@ -18,9 +18,6 @@ export function getServerSideProps(context: { query: { id: string }; }) {
   }
 }
 
-
-
-
 const KudoDetail: NextPage<{ id: string }> = ({ id }) => {
 
 

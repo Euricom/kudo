@@ -1,10 +1,9 @@
 import { signIn, useSession } from "next-auth/react";
 import { api } from "~/utils/api";
 import { useState } from "react";
+import { type AuthProps } from "~/types";
 
-interface AuthProps {
-  children?: React.ReactNode
-}
+
 
 export function Auth({ children }: AuthProps) {
   const update = api.users.updateUserIdAfterLogin.useMutation()

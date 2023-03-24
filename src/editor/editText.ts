@@ -5,13 +5,12 @@ type Document = {
   documentMode?: number;
 }
 
-const editText = (areaPosition: Vector2d, textNode: Konva.Text, tr: Konva.Transformer) => {
-  const textarea = createTextArea(textNode, areaPosition, tr)
-
+const editText = (areaPosition: Vector2d, textNode: Konva.Text, tr: Konva.Transformer, scale: number) => {
+  const textarea = createTextArea(textNode, areaPosition, tr, scale)
   textarea.focus();
 }
 
-const createTextArea = (textNode: Konva.Text, areaPosition: Vector2d, tr: Konva.Transformer) => {
+const createTextArea = (textNode: Konva.Text, areaPosition: Vector2d, tr: Konva.Transformer, scale: number) => {
   const textarea = document.createElement('textarea');
   document.body.appendChild(textarea);
 
@@ -20,13 +19,13 @@ const createTextArea = (textNode: Konva.Text, areaPosition: Vector2d, tr: Konva.
   // and sometimes it is hard to make it 100% the same. But we will try...
   textarea.value = textNode.text();
   textarea.style.position = 'absolute';
-  textarea.style.top = areaPosition.y.toString() + 'px';
-  textarea.style.left = areaPosition.x.toString() + 'px';
-  textarea.style.width = (textNode.width() - textNode.padding() * 2).toString() + 'px';
+  textarea.style.top = (areaPosition.y * scale).toString() + 'px';
+  textarea.style.left = (areaPosition.x * scale).toString() + 'px';
+  textarea.style.width = ((textNode.width() - textNode.padding() * 2) * scale).toString() + 'px';
   textarea.style.height =
-    (textNode.height() - textNode.padding() * 2 + 5).toString() + 'px';
+    ((textNode.height() - textNode.padding() * 2 + 5) * scale ).toString() + 'px';
     
-  textarea.style.fontSize = textNode.fontSize().toString() + 'px';
+  textarea.style.fontSize = (textNode.fontSize() * scale).toString() + 'px';
   textarea.style.border = 'none';
   textarea.style.padding = '0px';
   textarea.style.margin = '0px';
@@ -51,7 +50,7 @@ const createTextArea = (textNode: Konva.Text, areaPosition: Vector2d, tr: Konva.
   // because it jumps a bit
   const isFirefox = navigator.userAgent.toLowerCase().indexOf('firefox') > -1;
   if (isFirefox) {
-    px += 2 + Math.round(textNode.fontSize() / 20);
+    px += 2 + Math.round((textNode.fontSize()) / 20);
   }
   transform += 'translateY(-' + px.toString() + 'px)';
 
@@ -78,8 +77,8 @@ const createTextArea = (textNode: Konva.Text, areaPosition: Vector2d, tr: Konva.
   });
 
   textarea.addEventListener('keydown', function () {
-    const scale = textNode.getAbsoluteScale().x;
-    setTextareaWidth(textNode.width() * scale, textNode, textarea);
+    const absScale = textNode.getAbsoluteScale().x;
+    setTextareaWidth(textNode.width() * absScale * scale, textNode, textarea);
     textarea.style.height = 'auto';
     textarea.style.height =
       Math.min(300, textarea.scrollHeight + textNode.fontSize()).toString() + 'px';

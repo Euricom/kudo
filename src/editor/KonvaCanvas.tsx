@@ -105,6 +105,7 @@ const KonvaCanvas = ({editorFunction, template, setFunction, setStage}: KonvaCan
       y: pos.y / (stageDimensions.scale?.y??1),
     }
     shapes.push(text)
+    selectShape(text.id)
     setFunction(EditorFunctions.None)
   }
 

@@ -31,7 +31,7 @@ export type FabProps = {
     icon?: React.ReactNode
     url?: string
     onClick?: () => void
-    urlWithParams?: Url | undefined
+    urlWithParams?: Url
 }
 export type NavBarProps = {
     children?: React.ReactNode

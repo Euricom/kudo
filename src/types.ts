@@ -33,9 +33,6 @@ export type FabProps = {
     onClick?: () => void
     urlWithParams?: Url | undefined
 }
-export type NavBarProps = {
-    children?: React.ReactNode
-}
 export type MenuProps = {
     children?: React.ReactNode
 }

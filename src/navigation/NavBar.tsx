@@ -6,7 +6,6 @@ import { BsGearFill, BsArrowLeft } from 'react-icons/bs'
 import { useUtilButtons } from '~/hooks/useUtilButtons';
 
 import { useTitle } from "./NavBarTitle";
-import { type NavBarProps } from '~/types';
 
 
 
@@ -42,7 +41,7 @@ function useVisibleStartNavbarActions() {
 
 
 
-const NavBar = ({ children }: NavBarProps) => {
+const NavBar = () => {
     const buttons = useUtilButtons(undefined);
     const visibleEndNavbarActions = useVisibleEndNavbarActions();
     const visibleStartNavbarActions = useVisibleStartNavbarActions();
@@ -82,9 +81,6 @@ const NavBar = ({ children }: NavBarProps) => {
             </div>
             <div className="absolute md:right-1/4 my-2 pt-16 z-40 flex self-center gap-2">
                 {buttons}
-            </div>
-            <div className='pt-14 pb-32'>
-             {children}
             </div>
         </>
     );

@@ -24,11 +24,11 @@ const MyApp: AppType<{ session: Session | null }> = ({
           <UtilButtonsProvider>
             <SessionSpeakerProvider>
               <Menu>
-                <NavBar>
-                    <Footer/>
-                    <Component {...pageProps} />
-                </NavBar>
-                <Footer />
+                <NavBar/>
+                <div className="pt-14 pb-32">
+                  <Component {...pageProps} />
+                </div>
+                <Footer/>
               </Menu>
             </SessionSpeakerProvider>
           </UtilButtonsProvider>

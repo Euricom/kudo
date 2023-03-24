@@ -45,7 +45,7 @@ const NavBar = () => {
     const buttons = useUtilButtons(undefined);
     const visibleEndNavbarActions = useVisibleEndNavbarActions();
     const visibleStartNavbarActions = useVisibleStartNavbarActions();
-    const title = useTitle(undefined);
+    const title = useTitle();
 
     return (
         <>

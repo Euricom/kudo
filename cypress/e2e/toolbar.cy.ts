@@ -1,7 +1,7 @@
 import { Component } from 'react'
 
-describe('navbar title spec', () => {
-  it('passes', () => {
+describe('toolbar spec', () => {
+  it('checks the toolbar', () => {
     cy.viewport(375, 667)
     cy.login(Cypress.env('username') as string, Cypress.env('password') as string)
 

@@ -16,6 +16,8 @@ import { useSession } from "next-auth/react";
 const Home: NextPage = () => {
   const userId: string | undefined = useSession().data?.user.id
 
+  const speaker = api.users.getUserById.useQuery({ id: "cdb23f58-65db-4b6b-b132-cf2d13d08e76" })
+
   const sessions: Session[] | undefined = api.sessions.getSessionsBySpeaker.useQuery({ id: userId ?? "error" }).data
   if (!sessions) {
     return <div>Loading...</div>;

@@ -1,7 +1,8 @@
 import React from 'react';
 import { useRouter } from 'next/router';
 import { signOut } from 'next-auth/react';
-import { FiBell, FiMenu, FiDownload } from 'react-icons/fi';
+import { FiBell, FiDownload } from 'react-icons/fi';
+import { IoLogoChrome } from 'react-icons/io';
 import { BsGearFill, BsArrowLeft } from 'react-icons/bs'
 import { useUtilButtons } from '~/hooks/useUtilButtons';
 
@@ -47,26 +48,22 @@ const NavBar = () => {
     const visibleEndNavbarActions = useVisibleEndNavbarActions();
     const visibleStartNavbarActions = useVisibleStartNavbarActions();
     const title = useTitle();
-
     return (
         <>
-            <div className="w-full navbar bg-neutral text-neutral-content fixed z-50" data-cy="Navbar">
-                <div className="navbar-start ">
-
-                    <div className="flex-none lg:hidden">
-
-                        <label htmlFor="my-drawer-3" className="btn btn-square btn-ghost" data-cy="MenuButton">
-                            <FiMenu size={25} />
-                        </label>
-                    </div>
+            <div className="w-full navbar bg-base-100 fixed z-50 ">
+                <div className="navbar-start w-full">
+                    <label data-cy="logo">
+                        <IoLogoChrome size={25} />
+                    </label>
                     {visibleStartNavbarActions.map((x) => (
                         <x.Component key={x.key} />
                     ))}
+                    <div className="text-lg w-full sm:text-2xl sm:navbar-center z-10" data-cy='NavbarTitle'>
+                        <>{title}</>
+                    </div>
                 </div>
-                <div className="navbar-end sm:navbar-center w-1/2 sm:w-fit h-fit text-base sm:text-2xl" data-cy='NavbarTitle'>
-                    <>{title}</>
-                </div>
-                <div className="navbar-end">
+
+                <div className="navbar-end w-fit pr-10">
                     {visibleEndNavbarActions.map((x) => (
                         <x.Component key={x.key} />
                     ))}

@@ -36,6 +36,7 @@ module.exports = {
       },
     },
   },
+  darkMode: 'class',
   plugins: [require("@tailwindcss/typography"), require("daisyui")],
   daisyui: {
     themes: [
@@ -62,7 +63,7 @@ module.exports = {
         },
       },
       {
-        dark: {
+        euricomDark: {
           primary: '#52abc7',
           'primary-focus': '#a3e0f2',
           'primary-content': '#062a30',
@@ -84,5 +85,6 @@ module.exports = {
         },
       },
     ],
+    darkTheme: "euricomDark",
   },
 };

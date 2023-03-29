@@ -3,6 +3,7 @@ import React from 'react';
 import { type MenuProps } from '~/types';
 import avatar from '../contents/images/EMAvatar.jpg'
 import { signOut } from 'next-auth/react';
+import ThemeButton from '~/input/ThemeButton';
 
 
 
@@ -39,10 +40,7 @@ const Menu = ({ children }: MenuProps) => {
                                 <span className="label-text">Notifications</span>
                                 <input type="checkbox" className="toggle" />
                             </label>
-                            <label className="label cursor-pointer">
-                                <span className="label-text">Darkmode</span>
-                                <input type="checkbox" className="toggle" />
-                            </label>
+                            <ThemeButton />
                         </div>
                     </div>
                     <div className="divider"></div>

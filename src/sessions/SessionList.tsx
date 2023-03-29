@@ -23,7 +23,7 @@ const SessionList = ({ sessions }: SessionArray) => {
                         <>
                             <h2 key={d.date} className="w-full text-3xl text-center">{sessionDate == new Date().toLocaleDateString() ? 'Today' : sessionDate}</h2>
                             {d.sessions.map(s => {
-                                return <SessionCard key={s.id} session={s}/>
+                                return <SessionCard key={s.id} session={s} />
                             })}
                         </>
                     )

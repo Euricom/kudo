@@ -25,7 +25,7 @@ const MyApp: AppType<{ session: Session | null }> = ({
             <SessionSpeakerProvider>
               <Menu>
                 <NavBar />
-                <div className="pt-16 pb-32 h-fit min-h-screen">
+                <div className="pt-16 pb-20 h-screen">
                   <Component {...pageProps} />
                 </div>
                 <Footer />

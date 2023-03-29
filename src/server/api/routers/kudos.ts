@@ -19,6 +19,11 @@ const inputGetById = object({
     id: string(),
 })
 
+const inputLike = object({
+    id: string(),
+    liked: boolean(),
+})
+
 
 export const kudoRouter = createTRPCRouter({
 
@@ -112,5 +117,21 @@ export const kudoRouter = createTRPCRouter({
             },
         }));
         return image;
+    }),
+
+    LikeKudoById: protectedProcedure.input(inputLike).mutation(async ({ input, ctx }) => {
+
+        const kudo = await ctx.prisma.kudo.update({
+            where: {
+                id: input.id,
+            },
+            data: {
+                liked: input.liked,
+            }
+        });
+
+        if (kudo == undefined) {
+            throw new Error()
+        }
     }),
 });

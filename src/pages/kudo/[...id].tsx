@@ -7,6 +7,8 @@ import { FaTrashAlt } from "react-icons/fa";
 import { UtilButtonsContent } from "~/hooks/useUtilButtons";
 import Link from "next/link";
 import { api } from "~/utils/api";
+import { AiOutlineHeart, AiFillHeart } from 'react-icons/ai'
+import { useState } from "react";
 
 
 export function getServerSideProps(context: { query: { id: string }; }) {
@@ -23,19 +25,34 @@ const KudoDetail: NextPage<{ id: string }> = ({ id }) => {
 
   const deleteKudo = api.kudos.deleteKudoById.useMutation()
   const deleteImage = api.kudos.deleteImageById.useMutation()
+  const likeKudoById = api.kudos.LikeKudoById.useMutation()
 
 
   const kudo: Kudo | null | undefined = api.kudos.getKudoById.useQuery({ id: id }).data
   const image: string | undefined = api.kudos.getImageById.useQuery({ id: kudo?.image ?? "error" }).data?.dataUrl
+  const [liked, setLiked] = useState<boolean>(kudo?.liked ?? false)
+
+
+  function handleclick() {
+    try {
+      likeKudoById.mutate({ id: kudo?.id ?? "error", liked: !liked })
+      setLiked(!liked)
+    }
+    catch (e) {
+      console.log(e);
+    }
+  }
 
   if (!image || !kudo) {
-    return <div>Something is not right.</div>
+    return <div>loading...</div>
   }
 
   function del() {
     deleteKudo.mutate({ id: kudo?.id ?? "error" })
     deleteImage.mutate({ id: kudo?.image ?? "error" })
   }
+
+
 
   return (
     <>
@@ -58,11 +75,16 @@ const KudoDetail: NextPage<{ id: string }> = ({ id }) => {
         </div>
       </div> */}
 
-      <div className="flex flex-col items-center justify-center h-full">
-        <div className="aspect-[3/2] w-full max-h-full max-w-4xl bg-white relative">
+      <div className="flex flex-col  justify-center h-full">
+
+        <div className="aspect-[3/2] w-full items-center max-h-full max-w-4xl bg-white relative">
           <Image className="shadow-2xl" src={image} fill alt="Kudo" />
         </div>
+        <div className="btn btn-square btn-ghost " data-cy="Like" onClick={handleclick}>
+          {liked ? <AiFillHeart size={25} /> : <AiOutlineHeart size={25} />}
+        </div>
       </div>
+
     </>
   );
 };

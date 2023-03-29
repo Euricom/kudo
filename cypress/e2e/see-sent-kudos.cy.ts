@@ -19,6 +19,7 @@ describe('sent kudos bekijken', () => {
         cy.get('[data-cy=Kudo]').first().click()
         cy.get('[data-cy=NavbarTitle]').contains('Kudo DeBesteSessieTerWereldNatuurlijk').should("exist")
         cy.get('[data-cy=deleteButton]').click()
+        cy.get('[data-cy=Yes]').click()
         cy.get('[data-cy=NavButtons]').should('exist')
         cy.get('[data-cy=NavbarTitle]').contains('Out')
 

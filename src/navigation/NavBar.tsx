@@ -6,6 +6,7 @@ import { BsGearFill, BsArrowLeft } from 'react-icons/bs'
 import { useUtilButtons } from '~/hooks/useUtilButtons';
 
 import { useTitle } from "./NavBarTitle";
+import ThemeButton from '~/input/ThemeButton';
 
 
 
@@ -70,9 +71,20 @@ const NavBar = () => {
                         <x.Component key={x.key} />
                     ))}
                     <div className="hidden lg:inline-flex">
-                        <button className="btn btn-ghost btn-circle" data-cy='SettingsButton'>
-                            <BsGearFill />
-                        </button>
+                        <div className="dropdown dropdown-end">
+                            <label tabIndex={0} className="btn btn-ghost btn-circle m-1" data-cy='SettingsButton'><BsGearFill /></label>
+                            <ul tabIndex={0} className="dropdown-content menu p-2 shadow bg-base-100 rounded-box w-52">
+                                <li>
+                                    <ThemeButton />
+                                </li>
+                                <li>
+                                    <label className="label cursor-pointer">
+                                        <span className="label-text">Notifications</span>
+                                        <input type="checkbox" className="toggle" />
+                                    </label>
+                                </li>
+                            </ul>
+                        </div>
                         <button className="btn btn-ghost" onClick={() => void signOut()}>
                             Sign out
                         </button>

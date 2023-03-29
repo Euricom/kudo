@@ -1,8 +1,6 @@
 import { type NextPage } from "next";
 import Head from "next/head";
-import { GrAdd } from "react-icons/gr";
 import KudoCard from "~/kudos/Kudo";
-import FAB from "~/navigation/FAB";
 import { NavigationBarContent } from "~/navigation/NavBarTitle";
 import { api } from "~/utils/api";
 
@@ -43,7 +41,6 @@ const Session: NextPage<{ id: string }> = ({ id }) => {
             ))}
         </div>
       </main>
-      <FAB text={"Create Kudo"} icon={<GrAdd />} url="/create" />
     </>
   );
 };

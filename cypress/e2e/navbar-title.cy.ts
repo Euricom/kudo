@@ -1,4 +1,3 @@
-import { normalize } from 'path'
 import { Component } from 'react'
 
 describe('navbar title spec', () => {

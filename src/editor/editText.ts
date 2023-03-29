@@ -19,8 +19,8 @@ const createTextArea = (textNode: Konva.Text, areaPosition: Vector2d, tr: Konva.
   // and sometimes it is hard to make it 100% the same. But we will try...
   textarea.value = textNode.text();
   textarea.style.position = 'absolute';
-  textarea.style.top = (areaPosition.y * scale).toString() + 'px';
-  textarea.style.left = (areaPosition.x * scale).toString() + 'px';
+  textarea.style.top = (areaPosition.y).toString() + 'px';
+  textarea.style.left = (areaPosition.x).toString() + 'px';
   textarea.style.width = ((textNode.width() - textNode.padding() * 2) * scale).toString() + 'px';
   textarea.style.height =
     ((textNode.height() - textNode.padding() * 2 + 5) * scale ).toString() + 'px';

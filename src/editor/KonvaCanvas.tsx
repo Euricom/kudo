@@ -171,8 +171,8 @@ const KonvaCanvas = ({editorFunction, template, setFunction, setStage}: KonvaCan
                     setShapes(newShapes);
                   }}
                   areaPosition={{
-                    x: (stageRef.current?.container().offsetLeft??0) + s.x,
-                    y: (stageRef.current?.container().offsetTop??0) + s.y,
+                    x: (stageRef.current?.container().offsetLeft??0) + s.x * (stageDimensions?.scale?.x??1),
+                    y: (stageRef.current?.container().offsetTop??0) + s.y * (stageDimensions?.scale?.y??1),
                   }}
                 />
               );

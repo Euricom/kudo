@@ -50,7 +50,7 @@ const NavBar = () => {
     const title = useTitle();
     return (
         <>
-            <div className="w-full navbar bg-base-100 fixed z-50 ">
+            <div className="w-full navbar bg-base-100 shadow fixed z-50 ">
                 <div className="navbar-start w-full">
                     <label data-cy="logo">
                         <IoLogoChrome size={25} />

@@ -46,10 +46,7 @@ const Editor: NextPage<{ res: Template[], sess: string, speaker: string, anonymo
         <meta name="description" content="eKudo app" />
         <link rel="icon" href="/favicon.ico" />
       </Head>
-      <UtilButtonsContent>
-        <></>
-      </UtilButtonsContent>
-      <div className="w-full h-fit bg-secondary text-white p-1 text-center">
+      <div className="w-full h-fit bg-base-200 text-base-content p-1 text-center">
         <h1 data-cy="session" className="lg:inline">&emsp;&emsp;&emsp;&emsp;Session: {title}&emsp;&emsp;</h1><h1 data-cy="speaker" className="lg:inline"> Speaker: {speaker}</h1>
       </div>
       <main className="flex flex-col items-center justify-center h-full">

@@ -63,7 +63,7 @@ const NavBar = () => {
                     </div>
                 </div>
 
-                <div className="navbar-end w-fit pr-10">
+                <div className="navbar-end w-fit sm:pr-10">
                     {visibleEndNavbarActions.map((x) => (
                         <x.Component key={x.key} />
                     ))}

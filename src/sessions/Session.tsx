@@ -1,6 +1,8 @@
 import Link from "next/link";
 import { type User, type SessionProps } from "~/types";
 import { api } from "~/utils/api";
+import Image from 'next/image';
+import avatar from '../contents/images/EMAvatar.jpg'
 
 
 
@@ -12,16 +14,25 @@ const SessionCard = ({ session }: SessionProps) => {
     }
     return (
         <>
-            <Link key={session.id} className="card bg-base-200 shadow-xl w-full h-fit md:w-96 bg-honeycomb bg-cover" data-cy="Session" href={"/session/" + session.id.toString()} >
-                <div className="card bg-white bg-opacity-50 backdrop-blur-xs">
+            <Link key={session.id} className="card bg-base-100 shadow-xl w-full h-fit md:w-96" data-cy="Session" href={"/session/" + session.id.toString()} >
                     <div className="card-body">
-                        <h2 className="card-title justify-center text-2xl bold text-black">{session.title}</h2>
-                        <div className="flex justify-between w-full">
-                            <h3 className="text-lg">{speaker.displayName}</h3>
-                            <h3 className="text-lg">{new Date(session.date).toLocaleDateString()}</h3>
+                        <h2 className="card-title justify-center text-2xl">{session.title}</h2>
+                        <div className="flex w-full gap-3">
+                            <div className="avatar">
+                                <div className="w-10 rounded-full">
+                                    <Image
+                                        src={avatar}
+                                        alt="Profile picture"
+                                    />
+                                </div>
+                            </div>
+                            <div>
+                                <h3 className="">{speaker.displayName}</h3>
+                                {/*Eindstip nog toevoegen?*/}
+                                <h3 className="badge badge-primary">{new Date(session.date).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}</h3>
+                            </div>
                         </div>
                     </div>
-                </div>
             </Link>
         </>
     );

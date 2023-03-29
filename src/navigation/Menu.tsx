@@ -3,6 +3,7 @@ import React from 'react';
 import { type MenuProps } from '~/types';
 import avatar from '../contents/images/EMAvatar.jpg'
 import { signOut } from 'next-auth/react';
+import ThemeButton from '~/input/ThemeButton';
 
 
 
@@ -18,7 +19,7 @@ const Menu = ({ children }: MenuProps) => {
             <div className="drawer-side w-full ">
                 <label htmlFor="my-drawer-3" className="drawer-overlay">User</label>
                 <div className="menu p-4 w-full bg-base-100 text-lg">
-                    <label className='btn btn-circle absolute top-3 right-3 btn-ghost text-2xl' htmlFor="my-drawer-3">X</label>
+                    <label className='btn btn-circle absolute top-3 right-3 btn-ghost text-2xl' htmlFor="my-drawer-3" data-cy='CloseMenu'>X</label>
                     <div className='flex flex-col w-fit'>
                         <div className="avatar ">
                             <div className="w-24 rounded-xl">
@@ -39,14 +40,11 @@ const Menu = ({ children }: MenuProps) => {
                                 <span className="label-text">Notifications</span>
                                 <input type="checkbox" className="toggle" />
                             </label>
-                            <label className="label cursor-pointer">
-                                <span className="label-text">Darkmode</span>
-                                <input type="checkbox" className="toggle" />
-                            </label>
+                            <ThemeButton />
                         </div>
                     </div>
                     <div className="divider"></div>
-                    <a onClick={() => void signOut()}>Sign out</a>
+                    <a onClick={() => void signOut()} data-cy='SignOut'>Sign out</a>
                 </div>
             </div>
         </div>

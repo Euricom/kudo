@@ -4,7 +4,7 @@ import FAB from "~/navigation/FAB";
 import { GrAdd } from 'react-icons/gr';
 import { UtilButtonsContent } from "~/hooks/useUtilButtons";
 import { FiSearch } from "react-icons/fi";
-import { BiSortDown } from "react-icons/bi";
+import { MdSort } from "react-icons/md";
 import { NavigationBarContent } from "~/navigation/NavBarTitle";
 import NavButtons from "~/navigation/NavButtons";
 import SessionList from "~/sessions/SessionList";
@@ -32,11 +32,12 @@ const Home: NextPage = () => {
         <link rel="icon" href="/favicon.ico" />
       </Head>
       <UtilButtonsContent>
-        <button className="btn btn-ghost btn-circle">
-          <FiSearch size={20} />
-        </button>
-        <button className="btn btn-ghost btn-circle">
-          <BiSortDown size={20} />
+        <div className="flex w-full max-w-md bg-neutral rounded-full items-center px-4">
+          <FiSearch size={20} className=""/>
+          <input type="text" placeholder={"Search..."} className="input w-full bg-transparent rounded-full p-3 focus:outline-none" />
+        </div>
+        <button className="btn btn-primary btn-circle">
+          <MdSort size={20} />
         </button>
       </UtilButtonsContent>
       <main className="flex flex-col items-center overflow-y-scroll justify-center h-full">

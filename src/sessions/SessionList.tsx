@@ -14,17 +14,23 @@ const SessionList = ({ sessions }: SessionArray) => {
         else return previous
     }, [] as newSession[])
 
+
+
     return (
         <>
-            <div className="flex flex-wrap gap-8 h-full justify-center p-5">
+            <div className="flex flex-col gap-8 h-full justify-start p-5">
                 {sortedSessions.map((d) => {
-                    const sessionDate = new Date(d.date).toLocaleDateString();
+                    const sessionDate = new Date(d.date);
                     return (
                         <>
-                            <h2 key={d.date} className="w-full text-3xl text-center">{sessionDate == new Date().toLocaleDateString() ? 'Today' : sessionDate}</h2>
-                            {d.sessions.map(s => {
-                                return <SessionCard key={s.id} session={s} />
-                            })}
+                            <div key={d.date} className="">
+                                <h2 className="w-full">{sessionDate.toLocaleDateString() == new Date().toLocaleDateString() ? 'Today' : sessionDate.toDateString()}</h2>
+                                <div className="flex flex-wrap gap-4">
+                                    {d.sessions.map(s => {
+                                        return <SessionCard key={s.id} session={s} />
+                                    })}
+                                </div>
+                            </div>
                         </>
                     )
                 })}

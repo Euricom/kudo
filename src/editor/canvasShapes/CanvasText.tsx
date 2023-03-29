@@ -17,6 +17,7 @@ type TextProps = {
 
 type CanvasTextProps = {
   shapeProps: TextProps,
+  scale: number,
   isSelected: boolean,
   onSelect: () => void,
   onChange: (shapeProps: TextProps) => void,
@@ -24,7 +25,7 @@ type CanvasTextProps = {
   fontSize: number,
 }
 
-const CanvasText = ({ shapeProps, isSelected, onSelect, onChange, areaPosition, fontSize }: CanvasTextProps) => {
+const CanvasText = ({ shapeProps, scale, isSelected, onSelect, onChange, areaPosition, fontSize }: CanvasTextProps) => {
   const shapeRef = useRef<Konva.Text>() as MutableRefObject<Konva.Text>;
   const trRef = useRef<Konva.Transformer>() as MutableRefObject<Konva.Transformer>;
   // const [isEditing, setIsEditing] = useState(false)
@@ -40,7 +41,7 @@ const CanvasText = ({ shapeProps, isSelected, onSelect, onChange, areaPosition, 
   const onDoubleClick = () => {
     shapeRef.current.hide();
     trRef.current.hide();
-    editText(areaPosition, shapeRef.current, trRef.current)
+    editText(areaPosition, shapeRef.current, trRef.current, scale)
   }
 
   return (

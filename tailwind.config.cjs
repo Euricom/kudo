@@ -36,6 +36,7 @@ module.exports = {
       },
     },
   },
+  darkMode: 'class',
   plugins: [require("@tailwindcss/typography"), require("daisyui")],
   daisyui: {
     themes: [
@@ -62,7 +63,7 @@ module.exports = {
         },
       },
       {
-        dark: {
+        euricomDark: {
           primary: '#52abc7',
           'primary-focus': '#a3e0f2',
           'primary-content': '#062a30',
@@ -76,7 +77,7 @@ module.exports = {
           'neutral-focus': '#1e3f44',
           'neutral-content': '#e6e9ea',
           'base-content': '#e6e9ea',
-          'base-100': '#202020',
+          'base-100': '#062a30',
           info: '#a3e0f2',
           success: '#bffcb5',
           warning: '#ffe066',
@@ -84,5 +85,6 @@ module.exports = {
         },
       },
     ],
+    darkTheme: "euricomDark",
   },
 };

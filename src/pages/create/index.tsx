@@ -11,6 +11,7 @@ import { useSession } from "next-auth/react";
 
 
 import { type Session, type User } from "~/types";
+import { UtilButtonsContent } from "~/hooks/useUtilButtons";
 
 
 const New: NextPage = () => {
@@ -52,6 +53,9 @@ const New: NextPage = () => {
         <meta name="description" content="eKudo app" />
         <link rel="icon" href="/favicon.ico" />
       </Head>
+      <UtilButtonsContent>
+        <></>
+      </UtilButtonsContent>
       <main className="flex flex-col items-center justify-center h-full gap-4">
         <FcPodiumWithAudience size={100} />
         <Select data-cy="SelectSession" value={session?.title} onChange={(e: React.ChangeEvent<HTMLInputElement>): void => setSession(sessions.find(s => s.title === e.target.value) ? sessions.find(s => s.title === e.target.value) : { id: "0", title: e.target.value, date: "0", speakerId: "no" })} label="Session" options={visibibleSessions} displayLabel="title" valueLabel="id" />

@@ -1,5 +1,6 @@
 import { type NextPage } from "next";
 import Head from "next/head";
+import { UtilButtonsContent } from "~/hooks/useUtilButtons";
 import KudoCard from "~/kudos/Kudo";
 import { NavigationBarContent } from "~/navigation/NavBarTitle";
 import { api } from "~/utils/api";
@@ -21,7 +22,7 @@ const Session: NextPage<{ id: string }> = ({ id }) => {
     kudos?.length
     return <></>
   }
-  const kudos = api.kudos.getKudosBySessionId.useQuery({ id: session.title }).data
+  const kudos = api.kudos.getKudosBySessionId.useQuery({ id: session.id }).data
   return (
     <>
 
@@ -33,6 +34,9 @@ const Session: NextPage<{ id: string }> = ({ id }) => {
         <meta name="description" content="eKudo app" />
         <link rel="icon" href="/favicon.ico" />
       </Head>
+      <UtilButtonsContent>
+        <></>
+      </UtilButtonsContent>
       <main className="flex flex-col items-center justify-center h-full" data-cy="Session">
         <div className="flex flex-wrap gap-5 h-full justify-center p-5">
           {kudos == undefined || kudos.length == 0 ? <h1>No Kudos received Yet</h1> :

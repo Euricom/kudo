@@ -16,7 +16,7 @@ export default function useDimensions(ref: RefObject<HTMLElement>) {
     
     function handleResize() {
       const scale = (container?.offsetWidth??0)/(initialDimensions?.width??1)
-      setDimensions({width: (initialDimensions?.width??1) * scale, height: (initialDimensions?.height??1) * scale, scale: {x: scale, y: scale}});
+      setDimensions({width: (initialDimensions?.width??1), height: (initialDimensions?.height??1), scale: {x: scale, y: scale}});
     }
     
     handleResize()

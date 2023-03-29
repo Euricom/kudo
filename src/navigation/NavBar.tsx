@@ -79,7 +79,7 @@ const NavBar = () => {
                     </div>
                 </div>
             </div>
-            <div className="absolute w-full my-2 p-5 pt-16 z-40 flex gap-2 left-1/2 -translate-x-1/2">
+            <div className="absolute w-full lg:w-1/2 my-2 p-5 pt-16 z-40 flex justify-center gap-2 left-1/2 -translate-x-1/2">
                 {buttons}
             </div>
         </>

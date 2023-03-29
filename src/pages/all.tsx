@@ -32,7 +32,7 @@ const All: NextPage = () => {
       <UtilButtonsContent>
         <div className="flex w-full max-w-md bg-neutral rounded-full items-center px-4">
           <FiSearch size={20} className=""/>
-          <input type="text" placeholder={"Search..."} className="input w-full bg-transparent rounded-full focus:outline-none" />
+          <input type="text" placeholder={"Search..."} className="input w-full bg-transparent rounded-full p-3 focus:outline-none" />
         </div>
         <button className="btn btn-primary btn-circle">
           <MdSort size={20} />

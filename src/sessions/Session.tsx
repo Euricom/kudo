@@ -16,7 +16,7 @@ const SessionCard = ({ session }: SessionProps) => {
         <>
             <Link key={session.id} className="card bg-base-100 shadow-xl w-full h-fit md:w-96" data-cy="Session" href={"/session/" + session.id.toString()} >
                     <div className="card-body">
-                        <h2 className="card-title justify-center text-2xl">{session.title}</h2>
+                        <h2 className="card-title text-2xl">{session.title}</h2>
                         <div className="flex w-full gap-3">
                             <div className="avatar">
                                 <div className="w-10 rounded-full">

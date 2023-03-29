@@ -17,7 +17,7 @@ export default function handler(req: NextApiRequest, res: NextApiResponse) {
             { id: "12", title: "Comparison: Javascript or C#", date: new Date("11/7/2022"), speakerId: "18d332af-2d5b-49e5-8c42-9168b3910f97" },
             { id: "13", title: "Angular", date: new Date("11/1/2022"), speakerId: "18d332af-2d5b-49e5-8c42-9168b3910f97" },
             { id: "14", title: "Best component library", date: new Date("10/20/2022"), speakerId: "046df486-1162-4d77-9165-b7b9d20efaca" },
-            { id: "15", title: "Is the business analyst still relevant in Agile", date: new Date("9/20/2022"), speakerId: "046df486-1162-4d77-9165-b7b9d20efaca" },
+            { id: "15", title: "Is the business analyst still relevant in Agile Is the business analyst still relevant in Agile", date: new Date("9/20/2022"), speakerId: "046df486-1162-4d77-9165-b7b9d20efaca" },
             { id: "16", title: "Agile vs Scrum", date: new Date("9/8/2022"), speakerId: "63061de7-0a1f-471f-b9bd-5db02536157b" },
             { id: "17", title: "Functional analysis", date: new Date("8/4/2022"), speakerId: "046df486-1162-4d77-9165-b7b9d20efaca" },
             { id: "18", title: "Tailwind vs CSS", date: new Date("7/5/2022"), speakerId: "046df486-1162-4d77-9165-b7b9d20efaca" },

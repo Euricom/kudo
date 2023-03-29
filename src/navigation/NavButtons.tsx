@@ -1,22 +1,26 @@
 import Link from "next/link";
 import { useRouter } from 'next/router'
+import { useState } from "react";
+import { MdArrowDropDown } from "react-icons/md";
 
 const NavButtons = () => {
   const router = useRouter()
   const path = router.asPath
-  console.log(path);
-   
+  const [state, setState] = useState<boolean>(false)
+
+
 
   return (
     <>
-        <div className="dropdown dropdown-bottom mx-auto" data-cy='NavButtons'>
-          <label tabIndex={0} className=" btn m-1 text-3xl">{path=='/all'?"all": path ==="/out"?"out": "in"}</label>
-          <ul tabIndex={0} className="dropdown-content menu p-2 shadow bg-base-100 rounded-box w-52 text-black">
-            <li><Link className="btn btn-ghost hover:btn-active " href="/" data-cy='In'>In</Link></li>
-            <li><Link className="btn btn-ghost hover:btn-active" href="/out" data-cy='Out'>Out</Link></li>
-            <li><Link className="btn btn-ghost hover:btn-active" href="/all" data-cy='All'>All</Link></li>
-          </ul>
-        </div>
+      <div className="dropdown dropdown-bottom mx-auto bg-white" data-cy='NavButtons'>
+        <label onClick={() => setState(true)} tabIndex={0} className="btn btn-ghost  m-1 text-3xl w-full">{path == '/all' ? "all" : path === "/out" ? "out" : "in"}&nbsp;<MdArrowDropDown size={25} /></label>
+        {state ? <ul tabIndex={0} className="dropdown-content menu mx-auto justify-center p-2 gap-1 shadow rounded-box w-full  text-black">
+          <li ><Link className="btn bg-secondary-content hover:btn-active hover:text-white px-11" href="/" data-cy='In' onClick={() => setState(false)}>In</Link></li>
+          <li><Link className="btn bg-secondary-content hover:btn-active hover:text-white" href="/out" data-cy='Out' onClick={() => setState(false)}>Out</Link></li>
+          <li><Link className="btn bg-secondary-content hover:btn-active hover:text-white" href="/all" data-cy='All' onClick={() => setState(false)}>All</Link></li>
+        </ul> : <></>}
+
+      </div>
     </>
   );
 };

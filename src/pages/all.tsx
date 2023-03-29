@@ -30,7 +30,7 @@ const All: NextPage = () => {
         <link rel="icon" href="/favicon.ico" />
       </Head>
       <UtilButtonsContent>
-        <div className="flex w-full max-w-md bg-neutral rounded-full items-center px-4">
+        <div className="flex w-full max-w-md bg-base-200 dark:bg-base-100 shadow-xl rounded-full items-center px-4">
           <FiSearch size={20} className=""/>
           <input type="text" placeholder={"Search..."} className="input w-full bg-transparent rounded-full p-3 focus:outline-none" />
         </div>

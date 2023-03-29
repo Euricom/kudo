@@ -23,13 +23,15 @@ const MyApp: AppType<{ session: Session | null }> = ({
         <TitleProvider>
           <UtilButtonsProvider>
             <SessionSpeakerProvider>
-              <Menu>
-                <NavBar/>
-                <div className="pt-14 pb-32 h-full">
-                  <Component {...pageProps} />
-                </div>
-                <Footer/>
-              </Menu>
+              <div className="h-full w-full dark:bg-base-300">
+                <Menu>
+                  <NavBar />
+                  <div className="mt-14 pb-32 h-full">
+                    <Component {...pageProps} />
+                  </div>
+                  <Footer />
+                </Menu>
+              </div>
             </SessionSpeakerProvider>
           </UtilButtonsProvider>
         </TitleProvider>

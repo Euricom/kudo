@@ -3,7 +3,6 @@ import Head from "next/head";
 import KudoCard from "~/kudos/Kudo";
 import { NavigationBarContent } from "~/navigation/NavBarTitle";
 import { api } from "~/utils/api";
-import { AiOutlineHeart } from 'react-icons/ai'
 
 export function getServerSideProps(context: { query: { id: string }; }) {
   return {
@@ -36,9 +35,6 @@ const Session: NextPage<{ id: string }> = ({ id }) => {
       </Head>
 
       <main className="flex flex-col items-center justify-center h-full " data-cy="Session">
-        <div className="btn btn-square btn-ghost" data-cy="Like">
-          <AiOutlineHeart size={25} />
-        </div>
         <div className="flex flex-wrap gap-5 h-full justify-center p-5">
           {kudos == undefined || kudos.length == 0 ? <h1>No Kudos received Yet</h1> :
             kudos.map((kudo) => (

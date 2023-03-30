@@ -51,6 +51,7 @@ const KudoDetail: NextPage<{ id: string }> = ({ id }) => {
       likeKudoById.mutate({ id: kudo?.id ?? "error", liked: !liked })
       setLiked(!liked)
       localStorage.setItem(`kudo:${kudo?.id ?? "error"}:liked`, JSON.stringify(!liked));
+      //     kudo?.liked = liked
 
     }
     catch (e) {
@@ -64,6 +65,7 @@ const KudoDetail: NextPage<{ id: string }> = ({ id }) => {
       setSendReady(false)
       setComment("")
       setExistingComment(comment)
+      //    kudo?.comment = comment
     }
     catch (e) {
       console.log(e);

@@ -10,11 +10,17 @@ import NavButtons from "~/navigation/NavButtons";
 import React from "react"
 import SessionList from "~/sessions/SessionList";
 import { api } from "~/utils/api";
+import { sortPosibillities } from "~/types";
 
 
 
 const All: NextPage = () => {
   const sessions = api.sessions.getAll.useQuery().data
+
+
+
+
+
   if (!sessions) {
     return <div>Loading...</div>;
   }
@@ -31,7 +37,7 @@ const All: NextPage = () => {
       </Head>
       <UtilButtonsContent>
         <div className="flex w-full max-w-md bg-neutral rounded-full items-center px-4">
-          <FiSearch size={20} className=""/>
+          <FiSearch size={20} className="" />
           <input type="text" placeholder={"Search..."} className="input w-full bg-transparent rounded-full p-3 focus:outline-none" />
         </div>
         <button className="btn btn-primary btn-circle">
@@ -39,7 +45,7 @@ const All: NextPage = () => {
         </button>
       </UtilButtonsContent>
       <main className="flex flex-col items-center justify-center h-full">
-        <SessionList sessions={sessions} />
+        <SessionList sessions={sessions} sort={sortPosibillities.SpeakerA} />
       </main>
       <FAB text={"Create Kudo"} icon={<GrAdd />} url="/create" />
     </>

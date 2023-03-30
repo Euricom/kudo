@@ -9,9 +9,16 @@ import { MdSort } from "react-icons/md";
 import { NavigationBarContent } from "~/navigation/NavBarTitle";
 import NavButtons from "~/navigation/NavButtons";
 import { useSession } from "next-auth/react";
-import { api } from "~/utils/api";
+import { FindAllKudosSortedByUserId } from "~/server/services/kudoService";
 
+// export function getServerSideProps(context: { query: { sort: string }; }) {
 
+//   return {
+//     props: {
+//       sort: context.query.sort,
+//     }
+//   }
+// }
 
 const Out: NextPage = () => {
 
@@ -19,7 +26,8 @@ const Out: NextPage = () => {
   if (!userId) {
     throw new Error("No user signed in")
   }
-  const kudos = api.kudos.getKudosByUserId.useQuery({ id: userId }).data
+  const kudos = FindAllKudosSortedByUserId(userId, "session asc")
+
   if (!userId) {
     return <div>Loading...</div>
   }
@@ -36,7 +44,7 @@ const Out: NextPage = () => {
       </Head>
       <UtilButtonsContent>
         <div className="flex w-full max-w-md bg-neutral rounded-full items-center px-4">
-          <FiSearch size={20} className=""/>
+          <FiSearch size={20} className="" />
           <input type="text" placeholder={"Search..."} className="input w-full bg-transparent rounded-full p-3 focus:outline-none" />
         </div>
         <button className="btn btn-primary btn-circle">

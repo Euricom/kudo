@@ -14,7 +14,7 @@ const SessionList = ({ sessions }: SessionArray) => {
         else return previous
     }, [] as newSession[])
 
-    
+
 
     return (
         <>
@@ -27,7 +27,7 @@ const SessionList = ({ sessions }: SessionArray) => {
                                 <h2 className="w-full">{sessionDate.toLocaleDateString() == new Date().toLocaleDateString() ? 'Today' : sessionDate.toDateString()}</h2>
                                 <div className="flex flex-wrap gap-4">
                                     {d.sessions.map(s => {
-                                        return <SessionCard key={s.id} session={s}/>
+                                        return <SessionCard key={s.id} session={s} />
                                     })}
                                 </div>
                             </div>

@@ -15,7 +15,7 @@ import dynamic from 'next/dynamic';
 import { useSession } from 'next-auth/react';
 import { useSessionSpeaker } from '~/components/sessions/SelectedSessionAndSpeaker';
 import type Konva from 'konva';
-import ConfirmationModal from '~/components/input/ConfirmationModel';
+import ConfirmationModal from '~/components/input/ConfirmationModal';
 
 export async function getServerSideProps(context: { query: { template: string; }; }) {
   const id = context.query.template

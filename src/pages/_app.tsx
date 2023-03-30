@@ -26,7 +26,7 @@ const MyApp: AppType<{ session: Session | null }> = ({
               <div className="h-full w-full bg-base-200 dark:bg-base-300">
                 <Menu>
                   <NavBar />
-                  <div className="mt-14 pb-32 h-full">
+                  <div className="pt-16 pb-20 h-screen">
                     <Component {...pageProps} />
                   </div>
                   <Footer />

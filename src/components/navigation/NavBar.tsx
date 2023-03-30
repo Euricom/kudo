@@ -43,6 +43,7 @@ const NavBar = () => {
     const visibleEndNavbarActions = useVisibleEndNavbarActions();
     const visibleStartNavbarActions = useVisibleStartNavbarActions();
     const title = useTitle();
+    
     return (
         <>
             <div className="w-full navbar bg-base-100 shadow fixed z-50 " data-cy='Navbar'>

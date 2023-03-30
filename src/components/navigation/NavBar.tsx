@@ -1,13 +1,13 @@
 import React from 'react';
 import { useRouter } from 'next/router';
 import { signOut } from 'next-auth/react';
-import { FiBell, FiDownload } from 'react-icons/fi';
+import { FiBell } from 'react-icons/fi';
 import { IoLogoChrome } from 'react-icons/io';
 import { BsGearFill, BsArrowLeft } from 'react-icons/bs'
 import { useUtilButtons } from '~/hooks/useUtilButtons';
 
 import { useTitle } from "./NavBarTitle";
-import ThemeButton from '~/input/ThemeButton';
+import ThemeButton from '~/components/input/ThemeButton';
 
 
 
@@ -19,11 +19,6 @@ function useVisibleEndNavbarActions() {
             Component: NotificationIcon,
             key: 'notifButton',
             routes: ['/', '/out', '/all'],
-        },
-        {
-            Component: DownloadIcon,
-            key: 'downloadButton',
-            routes: ['/session/[...id]'],
         },
     ].filter((item) => item.routes.includes(router.pathname));
 }
@@ -48,7 +43,7 @@ const NavBar = () => {
     const visibleEndNavbarActions = useVisibleEndNavbarActions();
     const visibleStartNavbarActions = useVisibleStartNavbarActions();
     const title = useTitle();
-
+    
     return (
         <>
             <div className="w-full navbar bg-base-100 shadow fixed z-50 " data-cy='Navbar'>
@@ -59,16 +54,17 @@ const NavBar = () => {
                     {visibleStartNavbarActions.map((x) => (
                         <x.Component key={x.key} />
                     ))}
-                    <div className="text-lg w-full sm:text-2xl sm:navbar-center z-10" data-cy='NavbarTitle'>
+                    <div className="text-lg w-fit sm:text-2xl sm:navbar-center z-10" data-cy='NavbarTitle'>
                         <>{title}</>
                     </div>
                 </div>
 
                 <div className="navbar-end w-fit sm:pr-10">
+                    {buttons}
                     {visibleEndNavbarActions.map((x) => (
                         <x.Component key={x.key} />
                     ))}
-                    <div className="hidden lg:inline-flex">
+                    <div className="hidden lg:inline-flex items-center">
                         <div className="dropdown dropdown-end">
                             <label tabIndex={0} className="btn btn-ghost btn-circle m-1" data-cy='SettingsButton'><BsGearFill /></label>
                             <ul tabIndex={0} className="dropdown-content menu p-2 shadow bg-base-100 rounded-box w-52">
@@ -89,9 +85,6 @@ const NavBar = () => {
                     </div>
                 </div>
             </div>
-            <div className="absolute w-full lg:w-1/2 my-2 p-5 pt-16 z-40 flex justify-center gap-2 left-1/2 -translate-x-1/2">
-                {buttons}
-            </div>
         </>
     );
 };
@@ -104,16 +97,6 @@ function NotificationIcon() {
                     <FiBell size={20} />
                     <span className="badge badge-sm badge-error border border-collapse border-neutral indicator-item">12</span>
                 </div>
-            </button>
-        </>
-    );
-}
-
-function DownloadIcon() {
-    return (
-        <>
-            <button className="btn btn-ghost btn-circle" data-cy='DownloadButton'>
-                <FiDownload size={20} />
             </button>
         </>
     );

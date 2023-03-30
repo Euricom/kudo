@@ -1,16 +1,17 @@
 import { type NextPage } from "next";
 import Head from "next/head";
-import FAB from "~/navigation/FAB";
+import FAB from "~/components/navigation/FAB";
 import { GrNext } from "react-icons/gr"
 import { FcPodiumWithSpeaker, FcPodiumWithAudience } from "react-icons/fc"
-import Select from "~/input/Select";
-import { NavigationBarContent } from "~/navigation/NavBarTitle";
+import Select from "~/components/input/Select";
+import { NavigationBarContent } from "~/components/navigation/NavBarTitle";
 import { useState } from "react";
 import { api } from "~/utils/api";
 import { useSession } from "next-auth/react";
 
 
 import { type Session, type User } from "~/types";
+import { UtilButtonsContent } from "~/hooks/useUtilButtons";
 
 
 const New: NextPage = () => {

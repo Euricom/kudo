@@ -7,7 +7,6 @@ const Footer = () => {
     return (
         <>
             <div>
-
                 <footer className="w-full h-fit footer p-4 border-t border-secondary bg-base-100 lg:hidden fixed bottom-0 z-40" data-cy="Footer">
                     <div className="flex flex-row w-full footer-center">
                         <div className="w-1/2">

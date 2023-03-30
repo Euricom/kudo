@@ -1,6 +1,6 @@
 import { type NextPage } from "next";
 import Head from "next/head";
-import { NavigationBarContent } from "~/navigation/NavBarTitle";
+import { NavigationBarContent } from "~/components/navigation/NavBarTitle";
 
 const Notifications: NextPage = () => {
   return (

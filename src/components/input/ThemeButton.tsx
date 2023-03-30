@@ -1,16 +1,17 @@
-import React, { type ChangeEvent } from "react";
+import React, { useEffect, useState, type ChangeEvent } from "react";
 
 
 const ThemeButton = () => {
-    const [theme, setTheme] = React.useState('business');
+    const [theme, setTheme] = useState(window.matchMedia&&window.matchMedia('(prefers-color-scheme: dark)').matches? 'euricomDark' : 'euricom');
     const toggleTheme = (e: ChangeEvent<HTMLInputElement>) => {
         setTheme(e.target?.checked ? 'euricomDark' : 'euricom');
     };
     // initially set the theme and "listen" for changes to apply them to the HTML tag
-    React.useEffect(() => {
+    useEffect(() => {
         document.querySelector('html')?.setAttribute('data-theme', theme);
         document.querySelector('html')?.setAttribute('class', theme === 'euricomDark' ? 'dark' : '');
     }, [theme]);
+
     return (
         <>
             <label className="label cursor-pointer">

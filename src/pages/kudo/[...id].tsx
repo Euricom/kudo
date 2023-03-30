@@ -2,7 +2,7 @@ import { type Kudo } from "@prisma/client";
 import { type NextPage } from "next";
 import Head from "next/head";
 import Image from "next/image";
-import { NavigationBarContent } from "~/navigation/NavBarTitle";
+import { NavigationBarContent } from "~/components/navigation/NavBarTitle";
 import { FaTrashAlt } from "react-icons/fa";
 import { UtilButtonsContent } from "~/hooks/useUtilButtons";
 import Link from "next/link";

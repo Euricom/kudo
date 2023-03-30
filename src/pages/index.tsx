@@ -2,7 +2,6 @@ import { type NextPage } from "next";
 import Head from "next/head";
 import FAB from "~/components/navigation/FAB";
 import { GrAdd } from 'react-icons/gr';
-import { UtilButtonsContent } from "~/hooks/useUtilButtons";
 import { FiSearch } from "react-icons/fi";
 import { MdSort } from "react-icons/md";
 import { NavigationBarContent } from "~/components/navigation/NavBarTitle";
@@ -33,7 +32,7 @@ const Home: NextPage = () => {
       </Head>
       <main className="flex flex-col items-center overflow-y-scroll justify-start h-full">
         <div className="w-full lg:w-1/2 p-5 z-40 flex justify-center gap-2 mx-auto">
-          <div className="flex w-full max-w-md bg-neutral rounded-full items-center px-4">
+          <div className="flex w-full max-w-md bg-base-100 shadow-xl rounded-full items-center px-4">
             <FiSearch size={20} className=""/>
             <input type="text" placeholder={"Search..."} className="input w-full bg-transparent rounded-full p-3 focus:outline-none" />
           </div>

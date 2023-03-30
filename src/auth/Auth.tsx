@@ -2,6 +2,7 @@ import { signIn, useSession } from "next-auth/react";
 import { api } from "~/utils/api";
 import { useState } from "react";
 import { type AuthProps } from "~/types";
+import LoadingBar from "~/components/LoadingBar";
 
 
 
@@ -24,9 +25,7 @@ export function Auth({ children }: AuthProps) {
   if (status === "loading") {
     return (
       <>
-        <div className="h-screen grid place-items-center">
-          <progress className="progress progress-primary w-56"></progress>
-        </div>
+        <LoadingBar />
       </>
     );
   }

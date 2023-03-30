@@ -34,16 +34,16 @@ const Out: NextPage = () => {
         <meta name="description" content="eKudo app" />
         <link rel="icon" href="/favicon.ico" />
       </Head>
-      <UtilButtonsContent>
-        <div className="flex w-full max-w-md bg-neutral rounded-full items-center px-4">
-          <FiSearch size={20} className=""/>
-          <input type="text" placeholder={"Search..."} className="input w-full bg-transparent rounded-full p-3 focus:outline-none" />
+      <main className="flex flex-col items-center overflow-y-scroll justify-start h-full">
+        <div className="w-full lg:w-1/2 p-5 z-40 flex justify-center gap-2 mx-auto">
+          <div className="flex w-full max-w-md bg-neutral rounded-full items-center px-4">
+            <FiSearch size={20} className=""/>
+            <input type="text" placeholder={"Search..."} className="input w-full bg-transparent rounded-full p-3 focus:outline-none" />
+          </div>
+          <button className="btn btn-primary btn-circle">
+            <MdSort size={20} />
+          </button>
         </div>
-        <button className="btn btn-primary btn-circle">
-          <MdSort size={20} />
-        </button>
-      </UtilButtonsContent>
-      <main className="flex flex-col items-center justify-center h-full">
         <div className="flex flex-wrap gap-5 h-full justify-center p-5">
           {kudos == undefined || kudos.length == 0 ? <h1>No Kudos Sent Yet</h1> :
             kudos.map((kudo) => (

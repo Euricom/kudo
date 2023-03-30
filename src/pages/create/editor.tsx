@@ -38,7 +38,7 @@ export enum EditorFunctions {
 }
 
 const KonvaCanvas = dynamic(
-  () => import('../../editor/KonvaCanvas'),
+  () => import('../../components/editor/KonvaCanvas'),
   { ssr: false }
 );
 
@@ -87,23 +87,6 @@ const Editor: NextPage<{ res: Template }> = ({ res }) => {
       {/* <div className="w-full h-fit bg-secondary text-white p-5 text-center">
         <h1 data-cy="session" className="lg:inline">&emsp;&emsp;&emsp;&emsp;Session: {sessionId}&emsp;&emsp;</h1><h1 data-cy="speaker" className="lg:inline"> Speaker: {speaker}</h1>
       </div> */}
-      <UtilButtonsContent>
-        <button onClick={() => setSelectedButton(EditorFunctions.Text)} className={"btn btn-circle btn-secondary " + (selectedButton == EditorFunctions.Text ? "btn-accent" : "")}>
-          <BiText size={20} />
-        </button>
-        <button onClick={() => setSelectedButton(EditorFunctions.Draw)} className={"btn btn-circle btn-secondary " + (selectedButton == EditorFunctions.Draw ? "btn-accent" : "")}>
-          <BiPencil size={20} />
-        </button>
-        <button onClick={() => setSelectedButton(EditorFunctions.Sticker)} className={"btn btn-circle btn-secondary " + (selectedButton == EditorFunctions.Sticker ? "btn-accent" : "")}>
-          <GrEmoji size={20} />
-        </button>
-        <button onClick={() => setSelectedButton(EditorFunctions.Color)} className={"btn btn-circle btn-secondary " + (selectedButton == EditorFunctions.Color ? "btn-accent" : "")}>
-          <BiPalette size={20} />
-        </button>
-        <button onClick={() => setSelectedButton(EditorFunctions.Clear)} className={"btn btn-circle btn-secondary " + (selectedButton == EditorFunctions.Clear ? "btn-accent" : "")}>
-          <BiTrash size={20} />
-        </button>
-      </UtilButtonsContent>
       
       {selectedButton === EditorFunctions.Submit && 
         <ConfirmationModal 
@@ -116,6 +99,23 @@ const Editor: NextPage<{ res: Template }> = ({ res }) => {
       }
       {/* Main */}
       <main className="flex flex-col items-center justify-center h-full z-50" >
+        <div className="w-full lg:w-1/2 p-5 z-40 flex justify-center gap-2 mx-auto">
+          <button onClick={() => setSelectedButton(EditorFunctions.Text)} className={"btn btn-circle btn-secondary " + (selectedButton == EditorFunctions.Text ? "btn-accent" : "")}>
+            <BiText size={20} />
+          </button>
+          <button onClick={() => setSelectedButton(EditorFunctions.Draw)} className={"btn btn-circle btn-secondary " + (selectedButton == EditorFunctions.Draw ? "btn-accent" : "")}>
+            <BiPencil size={20} />
+          </button>
+          <button onClick={() => setSelectedButton(EditorFunctions.Sticker)} className={"btn btn-circle btn-secondary " + (selectedButton == EditorFunctions.Sticker ? "btn-accent" : "")}>
+            <GrEmoji size={20} />
+          </button>
+          <button onClick={() => setSelectedButton(EditorFunctions.Color)} className={"btn btn-circle btn-secondary " + (selectedButton == EditorFunctions.Color ? "btn-accent" : "")}>
+            <BiPalette size={20} />
+          </button>
+          <button onClick={() => setSelectedButton(EditorFunctions.Clear)} className={"btn btn-circle btn-secondary " + (selectedButton == EditorFunctions.Clear ? "btn-accent" : "")}>
+            <BiTrash size={20} />
+          </button>
+        </div>
         <KonvaCanvas editorFunction={selectedButton} template={res} setFunction={setSelectedButton} setStage={setStage}/>
       </main>
       <FAB text={"Send"} icon={<FiSend />} onClick={() => setSelectedButton(EditorFunctions.Submit)}/>

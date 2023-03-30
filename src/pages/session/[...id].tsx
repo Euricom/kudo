@@ -22,7 +22,7 @@ const Session: NextPage<{ id: string }> = ({ id }) => {
     kudos?.length
     return <></>
   }
-  const kudos = api.kudos.getKudosBySessionId.useQuery({ id: session.title }).data
+  const kudos = api.kudos.getKudosBySessionId.useQuery({ id: session.id }).data
   return (
     <>
 

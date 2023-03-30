@@ -28,15 +28,24 @@ const KudoDetail: NextPage<{ id: string }> = ({ id }) => {
   const likeKudoById = api.kudos.LikeKudoById.useMutation()
 
 
+
   const kudo: Kudo | null | undefined = api.kudos.getKudoById.useQuery({ id: id }).data
   const image: string | undefined = api.kudos.getImageById.useQuery({ id: kudo?.image ?? "error" }).data?.dataUrl
-  const [liked, setLiked] = useState<boolean>(kudo?.liked ?? false)
+  const session = api.sessions.getSessionById.useQuery({ id: kudo?.sessionId ?? "error" }).data
+  const [liked, setLiked] = useState<boolean>(() => {
+    const storedLiked = localStorage.getItem(`kudo:${kudo?.id ?? "error"}:liked`);
+    return storedLiked ? JSON.parse(storedLiked) as boolean : kudo?.liked ?? false;
+  });
+
+
 
 
   function handleclick() {
     try {
       likeKudoById.mutate({ id: kudo?.id ?? "error", liked: !liked })
       setLiked(!liked)
+      localStorage.setItem(`kudo:${kudo?.id ?? "error"}:liked`, JSON.stringify(!liked));
+
     }
     catch (e) {
       console.log(e);
@@ -47,17 +56,17 @@ const KudoDetail: NextPage<{ id: string }> = ({ id }) => {
     return <div>loading...</div>
   }
 
+
   function del() {
     deleteKudo.mutate({ id: kudo?.id ?? "error" })
     deleteImage.mutate({ id: kudo?.image ?? "error" })
   }
 
 
-
   return (
     <>
       <NavigationBarContent>
-        <h1>Kudo {kudo.sessionId}</h1>
+        <h1>Kudo {session?.title ?? "no title"}</h1>
       </NavigationBarContent>
       <UtilButtonsContent>
         <Link className="btn btn-ghost btn-circle" onClick={del} href="/out" data-cy="deleteButton">
@@ -80,7 +89,7 @@ const KudoDetail: NextPage<{ id: string }> = ({ id }) => {
         <div className="aspect-[3/2] w-full items-center max-h-full max-w-4xl bg-white relative">
           <Image className="shadow-2xl" src={image} fill alt="Kudo" />
         </div>
-        <div className="btn btn-square btn-ghost " data-cy="Like" onClick={handleclick}>
+        <div className="btn btn-square btn-ghost " data-cy="Like" onClick={() => handleclick()}>
           {liked ? <AiFillHeart size={25} /> : <AiOutlineHeart size={25} />}
         </div>
       </div>

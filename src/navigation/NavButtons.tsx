@@ -1,15 +1,25 @@
 import Link from "next/link";
 import { useRouter } from 'next/router'
+import { useState } from "react";
+import { MdArrowDropDown } from "react-icons/md";
 
 const NavButtons = () => {
   const router = useRouter()
+  const path = router.asPath
+  const [state, setState] = useState<boolean>(false)
+
+
 
   return (
     <>
-      <div className="btn-group" data-cy='NavButtons'>
-        <Link className={"btn btn-secondary " + (router.pathname == "/" ? "btn-active" : "")} href="/" data-cy='In'>In</Link>
-        <Link className={"btn btn-secondary " + (router.pathname == "/out" ? "btn-active" : "")} href="/out" data-cy='Out'>Out</Link>
-        <Link className={"btn btn-secondary " + (router.pathname == "/all" ? "btn-active" : "")} href="/all" data-cy='All'>All</Link>
+      <div className="dropdown dropdown-bottom mx-auto bg-base-100" data-cy='NavButtons'>
+        <label data-cy='NavButtonsLabel' onClick={() => setState(true)} tabIndex={0} className="btn btn-ghost  m-1 text-3xl w-full">{path == '/all' ? "all" : path === "/out" ? "out" : "in"}&nbsp;<MdArrowDropDown size={25} /></label>
+        {state ? <ul tabIndex={0} className="dropdown-content menu mx-auto justify-center p-2 gap-1 shadow rounded-box w-full  text-black">
+          <li ><Link className="btn bg-secondary-content hover:btn-active hover:text-white px-11" href="/" data-cy='In' onClick={() => setState(false)}>In</Link></li>
+          <li><Link className="btn bg-secondary-content hover:btn-active hover:text-white" href="/out" data-cy='Out' onClick={() => setState(false)}>Out</Link></li>
+          <li><Link className="btn bg-secondary-content hover:btn-active hover:text-white" href="/all" data-cy='All' onClick={() => setState(false)}>All</Link></li>
+        </ul> : <></>}
+
       </div>
     </>
   );

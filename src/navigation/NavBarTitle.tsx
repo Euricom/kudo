@@ -12,7 +12,7 @@ export function TitleProvider(props: React.PropsWithChildren<object>) {
     );
 }
 
-export function useTitle(newValue: (React.ReactNode | undefined)) {
+export function useTitle(newValue?: (React.ReactNode)) {
     const context = React.useContext(TitleContext);
 
     if (newValue !== undefined) {

@@ -40,7 +40,7 @@ const Home: NextPage = () => {
           <MdSort size={20} />
         </button>
       </UtilButtonsContent>
-      <main className="flex flex-col items-center justify-center h-full">
+      <main className="flex flex-col items-center overflow-y-scroll justify-center h-full">
         <SessionList sessions={sessions} />
       </main>
       <FAB text={"Create Kudo"} icon={<GrAdd />} url="/create" />

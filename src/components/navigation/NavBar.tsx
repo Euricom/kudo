@@ -20,11 +20,6 @@ function useVisibleEndNavbarActions() {
             key: 'notifButton',
             routes: ['/', '/out', '/all'],
         },
-        {
-            Component: DownloadIcon,
-            key: 'downloadButton',
-            routes: ['/session/[...id]'],
-        },
     ].filter((item) => item.routes.includes(router.pathname));
 }
 
@@ -64,6 +59,7 @@ const NavBar = () => {
                 </div>
 
                 <div className="navbar-end w-fit sm:pr-10">
+                    {buttons}
                     {visibleEndNavbarActions.map((x) => (
                         <x.Component key={x.key} />
                     ))}
@@ -100,16 +96,6 @@ function NotificationIcon() {
                     <FiBell size={20} />
                     <span className="badge badge-sm badge-error border border-collapse border-neutral indicator-item">12</span>
                 </div>
-            </button>
-        </>
-    );
-}
-
-function DownloadIcon() {
-    return (
-        <>
-            <button className="btn btn-ghost btn-circle" data-cy='DownloadButton'>
-                <FiDownload size={20} />
             </button>
         </>
     );

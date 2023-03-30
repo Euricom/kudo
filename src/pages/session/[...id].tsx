@@ -74,8 +74,9 @@ const Session: NextPage<{ id: string }> = ({ id }) => {
       </NavigationBarContent>
       <UtilButtonsContent>
         <button
-          className="btn-secondary btn btn-circle "
+          className="btn btn-ghost btn-circle "
           onClick={() => void downloadZip()}
+          data-cy='DownloadButton'
         >
           <FiDownload size={20} />
         </button>

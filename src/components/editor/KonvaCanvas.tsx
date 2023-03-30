@@ -9,7 +9,7 @@ import CanvasText from './canvasShapes/CanvasText';
 import Rectangle from './canvasShapes/Rectangle';
 import { type Vector2d } from 'konva/lib/types';
 import { v4 } from 'uuid';
-import ConfirmationModal from '~/input/ConfirmationModel';
+import ConfirmationModal from '~/components/input/ConfirmationModel';
 
 export enum CanvasShapes {
   Text,

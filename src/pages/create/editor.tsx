@@ -4,18 +4,18 @@ import Head from "next/head";
 import { UtilButtonsContent } from "~/hooks/useUtilButtons";
 import { GrEmoji } from "react-icons/gr"
 import { BiPencil, BiPalette, BiText, BiTrash } from "react-icons/bi"
-import { NavigationBarContent } from "~/navigation/NavBarTitle";
+import { NavigationBarContent } from "~/components/navigation/NavBarTitle";
 import { type Template } from "@prisma/client";
 import { findTemplateById } from "~/server/services/templateService";
-import FAB from "~/navigation/FAB";
+import FAB from "~/components/navigation/FAB";
 import { FiSend } from "react-icons/fi"
 import { useRouter } from 'next/router';
 import { api } from '~/utils/api';
 import dynamic from 'next/dynamic';
 import { useSession } from 'next-auth/react';
-import { useSessionSpeaker } from '~/sessions/SelectedSessionAndSpeaker';
+import { useSessionSpeaker } from '~/components/sessions/SelectedSessionAndSpeaker';
 import type Konva from 'konva';
-import ConfirmationModal from '~/input/ConfirmationModel';
+import ConfirmationModal from '~/components/input/ConfirmationModel';
 
 export async function getServerSideProps(context: { query: { template: string; }; }) {
   const id = context.query.template

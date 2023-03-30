@@ -1,4 +1,4 @@
-import SessionCard from "~/sessions/Session";
+import SessionCard from "~/components/sessions/Session";
 import { type newSession, type SessionArray } from "~/types";
 
 

@@ -7,7 +7,7 @@ import { BsGearFill, BsArrowLeft } from 'react-icons/bs'
 import { useUtilButtons } from '~/hooks/useUtilButtons';
 
 import { useTitle } from "./NavBarTitle";
-import ThemeButton from '~/input/ThemeButton';
+import ThemeButton from '~/components/input/ThemeButton';
 
 
 

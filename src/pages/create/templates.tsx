@@ -1,11 +1,11 @@
 import { type NextPage } from "next";
 import Head from "next/head";
-import { NavigationBarContent } from "~/navigation/NavBarTitle";
+import { NavigationBarContent } from "~/components/navigation/NavBarTitle";
 import { findAllTemplates } from "~/server/services/templateService";
 import { type Template } from "@prisma/client";
 import Link from "next/link";
-import { useSessionSpeaker } from "~/sessions/SelectedSessionAndSpeaker";
-import FAB from "~/navigation/FAB";
+import { useSessionSpeaker } from "~/components/sessions/SelectedSessionAndSpeaker";
+import FAB from "~/components/navigation/FAB";
 import { GrNext } from "react-icons/gr";
 import { api } from "~/utils/api";
 import { UtilButtonsContent } from "~/hooks/useUtilButtons";

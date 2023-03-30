@@ -1,14 +1,14 @@
 import { type NextPage } from "next";
 import Head from "next/head";
-import FAB from "~/navigation/FAB";
+import FAB from "~/components/navigation/FAB";
 import { GrAdd } from 'react-icons/gr';
 import { UtilButtonsContent } from "~/hooks/useUtilButtons";
 import { FiSearch } from "react-icons/fi";
 import { MdSort } from "react-icons/md";
-import { NavigationBarContent } from "~/navigation/NavBarTitle";
-import NavButtons from "~/navigation/NavButtons";
+import { NavigationBarContent } from "~/components/navigation/NavBarTitle";
+import NavButtons from "~/components/navigation/NavButtons";
 import React from "react"
-import SessionList from "~/sessions/SessionList";
+import SessionList from "~/components/sessions/SessionList";
 import { api } from "~/utils/api";
 
 

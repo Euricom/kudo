@@ -3,7 +3,7 @@ import React from 'react';
 import { type MenuProps } from '~/types';
 import avatar from '../contents/images/EMAvatar.jpg'
 import { signOut } from 'next-auth/react';
-import ThemeButton from '~/input/ThemeButton';
+import ThemeButton from '~/components/input/ThemeButton';
 
 
 

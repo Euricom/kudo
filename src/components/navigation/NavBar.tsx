@@ -1,7 +1,7 @@
 import React from 'react';
 import { useRouter } from 'next/router';
 import { signOut } from 'next-auth/react';
-import { FiBell, FiDownload } from 'react-icons/fi';
+import { FiBell } from 'react-icons/fi';
 import { IoLogoChrome } from 'react-icons/io';
 import { BsGearFill, BsArrowLeft } from 'react-icons/bs'
 import { useUtilButtons } from '~/hooks/useUtilButtons';
@@ -53,7 +53,7 @@ const NavBar = () => {
                     {visibleStartNavbarActions.map((x) => (
                         <x.Component key={x.key} />
                     ))}
-                    <div className="text-lg w-full sm:text-2xl sm:navbar-center z-10" data-cy='NavbarTitle'>
+                    <div className="text-lg w-fit sm:text-2xl sm:navbar-center z-10" data-cy='NavbarTitle'>
                         <>{title}</>
                     </div>
                 </div>
@@ -63,7 +63,7 @@ const NavBar = () => {
                     {visibleEndNavbarActions.map((x) => (
                         <x.Component key={x.key} />
                     ))}
-                    <div className="hidden lg:inline-flex">
+                    <div className="hidden lg:inline-flex items-center">
                         <div className="dropdown dropdown-end">
                             <label tabIndex={0} className="btn btn-ghost btn-circle m-1" data-cy='SettingsButton'><BsGearFill /></label>
                             <ul tabIndex={0} className="dropdown-content menu p-2 shadow bg-base-100 rounded-box w-52">

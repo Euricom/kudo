@@ -1,5 +1,6 @@
-import React from "react";
+import React, {useEffect} from "react";
 import { UtilButtonsContext } from "~/types";
+import { useRouter } from "next/router";
 
 
 
@@ -7,6 +8,14 @@ const UtilButtonsContext = React.createContext<UtilButtonsContext>({ buttons: <>
 
 export function UtilButtonsProvider(props: React.PropsWithChildren<object>) {
     const [buttons, setButtons] = React.useState<React.ReactNode>('');
+    const router = useRouter();
+
+    useEffect(() => {
+        router.events.on('routeChangeStart', () => {
+            setButtons('');
+        });
+    }, [router]);
+
     return (
         <UtilButtonsContext.Provider value={{ buttons, setButtons }}>
             {props.children}

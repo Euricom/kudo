@@ -1,4 +1,4 @@
-import React, {useEffect} from "react";
+import React, { useEffect } from "react";
 import { UtilButtonsContext } from "~/types";
 import { useRouter } from "next/router";
 
@@ -26,9 +26,12 @@ export function UtilButtonsProvider(props: React.PropsWithChildren<object>) {
 export function useUtilButtons(newValue: (React.ReactNode | undefined)) {
     const context = React.useContext(UtilButtonsContext);
 
-    if (newValue !== undefined) {
-        context.setButtons(newValue);
-    }
+    useEffect(() => {
+        if (newValue !== undefined) {
+            context.setButtons(newValue);
+        }
+    }, [context, newValue])
+
     return context.buttons;
 }
 

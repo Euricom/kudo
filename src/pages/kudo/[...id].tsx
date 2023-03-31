@@ -9,7 +9,7 @@ import { api } from "~/utils/api";
 import { AiOutlineHeart, AiFillHeart } from 'react-icons/ai'
 import { useState } from "react";
 import { FiSend } from "react-icons/fi";
-import ConfirmationModal from '~/input/ConfirmationModel';
+import ConfirmationModal from '~/components/input/ConfirmationModal';
 
 
 export function getServerSideProps(context: { query: { id: string }; }) {

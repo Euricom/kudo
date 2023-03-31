@@ -12,6 +12,7 @@ import { TitleProvider } from "~/components/navigation/NavBarTitle";
 import { SessionSpeakerProvider } from "~/components/sessions/SelectedSessionAndSpeaker";
 import Footer from "~/components/navigation/Footer";
 import Menu from "~/components/navigation/Menu";
+// import { ToastContainer } from "react-toastify/dist/components";
 
 const MyApp: AppType<{ session: Session | null }> = ({
   Component,
@@ -23,7 +24,21 @@ const MyApp: AppType<{ session: Session | null }> = ({
         <TitleProvider>
           <UtilButtonsProvider>
             <SessionSpeakerProvider>
+
               <div className="h-screen w-full bg-base-200 dark:bg-base-300">
+                {/* <ToastContainer
+                  position="top-right"
+                  autoClose={5000}
+                  hideProgressBar={false}
+                  newestOnTop={false}
+                  closeOnClick
+                  rtl={false}
+                  limit={5}
+                  pauseOnFocusLoss
+                  draggable
+                  pauseOnHover
+                  className=" mt-14"
+                /> */}
                 <Menu>
                   <NavBar />
                   <div className="flex-auto flex-shrink-0">

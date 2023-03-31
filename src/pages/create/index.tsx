@@ -12,9 +12,21 @@ import { useSession } from "next-auth/react";
 
 import { type Session, type User } from "~/types";
 import { UtilButtonsContent } from "~/hooks/useUtilButtons";
+import { toast } from "react-toastify";
+
+export function getServerSideProps(context: { query: { error?: string }; }) {
+
+  return {
+    props: {
+      error: context.query.error ?? "",
+    }
+  }
+}
+const New: NextPage<{ error: string }> = (error) => {
+
+  console.log(error);
 
 
-const New: NextPage = () => {
 
   const users = api.users.getAllUsers.useQuery().data
   const [session, setSession] = useState<Session>();
@@ -37,6 +49,10 @@ const New: NextPage = () => {
 
   const visibibleSessions = sessions.filter(ses => ses.speakerId !== me).filter(session => speaker ? speaker.id === session.speakerId : true)
 
+  if (error.error === "ongeldig") {
+    toast.error("Session is incorrect")
+  }
+
 
 
   function onclick() {
@@ -56,6 +72,7 @@ const New: NextPage = () => {
       <UtilButtonsContent>
         <></>
       </UtilButtonsContent>
+
       <main className="flex flex-col items-center justify-center gap-4">
         <FcPodiumWithAudience size={100} />
         <Select data-cy="SelectSession" value={session?.title} onChange={(e: React.ChangeEvent<HTMLInputElement>): void => setSession(sessions.find(s => s.title === e.target.value) ? sessions.find(s => s.title === e.target.value) : { id: "0", title: e.target.value, date: "0", speakerId: "no" })} label="Session" options={visibibleSessions} displayLabel="title" valueLabel="id" />

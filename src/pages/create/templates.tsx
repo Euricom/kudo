@@ -8,6 +8,7 @@ import { useSessionSpeaker } from "~/components/sessions/SelectedSessionAndSpeak
 import FAB from "~/components/navigation/FAB";
 import { GrNext } from "react-icons/gr";
 import { api } from "~/utils/api";
+import { UtilButtonsContent } from "~/hooks/useUtilButtons";
 
 
 
@@ -45,10 +46,13 @@ const Editor: NextPage<{ res: Template[], sess: string, speaker: string, anonymo
       <NavigationBarContent>
         <h1>Templates</h1>
       </NavigationBarContent>
+      <UtilButtonsContent>
+        <></>
+      </UtilButtonsContent>
       <div className="w-full h-fit bg-base-200 p-1 text-center">
         <h1 data-cy="session" className="lg:inline">&emsp;&emsp;&emsp;&emsp;Session: {title}&emsp;&emsp;</h1><h1 data-cy="speaker" className="lg:inline"> Speaker: {speaker}</h1>
       </div>
-      <main className="flex flex-col items-center justify-center h-full">
+      <main className="flex flex-col items-center overflow-y-scroll justify-center h-full">
         <div className="flex flex-wrap gap-5 h-full justify-center p-5">
           {res.map((x: Template) => (
             <Link className="card bg-white text-gray-800 shadow-xl aspect-[3/2] rounded-none w-80 h-52" data-cy="template" href={{ pathname: "/create/editor", query: { template: x.id } }} key={x.id}>

@@ -59,13 +59,13 @@ const Editor: NextPage<{ res: Template }> = ({ res }) => {
   }
 
   const submit = async () => {
-    if(!stage){
+    if (!stage) {
       console.log("Stage doesn't exist.");
       return
     }
     try {
       const image = await createImage.mutateAsync({ dataUrl: stage.toDataURL() })
-      await createKudo.mutateAsync({ image: image.id, sessionId: session, userId: userId, anonymous: anonymous});
+      await createKudo.mutateAsync({ image: image.id, sessionId: session, userId: userId, anonymous: anonymous });
 
       await router.replace('/out')
     } catch (e) {
@@ -76,20 +76,23 @@ const Editor: NextPage<{ res: Template }> = ({ res }) => {
 
   return (
     <>
-      <NavigationBarContent>
-        <h1>Editor</h1>
-      </NavigationBarContent>
       <Head>
         <title>eKudo</title>
         <meta name="description" content="eKudo app" />
         <link rel="icon" href="/favicon.ico" />
       </Head>
+      <NavigationBarContent>
+        <h1>Editor</h1>
+      </NavigationBarContent>
+      <UtilButtonsContent>
+        <></>
+      </UtilButtonsContent>
       {/* <div className="w-full h-fit bg-secondary text-white p-5 text-center">
         <h1 data-cy="session" className="lg:inline">&emsp;&emsp;&emsp;&emsp;Session: {sessionId}&emsp;&emsp;</h1><h1 data-cy="speaker" className="lg:inline"> Speaker: {speaker}</h1>
       </div> */}
-      
-      {selectedButton === EditorFunctions.Submit && 
-        <ConfirmationModal 
+
+      {selectedButton === EditorFunctions.Submit &&
+        <ConfirmationModal
           prompt={"Is your Kudo ready to be sent?"}
           onCancel={() => setSelectedButton(EditorFunctions.None)}
           cancelLabel={"No"}
@@ -116,9 +119,9 @@ const Editor: NextPage<{ res: Template }> = ({ res }) => {
             <BiTrash size={20} />
           </button>
         </div>
-        <KonvaCanvas editorFunction={selectedButton} template={res} setFunction={setSelectedButton} setStage={setStage}/>
+        <KonvaCanvas editorFunction={selectedButton} template={res} setFunction={setSelectedButton} setStage={setStage} />
       </main>
-      <FAB text={"Send"} icon={<FiSend />} onClick={() => setSelectedButton(EditorFunctions.Submit)}/>
+      <FAB text={"Send"} icon={<FiSend />} onClick={() => setSelectedButton(EditorFunctions.Submit)} />
     </>
   );
 };

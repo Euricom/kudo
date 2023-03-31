@@ -20,7 +20,7 @@ const New: NextPage = () => {
   const [session, setSession] = useState<Session>();
   const [speaker, setSpeaker] = useState<User>();
   const [anonymous, setAnonymous] = useState<boolean>(false);
-  const me = useSession().data?.user.email
+  const me = useSession().data?.user.id
 
   const sessions: Session[] | undefined = api.sessions.getAll.useQuery().data
   if (!sessions || !users) {
@@ -28,14 +28,14 @@ const New: NextPage = () => {
   }
 
   const visibleSpeakers = () => {
-    const visible = users.filter(x => (x.mail !== me)).filter(x => (sessions.filter(x => x.title.toLowerCase().includes(session?.title.toLowerCase() ?? ""))).map(x => x.speakerId).includes(x.id))
+    const visible = users.filter(x => (x.id !== me)).filter(x => (sessions.filter(x => x.title.toLowerCase().includes(session?.title.toLowerCase() ?? ""))).map(x => x.speakerId).includes(x.id))
     if (visible.length === 1 && speaker !== visible[0]) {
       setSpeaker(visible[0]);
     }
     return visible
   }
 
-  const visibibleSessions = sessions.filter(session => speaker ? speaker.id === session.speakerId : true)
+  const visibibleSessions = sessions.filter(ses => ses.speakerId !== me).filter(session => speaker ? speaker.id === session.speakerId : true)
 
 
 

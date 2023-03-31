@@ -34,7 +34,7 @@ const Home: NextPage = () => {
       <UtilButtonsContent>
         <></>
       </UtilButtonsContent>
-      <main className="flex flex-col items-center overflow-y-scroll justify-start h-full">
+      <main className="flex flex-col items-center justify-start h-full">
         <div className="w-full lg:w-1/2 p-5 z-40 flex justify-center gap-2 mx-auto">
           <div className="flex w-full max-w-md bg-base-100 shadow-xl rounded-full items-center px-4">
             <FiSearch size={20} className="" />

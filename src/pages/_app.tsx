@@ -23,10 +23,10 @@ const MyApp: AppType<{ session: Session | null }> = ({
         <TitleProvider>
           <UtilButtonsProvider>
             <SessionSpeakerProvider>
-              <div className="h-full w-full bg-base-200 dark:bg-base-300">
+              <div className="h-screen w-full bg-base-200 dark:bg-base-300">
                 <Menu>
                   <NavBar />
-                  <div className="pt-16 pb-20 h-screen">
+                  <div className="flex-auto flex-shrink-0">
                     <Component {...pageProps} />
                   </div>
                   <Footer />

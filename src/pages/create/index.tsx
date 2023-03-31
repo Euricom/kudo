@@ -56,7 +56,7 @@ const New: NextPage = () => {
       <UtilButtonsContent>
         <></>
       </UtilButtonsContent>
-      <main className="flex flex-col items-center justify-center h-full gap-4">
+      <main className="flex flex-col items-center justify-center gap-4">
         <FcPodiumWithAudience size={100} />
         <Select data-cy="SelectSession" value={session?.title} onChange={(e: React.ChangeEvent<HTMLInputElement>): void => setSession(sessions.find(s => s.title === e.target.value) ? sessions.find(s => s.title === e.target.value) : { id: "0", title: e.target.value, date: "0", speakerId: "no" })} label="Session" options={visibibleSessions} displayLabel="title" valueLabel="id" />
         <FcPodiumWithSpeaker size={100} />

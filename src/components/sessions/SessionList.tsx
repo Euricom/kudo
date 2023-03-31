@@ -18,7 +18,7 @@ const SessionList = ({ sessions }: SessionArray) => {
 
     return (
         <>
-            <div className="flex flex-col gap-8 h-full justify-start p-5">
+            <div className="flex flex-col gap-8 justify-start px-5 mb-8 md:mb-28">
                 {sortedSessions.map((d) => {
                     const sessionDate = new Date(d.date);
                     return (

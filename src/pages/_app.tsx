@@ -5,13 +5,13 @@ import { SessionProvider } from "next-auth/react";
 import { api } from "~/utils/api";
 
 import "~/styles/globals.css";
-import { Auth } from "../auth/Auth";
-import NavBar from "~/navigation/NavBar";
+import { Auth } from "../components/auth/Auth";
+import NavBar from "~/components/navigation/NavBar";
 import { UtilButtonsProvider } from "~/hooks/useUtilButtons";
-import { TitleProvider } from "~/navigation/NavBarTitle";
-import { SessionSpeakerProvider } from "~/sessions/SelectedSessionAndSpeaker";
-import Footer from "~/navigation/Footer";
-import Menu from "~/navigation/Menu";
+import { TitleProvider } from "~/components/navigation/NavBarTitle";
+import { SessionSpeakerProvider } from "~/components/sessions/SelectedSessionAndSpeaker";
+import Footer from "~/components/navigation/Footer";
+import Menu from "~/components/navigation/Menu";
 
 const MyApp: AppType<{ session: Session | null }> = ({
   Component,
@@ -23,10 +23,10 @@ const MyApp: AppType<{ session: Session | null }> = ({
         <TitleProvider>
           <UtilButtonsProvider>
             <SessionSpeakerProvider>
-              <div className="h-full w-full dark:bg-base-300">
+              <div className="h-screen w-full bg-base-200 dark:bg-base-300">
                 <Menu>
                   <NavBar />
-                  <div className="pt-16 pb-20 h-screen">
+                  <div className="flex-auto flex-shrink-0">
                     <Component {...pageProps} />
                   </div>
                   <Footer />

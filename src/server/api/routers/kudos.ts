@@ -19,6 +19,14 @@ const inputGetById = object({
     id: string(),
 })
 
+const inputLike = object({
+    id: string(),
+    liked: boolean(),
+})
+const inputComment = object({
+    id: string(),
+    comment: string(),
+})
 const inputGetImagesByIds = object({
     ids: string().array(),
 })
@@ -125,5 +133,36 @@ export const kudoRouter = createTRPCRouter({
             },
         }));
         return image;
+    }),
+
+    likeKudoById: protectedProcedure.input(inputLike).mutation(async ({ input, ctx }) => {
+
+        const kudo = await ctx.prisma.kudo.update({
+            where: {
+                id: input.id,
+            },
+            data: {
+                liked: input.liked,
+            }
+        });
+
+        if (kudo == undefined) {
+            throw new Error()
+        }
+    }),
+    commentKudoById: protectedProcedure.input(inputComment).mutation(async ({ input, ctx }) => {
+
+        const kudo = await ctx.prisma.kudo.update({
+            where: {
+                id: input.id,
+            },
+            data: {
+                comment: input.comment,
+            }
+        });
+
+        if (kudo == undefined) {
+            throw new Error()
+        }
     }),
 });

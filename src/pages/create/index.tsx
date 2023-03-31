@@ -1,16 +1,17 @@
 import { type NextPage } from "next";
 import Head from "next/head";
-import FAB from "~/navigation/FAB";
+import FAB from "~/components/navigation/FAB";
 import { GrNext } from "react-icons/gr"
 import { FcPodiumWithSpeaker, FcPodiumWithAudience } from "react-icons/fc"
-import Select from "~/input/Select";
-import { NavigationBarContent } from "~/navigation/NavBarTitle";
+import Select from "~/components/input/Select";
+import { NavigationBarContent } from "~/components/navigation/NavBarTitle";
 import { useState } from "react";
 import { api } from "~/utils/api";
 import { useSession } from "next-auth/react";
 
 
 import { type Session, type User } from "~/types";
+import { UtilButtonsContent } from "~/hooks/useUtilButtons";
 
 
 const New: NextPage = () => {
@@ -19,7 +20,7 @@ const New: NextPage = () => {
   const [session, setSession] = useState<Session>();
   const [speaker, setSpeaker] = useState<User>();
   const [anonymous, setAnonymous] = useState<boolean>(false);
-  const me = useSession().data?.user.email
+  const me = useSession().data?.user.id
 
   const sessions: Session[] | undefined = api.sessions.getAll.useQuery().data
   if (!sessions || !users) {
@@ -27,14 +28,14 @@ const New: NextPage = () => {
   }
 
   const visibleSpeakers = () => {
-    const visible = users.filter(x => (x.mail !== me)).filter(x => (sessions.filter(x => x.title.toLowerCase().includes(session?.title.toLowerCase() ?? ""))).map(x => x.speakerId).includes(x.id))
+    const visible = users.filter(x => (x.id !== me)).filter(x => (sessions.filter(x => x.title.toLowerCase().includes(session?.title.toLowerCase() ?? ""))).map(x => x.speakerId).includes(x.id))
     if (visible.length === 1 && speaker !== visible[0]) {
       setSpeaker(visible[0]);
     }
     return visible
   }
 
-  const visibibleSessions = sessions.filter(session => speaker ? speaker.id === session.speakerId : true)
+  const visibibleSessions = sessions.filter(ses => ses.speakerId !== me).filter(session => speaker ? speaker.id === session.speakerId : true)
 
 
 
@@ -44,15 +45,18 @@ const New: NextPage = () => {
 
   return (
     <>
-      <NavigationBarContent>
-        <h1>New</h1>
-      </NavigationBarContent>
       <Head>
         <title>eKudo</title>
         <meta name="description" content="eKudo app" />
         <link rel="icon" href="/favicon.ico" />
       </Head>
-      <main className="flex flex-col items-center justify-center h-full gap-4">
+      <NavigationBarContent>
+        <h1>New</h1>
+      </NavigationBarContent>
+      <UtilButtonsContent>
+        <></>
+      </UtilButtonsContent>
+      <main className="flex flex-col items-center justify-center gap-4">
         <FcPodiumWithAudience size={100} />
         <Select data-cy="SelectSession" value={session?.title} onChange={(e: React.ChangeEvent<HTMLInputElement>): void => setSession(sessions.find(s => s.title === e.target.value) ? sessions.find(s => s.title === e.target.value) : { id: "0", title: e.target.value, date: "0", speakerId: "no" })} label="Session" options={visibibleSessions} displayLabel="title" valueLabel="id" />
         <FcPodiumWithSpeaker size={100} />

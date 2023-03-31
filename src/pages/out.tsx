@@ -1,25 +1,16 @@
 import { type NextPage } from "next";
 import Head from "next/head";
-import FAB from "~/navigation/FAB";
+import FAB from "~/components/navigation/FAB";
 import { GrAdd } from 'react-icons/gr';
-import KudoCard from "~/kudos/Kudo";
+import KudoCard from "~/components/kudos/Kudo";
 import { UtilButtonsContent } from "~/hooks/useUtilButtons";
-import { NavigationBarContent } from "~/navigation/NavBarTitle";
-import NavButtons from "~/navigation/NavButtons";
+import { NavigationBarContent } from "~/components/navigation/NavBarTitle";
+import NavButtons from "~/components/navigation/NavButtons";
 import { useSession } from "next-auth/react";
 import { FindAllKudosSortedByUserId } from "~/server/services/kudoService";
 import { sortPosibillities } from "~/types";
 import { useState } from "react"
 import SortAndFilter from "~/input/SortAndFilter";
-
-// export function getServerSideProps(context: { query: { sort: string }; }) {
-
-//   return {
-//     props: {
-//       sort: context.query.sort,
-//     }
-//   }
-// }
 
 const Out: NextPage = () => {
 
@@ -37,19 +28,21 @@ const Out: NextPage = () => {
 
   return (
     <>
-      <NavigationBarContent>
-        <NavButtons />
-      </NavigationBarContent>
+
       <Head>
         <title>eKudo</title>
         <meta name="description" content="eKudo app" />
         <link rel="icon" href="/favicon.ico" />
       </Head>
+      <NavigationBarContent>
+        <NavButtons />
+      </NavigationBarContent>
       <UtilButtonsContent>
+        <></>
+      </UtilButtonsContent >
+      <main className="flex flex-col items-center justify-start">
         <SortAndFilter setSort={setSort} />
-      </UtilButtonsContent>
-      <main className="flex flex-col items-center justify-center h-full">
-        <div className="flex flex-wrap gap-5 h-full justify-center p-5">
+        <div className="flex flex-wrap gap-5 justify-center px-5 mb-8 md:mb-28">
           {kudos == undefined || kudos.length == 0 ? <h1>No Kudos Sent Yet</h1> :
             kudos.map((kudo) => (
               <KudoCard key={kudo.id} kudo={kudo} />

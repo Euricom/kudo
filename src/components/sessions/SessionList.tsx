@@ -1,7 +1,7 @@
 import { sortDate, sortSpeaker, sortTitle } from "~/server/services/sessionService";
-import SessionCard from "~/sessions/Session";
 import { sortPosibillities, type SessionArray } from "~/types";
 import { api } from "~/utils/api";
+import SessionCard from "~/components/sessions/Session";
 
 
 const SessionList = ({ sessions, sort }: SessionArray) => {

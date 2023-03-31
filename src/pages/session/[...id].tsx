@@ -1,11 +1,11 @@
 import JSZip from "jszip";
 import { type NextPage } from "next";
 import Head from "next/head";
-import KudoCard from "~/kudos/Kudo";
-import { NavigationBarContent } from "~/navigation/NavBarTitle";
+import { UtilButtonsContent } from "~/hooks/useUtilButtons";
+import KudoCard from "~/components/kudos/Kudo";
+import { NavigationBarContent } from "~/components/navigation/NavBarTitle";
 import { api } from "~/utils/api";
 import FileSaver from "file-saver";
-import { UtilButtonsContent } from "~/hooks/useUtilButtons";
 import LoadingBar from "~/components/LoadingBar";
 import { FiDownload } from "react-icons/fi";
 
@@ -74,14 +74,15 @@ const Session: NextPage<{ id: string }> = ({ id }) => {
       </NavigationBarContent>
       <UtilButtonsContent>
         <button
-          className="btn-secondary btn btn-circle "
+          className="btn btn-ghost btn-circle "
           onClick={() => void downloadZip()}
+          data-cy='DownloadButton'
         >
           <FiDownload size={20} />
         </button>
       </UtilButtonsContent>
       <main
-        className="flex h-full flex-col items-center justify-center"
+        className="flex flex-col items-center justify-center"
         data-cy="Session"
       >
         <div className="flex h-full flex-wrap justify-center gap-5 p-5">

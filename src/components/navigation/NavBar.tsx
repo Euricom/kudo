@@ -52,7 +52,7 @@ const NavBar = () => {
     return (
         <>
             <div className="w-full navbar bg-base-100 shadow fixed z-50 " data-cy='Navbar'>
-                <div className="navbar-start w-full">
+                <div className="navbar-start w-full sm:pl-8 pl-2">
                     {visibleStartNavbarActions.map((x) => (
                         <x.Component key={x.key} />
                     ))}

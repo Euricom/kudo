@@ -45,21 +45,24 @@ const New: NextPage = () => {
 
   return (
     <>
-      <NavigationBarContent>
-        <h1>New</h1>
-      </NavigationBarContent>
       <Head>
         <title>eKudo</title>
         <meta name="description" content="eKudo app" />
         <link rel="icon" href="/favicon.ico" />
       </Head>
-      <main className="flex flex-col items-center justify-center h-full gap-4">
+      <NavigationBarContent>
+        <h1>New</h1>
+      </NavigationBarContent>
+      <UtilButtonsContent>
+        <></>
+      </UtilButtonsContent>
+      <main className="flex flex-col items-center justify-center gap-4">
         <FcPodiumWithAudience size={100} />
         <Select data-cy="SelectSession" value={session?.title} onChange={(e: React.ChangeEvent<HTMLInputElement>): void => setSession(sessions.find(s => s.title === e.target.value) ? sessions.find(s => s.title === e.target.value) : { id: "0", title: e.target.value, date: "0", speakerId: "no" })} label="Session" options={visibibleSessions} displayLabel="title" valueLabel="id" />
         <FcPodiumWithSpeaker size={100} />
         <Select data-cy="SelectSpeaker" value={speaker?.displayName} onChange={(e: React.ChangeEvent<HTMLInputElement>): void => setSpeaker(users.find(u => u.displayName === e.target.value))} label="Speaker" options={visibleSpeakers()} displayLabel="displayName" valueLabel="id" />
         <label className="label cursor-pointer gap-5">
-          <input type="checkbox" checked={anonymous} className="checkbox" onClick={onclick} />
+          <input type="checkbox" checked={anonymous} className="checkbox" onChange={onclick} />
           <span className="label-text">Hide my name.</span>
         </label>
       </main>

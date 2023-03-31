@@ -18,10 +18,10 @@ export enum CanvasShapes {
 }
 
 type KonvaCanvasProps = {
-    editorFunction: EditorFunctions | undefined,
-    template: Template,
-    setFunction: (type: EditorFunctions) => void,
-    setStage: (stage: Konva.Stage) => void
+  editorFunction: EditorFunctions | undefined,
+  template: Template,
+  setFunction: (type: EditorFunctions) => void,
+  setStage: (stage: Konva.Stage) => void
 }
 
 type Shapes = {
@@ -37,7 +37,7 @@ type Shapes = {
 
 const initialShapes: Shapes[] = [];
 
-const KonvaCanvas = ({editorFunction, template, setFunction, setStage}: KonvaCanvasProps) => {
+const KonvaCanvas = ({ editorFunction, template, setFunction, setStage }: KonvaCanvasProps) => {
   const containerRef = useRef<HTMLDivElement>(null);
   const stageRef = useRef<Konva.Stage>() as MutableRefObject<Konva.Stage>;
   const layerRef = useRef<Konva.Layer>() as MutableRefObject<Konva.Layer>;
@@ -63,10 +63,10 @@ const KonvaCanvas = ({editorFunction, template, setFunction, setStage}: KonvaCan
 
   const checkDeselect = (e: KonvaEventObject<Event>) => {
     // deselect when clicked on empty area
-    
+
     // selectShape(null);
     const clickedOnEmpty = e.target?.getLayer() === staticLayerRef.current
-    
+
     if (clickedOnEmpty) {
       selectShape(null);
     }
@@ -101,8 +101,8 @@ const KonvaCanvas = ({editorFunction, template, setFunction, setStage}: KonvaCan
       id: v4(),
       type: CanvasShapes.Text,
       text: 'Text',
-      x: pos.x / (stageDimensions.scale?.x??1),
-      y: pos.y / (stageDimensions.scale?.y??1),
+      x: pos.x / (stageDimensions.scale?.x ?? 1),
+      y: pos.y / (stageDimensions.scale?.y ?? 1),
     }
     shapes.push(text)
     selectShape(text.id)
@@ -122,83 +122,83 @@ const KonvaCanvas = ({editorFunction, template, setFunction, setStage}: KonvaCan
   }, [setStage])
 
   return (
-  <>
-  {editorFunction === EditorFunctions.Clear &&
-    <ConfirmationModal
-      prompt={"Are you sure you want to clear the canvas?"}
-      onCancel={() => setFunction(EditorFunctions.None)}
-      cancelLabel={"No"}
-      onSubmit={onClear}
-      submitLabel={"Yes"}
-    />
-  }
-  
-  <div ref={containerRef} id='kudo' className="aspect-[3/2] w-full max-h-full max-w-5xl bg-neutral">
-    <Stage ref={stageRef} 
-      width={(stageDimensions?.width??1) * (stageDimensions.scale?.x??1)} 
-      height={(stageDimensions?.height??1) * (stageDimensions.scale?.y??1)}
-      scale={stageDimensions.scale}
-      onMouseDown={checkDeselect}
-      onTouchStart={checkDeselect}
-      onClick={clickListener}
-      onTap={clickListener}
-    >
-      <Layer ref={staticLayerRef}>
-        <Rect
-            width={stageDimensions?.width}
-            height={stageDimensions?.height}
-            fill={'white'}
+    <>
+      {editorFunction === EditorFunctions.Clear &&
+        <ConfirmationModal
+          prompt={"Are you sure you want to clear the canvas?"}
+          onCancel={() => setFunction(EditorFunctions.None)}
+          cancelLabel={"No"}
+          onSubmit={onClear}
+          submitLabel={"Yes"}
         />
-        <Header width={stageDimensions?.width} height={stageDimensions?.height} template={template}/>
-      </Layer>
-      <Layer ref={layerRef}>
-        {shapes.map((s, i) => {
-          switch (s.type) {
-            case CanvasShapes.Text:
-              return (
-                <CanvasText
-                  key={i}
-                  shapeProps={s}
-                  scale={stageDimensions.scale?.x??1}
-                  fontSize={(stageDimensions?.height??0)/15}
-                  isSelected={s.id === selectedId}
-                  onSelect={() => {
-                    selectShape(s.id);
-                  }}
-                  onChange={(newAttrs) => {
-                    const newShapes = shapes.slice();
-                    newShapes[i] = newAttrs;
-                    setShapes(newShapes);
-                  }}
-                  areaPosition={{
-                    x: (stageRef.current?.container().offsetLeft??0) + s.x * (stageDimensions?.scale?.x??1),
-                    y: (stageRef.current?.container().offsetTop??0) + s.y * (stageDimensions?.scale?.y??1),
-                  }}
-                />
-              );
-            case CanvasShapes.Rect:
-              return (
-                <Rectangle
-                  key={i}
-                  shapeProps={s}
-                  scale={stageDimensions.scale?.x??1}
-                  isSelected={s.id === selectedId}
-                  onSelect={() => {
-                    selectShape(s.id);
-                  }}
-                  onChange={(newAttrs) => {
-                    const newShapes = shapes.slice();
-                    newShapes[i] = newAttrs;
-                    setShapes(newShapes);
-                  }}
-                />
-              );
-            }
-          })}
-        </Layer>
-    </Stage>
-  </div>
-  </>
+      }
+
+      <div ref={containerRef} id='kudo' className="aspect-[3/2] w-full max-h-full max-w-xl lg:max-w-3xl bg-neutral">
+        <Stage ref={stageRef}
+          width={(stageDimensions?.width ?? 1) * (stageDimensions.scale?.x ?? 1)}
+          height={(stageDimensions?.height ?? 1) * (stageDimensions.scale?.y ?? 1)}
+          scale={stageDimensions.scale}
+          onMouseDown={checkDeselect}
+          onTouchStart={checkDeselect}
+          onClick={clickListener}
+          onTap={clickListener}
+        >
+          <Layer ref={staticLayerRef}>
+            <Rect
+              width={stageDimensions?.width}
+              height={stageDimensions?.height}
+              fill={'white'}
+            />
+            <Header width={stageDimensions?.width} height={stageDimensions?.height} template={template} />
+          </Layer>
+          <Layer ref={layerRef}>
+            {shapes.map((s, i) => {
+              switch (s.type) {
+                case CanvasShapes.Text:
+                  return (
+                    <CanvasText
+                      key={i}
+                      shapeProps={s}
+                      scale={stageDimensions.scale?.x ?? 1}
+                      fontSize={(stageDimensions?.height ?? 0) / 15}
+                      isSelected={s.id === selectedId}
+                      onSelect={() => {
+                        selectShape(s.id);
+                      }}
+                      onChange={(newAttrs) => {
+                        const newShapes = shapes.slice();
+                        newShapes[i] = newAttrs;
+                        setShapes(newShapes);
+                      }}
+                      areaPosition={{
+                        x: (stageRef.current?.container().offsetLeft ?? 0) + s.x * (stageDimensions?.scale?.x ?? 1),
+                        y: (stageRef.current?.container().offsetTop ?? 0) + s.y * (stageDimensions?.scale?.y ?? 1),
+                      }}
+                    />
+                  );
+                case CanvasShapes.Rect:
+                  return (
+                    <Rectangle
+                      key={i}
+                      shapeProps={s}
+                      scale={stageDimensions.scale?.x ?? 1}
+                      isSelected={s.id === selectedId}
+                      onSelect={() => {
+                        selectShape(s.id);
+                      }}
+                      onChange={(newAttrs) => {
+                        const newShapes = shapes.slice();
+                        newShapes[i] = newAttrs;
+                        setShapes(newShapes);
+                      }}
+                    />
+                  );
+              }
+            })}
+          </Layer>
+        </Stage>
+      </div>
+    </>
   )
 }
 

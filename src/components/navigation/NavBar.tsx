@@ -31,6 +31,11 @@ function useVisibleStartNavbarActions() {
             Component: BackArrow,
             key: 'backArrow',
             routes: ['/session/[...id]', '/kudo/[...id]', '/notifications', '/create', '/create/editor', '/create/templates'],
+        },
+        {
+            Component: logo,
+            key: 'logo',
+            routes: ['/', '/out', '/all'],
         }
     ].filter((item) => item.routes.includes(router.pathname));
 }
@@ -43,18 +48,15 @@ const NavBar = () => {
     const visibleEndNavbarActions = useVisibleEndNavbarActions();
     const visibleStartNavbarActions = useVisibleStartNavbarActions();
     const title = useTitle();
-    
+
     return (
         <>
-            <div className="w-full navbar bg-base-100 shadow fixed z-50 " data-cy='Navbar'>
-                <div className="navbar-start w-full">
-                    <label data-cy="logo">
-                        <IoLogoChrome size={25} />
-                    </label>
+            <div className="w-full navbar bg-base-100 shadow sticky z-50 top-0 left-0 " data-cy='Navbar'>
+                <div className="navbar-start w-full sm:pl-8 pl-2">
                     {visibleStartNavbarActions.map((x) => (
                         <x.Component key={x.key} />
                     ))}
-                    <div className="text-lg w-fit sm:text-2xl sm:navbar-center z-10" data-cy='NavbarTitle'>
+                    <div className="text-lg w-fit sm:text-2xl sm:navbar-center pl-2 z-10" data-cy='NavbarTitle'>
                         <>{title}</>
                     </div>
                 </div>
@@ -111,6 +113,15 @@ function BackArrow() {
         </>
     );
 }
+function logo() {
+    return (
+        <>
+            <label data-cy="logo">
+                <IoLogoChrome size={25} />
+            </label>
+        </>)
+}
+
 
 
 

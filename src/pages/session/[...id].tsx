@@ -82,7 +82,7 @@ const Session: NextPage<{ id: string }> = ({ id }) => {
         </button>
       </UtilButtonsContent>
       <main
-        className="flex h-full flex-col items-center justify-center"
+        className="flex flex-col items-center justify-center"
         data-cy="Session"
       >
         <div className="flex h-full flex-wrap justify-center gap-5 p-5">

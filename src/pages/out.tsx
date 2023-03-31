@@ -26,25 +26,29 @@ const Out: NextPage = () => {
 
   return (
     <>
-      <NavigationBarContent>
-        <NavButtons />
-      </NavigationBarContent>
+
       <Head>
         <title>eKudo</title>
         <meta name="description" content="eKudo app" />
         <link rel="icon" href="/favicon.ico" />
       </Head>
-      <main className="flex flex-col items-center overflow-y-scroll justify-start h-full">
+      <NavigationBarContent>
+        <NavButtons />
+      </NavigationBarContent>
+      <UtilButtonsContent>
+        <></>
+      </UtilButtonsContent>
+      <main className="flex flex-col items-center justify-start">
         <div className="w-full lg:w-1/2 p-5 z-40 flex justify-center gap-2 mx-auto">
           <div className="flex w-full max-w-md bg-base-100 shadow-xl rounded-full items-center px-4">
-            <FiSearch size={20} className=""/>
+            <FiSearch size={20} className="" />
             <input type="text" placeholder={"Search..."} className="input w-full bg-transparent rounded-full p-3 focus:outline-none" />
           </div>
           <button className="btn btn-primary btn-circle">
             <MdSort size={20} />
           </button>
         </div>
-        <div className="flex flex-wrap gap-5 h-full justify-center p-5">
+        <div className="flex flex-wrap gap-5 justify-center px-5 mb-8 md:mb-28">
           {kudos == undefined || kudos.length == 0 ? <h1>No Kudos Sent Yet</h1> :
             kudos.map((kudo) => (
               <KudoCard key={kudo.id} kudo={kudo} />

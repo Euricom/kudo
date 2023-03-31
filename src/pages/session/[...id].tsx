@@ -12,7 +12,6 @@ export function getServerSideProps(context: { query: { id: string }; }) {
   }
 }
 
-
 const Session: NextPage<{ id: string }> = ({ id }) => {
 
   const session = api.sessions.getSessionById.useQuery({ id: id }).data
@@ -24,7 +23,6 @@ const Session: NextPage<{ id: string }> = ({ id }) => {
   const kudos = api.kudos.getKudosBySessionId.useQuery({ id: session.id }).data
   return (
     <>
-
       <NavigationBarContent>
         <h1>Session: {session?.title}</h1>
       </NavigationBarContent>

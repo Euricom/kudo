@@ -23,22 +23,16 @@ export function getServerSideProps(context: { query: { id: string }; }) {
 
 const KudoDetail: NextPage<{ id: string }> = ({ id }) => {
 
-
   const deleteKudo = api.kudos.deleteKudoById.useMutation()
   const deleteImage = api.kudos.deleteImageById.useMutation()
   const likeKudoById = api.kudos.likeKudoById.useMutation()
   const commentKudoById = api.kudos.commentKudoById.useMutation()
-
-
 
   const { data: kudo, refetch: refetchKudo } = api.kudos.getKudoById.useQuery({ id: id })
   const image: string | undefined = api.kudos.getImageById.useQuery({ id: kudo?.image ?? "error" }).data?.dataUrl
   const session = api.sessions.getSessionById.useQuery({ id: kudo?.sessionId ?? "error" }).data
   const [comment, setComment] = useState<string>("")
   const [sendReady, setSendReady] = useState<boolean>(false)
-
-
-
 
   async function handleclick() {
     try {

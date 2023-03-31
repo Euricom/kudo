@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { type TitleContextValue } from "~/types";
 
 const TitleContext = React.createContext<TitleContextValue>({ title: <></>, setTitle: () => { /* do nothing */ } });
@@ -12,12 +12,14 @@ export function TitleProvider(props: React.PropsWithChildren<object>) {
     );
 }
 
-export function useTitle(newValue: (React.ReactNode | undefined)) {
+export function useTitle(newValue?: (React.ReactNode)) {
     const context = React.useContext(TitleContext);
 
-    if (newValue !== undefined) {
-        context.setTitle(newValue);
-    }
+    useEffect(() => {
+        if (newValue !== undefined) {
+            context.setTitle(newValue);
+        }
+    }, [context, newValue])
     return context.title;
 }
 

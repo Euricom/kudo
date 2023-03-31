@@ -1,4 +1,4 @@
-import SessionCard from "~/sessions/Session";
+import SessionCard from "~/components/sessions/Session";
 import { type newSession, type SessionArray } from "~/types";
 
 
@@ -14,11 +14,11 @@ const SessionList = ({ sessions }: SessionArray) => {
         else return previous
     }, [] as newSession[])
 
-    
+
 
     return (
         <>
-            <div className="flex flex-col gap-8 h-full justify-start p-5">
+            <div className="flex flex-col gap-8 justify-start px-5 mb-8 md:mb-28">
                 {sortedSessions.map((d) => {
                     const sessionDate = new Date(d.date);
                     return (
@@ -27,7 +27,7 @@ const SessionList = ({ sessions }: SessionArray) => {
                                 <h2 className="w-full">{sessionDate.toLocaleDateString() == new Date().toLocaleDateString() ? 'Today' : sessionDate.toDateString()}</h2>
                                 <div className="flex flex-wrap gap-4">
                                     {d.sessions.map(s => {
-                                        return <SessionCard key={s.id} session={s}/>
+                                        return <SessionCard key={s.id} session={s} />
                                     })}
                                 </div>
                             </div>

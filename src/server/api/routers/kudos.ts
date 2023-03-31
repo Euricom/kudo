@@ -27,6 +27,9 @@ const inputComment = object({
     id: string(),
     comment: string(),
 })
+const inputGetImagesByIds = object({
+    ids: string().array(),
+})
 
 
 export const kudoRouter = createTRPCRouter({
@@ -44,8 +47,6 @@ export const kudoRouter = createTRPCRouter({
     }),
 
     getKudosBySessionId: protectedProcedure.input(inputGetById).query(({ input, ctx }) => {
-        console.log(input.id);
-
         return ctx.prisma.kudo.findMany({
             where: {
                 sessionId: input.id,
@@ -73,6 +74,17 @@ export const kudoRouter = createTRPCRouter({
         return kudo
     }),
 
+    getImagesByIds: protectedProcedure.input(inputGetImagesByIds).query(({ input, ctx }) => {
+        return ctx.prisma.image.findMany({
+            where: {
+                id: {
+                    in: input.ids
+                },
+            }
+        });
+    }),
+
+    //Delete
     deleteKudoById: protectedProcedure.input(inputGetById).mutation(async ({ input, ctx }) => {
         const kudo = await ctx.prisma.kudo.delete({
             where: {
@@ -98,7 +110,7 @@ export const kudoRouter = createTRPCRouter({
         }
     }),
 
-
+    // Create
     createKudo: protectedProcedure.input(createKudoInput).mutation(async ({ input, ctx }): Promise<Kudo> => {
 
         const kudo = (await ctx.prisma.kudo.create({

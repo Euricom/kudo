@@ -1,13 +1,14 @@
 import { type NextPage } from "next";
 import Head from "next/head";
-import { NavigationBarContent } from "~/navigation/NavBarTitle";
+import { NavigationBarContent } from "~/components/navigation/NavBarTitle";
 import { findAllTemplates } from "~/server/services/templateService";
 import { type Template } from "@prisma/client";
 import Link from "next/link";
-import { useSessionSpeaker } from "~/sessions/SelectedSessionAndSpeaker";
-import FAB from "~/navigation/FAB";
+import { useSessionSpeaker } from "~/components/sessions/SelectedSessionAndSpeaker";
+import FAB from "~/components/navigation/FAB";
 import { GrNext } from "react-icons/gr";
 import { api } from "~/utils/api";
+import { UtilButtonsContent } from "~/hooks/useUtilButtons";
 
 
 
@@ -37,20 +38,23 @@ const Editor: NextPage<{ res: Template[], sess: string, speaker: string, anonymo
 
   return (
     <>
-      <NavigationBarContent>
-        <h1>Templates</h1>
-      </NavigationBarContent>
       <Head>
         <title>eKudo</title>
         <meta name="description" content="eKudo app" />
         <link rel="icon" href="/favicon.ico" />
       </Head>
-      <div className="w-full h-fit bg-secondary text-white p-1 text-center">
+      <NavigationBarContent>
+        <h1>Templates</h1>
+      </NavigationBarContent>
+      <UtilButtonsContent>
+        <></>
+      </UtilButtonsContent>
+      <div className="w-full h-fit bg-base-200 p-1 text-center sticky top-16 z-50">
         <h1 data-cy="session" className="lg:inline">&emsp;&emsp;&emsp;&emsp;Session: {title}&emsp;&emsp;</h1><h1 data-cy="speaker" className="lg:inline"> Speaker: {speaker}</h1>
       </div>
-      <main className="flex flex-col items-center justify-center h-full">
+      <main className="flex flex-col items-center justify-center">
 
-        <div className="flex flex-wrap gap-5 h-full justify-center p-5">
+        <div className="flex flex-wrap gap-5 justify-center px-5 mb-8 md:mb-28">
           {res.map((x: Template) => (
             <Link className="card bg-white text-gray-800 shadow-xl aspect-[3/2] rounded-none w-80 h-52" data-cy="template" href={{ pathname: "/create/editor", query: { template: x.id } }} key={x.id}>
               <div className="card-body p-0">

@@ -1,6 +1,7 @@
 import { type NextPage } from "next";
 import Head from "next/head";
-import { NavigationBarContent } from "~/navigation/NavBarTitle";
+import { NavigationBarContent } from "~/components/navigation/NavBarTitle";
+import { UtilButtonsContent } from "~/hooks/useUtilButtons";
 
 const Notifications: NextPage = () => {
   return (
@@ -9,6 +10,9 @@ const Notifications: NextPage = () => {
       <NavigationBarContent>
         <h1>Notifications </h1>
       </NavigationBarContent>
+      <UtilButtonsContent>
+        <></>
+      </UtilButtonsContent>
       <Head>
         <title>eKudo</title>
         <meta name="description" content="eKudo app" />

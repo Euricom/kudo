@@ -1,7 +1,7 @@
 import { type NextPage } from "next";
 import Head from "next/head";
 import Image from "next/image";
-import { NavigationBarContent } from "~/navigation/NavBarTitle";
+import { NavigationBarContent } from "~/components/navigation/NavBarTitle";
 import { FaTrashAlt } from "react-icons/fa";
 import { UtilButtonsContent } from "~/hooks/useUtilButtons";
 import Link from "next/link";
@@ -69,6 +69,11 @@ const KudoDetail: NextPage<{ id: string }> = ({ id }) => {
 
   return (
     <>
+      <Head>
+        <title>eKudo</title>
+        <meta name="description" content="eKudo app" />
+        <link rel="icon" href="/favicon.ico" />
+      </Head>
       <NavigationBarContent>
         <h1>Kudo {session?.title ?? "no title"}</h1>
       </NavigationBarContent>
@@ -77,11 +82,6 @@ const KudoDetail: NextPage<{ id: string }> = ({ id }) => {
           <FaTrashAlt size={20} />
         </Link>
       </UtilButtonsContent>
-      <Head>
-        <title>eKudo</title>
-        <meta name="description" content="eKudo app" />
-        <link rel="icon" href="/favicon.ico" />
-      </Head>
       {/* <div className="flex justify-center ">
         <div className="card bg-white text-gray-800 aspect-[3/2] rounded-none w-[320px] h-[208px] mt-20">
           <Image className="shadow-2xl h-full w-full" src={image} fill alt="Kudo" />

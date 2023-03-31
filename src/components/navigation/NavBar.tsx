@@ -1,12 +1,13 @@
 import React from 'react';
 import { useRouter } from 'next/router';
 import { signOut } from 'next-auth/react';
-import { FiBell, FiMenu, FiDownload } from 'react-icons/fi';
+import { FiBell } from 'react-icons/fi';
+import { IoLogoChrome } from 'react-icons/io';
 import { BsGearFill, BsArrowLeft } from 'react-icons/bs'
 import { useUtilButtons } from '~/hooks/useUtilButtons';
 
 import { useTitle } from "./NavBarTitle";
-import ThemeButton from '~/input/ThemeButton';
+import ThemeButton from '~/components/input/ThemeButton';
 
 
 
@@ -19,11 +20,6 @@ function useVisibleEndNavbarActions() {
             key: 'notifButton',
             routes: ['/', '/out', '/all'],
         },
-        {
-            Component: DownloadIcon,
-            key: 'downloadButton',
-            routes: ['/session/[...id]'],
-        },
     ].filter((item) => item.routes.includes(router.pathname));
 }
 
@@ -35,6 +31,11 @@ function useVisibleStartNavbarActions() {
             Component: BackArrow,
             key: 'backArrow',
             routes: ['/session/[...id]', '/kudo/[...id]', '/notifications', '/create', '/create/editor', '/create/templates'],
+        },
+        {
+            Component: logo,
+            key: 'logo',
+            routes: ['/', '/out', '/all'],
         }
     ].filter((item) => item.routes.includes(router.pathname));
 }
@@ -46,31 +47,26 @@ const NavBar = () => {
     const buttons = useUtilButtons(undefined);
     const visibleEndNavbarActions = useVisibleEndNavbarActions();
     const visibleStartNavbarActions = useVisibleStartNavbarActions();
-    const title = useTitle(undefined);
+    const title = useTitle();
 
     return (
         <>
-            <div className="w-full navbar bg-neutral text-neutral-content fixed z-50" data-cy="Navbar">
-                <div className="navbar-start ">
-
-                    <div className="flex-none lg:hidden">
-
-                        <label htmlFor="my-drawer-3" className="btn btn-square btn-ghost" data-cy="MenuButton">
-                            <FiMenu size={25} />
-                        </label>
-                    </div>
+            <div className="w-full navbar bg-base-100 shadow sticky z-50 top-0 left-0 " data-cy='Navbar'>
+                <div className="navbar-start w-full sm:pl-8 pl-2">
                     {visibleStartNavbarActions.map((x) => (
                         <x.Component key={x.key} />
                     ))}
+                    <div className="text-lg w-fit sm:text-2xl sm:navbar-center pl-2 z-10" data-cy='NavbarTitle'>
+                        <>{title}</>
+                    </div>
                 </div>
-                <div className="navbar-end sm:navbar-center w-1/2 sm:w-fit h-fit text-base sm:text-2xl" data-cy='NavbarTitle'>
-                    <>{title}</>
-                </div>
-                <div className="navbar-end">
+
+                <div className="navbar-end w-fit sm:pr-10">
+                    {buttons}
                     {visibleEndNavbarActions.map((x) => (
                         <x.Component key={x.key} />
                     ))}
-                    <div className="hidden lg:inline-flex">
+                    <div className="hidden lg:inline-flex items-center">
                         <div className="dropdown dropdown-end">
                             <label tabIndex={0} className="btn btn-ghost btn-circle m-1" data-cy='SettingsButton'><BsGearFill /></label>
                             <ul tabIndex={0} className="dropdown-content menu p-2 shadow bg-base-100 rounded-box w-52">
@@ -91,9 +87,6 @@ const NavBar = () => {
                     </div>
                 </div>
             </div>
-            <div className="absolute w-full lg:w-1/2 my-2 p-5 pt-16 z-40 flex justify-center gap-2 left-1/2 -translate-x-1/2">
-                {buttons}
-            </div>
         </>
     );
 };
@@ -110,16 +103,6 @@ function NotificationIcon() {
         </>
     );
 }
-
-function DownloadIcon() {
-    return (
-        <>
-            <button className="btn btn-ghost btn-circle" data-cy='DownloadButton'>
-                <FiDownload size={20} />
-            </button>
-        </>
-    );
-}
 function BackArrow() {
     const router = useRouter();
     return (
@@ -130,6 +113,15 @@ function BackArrow() {
         </>
     );
 }
+function logo() {
+    return (
+        <>
+            <label data-cy="logo">
+                <IoLogoChrome size={25} />
+            </label>
+        </>)
+}
+
 
 
 

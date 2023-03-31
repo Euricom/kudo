@@ -6,16 +6,13 @@ import { NavigationBarContent } from "~/components/navigation/NavBarTitle";
 import NavButtons from "~/components/navigation/NavButtons";
 import SessionList from "~/components/sessions/SessionList";
 import { api } from "~/utils/api";
-import { sortPosibillities, type Session } from "~/types";
+import { type Session } from "~/types";
 import { useSession } from "next-auth/react";
-import { useState } from "react"
-import SortAndFilter from "~/input/SortAndFilter";
 import { UtilButtonsContent } from "~/hooks/useUtilButtons";
 
 
 const Home: NextPage = () => {
   const userId: string | undefined = useSession().data?.user.id
-  const [sort, setSort] = useState<sortPosibillities>(sortPosibillities.DateD)
 
   const sessions: Session[] | undefined = api.sessions.getSessionsBySpeaker.useQuery({ id: userId ?? "error" }).data
   if (!sessions) {
@@ -36,8 +33,7 @@ const Home: NextPage = () => {
         <></>
       </UtilButtonsContent >
       <main className="flex flex-col items-center justify-center h-full">
-        <SortAndFilter setSort={setSort} />
-        <SessionList sessions={sessions} sort={sort} />
+        <SessionList sessions={sessions} />
       </main>
       <FAB text={"Create Kudo"} icon={<GrAdd />} url="/create" />
     </>

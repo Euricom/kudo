@@ -1,4 +1,3 @@
-import { type Kudo } from "@prisma/client";
 import { type NextPage } from "next";
 import Head from "next/head";
 import Image from "next/image";
@@ -32,40 +31,31 @@ const KudoDetail: NextPage<{ id: string }> = ({ id }) => {
 
 
 
-  const kudo: Kudo | null | undefined = api.kudos.getKudoById.useQuery({ id: id }).data
+  const { data: kudo, refetch: refetchKudo } = api.kudos.getKudoById.useQuery({ id: id })
   const image: string | undefined = api.kudos.getImageById.useQuery({ id: kudo?.image ?? "error" }).data?.dataUrl
   const session = api.sessions.getSessionById.useQuery({ id: kudo?.sessionId ?? "error" }).data
-  const [liked, setLiked] = useState<boolean>(() => {
-    const storedLiked = localStorage.getItem(`kudo:${kudo?.id ?? "error"}:liked`);
-    return storedLiked ? JSON.parse(storedLiked) as boolean : kudo?.liked ?? false;
-  });
   const [comment, setComment] = useState<string>("")
-  const [existingComment, setExistingComment] = useState<string | undefined>(kudo?.comment)
   const [sendReady, setSendReady] = useState<boolean>(false)
 
 
 
 
-  function handleclick() {
+  async function handleclick() {
     try {
-      likeKudoById.mutate({ id: kudo?.id ?? "error", liked: !liked })
-      setLiked(!liked)
-      localStorage.setItem(`kudo:${kudo?.id ?? "error"}:liked`, JSON.stringify(!liked));
-      //     kudo?.liked = liked
-
+      await likeKudoById.mutateAsync({ id: kudo?.id ?? "error", liked: !kudo?.liked })
+      await refetchKudo()
     }
     catch (e) {
       console.log(e);
     }
   }
 
-  function handleSubmit() {
+  async function handleSubmit() {
     try {
-      commentKudoById.mutate({ id: kudo?.id ?? "error", comment: comment })
+      await commentKudoById.mutateAsync({ id: kudo?.id ?? "error", comment: comment })
       setSendReady(false)
       setComment("")
-      setExistingComment(comment)
-      //    kudo?.comment = comment
+      await refetchKudo()
     }
     catch (e) {
       console.log(e);
@@ -110,12 +100,13 @@ const KudoDetail: NextPage<{ id: string }> = ({ id }) => {
             <Image className="shadow-2xl" src={image} fill alt="Kudo" />
           </div>
           <div className="flex flex-row left-0 mt-2 gap-5 md:gap-10 ">
-            <div className="btn btn-circle btn-ghost" data-cy="Like" onClick={() => handleclick()}>
-              {liked ? <AiFillHeart size={25} /> : <AiOutlineHeart size={25} />}
+            <div className="btn btn-circle btn-ghost" data-cy="Like" onClick={() => void handleclick()}>
+
+              {kudo.liked ? <AiFillHeart size={25} /> : <AiOutlineHeart size={25} />}
             </div>
-            {existingComment ?
+            {kudo.comment ?
               <div className="h-full w-full pt-3">
-                <h1 >{existingComment}</h1></div>
+                <h1 >{kudo.comment}</h1></div>
               : <div className="flex flex-row left justify-end w-fit">
                 <input value={comment} onChange={(e) => setComment(e.target.value)} type="text" placeholder="place your comment here" className="input input-bordered max-w-xs w-full" data-cy="comment" />
                 <div className="btn btn-circle btn-ghost mt-2" onClick={() => setSendReady(true)}>

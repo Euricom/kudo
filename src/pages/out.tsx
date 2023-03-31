@@ -4,22 +4,24 @@ import FAB from "~/components/navigation/FAB";
 import { GrAdd } from 'react-icons/gr';
 import KudoCard from "~/components/kudos/Kudo";
 import { UtilButtonsContent } from "~/hooks/useUtilButtons";
-import { FiSearch } from "react-icons/fi";
-import { MdSort } from "react-icons/md";
 import { NavigationBarContent } from "~/components/navigation/NavBarTitle";
 import NavButtons from "~/components/navigation/NavButtons";
 import { useSession } from "next-auth/react";
-import { api } from "~/utils/api";
-
-
+import { FindAllKudosSortedByUserId } from "~/server/services/kudoService";
+import { sortPosibillities } from "~/types";
+import { useState } from "react"
+import SortAndFilter from "~/input/SortAndFilter";
 
 const Out: NextPage = () => {
+
+  const [sort, setSort] = useState<sortPosibillities>(sortPosibillities.DateD)
 
   const userId = useSession().data?.user.id
   if (!userId) {
     throw new Error("No user signed in")
   }
-  const kudos = api.kudos.getKudosByUserId.useQuery({ id: userId }).data
+  const kudos = FindAllKudosSortedByUserId(userId, sort)
+
   if (!userId) {
     return <div>Loading...</div>
   }
@@ -37,17 +39,9 @@ const Out: NextPage = () => {
       </NavigationBarContent>
       <UtilButtonsContent>
         <></>
-      </UtilButtonsContent>
+      </UtilButtonsContent >
       <main className="flex flex-col items-center justify-start">
-        <div className="w-full lg:w-1/2 p-5 z-40 flex justify-center gap-2 mx-auto">
-          <div className="flex w-full max-w-md bg-base-100 shadow-xl rounded-full items-center px-4">
-            <FiSearch size={20} className="" />
-            <input type="text" placeholder={"Search..."} className="input w-full bg-transparent rounded-full p-3 focus:outline-none" />
-          </div>
-          <button className="btn btn-primary btn-circle">
-            <MdSort size={20} />
-          </button>
-        </div>
+        <SortAndFilter setSort={setSort} />
         <div className="flex flex-wrap gap-5 justify-center px-5 mb-8 md:mb-28">
           {kudos == undefined || kudos.length == 0 ? <h1>No Kudos Sent Yet</h1> :
             kudos.map((kudo) => (

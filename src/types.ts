@@ -50,7 +50,8 @@ export type Session = {
 }
 
 export type SessionArray = {
-    sessions: Session[]
+    sessions: Session[],
+    sort?: sortPosibillities
 }
 
 export type temp = {
@@ -90,7 +91,27 @@ export type SessionProps = {
     session: Session
 }
 
-export type newSession = {
+export type newSessionDate = {
     date: string,
     sessions: Session[]
+}
+
+export type newSessionSpeaker = {
+    speakerId: string,
+    sessions: Session[]
+}
+
+export enum sortPosibillities {
+    DateA = 'Date ↓',
+    DateD = 'Date ↑',
+    SpeakerA = 'Speaker ↓',
+    SpeakerD = 'Speaker ↑',
+    TitleA = 'Title ↓',
+    TitleD = 'Title ↑',
+}
+
+export type SortAndFilterProps = {
+    setSort: React.Dispatch<React.SetStateAction<sortPosibillities>>;
+    filter?: string
+    setFilter?: React.Dispatch<React.SetStateAction<string>>;
 }

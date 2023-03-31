@@ -12,9 +12,15 @@ const SessionList = ({ sessions, sort }: SessionArray) => {
         switch (sort) {
             case sortPosibillities.TitleA:
             case sortPosibillities.TitleD:
-                return sortTitle({ sessions: sessions, sort: sort }).map((s) => {
-                    return (<SessionCard key={s.id} session={s} />)
-                })
+                return (
+                    <>
+                        <div className="w-full flex flex-wrap gap-4">
+                            {sortTitle({ sessions: sessions, sort: sort }).map((s) =>
+                                <SessionCard key={s.id} session={s} />
+                            )}
+                        </div>
+                    </>
+                )
             case sortPosibillities.SpeakerA:
             case sortPosibillities.SpeakerD:
 

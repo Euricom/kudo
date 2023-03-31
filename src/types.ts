@@ -51,7 +51,7 @@ export type Session = {
 
 export type SessionArray = {
     sessions: Session[],
-    sort: sortPosibillities
+    sort?: sortPosibillities
 }
 
 export type temp = {
@@ -102,9 +102,16 @@ export type newSessionSpeaker = {
 }
 
 export enum sortPosibillities {
-    DateA = 'dateA',
-    SpeakerA = 'speakerA',
-    SpeakerD = 'speakerD',
-    TitleA = 'titleA',
-    TitleD = 'titleD',
+    DateA = 'Date ↓',
+    DateD = 'Date ↑',
+    SpeakerA = 'Speaker ↓',
+    SpeakerD = 'Speaker ↑',
+    TitleA = 'Title ↓',
+    TitleD = 'Title ↑',
+}
+
+export type SortAndFilterProps = {
+    setSort: React.Dispatch<React.SetStateAction<sortPosibillities>>;
+    filter?: string
+    setFilter?: React.Dispatch<React.SetStateAction<string>>;
 }

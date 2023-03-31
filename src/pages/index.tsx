@@ -3,18 +3,19 @@ import Head from "next/head";
 import FAB from "~/navigation/FAB";
 import { GrAdd } from 'react-icons/gr';
 import { UtilButtonsContent } from "~/hooks/useUtilButtons";
-import { FiSearch } from "react-icons/fi";
-import { MdSort } from "react-icons/md";
 import { NavigationBarContent } from "~/navigation/NavBarTitle";
 import NavButtons from "~/navigation/NavButtons";
 import SessionList from "~/sessions/SessionList";
 import { api } from "~/utils/api";
-import { type Session } from "~/types";
+import { sortPosibillities, type Session } from "~/types";
 import { useSession } from "next-auth/react";
+import { useState } from "react"
+import SortAndFilter from "~/input/SortAndFilter";
 
 
 const Home: NextPage = () => {
   const userId: string | undefined = useSession().data?.user.id
+  const [sort, setSort] = useState<sortPosibillities>(sortPosibillities.DateD)
 
   const sessions: Session[] | undefined = api.sessions.getSessionsBySpeaker.useQuery({ id: userId ?? "error" }).data
   if (!sessions) {
@@ -32,16 +33,10 @@ const Home: NextPage = () => {
         <link rel="icon" href="/favicon.ico" />
       </Head>
       <UtilButtonsContent>
-        <div className="flex w-full max-w-md bg-neutral rounded-full items-center px-4">
-          <FiSearch size={20} className=""/>
-          <input type="text" placeholder={"Search..."} className="input w-full bg-transparent rounded-full p-3 focus:outline-none" />
-        </div>
-        <button className="btn btn-primary btn-circle">
-          <MdSort size={20} />
-        </button>
+        <SortAndFilter setSort={setSort} />
       </UtilButtonsContent>
       <main className="flex flex-col items-center overflow-y-scroll justify-center h-full">
-        <SessionList sessions={sessions} />
+        <SessionList sessions={sessions} sort={sort} />
       </main>
       <FAB text={"Create Kudo"} icon={<GrAdd />} url="/create" />
     </>

@@ -5,7 +5,7 @@ import { api } from "~/utils/api";
 
 
 const SessionList = ({ sessions, sort }: SessionArray) => {
-    const user = api.users.getAllUsers.useQuery().data
+    const users = api.users.getAllUsers.useQuery().data
 
 
     function sortSessions() {
@@ -24,8 +24,8 @@ const SessionList = ({ sessions, sort }: SessionArray) => {
             case sortPosibillities.SpeakerA:
             case sortPosibillities.SpeakerD:
 
-                return sortSpeaker({ sessions: sessions.sort((a, b) => (user?.find(u => u.id === a.speakerId)?.displayName ?? "a") > (user?.find(u => u.id === b.speakerId)?.displayName ?? "b") ? 1 : -1), sort: sort }).map((s) => {
-                    const speaker = user?.find(u => u.id === s.speakerId);
+                return sortSpeaker({ sessions: sessions.sort((a, b) => (users?.find(u => u.id === a.speakerId)?.displayName ?? "a") > (users?.find(u => u.id === b.speakerId)?.displayName ?? "b") ? 1 : -1), sort: sort }).map((s) => {
+                    const speaker = users?.find(u => u.id === s.speakerId);
                     return (
                         <>
                             <div key={s.speakerId} className="">

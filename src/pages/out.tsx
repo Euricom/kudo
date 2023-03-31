@@ -4,12 +4,13 @@ import FAB from "~/navigation/FAB";
 import { GrAdd } from 'react-icons/gr';
 import KudoCard from "~/kudos/Kudo";
 import { UtilButtonsContent } from "~/hooks/useUtilButtons";
-import { FiSearch } from "react-icons/fi";
-import { MdSort } from "react-icons/md";
 import { NavigationBarContent } from "~/navigation/NavBarTitle";
 import NavButtons from "~/navigation/NavButtons";
 import { useSession } from "next-auth/react";
 import { FindAllKudosSortedByUserId } from "~/server/services/kudoService";
+import { sortPosibillities } from "~/types";
+import { useState } from "react"
+import SortAndFilter from "~/input/SortAndFilter";
 
 // export function getServerSideProps(context: { query: { sort: string }; }) {
 
@@ -22,11 +23,13 @@ import { FindAllKudosSortedByUserId } from "~/server/services/kudoService";
 
 const Out: NextPage = () => {
 
+  const [sort, setSort] = useState<sortPosibillities>(sortPosibillities.DateD)
+
   const userId = useSession().data?.user.id
   if (!userId) {
     throw new Error("No user signed in")
   }
-  const kudos = FindAllKudosSortedByUserId(userId, "session asc")
+  const kudos = FindAllKudosSortedByUserId(userId, sort)
 
   if (!userId) {
     return <div>Loading...</div>
@@ -43,13 +46,7 @@ const Out: NextPage = () => {
         <link rel="icon" href="/favicon.ico" />
       </Head>
       <UtilButtonsContent>
-        <div className="flex w-full max-w-md bg-neutral rounded-full items-center px-4">
-          <FiSearch size={20} className="" />
-          <input type="text" placeholder={"Search..."} className="input w-full bg-transparent rounded-full p-3 focus:outline-none" />
-        </div>
-        <button className="btn btn-primary btn-circle">
-          <MdSort size={20} />
-        </button>
+        <SortAndFilter setSort={setSort} />
       </UtilButtonsContent>
       <main className="flex flex-col items-center justify-center h-full">
         <div className="flex flex-wrap gap-5 h-full justify-center p-5">

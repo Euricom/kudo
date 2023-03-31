@@ -1,56 +1,43 @@
 import { type Kudo } from "@prisma/client";
+import { sortPosibillities } from "~/types";
 import { api } from "~/utils/api";
 
 
 
-export const FindAllKudosSortedByUserId = (id: string, sort: string): Kudo[] => {
+export const FindAllKudosSortedByUserId = (id: string, sort: sortPosibillities): Kudo[] => {
 
-    const array = ["a", "b", "c"]
 
-    const sorting = sort.split(" ")
 
     const kudoQuery = api.kudos.getKudosByUserId.useQuery({ id: id });
     const kudos: Kudo[] = kudoQuery.data as Kudo[]
     const sessions = api.sessions.getAll.useQuery().data
+    const users = api.users.getAllUsers.useQuery().data
+
     let sortedKudos: Kudo[] = []
 
-    console.log(kudos);
-
-
-
-    if (sorting[0] === "speaker" && kudos) {
-        if (sorting[1] === "desc") {
-            console.log("in speaker desc");
-            sortedKudos = kudos.sort((a, b) => (sessions?.find(s => s.id === a.sessionId)?.speakerId ?? "a" > (sessions?.find(s => s.id === b.sessionId)?.speakerId ?? "b")) ? -1 : 1)
-            console.log(sortedKudos);
-        }
-        else {
-            console.log("in speaker asc");
-            sortedKudos = kudos.sort((a, b) => ((sessions?.find(s => s.id === a.sessionId)?.speakerId) ?? "a" > (sessions?.find(s => s.id === b.sessionId)?.speakerId ?? "b")) ? 1 : -1)
-            console.log(sortedKudos);
-        }
-    }
-    if (sorting[0] === "session" && kudos) {
-        if (sorting[1] === "desc") {
-            console.log("in session desc");
-            sortedKudos = kudos.sort((a, b) => ((sessions?.find(s => s.id === a.sessionId)?.title) ?? "a" > (sessions?.find(s => s.id === b.sessionId)?.title ?? "b")) ? -1 : 1)
-            console.log(sortedKudos);
-        }
-        else {
-            console.log("in session asc");
-            sortedKudos = kudos.sort((a, b) => ((sessions?.find(s => s.id === a.sessionId)?.title) ?? "a" > (sessions?.find(s => s.id === b.sessionId)?.title ?? "b")) ? 1 : -1)
-            console.log(sortedKudos);
-        }
+    if (!kudos || !users) {
+        return kudos
     }
 
-    console.log("begin");
-    console.log(sortedKudos);
-    console.log(sortedKudos.reverse());
-    console.log(sortedKudos);
-    console.log(array);
-    console.log(array.reverse());
-    console.log(array);
-
-    return sortedKudos;
+    switch (sort) {
+        case sortPosibillities.TitleA:
+        case sortPosibillities.TitleD:
+            sortedKudos = kudos.sort((a, b) => ((sessions?.find(s => s.id === a.sessionId)?.title ?? "a") < (sessions?.find(s => s.id === b.sessionId)?.title ?? "b")) ? 1 : -1)
+            if (sort === sortPosibillities.TitleD)
+                return sortedKudos.reverse()
+            return sortedKudos
+        case sortPosibillities.SpeakerA:
+        case sortPosibillities.SpeakerD:
+            sortedKudos = kudos.sort((a, b) => ((users.find(u => u.id === sessions?.find(s => s.id === a.sessionId)?.speakerId)?.displayName ?? "a") < (users.find(u => u.id === sessions?.find(s => s.id === b.sessionId)?.speakerId)?.displayName ?? "b")) ? 1 : -1)
+            if (sort === sortPosibillities.SpeakerD)
+                return sortedKudos.reverse()
+            return sortedKudos
+        case sortPosibillities.DateA:
+        default:
+            sortedKudos = kudos.sort((a, b) => ((sessions?.find(s => s.id === a.sessionId)?.date ?? 1) < (sessions?.find(s => s.id === b.sessionId)?.date ?? 2)) ? -1 : 1)
+            if (sort === sortPosibillities.DateA)
+                return sortedKudos.reverse()
+            return sortedKudos
+    }
 };
 

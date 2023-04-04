@@ -10,7 +10,7 @@ import { useSession } from "next-auth/react";
 import { FindAllKudosSortedByUserId } from "~/server/services/kudoService";
 import { sortPosibillities } from "~/types";
 import { useState } from "react"
-import SortAndFilter from "~/input/SortAndFilter";
+import SortAndFilter from "~/components/input/SortAndFilter";
 
 const Out: NextPage = () => {
 

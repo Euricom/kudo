@@ -16,6 +16,7 @@ import { useSession } from 'next-auth/react';
 import { useSessionSpeaker } from '~/components/sessions/SelectedSessionAndSpeaker';
 import type Konva from 'konva';
 import ConfirmationModal from '~/components/input/ConfirmationModal';
+import LoadingBar from '~/components/LoadingBar';
 
 export async function getServerSideProps(context: { query: { template: string; }; }) {
   const id = context.query.template
@@ -54,8 +55,7 @@ const Editor: NextPage<{ res: Template }> = ({ res }) => {
   const { session, speaker, anonymous } = useSessionSpeaker().data
 
   if (!userId || !session || !speaker || userId == undefined) {
-    console.log("een probleem");
-
+    <LoadingBar />
   }
 
   const submit = async () => {
@@ -106,7 +106,7 @@ const Editor: NextPage<{ res: Template }> = ({ res }) => {
           <button onClick={() => setSelectedButton(EditorFunctions.Text)} className={"btn btn-circle btn-secondary " + (selectedButton == EditorFunctions.Text ? "btn-accent" : "")}>
             <BiText size={20} />
           </button>
-          <button onClick={() => setSelectedButton(EditorFunctions.Draw)} className={"btn btn-circle btn-secondary " + (selectedButton == EditorFunctions.Draw ? "btn-accent" : "")}>
+          <button onClick={() => setSelectedButton(selectedButton === EditorFunctions.Draw ? EditorFunctions.None : EditorFunctions.Draw)} className={"btn btn-circle btn-secondary " + (selectedButton == EditorFunctions.Draw ? "btn-accent" : "")}>
             <BiPencil size={20} />
           </button>
           <button onClick={() => setSelectedButton(EditorFunctions.Sticker)} className={"btn btn-circle btn-secondary " + (selectedButton == EditorFunctions.Sticker ? "btn-accent" : "")}>

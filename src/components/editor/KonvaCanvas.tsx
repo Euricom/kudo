@@ -1,5 +1,5 @@
 import React, { useRef, useState, useEffect, useMemo, type MutableRefObject } from 'react'
-import { Stage, Layer, Rect, Text } from 'react-konva';
+import { Stage, Layer, Rect, Text, Line } from 'react-konva';
 import type Konva from 'konva'
 import { type Template } from '@prisma/client';
 import { type KonvaEventObject } from 'konva/lib/Node';
@@ -35,6 +35,9 @@ type Shapes = {
   text?: string,
 }
 
+
+
+
 const initialShapes: Shapes[] = [];
 
 const KonvaCanvas = ({ editorFunction, template, setFunction, setStage }: KonvaCanvasProps) => {
@@ -44,6 +47,10 @@ const KonvaCanvas = ({ editorFunction, template, setFunction, setStage }: KonvaC
   const staticLayerRef = useRef<Konva.Layer>() as MutableRefObject<Konva.Layer>;
   const [shapes, setShapes] = useState(initialShapes);
   const [selectedId, selectShape] = useState<string | null>(null);
+
+
+  const [lines, setLines] = useState<number[][]>([]);
+  const isDrawing = useRef(false);
 
   const dimensions = useDimensions(containerRef);
   const stageDimensions = useMemo(
@@ -61,7 +68,14 @@ const KonvaCanvas = ({ editorFunction, template, setFunction, setStage }: KonvaC
     }
   }, [editorFunction]);
 
-  const checkDeselect = (e: KonvaEventObject<Event>) => {
+
+
+  const onClear = () => {
+    layerRef.current?.removeChildren()
+    setFunction(EditorFunctions.None)
+  }
+
+  const clickListener = (e: KonvaEventObject<Event>) => {
     // deselect when clicked on empty area
 
     // selectShape(null);
@@ -70,22 +84,10 @@ const KonvaCanvas = ({ editorFunction, template, setFunction, setStage }: KonvaC
     if (clickedOnEmpty) {
       selectShape(null);
     }
-  };
-
-  const onClear = () => {
-    layerRef.current?.removeChildren()
-    setFunction(EditorFunctions.None)
-  }
-
-  const clickListener = () => {
     switch (editorFunction) {
       case EditorFunctions.Text:
         console.log('Text');
         addText(stageRef.current.getPointerPosition() ?? { x: 50, y: 50 })
-        break
-      case EditorFunctions.Draw:
-        console.log('Draw');
-        draw()
         break
       case EditorFunctions.Sticker:
         console.log('Sticker');
@@ -113,9 +115,35 @@ const KonvaCanvas = ({ editorFunction, template, setFunction, setStage }: KonvaC
     setFunction(EditorFunctions.None)
   }
 
-  const draw = () => {
-    setFunction(EditorFunctions.None)
-  }
+
+
+  const handleMouseDown = () => {
+    if (editorFunction === EditorFunctions.Draw) {
+      isDrawing.current = true;
+      const pos = stageRef.current.getPointerPosition() ?? { x: 0, y: 0 };
+      setLines([...lines, [pos.x, pos.y]]);
+    }
+
+  };
+  const handleMouseMove = () => {
+    // no drawing - skipping
+    if (!isDrawing.current) {
+      return;
+    }
+    const stage = stageRef.current;
+    const point = stage.getPointerPosition() ?? { x: 0, y: 0 };
+    let lastLine = lines[lines.length - 1] ?? [0, 0];
+    // add point
+    lastLine = lastLine.concat([point.x, point.y]);
+
+    // replace last
+    lines.splice(lines.length - 1, 1, lastLine);
+    setLines(lines.concat());
+  };
+
+  const handleMouseUp = () => {
+    isDrawing.current = false;
+  };
 
   useEffect(() => {
     setStage(stageRef.current)
@@ -138,8 +166,10 @@ const KonvaCanvas = ({ editorFunction, template, setFunction, setStage }: KonvaC
           width={(stageDimensions?.width ?? 1) * (stageDimensions.scale?.x ?? 1)}
           height={(stageDimensions?.height ?? 1) * (stageDimensions.scale?.y ?? 1)}
           scale={stageDimensions.scale}
-          onMouseDown={checkDeselect}
-          onTouchStart={checkDeselect}
+          onMouseDown={handleMouseDown}
+          onMousemove={handleMouseMove}
+          onMouseup={handleMouseUp}
+          onTouchStart={handleMouseDown}
           onClick={clickListener}
           onTap={clickListener}
         >
@@ -152,6 +182,17 @@ const KonvaCanvas = ({ editorFunction, template, setFunction, setStage }: KonvaC
             <Header width={stageDimensions?.width} height={stageDimensions?.height} template={template} />
           </Layer>
           <Layer ref={layerRef}>
+            {lines.map((line, i) => (
+              <Line
+                key={i}
+                points={line}
+                stroke="#df4b26"
+                strokeWidth={5}
+                tension={0.5}
+                lineCap="round"
+                globalCompositeOperation="source-over"
+              />
+            ))}
             {shapes.map((s, i) => {
               switch (s.type) {
                 case CanvasShapes.Text:

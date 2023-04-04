@@ -72,13 +72,6 @@ const Session: NextPage<{ id: string }> = ({ id }) => {
         <h1>Session: {session?.title}</h1>
       </NavigationBarContent>
       <UtilButtonsContent>
-        <Link
-          href={`/session/presentation/${id}`}
-          className="btn btn-ghost btn-circle hidden lg:flex"
-          data-cy='PresentationButton'
-        >
-          <FiMonitor size={20} />
-        </Link>
         <button
           className="btn btn-ghost btn-circle "
           onClick={() => void downloadZip()}
@@ -86,6 +79,13 @@ const Session: NextPage<{ id: string }> = ({ id }) => {
         >
           <FiDownload size={20} />
         </button>
+        <Link
+          href={`/session/presentation/${id}`}
+          className="btn btn-ghost btn-circle hidden lg:flex"
+          data-cy='PresentationButton'
+        >
+          <FiMonitor size={20} />
+        </Link>
       </UtilButtonsContent>
       <main
         className="flex flex-col items-center justify-center"

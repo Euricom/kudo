@@ -12,6 +12,7 @@ import { api } from "~/utils/api";
 import { UtilButtonsContent } from "~/hooks/useUtilButtons";
 import { useRouter } from "next/router";
 import LoadingBar from "~/components/LoadingBar";
+import { toast } from "react-toastify";
 
 
 
@@ -29,17 +30,16 @@ export async function getServerSideProps(context: { query: { session: string, sp
   }
 }
 
-
-
 const Templates: NextPage<{ res: Template[], sess: string, speaker: string, anonymous: string }> = ({ res, sess, speaker, anonymous }) => {
   const sessionQuery = api.sessions.getSessionById.useQuery({ id: sess })
   const session = sessionQuery.data
   const router = useRouter()
 
   useEffect(() => {
+    toast.clearWaitingQueue();
     if (!sessionQuery.isLoading && !session) {
-      // router.beforePopState
-      router.replace('/create?error=ongeldig').catch(e => console.log(e));
+      toast.error('Session is incorrect', { delay: 500 })
+      router.replace('/create').catch(e => console.log(e));
     }
   }, [router, session, sessionQuery])
 

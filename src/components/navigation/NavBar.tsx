@@ -30,7 +30,7 @@ function useVisibleStartNavbarActions() {
         {
             Component: BackArrow,
             key: 'backArrow',
-            routes: ['/session/[...id]', '/kudo/[...id]', '/notifications', '/create', '/create/editor', '/create/templates'],
+            routes: ['/session/[...id]', '/session/presentation/[...id]', '/kudo/[...id]', '/notifications', '/create', '/create/editor', '/create/templates'],
         },
         {
             Component: logo,

@@ -51,3 +51,12 @@ export const findUserById = async (id: string): Promise<User> => {
     const user: User = await fetch('https://graph.microsoft.com/v1.0/users/' + id, options).then(r => r.json()) as User
     return user
 };
+
+
+export const findUserImageById = async (id: string) => {
+    const options = await getToken()
+    const user = await fetch('https://graph.microsoft.com/v1.0/users/' + id + '/photo/$value', options)
+    console.log(user);
+
+    return user
+};

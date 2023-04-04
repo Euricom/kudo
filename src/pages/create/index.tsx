@@ -22,8 +22,14 @@ const New: NextPage = () => {
   const [anonymous, setAnonymous] = useState<boolean>(false);
   const me = useSession().data?.user.id
 
+
+  const adil = api.users.getUserImageById.useQuery({ id: "cdb23f58-65db-4b6b-b132-cf2d13d08e76" })
+  console.log(adil);
+
+
+
   const sessions: Session[] | undefined = api.sessions.getAll.useQuery().data
-  if (!sessions || !users) {
+  if (!sessions || !users || !adil) {
     return <div>Loading...</div>;
   }
 

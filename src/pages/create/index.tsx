@@ -25,6 +25,7 @@ const New: NextPage = () => {
 
   const adil = api.users.getUserImageById.useQuery({ id: "cdb23f58-65db-4b6b-b132-cf2d13d08e76" })
   console.log(adil);
+  console.log(adil.data);
 
 
 

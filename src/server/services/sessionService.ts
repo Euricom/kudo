@@ -2,6 +2,7 @@ import { sortPosibillities, type newSessionDate, type newSessionSpeaker, type Se
 
 
 export function sortDate({ sessions, sort }: SessionArray) {
+    sessions.sort((a, b) => a.date > b.date ? -1 : 1)
     const sorted = sessions.reduce((previous, current) => {
         if (previous[previous.length - 1]?.date !== current.date) {
             return [...previous, { date: current.date, sessions: sessions.filter(s => s.date === current.date) }]

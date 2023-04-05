@@ -11,6 +11,7 @@ import { type Vector2d } from 'konva/lib/types';
 import { v4 } from 'uuid';
 import ConfirmationModal from '~/components/input/ConfirmationModal';
 
+
 export enum CanvasShapes {
   Text,
   Sticker,
@@ -20,7 +21,8 @@ export enum CanvasShapes {
 type KonvaCanvasProps = {
   editorFunction: EditorFunctions | undefined,
   template: Template,
-  thickness: number
+  thickness: number,
+  color: string,
   setFunction: (type: EditorFunctions) => void,
   setStage: (stage: Konva.Stage) => void
 }
@@ -40,19 +42,21 @@ type line = {
   tool: string,
   points: number[],
   thickness: number,
+  color: string,
 }
 
 
 
 const initialShapes: Shapes[] = [];
 
-const KonvaCanvas = ({ editorFunction, template, thickness, setFunction, setStage }: KonvaCanvasProps) => {
+const KonvaCanvas = ({ editorFunction, template, thickness, color, setFunction, setStage }: KonvaCanvasProps) => {
   const containerRef = useRef<HTMLDivElement>(null);
   const stageRef = useRef<Konva.Stage>() as MutableRefObject<Konva.Stage>;
   const layerRef = useRef<Konva.Layer>() as MutableRefObject<Konva.Layer>;
   const staticLayerRef = useRef<Konva.Layer>() as MutableRefObject<Konva.Layer>;
   const [shapes, setShapes] = useState(initialShapes);
   const [selectedId, selectShape] = useState<string | null>(null);
+
 
 
   const [lines, setLines] = useState<line[]>([]);
@@ -128,12 +132,12 @@ const KonvaCanvas = ({ editorFunction, template, thickness, setFunction, setStag
     if (editorFunction === EditorFunctions.Draw) {
       isDrawing.current = true;
       const pos = stageRef.current.getPointerPosition() ?? { x: 0, y: 0 };
-      setLines([...lines, { tool: "source-over", points: [pos.x, pos.y], thickness: thickness }]);
+      setLines([...lines, { tool: "source-over", points: [pos.x, pos.y], thickness: thickness, color: color }]);
     }
     if (editorFunction === EditorFunctions.Erase) {
       isDrawing.current = true;
       const pos = stageRef.current.getPointerPosition() ?? { x: 0, y: 0 };
-      setLines([...lines, { tool: "destination-out", points: [pos.x, pos.y], thickness: thickness }]);
+      setLines([...lines, { tool: "destination-out", points: [pos.x, pos.y], thickness: thickness, color: color }]);
     }
 
   };
@@ -144,7 +148,7 @@ const KonvaCanvas = ({ editorFunction, template, thickness, setFunction, setStag
     }
     const stage = stageRef.current;
     const point = stage.getPointerPosition() ?? { x: 0, y: 0 };
-    const lastLine = lines[lines.length - 1] ?? { tool: "destination-out", points: [0, 0], thickness: thickness };
+    const lastLine = lines[lines.length - 1] ?? { tool: "destination-out", points: [0, 0], thickness: thickness, color: color };
     // add point
     lastLine.points = lastLine.points.concat([point.x, point.y]);
 
@@ -200,7 +204,7 @@ const KonvaCanvas = ({ editorFunction, template, thickness, setFunction, setStag
               <Line
                 key={i}
                 points={line.points}
-                stroke="#df4b26"
+                stroke={line.color}
                 strokeWidth={line.thickness}
                 tension={0.5}
                 lineCap="round"

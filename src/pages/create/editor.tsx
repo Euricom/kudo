@@ -18,6 +18,8 @@ import type Konva from 'konva';
 import ConfirmationModal from '~/components/input/ConfirmationModal';
 import LoadingBar from '~/components/LoadingBar';
 import { BsFillCircleFill } from 'react-icons/bs';
+import { type Color, ColorPicker, useColor } from "react-color-palette";
+import "react-color-palette/lib/css/styles.css";
 
 export async function getServerSideProps(context: { query: { template: string; }; }) {
   const id = context.query.template
@@ -52,6 +54,7 @@ const Editor: NextPage<{ res: Template }> = ({ res }) => {
   const createKudo = api.kudos.createKudo.useMutation()
   const createImage = api.kudos.createKudoImage.useMutation()
   const router = useRouter()
+  const [color, setColor]: [Color, React.Dispatch<React.SetStateAction<Color>>] = useColor("hex", "#121212");
 
   const userId: string = useSession().data?.user.id ?? "error"
 
@@ -122,7 +125,7 @@ const Editor: NextPage<{ res: Template }> = ({ res }) => {
                   </li>
                 </div>
                 <li className='flex-auto w-full h-full items-center pointer-events-none'>
-                  <BsFillCircleFill size={33 + thickness} />
+                  <BsFillCircleFill size={33 + thickness} color={color.hex} />
                 </li>
               </div>
               <li>
@@ -135,14 +138,20 @@ const Editor: NextPage<{ res: Template }> = ({ res }) => {
           <button onClick={() => setSelectedButton(EditorFunctions.Sticker)} className={"btn btn-circle btn-secondary " + (selectedButton == EditorFunctions.Sticker ? "btn-accent" : "")}>
             <GrEmoji size={20} />
           </button>
-          <button onClick={() => setSelectedButton(EditorFunctions.Color)} className={"btn btn-circle btn-secondary " + (selectedButton == EditorFunctions.Color ? "btn-accent" : "")}>
-            <BiPalette size={20} />
-          </button>
+          <div className="dropdown dropdown-end">
+            <label tabIndex={0} className=""> <button onClick={() => setSelectedButton(EditorFunctions.Color)} className={"btn btn-circle btn-secondary " + (selectedButton == EditorFunctions.Color ? "btn-accent" : "")}><BiPalette size={20} /></button></label>
+            <ul tabIndex={0} className="dropdown-content menu p-2 shadow bg-base-100 rounded-box w-fit">
+              <li className=''>
+                <ColorPicker width={228} height={114} color={color}
+                  onChange={setColor} hideHSV hideHEX hideRGB dark />
+              </li>
+            </ul>
+          </div>
           <button onClick={() => setSelectedButton(EditorFunctions.Clear)} className={"btn btn-circle btn-secondary " + (selectedButton == EditorFunctions.Clear ? "btn-accent" : "")}>
             <BiTrash size={20} />
           </button>
         </div>
-        <KonvaCanvas editorFunction={selectedButton} template={res} thickness={thickness} setFunction={setSelectedButton} setStage={setStage} />
+        <KonvaCanvas editorFunction={selectedButton} template={res} thickness={thickness} color={color.hex} setFunction={setSelectedButton} setStage={setStage} />
       </main>
       <FAB text={"Send"} icon={<FiSend />} onClick={() => setSelectedButton(EditorFunctions.Submit)} />
     </>

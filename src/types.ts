@@ -120,6 +120,7 @@ export type SortAndFilterProps = {
 export enum CanvasShapes {
     Text,
     Sticker,
+    Line,
     Rect
 }
 
@@ -137,19 +138,16 @@ export type KonvaCanvasProps = {
 export type Shapes = {
     type: CanvasShapes,
     id: string,
-    x: number,
-    y: number,
+    x?: number,
+    y?: number,
     width?: number,
     height?: number,
     fill?: string,
     text?: string,
-}
-
-export type LineProps = {
-    tool: string,
-    points: number[],
-    thickness: number,
-    color: string,
+    tool?: string,
+    points?: number[],
+    thickness?: number,
+    color?: string,
 }
 
 export type CanvasTextProps = {
@@ -169,6 +167,7 @@ export enum EditorFunctions {
     Sticker = 'sticker',
     Color = 'color',
     Clear = 'clear',
+    Undo = 'undo',
     Submit = 'submit',
     None = 'none'
 }

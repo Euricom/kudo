@@ -21,7 +21,14 @@ const CanvasText = ({ shapeProps, scale, isSelected, onSelect, onChange, areaPos
   const onDoubleClick = () => {
     shapeRef.current.hide();
     trRef.current.hide();
-    editText(areaPosition, shapeRef.current, trRef.current, scale)
+    editText(areaPosition, shapeRef.current, trRef.current, scale, onTextChange)
+  }
+
+  const onTextChange = (text: string) => {
+    onChange({
+      ...shapeProps,
+      text: text
+    })
   }
 
   return (

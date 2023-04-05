@@ -1,16 +1,17 @@
 import type Konva from "konva";
 import { type Vector2d } from "konva/lib/types";
+import { Shapes } from "~/types";
 
 type Document = {
   documentMode?: number;
 }
 
-const editText = (areaPosition: Vector2d, textNode: Konva.Text, tr: Konva.Transformer, scale: number) => {
-  const textarea = createTextArea(textNode, areaPosition, tr, scale)
+const editText = (areaPosition: Vector2d, textNode: Konva.Text, tr: Konva.Transformer, scale: number, onChange: (text: string) => void,) => {
+  const textarea = createTextArea(textNode, areaPosition, tr, scale, onChange)
   textarea.focus();
 }
 
-const createTextArea = (textNode: Konva.Text, areaPosition: Vector2d, tr: Konva.Transformer, scale: number) => {
+const createTextArea = (textNode: Konva.Text, areaPosition: Vector2d, tr: Konva.Transformer, scale: number, onChange: (text: string) => void) => {
   const textarea = document.createElement('textarea');
   document.body.appendChild(textarea);
 
@@ -23,8 +24,8 @@ const createTextArea = (textNode: Konva.Text, areaPosition: Vector2d, tr: Konva.
   textarea.style.left = (areaPosition.x).toString() + 'px';
   textarea.style.width = ((textNode.width() - textNode.padding() * 2) * scale).toString() + 'px';
   textarea.style.height =
-    ((textNode.height() - textNode.padding() * 2 + 5) * scale ).toString() + 'px';
-    
+    ((textNode.height() - textNode.padding() * 2 + 5) * scale).toString() + 'px';
+
   textarea.style.fontSize = (textNode.fontSize() * scale).toString() + 'px';
   textarea.style.border = 'none';
   textarea.style.padding = '0px';
@@ -58,7 +59,7 @@ const createTextArea = (textNode: Konva.Text, areaPosition: Vector2d, tr: Konva.
 
   // reset height
   textarea.style.height = 'auto';
-  
+
   // after browsers resized it we can set actual value
   textarea.style.height = (textarea.scrollHeight + 3).toString() + 'px';
 
@@ -83,10 +84,11 @@ const createTextArea = (textNode: Konva.Text, areaPosition: Vector2d, tr: Konva.
     textarea.style.height =
       Math.min(300, textarea.scrollHeight + textNode.fontSize()).toString() + 'px';
   });
-  
+
   function handleOutsideClick(e: Event) {
     if (e.target !== textarea) {
       textNode.text(textarea.value);
+      onChange(textarea.value)
       removeTextarea(textNode, textarea, tr);
     }
   }
@@ -95,10 +97,10 @@ const createTextArea = (textNode: Konva.Text, areaPosition: Vector2d, tr: Konva.
     textarea.parentNode?.removeChild(textarea);
     window.removeEventListener('click', handleOutsideClick);
     textNode.show();
-    
+
     tr.show();
   }
-  
+
   setTimeout(() => {
     window.addEventListener('click', handleOutsideClick);
   });

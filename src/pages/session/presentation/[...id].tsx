@@ -7,6 +7,8 @@ import { api } from "~/utils/api";
 import LoadingBar from "~/components/LoadingBar";
 import { FiMonitor } from "react-icons/fi";
 import { useRouter } from "next/router";
+import { useRef, useState, useEffect } from "react";
+import { type PresentationKudo } from "~/types";
 
 export function getServerSideProps(context: { query: { id: string } }) {
   return {
@@ -17,21 +19,47 @@ export function getServerSideProps(context: { query: { id: string } }) {
 }
 
 const Presentation: NextPage<{ id: string }> = ({ id }) => {
+  const dropzoneRef = useRef<HTMLDivElement>(null);
+  const router = useRouter();
+  const [kudos, setKudos] = useState<PresentationKudo[]>([]);
+
   const sessionQuery = api.sessions.getSessionById.useQuery({ id: id });
   const session = sessionQuery.data;
-  const kudosQuery = api.kudos.getKudosBySessionId.useQuery({
+  const { data: allKudos, isLoading: kudoLoading } = api.kudos.getKudosBySessionId.useQuery({
     id: session?.id ?? "",
   });
-  const kudos = kudosQuery.data;
 
-  const router = useRouter();
+  useEffect(() => {
+    const newKudos = allKudos?.map((kudo) => {
+      const {rX, rY, rot} = getRandomPosition();
+      return {
+        id: kudo.id, 
+        x: rX,
+        y: rY,
+        rot: rot,
+        kudo: kudo,
+      }
+    }) ?? [];
+    setKudos(k => [...k, ...newKudos.filter((kudo) => !k.find((item) => item.id === kudo.id))]);
+  }, [allKudos]);
 
-  if (sessionQuery.isLoading || kudosQuery.isLoading) {
+  if (sessionQuery.isLoading || kudoLoading) {
     return <LoadingBar />;
   }
 
   if (!session) {
     return <>404</>;
+  }
+
+  function getRandomPosition() {
+    const x = (dropzoneRef.current?.offsetWidth??1)*0.75;
+    const y = (dropzoneRef.current?.offsetHeight??1)*0.6;
+    const rX = Math.floor(Math.random() * x);
+    const rY = Math.floor(Math.random() * y);
+
+    const rot = Math.floor(Math.random() * (90)) - 45
+
+    return {rX, rY, rot};
   }
 
   return (
@@ -54,14 +82,24 @@ const Presentation: NextPage<{ id: string }> = ({ id }) => {
         </button>
       </UtilButtonsContent>
       <main
-        className="flex flex-col items-center justify-center"
+        className="flex flex-col items-center justify-center h-full"
         data-cy="Session"
       >
-        <div className="flex h-full flex-wrap justify-center gap-5 p-5">
+        <div ref={dropzoneRef} className="relative h-full w-full overflow-hidden">
           {kudos == undefined || kudos.length == 0 ? (
-            <h1>No Kudos received Yet</h1>
-          ) : (
-            kudos.map((kudo) => <KudoCard key={kudo.id} kudo={kudo} />)
+              <h1>No Kudos received Yet</h1>
+            ) : (
+              kudos.map((kudo) => {
+                return <>
+                  <div 
+                    key={kudo.id} 
+                    className="absolute left-0 top-0 -translate-x-1/2 -translate-y-1/2 presentation-card"
+                    style={{ top: kudo.y, left: kudo.x, transform: `rotate(${kudo.rot}deg)`}}
+                  >
+                    <KudoCard kudo={kudo.kudo} hideLiked={true}/>
+                  </div>
+                </>
+              })
           )}
         </div>
       </main>

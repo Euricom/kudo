@@ -24,6 +24,7 @@ export type SelectProps<T> = {
 }
 export type KudoProps = {
     kudo: Kudo
+    hideLiked?: boolean
 }
 
 export type FabProps = {
@@ -114,4 +115,12 @@ export type SortAndFilterProps = {
     setSort: React.Dispatch<React.SetStateAction<sortPosibillities>>;
     filter?: string
     setFilter?: React.Dispatch<React.SetStateAction<string>>;
+}
+
+export type PresentationKudo = {
+    id: string,
+    x: number,
+    y: number,
+    rot: number,
+    kudo: Kudo,
 }

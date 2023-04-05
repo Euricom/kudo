@@ -78,6 +78,7 @@ const KonvaCanvas = ({ editorFunction, template, thickness, setFunction, setStag
 
   const onClear = () => {
     layerRef.current?.removeChildren()
+    setLines([])
     setFunction(EditorFunctions.None)
   }
 

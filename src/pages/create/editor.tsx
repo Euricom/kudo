@@ -17,6 +17,7 @@ import { useSessionSpeaker } from '~/components/sessions/SelectedSessionAndSpeak
 import type Konva from 'konva';
 import ConfirmationModal from '~/components/input/ConfirmationModal';
 import LoadingBar from '~/components/LoadingBar';
+import { BsFillCircleFill } from 'react-icons/bs';
 
 export async function getServerSideProps(context: { query: { template: string; }; }) {
   const id = context.query.template
@@ -46,6 +47,7 @@ const KonvaCanvas = dynamic(
 
 const Editor: NextPage<{ res: Template }> = ({ res }) => {
   const [selectedButton, setSelectedButton] = useState<EditorFunctions>()
+  const [thickness, setThickness] = useState<number>(5)
   const [stage, setStage] = useState<Konva.Stage>()
   const createKudo = api.kudos.createKudo.useMutation()
   const createImage = api.kudos.createKudoImage.useMutation()
@@ -109,12 +111,24 @@ const Editor: NextPage<{ res: Template }> = ({ res }) => {
           </button>
           <div className="dropdown dropdown-end">
             <label tabIndex={0} className=""><button onClick={() => setSelectedButton(selectedButton == EditorFunctions.Erase ? EditorFunctions.Erase : EditorFunctions.Draw)} className={"btn btn-circle btn-secondary " + ((selectedButton == EditorFunctions.Draw || selectedButton == EditorFunctions.Erase) ? "btn-accent" : "")}>{selectedButton === EditorFunctions.Erase ? <BiEraser size={20} /> : <BiPencil size={20} />}</button></label>
-            <ul tabIndex={0} className="dropdown-content menu p-2 shadow bg-base-100 rounded-box">
+            <ul tabIndex={0} className="dropdown-content menu p-2 shadow bg-base-100 rounded-box w-52">
+              <div className='flex w-full items-center'>
+                <div>
+                  <li>
+                    <BiPencil size={50} onClick={() => setSelectedButton(EditorFunctions.Draw)} />
+                  </li>
+                  <li >
+                    <BiEraser size={50} onClick={() => setSelectedButton(EditorFunctions.Erase)} />
+                  </li>
+                </div>
+                <li className='flex-auto w-full h-full items-center pointer-events-none'>
+                  <BsFillCircleFill size={33 + thickness} />
+                </li>
+              </div>
               <li>
-                <BiPencil size={50} onClick={() => setSelectedButton(EditorFunctions.Draw)} />
-              </li>
-              <li >
-                <BiEraser size={50} onClick={() => setSelectedButton(EditorFunctions.Erase)} />
+                <div className='text-xs'>Thickness
+                  <input type="range" min="1" height={thickness} max="50" value={thickness} className="range" onChange={(e) => setThickness(parseInt(e.target.value))} />
+                </div>
               </li>
             </ul>
           </div>
@@ -128,7 +142,7 @@ const Editor: NextPage<{ res: Template }> = ({ res }) => {
             <BiTrash size={20} />
           </button>
         </div>
-        <KonvaCanvas editorFunction={selectedButton} template={res} setFunction={setSelectedButton} setStage={setStage} />
+        <KonvaCanvas editorFunction={selectedButton} template={res} thickness={thickness} setFunction={setSelectedButton} setStage={setStage} />
       </main>
       <FAB text={"Send"} icon={<FiSend />} onClick={() => setSelectedButton(EditorFunctions.Submit)} />
     </>

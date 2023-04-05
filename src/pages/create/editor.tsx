@@ -3,7 +3,7 @@ import { type NextPage } from "next";
 import Head from "next/head";
 import { UtilButtonsContent } from "~/hooks/useUtilButtons";
 import { GrEmoji } from "react-icons/gr"
-import { BiPencil, BiPalette, BiText, BiTrash } from "react-icons/bi"
+import { BiPencil, BiPalette, BiText, BiTrash, BiEraser } from "react-icons/bi"
 import { NavigationBarContent } from "~/components/navigation/NavBarTitle";
 import { type Template } from "@prisma/client";
 import { findTemplateById } from "~/server/services/templateService";
@@ -16,6 +16,7 @@ import { useSession } from 'next-auth/react';
 import { useSessionSpeaker } from '~/components/sessions/SelectedSessionAndSpeaker';
 import type Konva from 'konva';
 import ConfirmationModal from '~/components/input/ConfirmationModal';
+import LoadingBar from '~/components/LoadingBar';
 
 export async function getServerSideProps(context: { query: { template: string; }; }) {
   const id = context.query.template
@@ -30,6 +31,7 @@ export async function getServerSideProps(context: { query: { template: string; }
 export enum EditorFunctions {
   Text = 'text',
   Draw = 'draw',
+  Erase = 'erase',
   Sticker = 'sticker',
   Color = 'color',
   Clear = 'clear',
@@ -54,8 +56,7 @@ const Editor: NextPage<{ res: Template }> = ({ res }) => {
   const { session, speaker, anonymous } = useSessionSpeaker().data
 
   if (!userId || !session || !speaker || userId == undefined) {
-    console.log("een probleem");
-
+    <LoadingBar />
   }
 
   const submit = async () => {
@@ -106,9 +107,17 @@ const Editor: NextPage<{ res: Template }> = ({ res }) => {
           <button onClick={() => setSelectedButton(EditorFunctions.Text)} className={"btn btn-circle btn-secondary " + (selectedButton == EditorFunctions.Text ? "btn-accent" : "")}>
             <BiText size={20} />
           </button>
-          <button onClick={() => setSelectedButton(EditorFunctions.Draw)} className={"btn btn-circle btn-secondary " + (selectedButton == EditorFunctions.Draw ? "btn-accent" : "")}>
-            <BiPencil size={20} />
-          </button>
+          <div className="dropdown dropdown-end">
+            <label tabIndex={0} className=""><button onClick={() => setSelectedButton(selectedButton == EditorFunctions.Erase ? EditorFunctions.Erase : EditorFunctions.Draw)} className={"btn btn-circle btn-secondary " + ((selectedButton == EditorFunctions.Draw || selectedButton == EditorFunctions.Erase) ? "btn-accent" : "")}>{selectedButton === EditorFunctions.Erase ? <BiEraser size={20} /> : <BiPencil size={20} />}</button></label>
+            <ul tabIndex={0} className="dropdown-content menu p-2 shadow bg-base-100 rounded-box">
+              <li>
+                <BiPencil size={50} onClick={() => setSelectedButton(EditorFunctions.Draw)} />
+              </li>
+              <li >
+                <BiEraser size={50} onClick={() => setSelectedButton(EditorFunctions.Erase)} />
+              </li>
+            </ul>
+          </div>
           <button onClick={() => setSelectedButton(EditorFunctions.Sticker)} className={"btn btn-circle btn-secondary " + (selectedButton == EditorFunctions.Sticker ? "btn-accent" : "")}>
             <GrEmoji size={20} />
           </button>

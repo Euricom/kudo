@@ -177,6 +177,7 @@ const KonvaCanvas = ({ editorFunction, template, thickness, color, setFunction, 
                 stroke={line.color}
                 strokeWidth={line.thickness}
                 tension={0.5}
+                lineJoin='round'
                 lineCap="round"
                 globalCompositeOperation={line.tool === "destination-out" ? "destination-out" : "source-over"}
               />

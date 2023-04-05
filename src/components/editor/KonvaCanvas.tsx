@@ -35,6 +35,10 @@ type Shapes = {
   text?: string,
 }
 
+type line = {
+  tool: string
+  points: number[]
+}
 
 
 
@@ -49,7 +53,7 @@ const KonvaCanvas = ({ editorFunction, template, setFunction, setStage }: KonvaC
   const [selectedId, selectShape] = useState<string | null>(null);
 
 
-  const [lines, setLines] = useState<number[][]>([]);
+  const [lines, setLines] = useState<line[]>([]);
   const isDrawing = useRef(false);
 
   const dimensions = useDimensions(containerRef);
@@ -121,7 +125,12 @@ const KonvaCanvas = ({ editorFunction, template, setFunction, setStage }: KonvaC
     if (editorFunction === EditorFunctions.Draw) {
       isDrawing.current = true;
       const pos = stageRef.current.getPointerPosition() ?? { x: 0, y: 0 };
-      setLines([...lines, [pos.x, pos.y]]);
+      setLines([...lines, { tool: "source-over", points: [pos.x, pos.y] }]);
+    }
+    if (editorFunction === EditorFunctions.Erase) {
+      isDrawing.current = true;
+      const pos = stageRef.current.getPointerPosition() ?? { x: 0, y: 0 };
+      setLines([...lines, { tool: "destination-out", points: [pos.x, pos.y] }]);
     }
 
   };
@@ -132,9 +141,9 @@ const KonvaCanvas = ({ editorFunction, template, setFunction, setStage }: KonvaC
     }
     const stage = stageRef.current;
     const point = stage.getPointerPosition() ?? { x: 0, y: 0 };
-    let lastLine = lines[lines.length - 1] ?? [0, 0];
+    const lastLine = lines[lines.length - 1] ?? { tool: "destination-out", points: [0, 0] };
     // add point
-    lastLine = lastLine.concat([point.x, point.y]);
+    lastLine.points = lastLine.points.concat([point.x, point.y]);
 
     // replace last
     lines.splice(lines.length - 1, 1, lastLine);
@@ -170,6 +179,8 @@ const KonvaCanvas = ({ editorFunction, template, setFunction, setStage }: KonvaC
           onMousemove={handleMouseMove}
           onMouseup={handleMouseUp}
           onTouchStart={handleMouseDown}
+          onTouchMove={handleMouseMove}
+          onTouchEnd={handleMouseUp}
           onClick={clickListener}
           onTap={clickListener}
         >
@@ -185,12 +196,12 @@ const KonvaCanvas = ({ editorFunction, template, setFunction, setStage }: KonvaC
             {lines.map((line, i) => (
               <Line
                 key={i}
-                points={line}
+                points={line.points}
                 stroke="#df4b26"
                 strokeWidth={5}
                 tension={0.5}
                 lineCap="round"
-                globalCompositeOperation="source-over"
+                globalCompositeOperation={line.tool === "destination-out" ? "destination-out" : "source-over"}
               />
             ))}
             {shapes.map((s, i) => {

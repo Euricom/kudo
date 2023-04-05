@@ -41,7 +41,8 @@ const Presentation: NextPage<{ id: string }> = ({ id }) => {
       }
     }) ?? [];
     setKudos(k => [...k, ...newKudos.filter((kudo) => !k.find((item) => item.id === kudo.id))]);
-  }, [allKudos]);
+    // setKudos(k => [...k, ...newKudos]);
+  }, [kudos, allKudos]);
 
   if (sessionQuery.isLoading || kudoLoading) {
     return <LoadingBar />;
@@ -52,8 +53,8 @@ const Presentation: NextPage<{ id: string }> = ({ id }) => {
   }
 
   function getRandomPosition() {
-    const x = (dropzoneRef.current?.offsetWidth??1)*0.75;
-    const y = (dropzoneRef.current?.offsetHeight??1)*0.6;
+    const x = (dropzoneRef.current?.offsetWidth??1)*0.7;
+    const y = (dropzoneRef.current?.offsetHeight??1)*0.8;
     const rX = Math.floor(Math.random() * x);
     const rY = Math.floor(Math.random() * y);
 

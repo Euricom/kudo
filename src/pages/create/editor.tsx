@@ -140,7 +140,7 @@ const Editor: NextPage<{ res: Template }> = ({ res }) => {
           </button>
           <div className="dropdown dropdown-end">
             <label tabIndex={0} className=""> <button onClick={() => setSelectedButton(EditorFunctions.Color)} className={"btn btn-circle btn-secondary " + (selectedButton == EditorFunctions.Color ? "btn-accent" : "")}><BiPalette size={20} /></button></label>
-            <ul tabIndex={0} className="dropdown-content menu p-2 shadow bg-base-100 rounded-box w-fit">
+            <ul tabIndex={0} className="dropdown-content menu p-2 shadow bg-base-100 rounded-box w-52">
               <li className=''>
                 <ColorPicker width={228} height={114} color={color}
                   onChange={setColor} hideHSV hideHEX hideRGB dark />

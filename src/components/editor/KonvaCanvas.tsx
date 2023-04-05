@@ -4,46 +4,15 @@ import type Konva from 'konva'
 import { type Template } from '@prisma/client';
 import { type KonvaEventObject } from 'konva/lib/Node';
 import useDimensions from '~/hooks/useDimensions';
-import { EditorFunctions } from '~/pages/create/editor';
 import CanvasText from './canvasShapes/CanvasText';
 import Rectangle from './canvasShapes/Rectangle';
 import { type Vector2d } from 'konva/lib/types';
 import { v4 } from 'uuid';
 import ConfirmationModal from '~/components/input/ConfirmationModal';
+import { CanvasShapes, EditorFunctions, type KonvaCanvasProps, type LineProps, type Shapes } from '~/types';
 
 
-export enum CanvasShapes {
-  Text,
-  Sticker,
-  Rect
-}
 
-type KonvaCanvasProps = {
-  editorFunction: EditorFunctions | undefined,
-  template: Template,
-  thickness: number,
-  color: string,
-  setFunction: (type: EditorFunctions) => void,
-  setStage: (stage: Konva.Stage) => void
-}
-
-type Shapes = {
-  type: CanvasShapes,
-  id: string,
-  x: number,
-  y: number,
-  width?: number,
-  height?: number,
-  fill?: string,
-  text?: string,
-}
-
-type line = {
-  tool: string,
-  points: number[],
-  thickness: number,
-  color: string,
-}
 
 
 
@@ -59,7 +28,7 @@ const KonvaCanvas = ({ editorFunction, template, thickness, color, setFunction, 
 
 
 
-  const [lines, setLines] = useState<line[]>([]);
+  const [lines, setLines] = useState<LineProps[]>([]);
   const isDrawing = useRef(false);
 
   const dimensions = useDimensions(containerRef);
@@ -114,6 +83,7 @@ const KonvaCanvas = ({ editorFunction, template, thickness, color, setFunction, 
       id: v4(),
       type: CanvasShapes.Text,
       text: 'Text',
+      fill: color,
       x: pos.x / (stageDimensions.scale?.x ?? 1),
       y: pos.y / (stageDimensions.scale?.y ?? 1),
     }

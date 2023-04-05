@@ -1,5 +1,7 @@
-import { type Kudo } from "@prisma/client";
+import { type Kudo, type Template } from "@prisma/client";
 import { type Url } from "url";
+import { type Vector2d } from 'konva/lib/types';
+import type Konva from "konva";
 
 export type AuthProps = {
     children?: React.ReactNode
@@ -114,4 +116,68 @@ export type SortAndFilterProps = {
     setSort: React.Dispatch<React.SetStateAction<sortPosibillities>>;
     filter?: string
     setFilter?: React.Dispatch<React.SetStateAction<string>>;
+}
+export enum CanvasShapes {
+    Text,
+    Sticker,
+    Rect
+}
+
+export type KonvaCanvasProps = {
+    editorFunction: EditorFunctions | undefined,
+    template: Template,
+    thickness: number,
+    color: string,
+    setFunction: (type: EditorFunctions) => void,
+    setStage: (stage: Konva.Stage) => void
+}
+
+
+
+export type Shapes = {
+    type: CanvasShapes,
+    id: string,
+    x: number,
+    y: number,
+    width?: number,
+    height?: number,
+    fill?: string,
+    text?: string,
+}
+
+export type LineProps = {
+    tool: string,
+    points: number[],
+    thickness: number,
+    color: string,
+}
+
+export type CanvasTextProps = {
+    shapeProps: Shapes,
+    scale: number,
+    isSelected: boolean,
+    onSelect: () => void,
+    onChange: (shapeProps: Shapes) => void,
+    areaPosition: Vector2d,
+    fontSize: number,
+}
+
+export enum EditorFunctions {
+    Text = 'text',
+    Draw = 'draw',
+    Erase = 'erase',
+    Sticker = 'sticker',
+    Color = 'color',
+    Clear = 'clear',
+    Submit = 'submit',
+    None = 'none'
+}
+
+
+export type RectangleProps = {
+    shapeProps: Shapes,
+    scale: number,
+    isSelected: boolean,
+    onSelect: () => void,
+    onChange: (shapeProps: Shapes) => void
 }

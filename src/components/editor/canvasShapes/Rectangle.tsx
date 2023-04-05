@@ -1,25 +1,9 @@
 import React, { useRef, type MutableRefObject, useEffect } from 'react';
 import { Transformer, Rect } from 'react-konva';
 import type Konva from 'konva';
-import { type CanvasShapes } from '../KonvaCanvas';
+import { type RectangleProps } from '~/types';
 
-type RectProps = {
-  id: string,
-  type: CanvasShapes,
-  x: number,
-  y: number,
-  width?: number,
-  height?: number,
-  fill?: string,
-}
 
-type RectangleProps = {
-  shapeProps: RectProps,
-  scale: number,
-  isSelected: boolean,
-  onSelect: () => void,
-  onChange: (shapeProps: RectProps) => void
-}
 
 const Rectangle = ({ shapeProps, scale, isSelected, onSelect, onChange }: RectangleProps) => {
   const shapeRef = useRef<Konva.Rect>() as MutableRefObject<Konva.Rect>;

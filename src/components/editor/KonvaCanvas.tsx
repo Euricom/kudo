@@ -20,6 +20,7 @@ export enum CanvasShapes {
 type KonvaCanvasProps = {
   editorFunction: EditorFunctions | undefined,
   template: Template,
+  thickness: number
   setFunction: (type: EditorFunctions) => void,
   setStage: (stage: Konva.Stage) => void
 }
@@ -36,15 +37,16 @@ type Shapes = {
 }
 
 type line = {
-  tool: string
-  points: number[]
+  tool: string,
+  points: number[],
+  thickness: number,
 }
 
 
 
 const initialShapes: Shapes[] = [];
 
-const KonvaCanvas = ({ editorFunction, template, setFunction, setStage }: KonvaCanvasProps) => {
+const KonvaCanvas = ({ editorFunction, template, thickness, setFunction, setStage }: KonvaCanvasProps) => {
   const containerRef = useRef<HTMLDivElement>(null);
   const stageRef = useRef<Konva.Stage>() as MutableRefObject<Konva.Stage>;
   const layerRef = useRef<Konva.Layer>() as MutableRefObject<Konva.Layer>;
@@ -76,6 +78,7 @@ const KonvaCanvas = ({ editorFunction, template, setFunction, setStage }: KonvaC
 
   const onClear = () => {
     layerRef.current?.removeChildren()
+    setLines([])
     setFunction(EditorFunctions.None)
   }
 
@@ -125,12 +128,12 @@ const KonvaCanvas = ({ editorFunction, template, setFunction, setStage }: KonvaC
     if (editorFunction === EditorFunctions.Draw) {
       isDrawing.current = true;
       const pos = stageRef.current.getPointerPosition() ?? { x: 0, y: 0 };
-      setLines([...lines, { tool: "source-over", points: [pos.x, pos.y] }]);
+      setLines([...lines, { tool: "source-over", points: [pos.x, pos.y], thickness: thickness }]);
     }
     if (editorFunction === EditorFunctions.Erase) {
       isDrawing.current = true;
       const pos = stageRef.current.getPointerPosition() ?? { x: 0, y: 0 };
-      setLines([...lines, { tool: "destination-out", points: [pos.x, pos.y] }]);
+      setLines([...lines, { tool: "destination-out", points: [pos.x, pos.y], thickness: thickness }]);
     }
 
   };
@@ -141,7 +144,7 @@ const KonvaCanvas = ({ editorFunction, template, setFunction, setStage }: KonvaC
     }
     const stage = stageRef.current;
     const point = stage.getPointerPosition() ?? { x: 0, y: 0 };
-    const lastLine = lines[lines.length - 1] ?? { tool: "destination-out", points: [0, 0] };
+    const lastLine = lines[lines.length - 1] ?? { tool: "destination-out", points: [0, 0], thickness: thickness };
     // add point
     lastLine.points = lastLine.points.concat([point.x, point.y]);
 
@@ -198,7 +201,7 @@ const KonvaCanvas = ({ editorFunction, template, setFunction, setStage }: KonvaC
                 key={i}
                 points={line.points}
                 stroke="#df4b26"
-                strokeWidth={5}
+                strokeWidth={line.thickness}
                 tension={0.5}
                 lineCap="round"
                 globalCompositeOperation={line.tool === "destination-out" ? "destination-out" : "source-over"}

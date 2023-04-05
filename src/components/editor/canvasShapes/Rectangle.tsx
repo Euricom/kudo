@@ -26,7 +26,7 @@ const Rectangle = ({ shapeProps, scale, isSelected, onSelect, onChange }: Rectan
         {...shapeProps}
         x={shapeProps.x * scale}
         y={shapeProps.y * scale}
-        draggable
+        draggable={isSelected}
         onDragEnd={(e) => {
           onChange({
             ...shapeProps,

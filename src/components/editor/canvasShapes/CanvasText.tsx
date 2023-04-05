@@ -34,7 +34,7 @@ const CanvasText = ({ shapeProps, scale, isSelected, onSelect, onChange, areaPos
         ref={shapeRef}
         {...shapeProps}
         fontSize={fontSize}
-        draggable
+        draggable={isSelected}
         onDragEnd={(e) => {
           onChange({
             ...shapeProps,

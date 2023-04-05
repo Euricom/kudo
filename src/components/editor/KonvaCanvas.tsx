@@ -4,49 +4,21 @@ import type Konva from 'konva'
 import { type Template } from '@prisma/client';
 import { type KonvaEventObject } from 'konva/lib/Node';
 import useDimensions from '~/hooks/useDimensions';
-import { EditorFunctions } from '~/pages/create/editor';
 import CanvasText from './canvasShapes/CanvasText';
 import Rectangle from './canvasShapes/Rectangle';
 import { type Vector2d } from 'konva/lib/types';
 import { v4 } from 'uuid';
 import ConfirmationModal from '~/components/input/ConfirmationModal';
+import { CanvasShapes, EditorFunctions, type KonvaCanvasProps, type LineProps, type Shapes } from '~/types';
 
-export enum CanvasShapes {
-  Text,
-  Sticker,
-  Rect
-}
 
-type KonvaCanvasProps = {
-  editorFunction: EditorFunctions | undefined,
-  template: Template,
-  thickness: number
-  setFunction: (type: EditorFunctions) => void,
-  setStage: (stage: Konva.Stage) => void
-}
 
-type Shapes = {
-  type: CanvasShapes,
-  id: string,
-  x: number,
-  y: number,
-  width?: number,
-  height?: number,
-  fill?: string,
-  text?: string,
-}
-
-type line = {
-  tool: string,
-  points: number[],
-  thickness: number,
-}
 
 
 
 const initialShapes: Shapes[] = [];
 
-const KonvaCanvas = ({ editorFunction, template, thickness, setFunction, setStage }: KonvaCanvasProps) => {
+const KonvaCanvas = ({ editorFunction, template, thickness, color, setFunction, setStage }: KonvaCanvasProps) => {
   const containerRef = useRef<HTMLDivElement>(null);
   const stageRef = useRef<Konva.Stage>() as MutableRefObject<Konva.Stage>;
   const layerRef = useRef<Konva.Layer>() as MutableRefObject<Konva.Layer>;
@@ -55,7 +27,8 @@ const KonvaCanvas = ({ editorFunction, template, thickness, setFunction, setStag
   const [selectedId, selectShape] = useState<string | null>(null);
 
 
-  const [lines, setLines] = useState<line[]>([]);
+
+  const [lines, setLines] = useState<LineProps[]>([]);
   const isDrawing = useRef(false);
 
   const dimensions = useDimensions(containerRef);
@@ -110,6 +83,7 @@ const KonvaCanvas = ({ editorFunction, template, thickness, setFunction, setStag
       id: v4(),
       type: CanvasShapes.Text,
       text: 'Text',
+      fill: color,
       x: pos.x / (stageDimensions.scale?.x ?? 1),
       y: pos.y / (stageDimensions.scale?.y ?? 1),
     }
@@ -128,12 +102,12 @@ const KonvaCanvas = ({ editorFunction, template, thickness, setFunction, setStag
     if (editorFunction === EditorFunctions.Draw) {
       isDrawing.current = true;
       const pos = stageRef.current.getPointerPosition() ?? { x: 0, y: 0 };
-      setLines([...lines, { tool: "source-over", points: [pos.x, pos.y], thickness: thickness }]);
+      setLines([...lines, { tool: "source-over", points: [pos.x, pos.y], thickness: thickness, color: color }]);
     }
     if (editorFunction === EditorFunctions.Erase) {
       isDrawing.current = true;
       const pos = stageRef.current.getPointerPosition() ?? { x: 0, y: 0 };
-      setLines([...lines, { tool: "destination-out", points: [pos.x, pos.y], thickness: thickness }]);
+      setLines([...lines, { tool: "destination-out", points: [pos.x, pos.y], thickness: thickness, color: color }]);
     }
 
   };
@@ -144,7 +118,7 @@ const KonvaCanvas = ({ editorFunction, template, thickness, setFunction, setStag
     }
     const stage = stageRef.current;
     const point = stage.getPointerPosition() ?? { x: 0, y: 0 };
-    const lastLine = lines[lines.length - 1] ?? { tool: "destination-out", points: [0, 0], thickness: thickness };
+    const lastLine = lines[lines.length - 1] ?? { tool: "destination-out", points: [0, 0], thickness: thickness, color: color };
     // add point
     lastLine.points = lastLine.points.concat([point.x, point.y]);
 
@@ -200,9 +174,10 @@ const KonvaCanvas = ({ editorFunction, template, thickness, setFunction, setStag
               <Line
                 key={i}
                 points={line.points}
-                stroke="#df4b26"
+                stroke={line.color}
                 strokeWidth={line.thickness}
                 tension={0.5}
+                lineJoin='round'
                 lineCap="round"
                 globalCompositeOperation={line.tool === "destination-out" ? "destination-out" : "source-over"}
               />

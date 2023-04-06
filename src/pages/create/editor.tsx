@@ -105,7 +105,7 @@ const Editor: NextPage<{ res: Template }> = ({ res }) => {
         />
       }
       {/* Main */}
-      <main className="flex flex-col items-center justify-center h-full z-50" >
+      <main className="flex flex-col items-center justify-center h-full z-50 relative overflow-x-hidden" >
         <div className="w-full lg:w-1/2 p-5 z-40 flex justify-center gap-2 mx-auto">
 
           <div className="dropdown dropdown-start ">
@@ -113,8 +113,8 @@ const Editor: NextPage<{ res: Template }> = ({ res }) => {
             <ul tabIndex={0} className=" dropdown-content menu p-2 shadow bg-base-100 rounded-box w-52">
               <label className="label text-xs">Font</label>
               <select className="select select-bordered w-full max-w-xs" value={font} onChange={(e) => setFont(e.target.value)}>
-                {Fonts.map(f =>
-                  <option key={f}>{f}</option>
+                {Fonts.sort((a, b) => b < a ? 1 : -1).map(f =>
+                  <option style={{ fontFamily: f }} key={f}>{f}</option>
                 )}
               </select>
             </ul>

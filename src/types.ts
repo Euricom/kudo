@@ -115,7 +115,7 @@ export enum sortPosibillities {
 export type SortAndFilterProps = {
     setSort: React.Dispatch<React.SetStateAction<sortPosibillities>>;
     filter?: string
-    setFilter?: React.Dispatch<React.SetStateAction<string>>;
+    setFilter: React.Dispatch<React.SetStateAction<string | undefined>>;
 }
 export enum CanvasShapes {
     Text,

@@ -10,6 +10,7 @@ const SessionList = ({ sessions }: SessionArray) => {
     const users = api.users.getAllUsers.useQuery().data
 
     const [sort, setSort] = useState<sortPosibillities>(sortPosibillities.DateD)
+    const [filter, setFilter] = useState<string>()
 
 
 
@@ -20,7 +21,7 @@ const SessionList = ({ sessions }: SessionArray) => {
                 return (
                     <>
                         <div className="w-full flex flex-wrap gap-4">
-                            {sortTitle({ sessions: sessions, sort: sort }).map((s) =>
+                            {sortTitle({ sessions: sessions, sort: sort }).filter(s => (s.title.toLowerCase().includes(filter?.toLowerCase() ?? "")) || (users?.find(u => u.id == s.speakerId)?.displayName.toLowerCase().includes(filter?.toLowerCase() ?? ""))).map((s) =>
                                 <SessionCard key={s.id} session={s} />
                             )}
                         </div>
@@ -29,7 +30,7 @@ const SessionList = ({ sessions }: SessionArray) => {
             case sortPosibillities.SpeakerA:
             case sortPosibillities.SpeakerD:
 
-                return sortSpeaker({ sessions: sessions.sort((a, b) => (users?.find(u => u.id === a.speakerId)?.displayName ?? "a") > (users?.find(u => u.id === b.speakerId)?.displayName ?? "b") ? 1 : -1), sort: sort }).map((s) => {
+                return sortSpeaker({ sessions: sessions.filter(s => (s.title.toLowerCase().includes(filter?.toLowerCase() ?? "")) || (users?.find(u => u.id == s.speakerId)?.displayName.toLowerCase().includes(filter?.toLowerCase() ?? ""))).sort((a, b) => (users?.find(u => u.id === a.speakerId)?.displayName ?? "a") > (users?.find(u => u.id === b.speakerId)?.displayName ?? "b") ? 1 : -1), sort: sort }).map((s) => {
                     const speaker = users?.find(u => u.id === s.speakerId);
                     return (
                         <>
@@ -45,7 +46,7 @@ const SessionList = ({ sessions }: SessionArray) => {
                     )
                 })
             default:
-                return sortDate({ sessions: sessions, sort: sort }).map((d) => {
+                return sortDate({ sessions: sessions.filter(s => (s.title.toLowerCase().includes(filter?.toLowerCase() ?? "")) || (users?.find(u => u.id == s.speakerId)?.displayName.toLowerCase().includes(filter?.toLowerCase() ?? ""))), sort: sort }).map((d) => {
                     const sessionDate = new Date(d.date);
                     return (
                         <>
@@ -65,7 +66,7 @@ const SessionList = ({ sessions }: SessionArray) => {
     }
     return (
         <>
-            <SortAndFilter setSort={setSort} />
+            <SortAndFilter setSort={setSort} filter={filter} setFilter={setFilter} />
             <div className="flex flex-col gap-8 h-full justify-start p-5">
                 {sortSessions()}
             </div>

@@ -11,10 +11,14 @@ import { FindAllKudosSortedByUserId } from "~/server/services/kudoService";
 import { sortPosibillities } from "~/types";
 import { useState } from "react"
 import SortAndFilter from "~/components/input/SortAndFilter";
+import { api } from "~/utils/api";
 
 const Out: NextPage = () => {
 
+  const sessions = api.sessions.getAll.useQuery().data
+
   const [sort, setSort] = useState<sortPosibillities>(sortPosibillities.DateD)
+  const [filter, setFilter] = useState<string>()
 
   const userId = useSession().data?.user.id
   if (!userId) {
@@ -22,7 +26,7 @@ const Out: NextPage = () => {
   }
   const kudos = FindAllKudosSortedByUserId(userId, sort)
 
-  if (!userId) {
+  if (!userId || !sessions) {
     return <div>Loading...</div>
   }
 
@@ -41,10 +45,10 @@ const Out: NextPage = () => {
         <></>
       </UtilButtonsContent >
       <main className="flex flex-col items-center justify-start">
-        <SortAndFilter setSort={setSort} />
+        <SortAndFilter setSort={setSort} filter={filter} setFilter={setFilter} />
         <div className="flex flex-wrap gap-5 justify-center px-5 mb-8 md:mb-28">
           {kudos == undefined || kudos.length == 0 ? <h1>No Kudos Sent Yet</h1> :
-            kudos.map((kudo) => (
+            kudos.filter(k => sessions.find(s => s.id == k.sessionId)?.title.toLowerCase().includes(filter?.toLowerCase() ?? "")).map((kudo) => (
               <KudoCard key={kudo.id} kudo={kudo} />
             ))}
         </div>

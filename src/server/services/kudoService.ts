@@ -5,9 +5,6 @@ import { api } from "~/utils/api";
 
 
 export const FindAllKudosSortedByUserId = (id: string, sort: sortPosibillities): Kudo[] => {
-
-
-
     const kudoQuery = api.kudos.getKudosByUserId.useQuery({ id: id });
     const kudos: Kudo[] = kudoQuery.data as Kudo[]
     const sessions = api.sessions.getAll.useQuery().data

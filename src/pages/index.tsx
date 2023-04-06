@@ -8,14 +8,16 @@ import SessionList from "~/components/sessions/SessionList";
 import { api } from "~/utils/api";
 import { useSession } from "next-auth/react";
 import { UtilButtonsContent } from "~/hooks/useUtilButtons";
+import LoadingBar from "~/components/LoadingBar";
 
 
 const Home: NextPage = () => {
   const userId = useSession().data?.user.id
 
-  const sessions= api.sessions.getSessionsBySpeaker.useQuery({ id: userId ?? "error" }).data
-  if (!sessions) {
-    return <div>Loading...</div>;
+  const sessionsQuery = api.sessions.getSessionsBySpeaker.useQuery({ id: userId ?? "error" })
+  const sessions = sessionsQuery.data
+  if (sessionsQuery.isLoading || !sessions) {
+    return <LoadingBar />;
   }
 
   return (

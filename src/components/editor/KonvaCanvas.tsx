@@ -1,5 +1,5 @@
 import React, { useRef, useState, useEffect, useMemo, type MutableRefObject, useCallback } from 'react'
-import { Stage, Layer, Rect, Text, Line } from 'react-konva';
+import { Stage, Layer, Rect, Line } from 'react-konva';
 import type Konva from 'konva'
 import { type Template } from '@prisma/client';
 import { type KonvaEventObject } from 'konva/lib/Node';
@@ -36,6 +36,51 @@ const KonvaCanvas = ({ editorFunction, template, thickness, color, setFunction, 
     [dimensions]
   );
 
+  useEffect(() => {
+    console.log(history);
+
+  }, [history, history.length])
+
+  const makeHeader = useCallback(() => {
+    const header = {
+      type: CanvasShapes.Text,
+      id: "header",
+      x: 0,
+      y: 0,
+      text: template.Title,
+      fill: "white",
+      align: "center",
+      verticalAlign: "middle",
+      width: stageDimensions.width,
+      height: (stageDimensions.height ?? 0) / 4,
+      fontSize: (stageDimensions.height ?? 0) / 6,
+      draggable: false,
+    }
+    if (shapes.find(s => s.id === "header")?.width !== header.width) {
+      const newShapes = shapes.slice();
+      newShapes[0] = header;
+      history.shift()
+      history.unshift(header)
+      setShapes(newShapes);
+    }
+    if (shapes.find(s => s.id === "header")) {
+      return
+    }
+    setShapes([])
+    shapes.push(header)
+    setShapes(shapes)
+
+  }, [shapes, stageDimensions, template, history])
+
+
+  useEffect(() => {
+    makeHeader()
+  }, [makeHeader, template])
+
+  useEffect(() => {
+    setShapes([])
+  }, [template])
+
   const undo = useCallback(() => {
     const lastShape = history.shift()
     const shapeToBe = history.find(s => s.id === lastShape?.id)
@@ -52,7 +97,11 @@ const KonvaCanvas = ({ editorFunction, template, thickness, color, setFunction, 
     if (shapeToBe) {
       shapes[index] = shapeToBe
     } else {
-      shapes.splice(index, 1)
+      if (lastShape?.id === "header") {
+        history.unshift(lastShape)
+      } else {
+        shapes.splice(index, 1)
+      }
     }
     setShapes(shapes)
 
@@ -106,6 +155,14 @@ const KonvaCanvas = ({ editorFunction, template, thickness, color, setFunction, 
   }
 
   const addText = (pos: Vector2d) => {
+    const text = makeText(pos)
+    history.unshift(text)
+    shapes.push(text)
+    selectShape(text.id)
+    setFunction(EditorFunctions.None)
+  }
+
+  const makeText = (pos: Vector2d) => {
     const text = {
       id: v4(),
       type: CanvasShapes.Text,
@@ -113,12 +170,13 @@ const KonvaCanvas = ({ editorFunction, template, thickness, color, setFunction, 
       fill: color,
       x: pos.x / (stageDimensions.scale?.x ?? 1),
       y: pos.y / (stageDimensions.scale?.y ?? 1),
+      fontSize: (stageDimensions?.height ?? 0) / 15,
+      draggable: true
     }
-    history.unshift(text)
-    shapes.push(text)
-    selectShape(text.id)
-    setFunction(EditorFunctions.None)
+    return text
   }
+
+
 
   const addSticker = () => {
     setFunction(EditorFunctions.None)
@@ -189,8 +247,13 @@ const KonvaCanvas = ({ editorFunction, template, thickness, color, setFunction, 
             height={stageDimensions?.height}
             fill={'white'}
           />
-          <Header width={stageDimensions?.width} height={stageDimensions?.height} template={template} />
+          <Rect
+            width={stageDimensions?.width}
+            height={(stageDimensions?.height ?? 0) / 4}
+            fill={template.Color}
+          />
         </Layer>
+
         <Layer ref={layerRef}>
           {shapes.map((s, i) => {
             switch (s.type) {
@@ -213,7 +276,6 @@ const KonvaCanvas = ({ editorFunction, template, thickness, color, setFunction, 
                     key={i}
                     shapeProps={s}
                     scale={stageDimensions.scale?.x ?? 1}
-                    fontSize={(stageDimensions?.height ?? 0) / 15}
                     isSelected={s.id === selectedId}
                     onSelect={() => {
                       selectShape(s.id);
@@ -222,6 +284,8 @@ const KonvaCanvas = ({ editorFunction, template, thickness, color, setFunction, 
                       const newShapes = shapes.slice();
                       newShapes[i] = newAttrs;
                       setShapes(newShapes);
+                      console.log(newAttrs);
+
                       history.unshift(newAttrs)
 
                     }}
@@ -270,28 +334,6 @@ const KonvaCanvas = ({ editorFunction, template, thickness, color, setFunction, 
         </Layer>
       </Stage>
     </div>
-    </>
-  )
-}
-
-const Header = ({ width, height, template }: { width: number | undefined, height: number | undefined, template: Template }) => {
-  return (
-    <>
-      <Rect
-        width={width}
-        height={(height ?? 0) / 4}
-        fill={template.Color}
-      />
-      <Text
-        width={width}
-        height={(height ?? 0) / 4}
-        text={template.Title}
-        fontSize={(height ?? 0) / 6}
-        fontFamily='Calibri'
-        fill='white'
-        align='center'
-        verticalAlign='middle'
-      />
     </>
   )
 }

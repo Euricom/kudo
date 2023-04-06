@@ -5,7 +5,7 @@ import editText from '../editText';
 import { EditorFunctions, type CanvasTextProps } from '~/types';
 
 
-const CanvasText = ({ shapeProps, scale, isSelected, onSelect, onChange, areaPosition, fontSize, onDelete, editorFunction }: CanvasTextProps) => {
+const CanvasText = ({ shapeProps, scale, isSelected, onSelect, onChange, areaPosition, onDelete, editorFunction }: CanvasTextProps) => {
   const shapeRef = useRef<Konva.Text>() as MutableRefObject<Konva.Text>;
   const trRef = useRef<Konva.Transformer>() as MutableRefObject<Konva.Transformer>;
   // const [isEditing, setIsEditing] = useState(false)
@@ -24,7 +24,7 @@ const CanvasText = ({ shapeProps, scale, isSelected, onSelect, onChange, areaPos
 
   const onDoubleClick = () => {
     shapeRef.current.hide();
-    trRef.current.hide();
+    trRef.current?.hide();
     editText(areaPosition, shapeRef.current, trRef.current, scale, onTextChange)
   }
 
@@ -44,8 +44,7 @@ const CanvasText = ({ shapeProps, scale, isSelected, onSelect, onChange, areaPos
         onDblTap={onDoubleClick}
         ref={shapeRef}
         {...shapeProps}
-        fontSize={fontSize}
-        draggable={isSelected}
+        draggable={(!shapeProps.draggable) ? false : isSelected}
         onDragEnd={(e) => {
           onChange({
             ...shapeProps,
@@ -80,7 +79,7 @@ const CanvasText = ({ shapeProps, scale, isSelected, onSelect, onChange, areaPos
           ref={trRef}
           anchorX={0.5}
           anchorY={0.5}
-          enabledAnchors={['middle-left', 'middle-right', 'bottom-center']}
+          enabledAnchors={[]}
           boundBoxFunc={(oldBox, newBox) => {
             newBox.width = Math.max(30, newBox.width);
             return newBox;

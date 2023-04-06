@@ -13,15 +13,18 @@
     container-type: inline-size;
 }
 
-.presentaion-card {
-    animation: fall 1s ease-out;
+@keyframes append-animate {
+	from {
+		transform: scale(0);
+		opacity: 0;
+	}
+	to {
+		transform: scale(1);
+		opacity: 1;	
+	}
 }
 
-@keyframes fall {
-    0% {
-      transform: scale(2);
-    }
-    100% {
-      transform: scale(1);
-    }
+/* animate new box */
+.presentaion-card-appear {
+	animation: append-animate 1s linear;
 }

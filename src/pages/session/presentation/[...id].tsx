@@ -94,7 +94,7 @@ const Presentation: NextPage<{ id: string }> = ({ id }) => {
                 return <>
                   <div 
                     key={kudo.id} 
-                    className="absolute left-0 top-0 -translate-x-1/2 -translate-y-1/2 presentation-card"
+                    className="absolute left-0 top-0 -translate-x-1/2 -translate-y-1/2 presentation-card-appear"
                     style={{ top: kudo.y, left: kudo.x, transform: `rotate(${kudo.rot}deg)`}}
                   >
                     <KudoCard kudo={kudo.kudo} hideLiked={true}/>

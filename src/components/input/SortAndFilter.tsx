@@ -9,27 +9,27 @@ function useVisibleSort() {
     return [
         {
             sort: sortPosibillities.DateA,
-            routes: ['/', '/out', '/speakers/[...id]'],
+            routes: ['/', '/out', '/speaker/[...id]'],
         },
         {
             sort: sortPosibillities.DateD,
-            routes: ['/', '/out', '/speakers/[...id]'],
+            routes: ['/', '/out', '/speaker/[...id]'],
         },
         {
             sort: sortPosibillities.SpeakerA,
-            routes: ['/', '/out', '/all'],
+            routes: ['/out', '/all'],
         },
         {
             sort: sortPosibillities.SpeakerD,
-            routes: ['/', '/out', '/all'],
+            routes: ['/out', '/all'],
         },
         {
             sort: sortPosibillities.TitleA,
-            routes: ['/', '/out', '/speakers/[...id]'],
+            routes: ['/', '/out', '/speaker/[...id]'],
         },
         {
             sort: sortPosibillities.TitleD,
-            routes: ['/', '/out', '/speakers/[...id]'],
+            routes: ['/', '/out', '/speaker/[...id]'],
         },
     ].filter((item) => item.routes.includes(router.pathname));
 }

@@ -2,21 +2,25 @@ import React, { useRef, type MutableRefObject, useEffect } from 'react';
 import { Transformer, Text } from 'react-konva';
 import type Konva from 'konva';
 import editText from '../editText';
-import { type CanvasTextProps } from '~/types';
+import { EditorFunctions, type CanvasTextProps } from '~/types';
 
 
-const CanvasText = ({ shapeProps, scale, isSelected, onSelect, onChange, areaPosition, fontSize }: CanvasTextProps) => {
+const CanvasText = ({ shapeProps, scale, isSelected, onSelect, onChange, areaPosition, fontSize, onDelete, editorFunction }: CanvasTextProps) => {
   const shapeRef = useRef<Konva.Text>() as MutableRefObject<Konva.Text>;
   const trRef = useRef<Konva.Transformer>() as MutableRefObject<Konva.Transformer>;
   // const [isEditing, setIsEditing] = useState(false)
 
   useEffect(() => {
     if (isSelected) {
+      if (editorFunction === EditorFunctions.Clear) {
+        onDelete(shapeProps.id)
+      }
+
       // we need to attach transformer manually
       trRef.current?.nodes([shapeRef.current]);
       trRef.current?.getLayer()?.batchDraw();
     }
-  }, [isSelected]);
+  }, [isSelected, onDelete, shapeProps, editorFunction]);
 
   const onDoubleClick = () => {
     shapeRef.current.hide();

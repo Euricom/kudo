@@ -8,13 +8,7 @@ import CanvasText from './canvasShapes/CanvasText';
 import Rectangle from './canvasShapes/Rectangle';
 import { type Vector2d } from 'konva/lib/types';
 import { v4 } from 'uuid';
-import ConfirmationModal from '~/components/input/ConfirmationModal';
 import { CanvasShapes, EditorFunctions, type KonvaCanvasProps, type Shapes } from '~/types';
-
-
-
-
-
 
 const initialShapes: Shapes[] = [];
 
@@ -25,9 +19,7 @@ const KonvaCanvas = ({ editorFunction, template, thickness, color, setFunction, 
   const staticLayerRef = useRef<Konva.Layer>() as MutableRefObject<Konva.Layer>;
   const [shapes, setShapes] = useState(initialShapes);
   const [selectedId, selectShape] = useState<string | null>(null);
-  const [history] = useState<Shapes[]>([]);
-
-
+  const [history] = useState<Shapes[]>([])
 
   const [line, setLine] = useState<Shapes[]>([]);
 
@@ -48,7 +40,12 @@ const KonvaCanvas = ({ editorFunction, template, thickness, color, setFunction, 
     const lastShape = history.shift()
     const shapeToBe = history.find(s => s.id === lastShape?.id)
     const shape = shapes.find(s => s.id === lastShape?.id)
-    if (!shape || !lastShape) {
+    if (!shape) {
+      if (lastShape) {
+        shapes.push(lastShape)
+        setShapes(shapes)
+      }
+      setFunction(EditorFunctions.None)
       return
     }
     const index = shapes.indexOf(shape)
@@ -72,13 +69,16 @@ const KonvaCanvas = ({ editorFunction, template, thickness, color, setFunction, 
     }
   }, [editorFunction, undo]);
 
+  const onDelete = (id: string) => {
+    const shape = shapes.find(s => s.id === id)
+    if (!shape) {
+      return
+    }
+    const index = shapes.indexOf(shape)
+    shapes.splice(index, 1)
 
-
-
-  const onClear = () => {
-    layerRef.current?.removeChildren()
-    setLine([])
-    setShapes([])
+    history.unshift(shape)
+    selectShape(null)
     setFunction(EditorFunctions.None)
   }
 
@@ -169,116 +169,107 @@ const KonvaCanvas = ({ editorFunction, template, thickness, color, setFunction, 
   }, [setStage])
 
   return (
-    <>
-      {editorFunction === EditorFunctions.Clear &&
-        <ConfirmationModal
-          prompt={"Are you sure you want to clear the canvas?"}
-          onCancel={() => setFunction(EditorFunctions.None)}
-          cancelLabel={"No"}
-          onSubmit={onClear}
-          submitLabel={"Yes"}
-        />
-      }
+    <><div ref={containerRef} id='kudo' className="aspect-[3/2] w-full max-h-full max-w-xl lg:max-w-3xl bg-neutral">
+      <Stage ref={stageRef}
+        width={(stageDimensions?.width ?? 1) * (stageDimensions.scale?.x ?? 1)}
+        height={(stageDimensions?.height ?? 1) * (stageDimensions.scale?.y ?? 1)}
+        scale={stageDimensions.scale}
+        onMouseDown={handleMouseDown}
+        onMousemove={handleMouseMove}
+        onMouseup={handleMouseUp}
+        onTouchStart={handleMouseDown}
+        onTouchMove={handleMouseMove}
+        onTouchEnd={handleMouseUp}
+        onClick={clickListener}
+        onTap={clickListener}
+      >
+        <Layer ref={staticLayerRef}>
+          <Rect
+            width={stageDimensions?.width}
+            height={stageDimensions?.height}
+            fill={'white'}
+          />
+          <Header width={stageDimensions?.width} height={stageDimensions?.height} template={template} />
+        </Layer>
+        <Layer ref={layerRef}>
+          {shapes.map((s, i) => {
+            switch (s.type) {
+              case CanvasShapes.Line:
+                return (
+                  <Line
+                    key={i}
+                    points={s.points}
+                    stroke={s.color}
+                    strokeWidth={s.thickness}
+                    tension={0.5}
+                    lineJoin='round'
+                    lineCap="round"
+                    globalCompositeOperation={s.tool === "destination-out" ? "destination-out" : "source-over"}
+                  />
+                )
+              case CanvasShapes.Text:
+                return (
+                  <CanvasText
+                    key={i}
+                    shapeProps={s}
+                    scale={stageDimensions.scale?.x ?? 1}
+                    fontSize={(stageDimensions?.height ?? 0) / 15}
+                    isSelected={s.id === selectedId}
+                    onSelect={() => {
+                      selectShape(s.id);
+                    }}
+                    onChange={(newAttrs) => {
+                      const newShapes = shapes.slice();
+                      newShapes[i] = newAttrs;
+                      setShapes(newShapes);
+                      history.unshift(newAttrs)
 
-      <div ref={containerRef} id='kudo' className="aspect-[3/2] w-full max-h-full max-w-xl lg:max-w-3xl bg-neutral">
-        <Stage ref={stageRef}
-          width={(stageDimensions?.width ?? 1) * (stageDimensions.scale?.x ?? 1)}
-          height={(stageDimensions?.height ?? 1) * (stageDimensions.scale?.y ?? 1)}
-          scale={stageDimensions.scale}
-          onMouseDown={handleMouseDown}
-          onMousemove={handleMouseMove}
-          onMouseup={handleMouseUp}
-          onTouchStart={handleMouseDown}
-          onTouchMove={handleMouseMove}
-          onTouchEnd={handleMouseUp}
-          onClick={clickListener}
-          onTap={clickListener}
-        >
-          <Layer ref={staticLayerRef}>
-            <Rect
-              width={stageDimensions?.width}
-              height={stageDimensions?.height}
-              fill={'white'}
-            />
-            <Header width={stageDimensions?.width} height={stageDimensions?.height} template={template} />
-          </Layer>
-          <Layer ref={layerRef}>
-            {shapes.map((s, i) => {
-              switch (s.type) {
-                case CanvasShapes.Line:
-                  return (
-                    <Line
-                      key={i}
-                      points={s.points}
-                      stroke={s.color}
-                      strokeWidth={s.thickness}
-                      tension={0.5}
-                      lineJoin='round'
-                      lineCap="round"
-                      globalCompositeOperation={s.tool === "destination-out" ? "destination-out" : "source-over"}
-                    />
-                  )
-                case CanvasShapes.Text:
-                  return (
-                    <CanvasText
-                      key={i}
-                      shapeProps={s}
-                      scale={stageDimensions.scale?.x ?? 1}
-                      fontSize={(stageDimensions?.height ?? 0) / 15}
-                      isSelected={s.id === selectedId}
-                      onSelect={() => {
-                        selectShape(s.id);
-                      }}
-                      onChange={(newAttrs) => {
-                        const newShapes = shapes.slice();
-                        newShapes[i] = newAttrs;
-                        setShapes(newShapes);
-                        history.unshift(newAttrs)
-
-                      }}
-                      areaPosition={{
-                        x: (stageRef.current?.container().offsetLeft ?? 0) + (s.x ?? 1) * (stageDimensions?.scale?.x ?? 1),
-                        y: (stageRef.current?.container().offsetTop ?? 0) + (s.y ?? 1) * (stageDimensions?.scale?.y ?? 1),
-                      }}
-                    />
-                  );
-                case CanvasShapes.Rect:
-                  return (
-                    <Rectangle
-                      key={i}
-                      shapeProps={s}
-                      scale={stageDimensions.scale?.x ?? 1}
-                      isSelected={s.id === selectedId}
-                      onSelect={() => {
-                        selectShape(s.id);
-                      }}
-                      onChange={(newAttrs) => {
-                        const newShapes = shapes.slice();
-                        newShapes[i] = newAttrs;
-                        setShapes(newShapes);
-                        history.unshift(newAttrs)
-                      }}
-                    />
-                  );
-              }
-            })}
-            {
-              line.map((l, i) => (
-                <Line
-                  key={i}
-                  points={l.points}
-                  stroke={l.color}
-                  strokeWidth={l.thickness}
-                  tension={0.5}
-                  lineJoin='round'
-                  lineCap="round"
-                  globalCompositeOperation={l.tool === "destination-out" ? "destination-out" : "source-over"}
-                />
-              ))
+                    }}
+                    areaPosition={{
+                      x: (stageRef.current?.container().offsetLeft ?? 0) + (s.x ?? 1) * (stageDimensions?.scale?.x ?? 1),
+                      y: (stageRef.current?.container().offsetTop ?? 0) + (s.y ?? 1) * (stageDimensions?.scale?.y ?? 1),
+                    }}
+                    onDelete={onDelete}
+                    editorFunction={editorFunction ?? EditorFunctions.None}
+                  />
+                );
+              case CanvasShapes.Rect:
+                return (
+                  <Rectangle
+                    key={i}
+                    shapeProps={s}
+                    scale={stageDimensions.scale?.x ?? 1}
+                    isSelected={s.id === selectedId}
+                    onSelect={() => {
+                      selectShape(s.id);
+                    }}
+                    onChange={(newAttrs) => {
+                      const newShapes = shapes.slice();
+                      newShapes[i] = newAttrs;
+                      setShapes(newShapes);
+                      history.unshift(newAttrs)
+                    }}
+                  />
+                );
             }
-          </Layer>
-        </Stage>
-      </div>
+          })}
+          {
+            line.map((l, i) => (
+              <Line
+                key={i}
+                points={l.points}
+                stroke={l.color}
+                strokeWidth={l.thickness}
+                tension={0.5}
+                lineJoin='round'
+                lineCap="round"
+                globalCompositeOperation={l.tool === "destination-out" ? "destination-out" : "source-over"}
+              />
+            ))
+          }
+        </Layer>
+      </Stage>
+    </div>
     </>
   )
 }
@@ -306,3 +297,5 @@ const Header = ({ width, height, template }: { width: number | undefined, height
 }
 
 export default KonvaCanvas
+
+

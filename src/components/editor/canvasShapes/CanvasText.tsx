@@ -44,6 +44,7 @@ const CanvasText = ({ shapeProps, scale, isSelected, onSelect, onChange, areaPos
         onDblTap={onDoubleClick}
         ref={shapeRef}
         {...shapeProps}
+        fontSize={shapeProps.height}
         draggable={(!shapeProps.draggable) ? false : isSelected}
         onDragEnd={(e) => {
           onChange({
@@ -79,7 +80,7 @@ const CanvasText = ({ shapeProps, scale, isSelected, onSelect, onChange, areaPos
           ref={trRef}
           anchorX={0.5}
           anchorY={0.5}
-          enabledAnchors={[]}
+          enabledAnchors={shapeProps.draggable ? ['bottom-right'] : []}
           boundBoxFunc={(oldBox, newBox) => {
             newBox.width = Math.max(30, newBox.width);
             return newBox;

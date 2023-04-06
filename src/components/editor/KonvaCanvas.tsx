@@ -35,11 +35,6 @@ const KonvaCanvas = ({ editorFunction, template, thickness, color, fontFamily, s
     [dimensions]
   );
 
-  useEffect(() => {
-    console.log(history);
-
-  }, [history, history.length])
-
   const makeHeader = useCallback(() => {
     const header = {
       type: CanvasShapes.Text,
@@ -141,15 +136,11 @@ const KonvaCanvas = ({ editorFunction, template, thickness, color, fontFamily, s
     }
     switch (editorFunction) {
       case EditorFunctions.Text:
-        console.log('Text');
         addText(stageRef.current.getPointerPosition() ?? { x: 50, y: 50 })
         break
       case EditorFunctions.Sticker:
-        console.log('Sticker');
         addSticker()
         break
-      default:
-        console.log('None');
     }
   }
 
@@ -186,6 +177,7 @@ const KonvaCanvas = ({ editorFunction, template, thickness, color, fontFamily, s
 
   const handleMouseDown = () => {
     if (editorFunction === EditorFunctions.Draw || editorFunction === EditorFunctions.Erase) {
+      selectShape(null)
       isDrawing.current = true;
       const pos = stageRef.current.getPointerPosition() ?? { x: 0, y: 0 };
       setLine([...line, { type: CanvasShapes.Line, id: v4(), tool: editorFunction === EditorFunctions.Erase ? "destination-out" : "source-over", points: [pos.x, pos.y], thickness: thickness, color: color }]);
@@ -273,6 +265,7 @@ const KonvaCanvas = ({ editorFunction, template, thickness, color, fontFamily, s
               case CanvasShapes.Text:
                 return (
                   <CanvasText
+                    container={containerRef.current ?? undefined}
                     key={i}
                     shapeProps={s}
                     scale={stageDimensions.scale?.x ?? 1}
@@ -284,7 +277,9 @@ const KonvaCanvas = ({ editorFunction, template, thickness, color, fontFamily, s
                       const newShapes = shapes.slice();
                       newShapes[i] = newAttrs;
                       setShapes(newShapes);
-                      console.log(newAttrs);
+
+                    }}
+                    onChangeEnd={(newAttrs) => {
 
                       history.unshift(newAttrs)
 

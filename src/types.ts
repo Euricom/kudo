@@ -152,10 +152,12 @@ export type Shapes = {
     align?: string,
     verticalAlign?: string,
     fontSize?: number,
-    draggable?: boolean
+    draggable?: boolean,
+    rotation?: number,
 }
 
 export type CanvasTextProps = {
+    container?: HTMLDivElement,
     shapeProps: Shapes,
     scale: number,
     isSelected: boolean,
@@ -163,6 +165,7 @@ export type CanvasTextProps = {
     onChange: (shapeProps: Shapes) => void,
     areaPosition: Vector2d,
     onDelete: (id: string) => void,
+    onChangeEnd: (shapeProps: Shapes) => void,
     editorFunction: EditorFunctions
 }
 

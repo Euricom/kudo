@@ -5,14 +5,18 @@ type Document = {
   documentMode?: number;
 }
 
-const editText = (areaPosition: Vector2d, textNode: Konva.Text, tr: Konva.Transformer, scale: number, onChange: (text: string) => void,) => {
-  const textarea = createTextArea(textNode, areaPosition, tr, scale, onChange)
+const editText = (areaPosition: Vector2d, textNode: Konva.Text, tr: Konva.Transformer, scale: number, onChange: (text: string) => void, container?: HTMLDivElement) => {
+  const textarea = createTextArea(textNode, areaPosition, tr, scale, onChange, container)
   textarea.focus();
 }
 
-const createTextArea = (textNode: Konva.Text, areaPosition: Vector2d, tr: Konva.Transformer, scale: number, onChange: (text: string) => void) => {
+const createTextArea = (textNode: Konva.Text, areaPosition: Vector2d, tr: Konva.Transformer, scale: number, onChange: (text: string) => void, container?: HTMLDivElement) => {
   const textarea = document.createElement('textarea');
-  document.body.appendChild(textarea);
+  if (container) {
+    container.appendChild(textarea)
+  } else {
+    document.body.appendChild(textarea)
+  }
 
   // apply many styles to match text on canvas as close as possible
   // remember that text rendering on canvas and on the textarea can be different
@@ -21,11 +25,11 @@ const createTextArea = (textNode: Konva.Text, areaPosition: Vector2d, tr: Konva.
   textarea.style.position = 'absolute';
   textarea.style.top = (areaPosition.y).toString() + 'px';
   textarea.style.left = (areaPosition.x).toString() + 'px';
-  textarea.style.width = ((textNode.width() - textNode.padding() * 2) * scale).toString() + 'px';
+  textarea.style.width = ((textNode.width() - textNode.padding() * 2) * scale * textNode.scaleX()).toString() + 'px';
   textarea.style.height =
     ((textNode.height() - textNode.padding() * 2 + 5) * scale).toString() + 'px';
 
-  textarea.style.fontSize = (textNode.fontSize() * scale).toString() + 'px';
+  textarea.style.fontSize = (textNode.fontSize() * scale * textNode.scaleX()).toString() + 'px';
   textarea.style.border = 'none';
   textarea.style.padding = '0px';
   textarea.style.margin = '0px';

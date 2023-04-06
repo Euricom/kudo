@@ -1,6 +1,5 @@
 import type Konva from "konva";
 import { type Vector2d } from "konva/lib/types";
-import { Shapes } from "~/types";
 
 type Document = {
   documentMode?: number;

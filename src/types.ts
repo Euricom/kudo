@@ -158,6 +158,8 @@ export type CanvasTextProps = {
     onChange: (shapeProps: Shapes) => void,
     areaPosition: Vector2d,
     fontSize: number,
+    onDelete: (id: string) => void,
+    editorFunction: EditorFunctions
 }
 
 export enum EditorFunctions {

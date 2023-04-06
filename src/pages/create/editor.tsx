@@ -57,7 +57,7 @@ const Editor: NextPage<{ res: Template }> = ({ res }) => {
     <LoadingBar />
   }
 
-  const handleChange = (color: ColorResult) => {
+  const handleColorChange = (color: ColorResult) => {
     setColor(color.hex)
   }
 
@@ -143,12 +143,12 @@ const Editor: NextPage<{ res: Template }> = ({ res }) => {
               <li className='align-middle flex gap-4'>
                 <BsFillCircleFill size={16} onClick={() => setColor("#121212")} color={"#121212"} />
                 <HuePicker color={color}
-                  onChange={handleChange}
+                  onChange={handleColorChange}
                 />
               </li>
             </ul>
           </div>
-          <button onClick={() => setSelectedButton(EditorFunctions.Undo)} className={"btn btn-circle btn-secondary " + (selectedButton == EditorFunctions.Undo ? "btn-accent" : "")}>
+          <button onClick={() => setSelectedButton(EditorFunctions.Undo)} className={"btn btn-circle btn-secondary" + (selectedButton == EditorFunctions.Undo ? "btn-accent" : "")}>
             <BiUndo size={20} />
           </button>
           <button onClick={() => setSelectedButton(EditorFunctions.Clear)} className={"btn btn-circle btn-secondary " + (selectedButton == EditorFunctions.Clear ? "btn-accent" : "")}>

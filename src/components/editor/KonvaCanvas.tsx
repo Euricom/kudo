@@ -284,10 +284,7 @@ const KonvaCanvas = ({ editorFunction, template, thickness, color, fontFamily, s
                       const newShapes = shapes.slice();
                       newShapes[i] = newAttrs;
                       setShapes(newShapes);
-                      console.log(newAttrs);
-
                       history.unshift(newAttrs)
-
                     }}
                     areaPosition={{
                       x: (stageRef.current?.container().offsetLeft ?? 0) + (s.x ?? 1) * (stageDimensions?.scale?.x ?? 1),

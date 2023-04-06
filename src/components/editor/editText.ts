@@ -68,6 +68,7 @@ const createTextArea = (textNode: Konva.Text, areaPosition: Vector2d, tr: Konva.
     // but don't hide on shift + enter
     if (e.key === 'Enter' && !e.shiftKey) {
       textNode.text(textarea.value);
+      onChange(textarea.value)
       removeTextarea(textNode, textarea, tr);
     }
     // on esc do not set value back to node
@@ -97,7 +98,7 @@ const createTextArea = (textNode: Konva.Text, areaPosition: Vector2d, tr: Konva.
     window.removeEventListener('click', handleOutsideClick);
     textNode.show();
 
-    tr.show();
+    tr?.show();
   }
 
   setTimeout(() => {

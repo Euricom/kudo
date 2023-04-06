@@ -148,6 +148,10 @@ export type Shapes = {
     points?: number[],
     thickness?: number,
     color?: string,
+    align?: string,
+    verticalAlign?: string,
+    fontSize?: number,
+    draggable?: boolean
 }
 
 export type CanvasTextProps = {
@@ -157,7 +161,6 @@ export type CanvasTextProps = {
     onSelect: () => void,
     onChange: (shapeProps: Shapes) => void,
     areaPosition: Vector2d,
-    fontSize: number,
     onDelete: (id: string) => void,
     editorFunction: EditorFunctions
 }

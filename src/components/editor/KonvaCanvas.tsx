@@ -1,7 +1,6 @@
 import React, { useRef, useState, useEffect, useMemo, type MutableRefObject, useCallback } from 'react'
 import { Stage, Layer, Rect, Line } from 'react-konva';
 import type Konva from 'konva'
-import { type Template } from '@prisma/client';
 import { type KonvaEventObject } from 'konva/lib/Node';
 import useDimensions from '~/hooks/useDimensions';
 import CanvasText from './canvasShapes/CanvasText';
@@ -12,7 +11,7 @@ import { CanvasShapes, EditorFunctions, type KonvaCanvasProps, type Shapes } fro
 
 const initialShapes: Shapes[] = [];
 
-const KonvaCanvas = ({ editorFunction, template, thickness, color, setFunction, setStage }: KonvaCanvasProps) => {
+const KonvaCanvas = ({ editorFunction, template, thickness, color, fontFamily, setFunction, setStage }: KonvaCanvasProps) => {
   const containerRef = useRef<HTMLDivElement>(null);
   const stageRef = useRef<Konva.Stage>() as MutableRefObject<Konva.Stage>;
   const layerRef = useRef<Konva.Layer>() as MutableRefObject<Konva.Layer>;
@@ -168,6 +167,7 @@ const KonvaCanvas = ({ editorFunction, template, thickness, color, setFunction, 
       type: CanvasShapes.Text,
       text: 'Text',
       fill: color,
+      fontFamily: fontFamily,
       x: pos.x / (stageDimensions.scale?.x ?? 1),
       y: pos.y / (stageDimensions.scale?.y ?? 1),
       fontSize: (stageDimensions?.height ?? 0) / 15,

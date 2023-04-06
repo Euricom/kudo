@@ -24,8 +24,8 @@ const Rectangle = ({ shapeProps, scale, isSelected, onSelect, onChange }: Rectan
         onTap={onSelect}
         ref={shapeRef}
         {...shapeProps}
-        x={shapeProps.x * scale}
-        y={shapeProps.y * scale}
+        x={shapeProps.x ?? 1 * scale}
+        y={shapeProps.y ?? 1 * scale}
         draggable={isSelected}
         onDragEnd={(e) => {
           onChange({

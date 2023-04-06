@@ -3,7 +3,7 @@ import { type NextPage } from "next";
 import Head from "next/head";
 import { UtilButtonsContent } from "~/hooks/useUtilButtons";
 import { GrEmoji } from "react-icons/gr"
-import { BiPencil, BiPalette, BiText, BiTrash, BiEraser, BiCircle } from "react-icons/bi"
+import { BiPencil, BiPalette, BiText, BiTrash, BiEraser, BiCircle, BiUndo } from "react-icons/bi"
 import { NavigationBarContent } from "~/components/navigation/NavBarTitle";
 import { type Template } from "@prisma/client";
 import { findTemplateById } from "~/server/services/templateService";
@@ -148,6 +148,9 @@ const Editor: NextPage<{ res: Template }> = ({ res }) => {
               </li>
             </ul>
           </div>
+          <button onClick={() => setSelectedButton(EditorFunctions.Undo)} className={"btn btn-circle btn-secondary " + (selectedButton == EditorFunctions.Undo ? "btn-accent" : "")}>
+            <BiUndo size={20} />
+          </button>
           <button onClick={() => setSelectedButton(EditorFunctions.Clear)} className={"btn btn-circle btn-secondary " + (selectedButton == EditorFunctions.Clear ? "btn-accent" : "")}>
             <BiTrash size={20} />
           </button>

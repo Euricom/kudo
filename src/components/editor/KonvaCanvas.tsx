@@ -1,4 +1,4 @@
-import React, { useRef, useState, useEffect, useMemo, type MutableRefObject } from 'react'
+import React, { useRef, useState, useEffect, useMemo, type MutableRefObject, useCallback } from 'react'
 import { Stage, Layer, Rect, Text, Line } from 'react-konva';
 import type Konva from 'konva'
 import { type Template } from '@prisma/client';
@@ -9,7 +9,7 @@ import Rectangle from './canvasShapes/Rectangle';
 import { type Vector2d } from 'konva/lib/types';
 import { v4 } from 'uuid';
 import ConfirmationModal from '~/components/input/ConfirmationModal';
-import { CanvasShapes, EditorFunctions, type KonvaCanvasProps, type LineProps, type Shapes } from '~/types';
+import { CanvasShapes, EditorFunctions, type KonvaCanvasProps, type Shapes } from '~/types';
 
 
 
@@ -25,10 +25,13 @@ const KonvaCanvas = ({ editorFunction, template, thickness, color, setFunction, 
   const staticLayerRef = useRef<Konva.Layer>() as MutableRefObject<Konva.Layer>;
   const [shapes, setShapes] = useState(initialShapes);
   const [selectedId, selectShape] = useState<string | null>(null);
+  const [history] = useState<Shapes[]>([]);
 
 
 
-  const [lines, setLines] = useState<LineProps[]>([]);
+  const [line, setLine] = useState<Shapes[]>([]);
+
+
   const isDrawing = useRef(false);
 
   const dimensions = useDimensions(containerRef);
@@ -41,17 +44,41 @@ const KonvaCanvas = ({ editorFunction, template, thickness, color, setFunction, 
     [dimensions]
   );
 
+  const undo = useCallback(() => {
+    const lastShape = history.shift()
+    const shapeToBe = history.find(s => s.id === lastShape?.id)
+    const shape = shapes.find(s => s.id === lastShape?.id)
+    if (!shape || !lastShape) {
+      return
+    }
+    const index = shapes.indexOf(shape)
+    if (shapeToBe) {
+      shapes[index] = shapeToBe
+    } else {
+      shapes.splice(index, 1)
+    }
+    setShapes(shapes)
+
+    setFunction(EditorFunctions.None)
+  }, [setFunction, history, shapes])
+
+
   useEffect(() => {
     if (editorFunction === EditorFunctions.Submit) {
       selectShape(null);
     }
-  }, [editorFunction]);
+    if (editorFunction === EditorFunctions.Undo) {
+      undo();
+    }
+  }, [editorFunction, undo]);
+
 
 
 
   const onClear = () => {
     layerRef.current?.removeChildren()
-    setLines([])
+    setLine([])
+    setShapes([])
     setFunction(EditorFunctions.None)
   }
 
@@ -87,6 +114,7 @@ const KonvaCanvas = ({ editorFunction, template, thickness, color, setFunction, 
       x: pos.x / (stageDimensions.scale?.x ?? 1),
       y: pos.y / (stageDimensions.scale?.y ?? 1),
     }
+    history.unshift(text)
     shapes.push(text)
     selectShape(text.id)
     setFunction(EditorFunctions.None)
@@ -99,17 +127,11 @@ const KonvaCanvas = ({ editorFunction, template, thickness, color, setFunction, 
 
 
   const handleMouseDown = () => {
-    if (editorFunction === EditorFunctions.Draw) {
+    if (editorFunction === EditorFunctions.Draw || editorFunction === EditorFunctions.Erase) {
       isDrawing.current = true;
       const pos = stageRef.current.getPointerPosition() ?? { x: 0, y: 0 };
-      setLines([...lines, { tool: "source-over", points: [pos.x, pos.y], thickness: thickness, color: color }]);
+      setLine([...line, { type: CanvasShapes.Line, id: v4(), tool: editorFunction === EditorFunctions.Erase ? "destination-out" : "source-over", points: [pos.x, pos.y], thickness: thickness, color: color }]);
     }
-    if (editorFunction === EditorFunctions.Erase) {
-      isDrawing.current = true;
-      const pos = stageRef.current.getPointerPosition() ?? { x: 0, y: 0 };
-      setLines([...lines, { tool: "destination-out", points: [pos.x, pos.y], thickness: thickness, color: color }]);
-    }
-
   };
   const handleMouseMove = () => {
     // no drawing - skipping
@@ -118,16 +140,27 @@ const KonvaCanvas = ({ editorFunction, template, thickness, color, setFunction, 
     }
     const stage = stageRef.current;
     const point = stage.getPointerPosition() ?? { x: 0, y: 0 };
-    const lastLine = lines[lines.length - 1] ?? { tool: "destination-out", points: [0, 0], thickness: thickness, color: color };
-    // add point
-    lastLine.points = lastLine.points.concat([point.x, point.y]);
+    if (line) {
+      const lastLine = line[line.length - 1] ?? { type: CanvasShapes.Line, id: "1", tool: "source-over", points: [0, 0], thickness: thickness, color: color };
+      // add point
+      lastLine.points = lastLine.points?.concat([point.x, point.y]);
 
-    // replace last
-    lines.splice(lines.length - 1, 1, lastLine);
-    setLines(lines.concat());
+      // replace last
+      line.splice(line.length - 1, 1, lastLine);
+      setLine(line.concat());
+    }
   };
 
   const handleMouseUp = () => {
+    if (line.length > 0) {
+      const newShape = line.pop()
+      if (newShape) {
+        history.unshift(newShape)
+        shapes.push(newShape)
+      }
+      setLine([])
+
+    }
     isDrawing.current = false;
   };
 
@@ -170,20 +203,21 @@ const KonvaCanvas = ({ editorFunction, template, thickness, color, setFunction, 
             <Header width={stageDimensions?.width} height={stageDimensions?.height} template={template} />
           </Layer>
           <Layer ref={layerRef}>
-            {lines.map((line, i) => (
-              <Line
-                key={i}
-                points={line.points}
-                stroke={line.color}
-                strokeWidth={line.thickness}
-                tension={0.5}
-                lineJoin='round'
-                lineCap="round"
-                globalCompositeOperation={line.tool === "destination-out" ? "destination-out" : "source-over"}
-              />
-            ))}
             {shapes.map((s, i) => {
               switch (s.type) {
+                case CanvasShapes.Line:
+                  return (
+                    <Line
+                      key={i}
+                      points={s.points}
+                      stroke={s.color}
+                      strokeWidth={s.thickness}
+                      tension={0.5}
+                      lineJoin='round'
+                      lineCap="round"
+                      globalCompositeOperation={s.tool === "destination-out" ? "destination-out" : "source-over"}
+                    />
+                  )
                 case CanvasShapes.Text:
                   return (
                     <CanvasText
@@ -199,10 +233,12 @@ const KonvaCanvas = ({ editorFunction, template, thickness, color, setFunction, 
                         const newShapes = shapes.slice();
                         newShapes[i] = newAttrs;
                         setShapes(newShapes);
+                        history.unshift(newAttrs)
+
                       }}
                       areaPosition={{
-                        x: (stageRef.current?.container().offsetLeft ?? 0) + s.x * (stageDimensions?.scale?.x ?? 1),
-                        y: (stageRef.current?.container().offsetTop ?? 0) + s.y * (stageDimensions?.scale?.y ?? 1),
+                        x: (stageRef.current?.container().offsetLeft ?? 0) + (s.x ?? 1) * (stageDimensions?.scale?.x ?? 1),
+                        y: (stageRef.current?.container().offsetTop ?? 0) + (s.y ?? 1) * (stageDimensions?.scale?.y ?? 1),
                       }}
                     />
                   );
@@ -220,11 +256,26 @@ const KonvaCanvas = ({ editorFunction, template, thickness, color, setFunction, 
                         const newShapes = shapes.slice();
                         newShapes[i] = newAttrs;
                         setShapes(newShapes);
+                        history.unshift(newAttrs)
                       }}
                     />
                   );
               }
             })}
+            {
+              line.map((l, i) => (
+                <Line
+                  key={i}
+                  points={l.points}
+                  stroke={l.color}
+                  strokeWidth={l.thickness}
+                  tension={0.5}
+                  lineJoin='round'
+                  lineCap="round"
+                  globalCompositeOperation={l.tool === "destination-out" ? "destination-out" : "source-over"}
+                />
+              ))
+            }
           </Layer>
         </Stage>
       </div>

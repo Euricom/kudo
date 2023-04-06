@@ -20,7 +20,7 @@ import LoadingBar from '~/components/LoadingBar';
 import { BsFillCircleFill } from 'react-icons/bs';
 
 import { type ColorResult, HuePicker } from 'react-color';
-import { EditorFunctions } from '~/types';
+import { EditorFunctions, Fonts } from '~/types';
 
 
 export async function getServerSideProps(context: { query: { template: string; }; }) {
@@ -48,6 +48,7 @@ const Editor: NextPage<{ res: Template }> = ({ res }) => {
   const createImage = api.kudos.createKudoImage.useMutation()
   const router = useRouter()
   const [color, setColor] = useState<string>("#121212");
+  const [font, setFont] = useState<string>("Arial");
 
   const userId: string = useSession().data?.user.id ?? "error"
 
@@ -106,9 +107,18 @@ const Editor: NextPage<{ res: Template }> = ({ res }) => {
       {/* Main */}
       <main className="flex flex-col items-center justify-center h-full z-50" >
         <div className="w-full lg:w-1/2 p-5 z-40 flex justify-center gap-2 mx-auto">
-          <button onClick={() => setSelectedButton(EditorFunctions.Text)} className={"btn btn-circle btn-secondary " + (selectedButton == EditorFunctions.Text ? "btn-accent" : "")}>
-            <BiText size={20} />
-          </button>
+
+          <div className="dropdown dropdown-start ">
+            <label tabIndex={0} className=""><button onClick={() => setSelectedButton(EditorFunctions.Text)} className={"btn btn-circle btn-secondary " + (selectedButton == EditorFunctions.Text ? "btn-accent" : "")}><BiText size={20} /> </button></label>
+            <ul tabIndex={0} className=" dropdown-content menu p-2 shadow bg-base-100 rounded-box w-52">
+              <label className="label text-xs">Font</label>
+              <select className="select select-bordered w-full max-w-xs" value={font} onChange={(e) => setFont(e.target.value)}>
+                {Fonts.map(f =>
+                  <option key={f}>{f}</option>
+                )}
+              </select>
+            </ul>
+          </div>
           <div className="dropdown dropdown-start">
             <label tabIndex={0} className=""><button onClick={() => setSelectedButton(selectedButton == EditorFunctions.Erase ? EditorFunctions.Erase : EditorFunctions.Draw)} className={"btn btn-circle btn-secondary " + ((selectedButton == EditorFunctions.Draw || selectedButton == EditorFunctions.Erase) ? "btn-accent" : "")}>{selectedButton === EditorFunctions.Erase ? <BiEraser size={20} /> : <BiPencil size={20} />}</button></label>
             <ul tabIndex={0} className="dropdown-content menu p-2 shadow bg-base-100 rounded-box w-52">
@@ -155,7 +165,7 @@ const Editor: NextPage<{ res: Template }> = ({ res }) => {
             <BiTrash size={20} />
           </button>
         </div>
-        <KonvaCanvas editorFunction={selectedButton} template={res} thickness={thickness} color={color} setFunction={setSelectedButton} setStage={setStage} />
+        <KonvaCanvas editorFunction={selectedButton} template={res} thickness={thickness} color={color} fontFamily={font} setFunction={setSelectedButton} setStage={setStage} />
       </main>
       <FAB text={"Send"} icon={<FiSend />} onClick={() => setSelectedButton(EditorFunctions.Submit)} />
     </>

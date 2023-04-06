@@ -129,6 +129,7 @@ export type KonvaCanvasProps = {
     template: Template,
     thickness: number,
     color: string,
+    fontFamily: string,
     setFunction: (type: EditorFunctions) => void,
     setStage: (stage: Konva.Stage) => void
 }
@@ -185,3 +186,16 @@ export type RectangleProps = {
     onSelect: () => void,
     onChange: (shapeProps: Shapes) => void
 }
+
+export const Fonts = [
+    "Helvetica",
+    "Garamond",
+    "Futura",
+    "Bodoni",
+    "Arial",
+    "Times New Roman",
+    "Verdana",
+    "Rockwell",
+    "FranklinGothic",
+    "Univers",
+    "Frutiger"]

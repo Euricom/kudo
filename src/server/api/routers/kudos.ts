@@ -34,6 +34,10 @@ const inputGetImagesByIds = object({
 
 export const kudoRouter = createTRPCRouter({
 
+    getAllKudos: protectedProcedure.query(({ ctx }) => {
+        const kudo = ctx.prisma.kudo.findMany({})
+        return kudo
+    }),
 
     getKudosByUserId: protectedProcedure.input(inputGetById).query(({ input, ctx }) => {
         return ctx.prisma.kudo.findMany({

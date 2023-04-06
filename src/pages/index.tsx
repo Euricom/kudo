@@ -6,15 +6,14 @@ import { NavigationBarContent } from "~/components/navigation/NavBarTitle";
 import NavButtons from "~/components/navigation/NavButtons";
 import SessionList from "~/components/sessions/SessionList";
 import { api } from "~/utils/api";
-import { type Session } from "~/types";
 import { useSession } from "next-auth/react";
 import { UtilButtonsContent } from "~/hooks/useUtilButtons";
 
 
 const Home: NextPage = () => {
-  const userId: string | undefined = useSession().data?.user.id
+  const userId = useSession().data?.user.id
 
-  const sessions: Session[] | undefined = api.sessions.getSessionsBySpeaker.useQuery({ id: userId ?? "error" }).data
+  const sessions= api.sessions.getSessionsBySpeaker.useQuery({ id: userId ?? "error" }).data
   if (!sessions) {
     return <div>Loading...</div>;
   }

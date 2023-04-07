@@ -39,7 +39,7 @@ export const userRouter = createTRPCRouter({
                 },
                 data: {
                     id: userId,
-                    role: adminList.includes(userId) ? "ADMIN" : "USER",
+                    role: adminList.includes(userId??"") ? "ADMIN" : "USER",
                 }
             });
         }

@@ -16,11 +16,11 @@ import { useRouter } from "next/router";
 
 const All: NextPage = () => {
   const router = useRouter()
+  const user = useSession().data?.user
 
   const usersQuery = api.users.getRelevantUsers.useQuery()
   const users = usersQuery.data
 
-  const user = useSession().data?.user
 
   const [sort, setSort] = useState<sortPosibillities>(sortPosibillities.SpeakerA)
 

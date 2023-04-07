@@ -9,6 +9,7 @@ import { FiMonitor } from "react-icons/fi";
 import { useRouter } from "next/router";
 import { useRef, useState, useEffect } from "react";
 import { type PresentationKudo } from "~/types";
+import { useTransition, animated } from '@react-spring/web'; 
 
 export function getServerSideProps(context: { query: { id: string } }) {
   return {
@@ -29,6 +30,21 @@ const Presentation: NextPage<{ id: string }> = ({ id }) => {
     id: session?.id ?? "",
   });
 
+  const DURATION_SECONDEN = 3;
+
+  const transitions = useTransition(kudos, {
+    from: { x: (dropzoneRef.current?.offsetWidth??1)/2, y: (dropzoneRef.current?.offsetHeight??1)/2,  opacity: 0, scale: 3, rotate: 0},
+    enter: (kudo, index) => async (next) => (
+      await next({ opacity: 1, delay: index * (DURATION_SECONDEN+1) * 1000}),
+      await next({ x: kudo.x, y: kudo.y, scale: 1, rotate: kudo.rot,
+        config: {
+          duration: DURATION_SECONDEN * 1000,
+        }})
+    ),
+  })
+
+
+
   useEffect(() => {
     const newKudos = allKudos?.map((kudo) => {
       const {rX, rY, rot} = getRandomPosition();
@@ -41,8 +57,8 @@ const Presentation: NextPage<{ id: string }> = ({ id }) => {
       }
     }) ?? [];
     setKudos(k => [...k, ...newKudos.filter((kudo) => !k.find((item) => item.id === kudo.id))]);
-    // setKudos(k => [...k, ...newKudos]);
-  }, [kudos, allKudos]);
+  }, [allKudos]);
+
 
   if (sessionQuery.isLoading || kudoLoading) {
     return <LoadingBar />;
@@ -88,19 +104,17 @@ const Presentation: NextPage<{ id: string }> = ({ id }) => {
       >
         <div ref={dropzoneRef} className="relative h-full w-full overflow-hidden">
           {kudos == undefined || kudos.length == 0 ? (
-              <h1>No Kudos received Yet</h1>
+              <></>
             ) : (
-              kudos.map((kudo) => {
-                return <>
-                  <div 
+              transitions((style, kudo) => ( kudo &&
+                  <animated.div 
                     key={kudo.id} 
-                    className="absolute left-0 top-0 -translate-x-1/2 -translate-y-1/2 presentation-card-appear"
-                    style={{ top: kudo.y, left: kudo.x, transform: `rotate(${kudo.rot}deg)`}}
+                    className="absolute"
+                    style={{translateX: '-50%', translateY: '-50%', ...style}}
                   >
                     <KudoCard kudo={kudo.kudo} hideLiked={true}/>
-                  </div>
-                </>
-              })
+                  </animated.div>
+              ))
           )}
         </div>
       </main>

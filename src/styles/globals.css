@@ -12,19 +12,3 @@
 .kudo-header-container {
     container-type: inline-size;
 }
-
-@keyframes append-animate {
-	from {
-		transform: scale(0);
-		opacity: 0;
-	}
-	to {
-		transform: scale(1);
-		opacity: 1;	
-	}
-}
-
-/* animate new box */
-.presentaion-card-appear {
-	animation: append-animate 1s linear;
-}

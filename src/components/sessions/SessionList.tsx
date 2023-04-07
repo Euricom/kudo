@@ -1,17 +1,44 @@
 import { sortDate, sortSpeaker, sortTitle } from "~/server/services/sessionService";
-import { sortPosibillities, type SessionArray } from "~/types";
+import { pages, sortPosibillities, type SessionArray } from "~/types";
 import { api } from "~/utils/api";
 import SessionCard from "~/components/sessions/Session";
 import SortAndFilter from "~/components/input/SortAndFilter";
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
+import { useRouter } from "next/router";
+import { useFilters } from "../input/RememberFilter";
 
 
 const SessionList = ({ sessions }: SessionArray) => {
+    const router = useRouter()
     const users = api.users.getAllUsers.useQuery().data
 
-    const [sort, setSort] = useState<sortPosibillities>(sortPosibillities.DateD)
-    const [filter, setFilter] = useState<string>()
+    const pageString = router.asPath
+    let page = pages.In
+    switch (pageString) {
+        case ("/all"): page = pages.All
+            break;
+        case ("/"): page = pages.In
+            break;
+        default: page = pages.In
+    }
 
+
+    const data = useFilters().data
+    let index = -1
+    if (data.pages.includes(page)) {
+        index = data.pages.indexOf(page)
+    }
+    const [sort, setSort] = useState<sortPosibillities>(data.sorts[index] ?? sortPosibillities.DateD)
+    const [filter, setFilter] = useState<string>(data.filters[index] ?? "")
+
+    useEffect(() => {
+        if (data.pages.includes(page)) {
+            const index = data.pages.indexOf(page)
+            setFilter(data.filters[index] ?? "")
+            setSort(data.sorts[index] ?? sortPosibillities.DateD)
+
+        }
+    }, [data.pages, data.filters, data.sorts, page])
 
 
     function sortSessions() {
@@ -66,7 +93,7 @@ const SessionList = ({ sessions }: SessionArray) => {
     }
     return (
         <>
-            <SortAndFilter setSort={setSort} filter={filter} setFilter={setFilter} />
+            <SortAndFilter page={page} sort={sort} setSort={setSort} filter={filter} setFilter={setFilter} />
             <div className="flex flex-col gap-8 h-full justify-start p-5">
                 {sortSessions()}
             </div>

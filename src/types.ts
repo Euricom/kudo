@@ -88,6 +88,11 @@ export type SessionContextValue = {
     anonymous: boolean;
     setAnonymous: React.Dispatch<React.SetStateAction<boolean>>;
 }
+export type FilterContextValue = {
+    pages: pages[]
+    filters: string[];
+    sorts: sortPosibillities[];
+}
 
 export type SessionProps = {
     session: Session
@@ -112,10 +117,18 @@ export enum sortPosibillities {
     TitleD = 'Title ↑',
 }
 
+export enum pages {
+    In = "/",
+    Out = "/out",
+    All = "/all",
+}
+
 export type SortAndFilterProps = {
+    page: pages;
+    sort: sortPosibillities;
     setSort: React.Dispatch<React.SetStateAction<sortPosibillities>>;
     filter?: string
-    setFilter: React.Dispatch<React.SetStateAction<string | undefined>>;
+    setFilter: React.Dispatch<React.SetStateAction<string>>;
 }
 export enum CanvasShapes {
     Text,

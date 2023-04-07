@@ -6,17 +6,24 @@ import { NavigationBarContent } from "~/components/navigation/NavBarTitle";
 import NavButtons from "~/components/navigation/NavButtons";
 import SessionList from "~/components/sessions/SessionList";
 import { api } from "~/utils/api";
-import { type Session } from "~/types";
 import { useSession } from "next-auth/react";
 import { UtilButtonsContent } from "~/hooks/useUtilButtons";
+import LoadingBar from "~/components/LoadingBar";
+import { useRouter } from "next/router";
 
 
 const Home: NextPage = () => {
-  const userId: string | undefined = useSession().data?.user.id
+  const router = useRouter()
+  const user = useSession().data?.user
 
-  const sessions: Session[] | undefined = api.sessions.getSessionsBySpeaker.useQuery({ id: userId ?? "error" }).data
-  if (!sessions) {
-    return <div>Loading...</div>;
+  const sessionsQuery = api.sessions.getSessionsBySpeaker.useQuery({ id: user?.id ?? "error" })
+  const sessions = sessionsQuery.data
+  if (sessionsQuery.isLoading || !sessions || !user) {
+    return <LoadingBar />;
+  }
+
+  if (sessions.length === 0) {
+    router.replace("/out").catch(console.error)
   }
 
   return (

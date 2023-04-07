@@ -67,6 +67,12 @@ export type AADResponseUsers = {
     value: User[]
     '@odata.nextLink': string
 }
+
+export enum UserRole {
+    ADMIN = "ADMIN",
+    USER = "USER",
+}
+
 export type User = {
     businessPhones: string[],
     displayName: string,
@@ -80,6 +86,15 @@ export type User = {
     userPrincipalName: string,
     id: string
 }
+
+export type UserWCount = {
+    user: User,
+    sessionCount: number
+    sendKudoCount: number
+    receiveKudoCount: number
+}
+
+
 export type SessionContextValue = {
     session: string;
     setSession: React.Dispatch<React.SetStateAction<string>>;

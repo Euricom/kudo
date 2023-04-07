@@ -53,10 +53,11 @@ export const findUserById = async (id: string): Promise<User> => {
 };
 
 
-export const findUserImageById = async (id: string) => {
+export const findUserImageById = async (id: string): Promise<Blob> => {
     const options = await getToken()
-    const user = await fetch('https://graph.microsoft.com/v1.0/users/cdb23f58-65db-4b6b-b132-cf2d13d08e76/photo/$value', options)
-    console.log(user);
+    const response = await fetch('https://graph.microsoft.com/v1.0/users/' + id + '/photo/$value', options)
+    const blob = await response.blob();
+    console.log(blob);
+    return blob
 
-    return user
 };

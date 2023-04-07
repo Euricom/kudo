@@ -8,10 +8,12 @@ import { NavigationBarContent } from "~/components/navigation/NavBarTitle";
 import { useState } from "react";
 import { api } from "~/utils/api";
 import { useSession } from "next-auth/react";
+import Image from 'next/image';
 
 
 import { type Session, type User } from "~/types";
 import { UtilButtonsContent } from "~/hooks/useUtilButtons";
+
 
 
 const New: NextPage = () => {
@@ -22,15 +24,24 @@ const New: NextPage = () => {
   const [anonymous, setAnonymous] = useState<boolean>(false);
   const me = useSession().data?.user.id
 
+  const blob: Blob = api.users.getUserImageById.useQuery({ id: "cdb23f58-65db-4b6b-b132-cf2d13d08e76" }).data as Blob
+  console.log(blob);
 
-  const adil = api.users.getUserImageById.useQuery({ id: "cdb23f58-65db-4b6b-b132-cf2d13d08e76" })
+  if (!blob) {
+    return <></>
+  }
+
+  console.log(blob);
+  console.log(typeof blob);
+  const reader = new FileReader();
+  const adil = reader.readAsDataURL(blob);
   console.log(adil);
-  console.log(adil.data);
+
 
 
 
   const sessions: Session[] | undefined = api.sessions.getAll.useQuery().data
-  if (!sessions || !users || !adil) {
+  if (!sessions || !users) {
     return <div>Loading...</div>;
   }
 
@@ -64,6 +75,7 @@ const New: NextPage = () => {
         <></>
       </UtilButtonsContent>
       <main className="flex flex-col items-center justify-center gap-4">
+        {/* <Image src={av} alt="Profile picture" fill /> */}
         <FcPodiumWithAudience size={100} />
         <Select data-cy="SelectSession" value={session?.title} onChange={(e: React.ChangeEvent<HTMLInputElement>): void => setSession(sessions.find(s => s.title === e.target.value) ? sessions.find(s => s.title === e.target.value) : { id: "0", title: e.target.value, date: "0", speakerId: "no" })} label="Session" options={visibibleSessions} displayLabel="title" valueLabel="id" />
         <FcPodiumWithSpeaker size={100} />

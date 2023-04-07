@@ -26,10 +26,10 @@ export const userRouter = createTRPCRouter({
     }),
 
     getUserImageById: protectedProcedure.input(inputGetById).query(async ({ input }) => {
-        const user = await findUserImageById(input.id)
-        console.log("voor");
-        console.log(user);
-        return user
+        const blob = await findUserImageById(input.id)
+        console.log(blob);
+
+        return blob
 
     }),
 

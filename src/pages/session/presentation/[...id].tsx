@@ -30,15 +30,15 @@ const Presentation: NextPage<{ id: string }> = ({ id }) => {
     id: session?.id ?? "",
   });
 
-  const DURATION_SECONDEN = 3;
+  const DURATION_SECONDEN = 4;
 
   const transitions = useTransition(kudos, {
-    from: { x: (dropzoneRef.current?.offsetWidth??1)/2, y: (dropzoneRef.current?.offsetHeight??1)/2,  opacity: 0, scale: 3, rotate: 0},
+    from: {x: 0, y: 0,  opacity: 0, scale: 3, rotate: 0},
     enter: (kudo, index) => async (next) => (
-      await next({ opacity: 1, delay: index * (DURATION_SECONDEN+1) * 1000}),
-      await next({ x: kudo.x, y: kudo.y, scale: 1, rotate: kudo.rot,
+      await next({ opacity: 1, delay: index * (DURATION_SECONDEN * 1000 + 1000)}),
+      await next({x: kudo.x, y: kudo.y, scale: 1, rotate: kudo.rot, delay: DURATION_SECONDEN *0.6 *1000,
         config: {
-          duration: DURATION_SECONDEN * 1000,
+          duration: DURATION_SECONDEN *0.4 *1000,
         }})
     ),
   })
@@ -69,10 +69,12 @@ const Presentation: NextPage<{ id: string }> = ({ id }) => {
   }
 
   function getRandomPosition() {
-    const x = (dropzoneRef.current?.offsetWidth??1)*0.7;
-    const y = (dropzoneRef.current?.offsetHeight??1)*0.8;
-    const rX = Math.floor(Math.random() * x);
-    const rY = Math.floor(Math.random() * y);
+    const width = dropzoneRef.current?.offsetWidth??1;
+    const height = dropzoneRef.current?.offsetHeight??1;
+    const x = width*0.7;
+    const y = height*0.8;
+    const rX = Math.floor(Math.random() * x) - (x/2);
+    const rY = Math.floor(Math.random() * y) - (y/2);
 
     const rot = Math.floor(Math.random() * (90)) - 45
 
@@ -102,15 +104,16 @@ const Presentation: NextPage<{ id: string }> = ({ id }) => {
         className="flex flex-col items-center justify-center h-full"
         data-cy="Session"
       >
-        <div ref={dropzoneRef} className="relative h-full w-full overflow-hidden">
+        <div ref={dropzoneRef} className="relative flex justify-center items-center h-full w-full overflow-hidden">
+          <div className="w-64 h-64 bg-white border-4"></div>
           {kudos == undefined || kudos.length == 0 ? (
               <></>
             ) : (
               transitions((style, kudo) => ( kudo &&
                   <animated.div 
                     key={kudo.id} 
-                    className="absolute"
-                    style={{translateX: '-50%', translateY: '-50%', ...style}}
+                    className="absolute -translate-x-1/2 -translate-y-1/2"
+                    style={{...style}}
                   >
                     <KudoCard kudo={kudo.kudo} hideLiked={true}/>
                   </animated.div>

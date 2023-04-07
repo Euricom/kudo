@@ -8,6 +8,10 @@ import { api } from "~/utils/api";
 import FileSaver from "file-saver";
 import LoadingBar from "~/components/LoadingBar";
 import { FiDownload } from "react-icons/fi";
+import { useRouter } from "next/router";
+import { useSession } from "next-auth/react";
+import { UserRole } from "~/types";
+import { useEffect } from "react";
 
 export function getServerSideProps(context: { query: { id: string } }) {
   return {
@@ -18,6 +22,9 @@ export function getServerSideProps(context: { query: { id: string } }) {
 }
 
 const Session: NextPage<{ id: string }> = ({ id }) => {
+  const router = useRouter()
+  const user = useSession().data?.user
+
   const sessionQuery = api.sessions.getSessionById.useQuery({ id: id });
   const session = sessionQuery.data;
   const kudosQuery = api.kudos.getKudosBySessionId.useQuery({
@@ -27,6 +34,11 @@ const Session: NextPage<{ id: string }> = ({ id }) => {
   const ids = kudos?.map((kudo) => kudo.image) ?? [];
   const imagesQuery = api.kudos.getImagesByIds.useQuery({ ids: ids });
   const images = imagesQuery.data;
+
+  useEffect(() => {
+    if(user?.role !== UserRole.ADMIN && user?.id !== session?.speakerId) 
+      router.replace("/403").catch(console.error)
+  }, [user, router, session?.speakerId])
 
   if (sessionQuery.isLoading || kudosQuery.isLoading || imagesQuery.isLoading) {
     return <LoadingBar />;

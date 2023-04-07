@@ -120,8 +120,6 @@ export const kudoRouter = createTRPCRouter({
         const kudo = (await ctx.prisma.kudo.create({
             data: {
                 image: input.image,
-                liked: false,
-                comment: '',
                 sessionId: input.sessionId,
                 userId: input.userId,
                 anonymous: input.anonymous,

@@ -7,11 +7,12 @@ import { UtilButtonsContent } from "~/hooks/useUtilButtons";
 import Link from "next/link";
 import { api } from "~/utils/api";
 import { AiOutlineHeart, AiFillHeart } from 'react-icons/ai'
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { FiSend } from "react-icons/fi";
 import ConfirmationModal from '~/components/input/ConfirmationModal';
 import { useSession } from "next-auth/react";
 import { UserRole } from "~/types";
+import { useRouter } from "next/router";
 
 
 export function getServerSideProps(context: { query: { id: string }; }) {
@@ -24,6 +25,7 @@ export function getServerSideProps(context: { query: { id: string }; }) {
 }
 
 const KudoDetail: NextPage<{ id: string }> = ({ id }) => {
+  const router = useRouter()
   const user = useSession().data?.user
 
   const deleteKudo = api.kudos.deleteKudoById.useMutation()
@@ -38,12 +40,14 @@ const KudoDetail: NextPage<{ id: string }> = ({ id }) => {
   const [sendReady, setSendReady] = useState<boolean>(false)
 
   async function handleclick() {
-    try {
-      await likeKudoById.mutateAsync({ id: kudo?.id ?? "error", liked: !kudo?.liked })
-      await refetchKudo()
-    }
-    catch (e) {
-      console.log(e);
+    if (user?.id === session?.speakerId) {
+      try {
+        await likeKudoById.mutateAsync({ id: kudo?.id ?? "error", liked: !kudo?.liked })
+        await refetchKudo()
+      }
+      catch (e) {
+        console.log(e);
+      }
     }
   }
 
@@ -58,6 +62,11 @@ const KudoDetail: NextPage<{ id: string }> = ({ id }) => {
       console.log(e);
     }
   }
+
+  useEffect(() => {
+    if(user?.role !== UserRole.ADMIN && user?.id !== kudo?.userId && user?.id !== session?.speakerId) 
+      router.replace("/403").catch(console.error)
+  }, [user, router, kudo?.userId, session?.speakerId])
 
   if (!image || !kudo) {
     return <div>loading...</div>
@@ -100,18 +109,20 @@ const KudoDetail: NextPage<{ id: string }> = ({ id }) => {
           </div>
           <div className="flex flex-row left-0 mt-2 gap-5 md:gap-10 ">
             <div className="btn btn-circle btn-ghost" data-cy="Like" onClick={() => void handleclick()}>
-
               {kudo.liked ? <AiFillHeart size={25} /> : <AiOutlineHeart size={25} />}
             </div>
-            {kudo.comment ?
-              <div className="h-full w-full pt-3">
-                <h1 >{kudo.comment}</h1></div>
-              : <div className="flex flex-row left justify-end w-fit">
+            {!kudo.comment && user?.id === session?.speakerId?
+              <div className="flex flex-row left justify-end w-fit">
                 <input value={comment} onChange={(e) => setComment(e.target.value)} type="text" placeholder="place your comment here" className="input input-bordered max-w-xs w-full" data-cy="comment" />
                 <div className="btn btn-circle btn-ghost mt-2" onClick={() => setSendReady(true)}>
                   <FiSend size={20} />
                 </div>
-              </div>}
+              </div>
+              :
+              <div className="h-full w-full pt-3">
+                <h1 >{kudo.comment}</h1>
+              </div>
+            }
           </div>
         </div>
       </div>

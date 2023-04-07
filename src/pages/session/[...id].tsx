@@ -36,9 +36,10 @@ const Session: NextPage<{ id: string }> = ({ id }) => {
   const images = imagesQuery.data;
 
   useEffect(() => {
+    if(sessionQuery.isLoading) return
     if(user?.role !== UserRole.ADMIN && user?.id !== session?.speakerId) 
       router.replace("/403").catch(console.error)
-  }, [user, router, session?.speakerId])
+  }, [user, router, session?.speakerId, sessionQuery.isLoading])
 
   if (sessionQuery.isLoading || kudosQuery.isLoading || imagesQuery.isLoading) {
     return <LoadingBar />;

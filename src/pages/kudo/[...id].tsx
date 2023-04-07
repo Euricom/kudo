@@ -13,6 +13,7 @@ import ConfirmationModal from '~/components/input/ConfirmationModal';
 import { useSession } from "next-auth/react";
 import { UserRole } from "~/types";
 import { useRouter } from "next/router";
+import LoadingBar from "~/components/LoadingBar";
 
 
 export function getServerSideProps(context: { query: { id: string }; }) {
@@ -33,8 +34,10 @@ const KudoDetail: NextPage<{ id: string }> = ({ id }) => {
   const likeKudoById = api.kudos.likeKudoById.useMutation()
   const commentKudoById = api.kudos.commentKudoById.useMutation()
 
-  const { data: kudo, refetch: refetchKudo } = api.kudos.getKudoById.useQuery({ id: id })
-  const image: string | undefined = api.kudos.getImageById.useQuery({ id: kudo?.image ?? "error" }).data?.dataUrl
+  const kudoQuery = api.kudos.getKudoById.useQuery({ id: id })
+  const { data: kudo, refetch: refetchKudo } = kudoQuery
+  const imageQuery = api.kudos.getImageById.useQuery({ id: kudo?.image ?? "error" })
+  const image = imageQuery.data?.dataUrl
   const sessionQuery = api.sessions.getSessionById.useQuery({ id: kudo?.sessionId ?? "error" })
   const session = sessionQuery.data
   const [comment, setComment] = useState<string>("")
@@ -65,13 +68,13 @@ const KudoDetail: NextPage<{ id: string }> = ({ id }) => {
   }
 
   useEffect(() => {
-    if(!user || sessionQuery.isLoading) return
+    if(!user || sessionQuery.isLoading || kudoQuery.isLoading) return
     if(user?.role !== UserRole.ADMIN && user?.id !== kudo?.userId && user?.id !== session?.speakerId) 
       router.replace("/403").catch(console.error)
-  }, [user, router, kudo?.userId, session?.speakerId, sessionQuery.isLoading])
+  }, [user, router, kudo?.userId, session?.speakerId, sessionQuery.isLoading, kudoQuery.isLoading])
 
-  if (!image || !kudo) {
-    return <div>loading...</div>
+  if (!image || !kudo || !session || imageQuery.isLoading || sessionQuery.isLoading || kudoQuery.isLoading) {
+    return <LoadingBar />
   }
 
 

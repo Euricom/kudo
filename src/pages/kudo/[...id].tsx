@@ -64,6 +64,7 @@ const KudoDetail: NextPage<{ id: string }> = ({ id }) => {
   }
 
   useEffect(() => {
+    if(!user) return
     if(user?.role !== UserRole.ADMIN && user?.id !== kudo?.userId && user?.id !== session?.speakerId) 
       router.replace("/403").catch(console.error)
   }, [user, router, kudo?.userId, session?.speakerId])
@@ -108,7 +109,7 @@ const KudoDetail: NextPage<{ id: string }> = ({ id }) => {
             <Image className="shadow-2xl" src={image} fill alt="Kudo" />
           </div>
           <div className="flex flex-row left-0 mt-2 gap-5 md:gap-10 ">
-            <div className="btn btn-circle btn-ghost" data-cy="Like" onClick={() => void handleclick()}>
+            <div className={`btn btn-circle btn-ghost ${user?.id === session?.speakerId?"":"pointer-events-none"}`} data-cy="Like" onClick={() => void handleclick()}>
               {kudo.liked ? <AiFillHeart size={25} /> : <AiOutlineHeart size={25} />}
             </div>
             {!kudo.comment && user?.id === session?.speakerId?

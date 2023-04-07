@@ -24,7 +24,7 @@ const Menu = ({ children }: MenuProps) => {
                         <label className='btn btn-circle absolute top-3 right-3 btn-ghost text-2xl' htmlFor="my-drawer-3" data-cy='CloseMenu'>X</label>
                         <div className='flex flex-col w-fit'>
                             <div className="avatar ">
-                                <div className="w-24 rounded-xl">
+                                <div className="w-24 rounded-xl relative">
                                     <Image
                                         src={user?.image ?? avatar}
                                         alt="Profile picture"

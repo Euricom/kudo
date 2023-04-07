@@ -90,7 +90,7 @@ const KudoDetail: NextPage<{ id: string }> = ({ id }) => {
         <h1>Kudo {session?.title ?? "no title"}</h1>
       </NavigationBarContent>
       <UtilButtonsContent>
-        {user?.id === kudo?.userId ||user?.role === UserRole.ADMIN && 
+        {((user?.id === kudo?.userId || user?.role === UserRole.ADMIN) && user?.id !== session?.speakerId) && 
           <Link className="btn btn-ghost btn-circle" onClick={del} href="/out" data-cy="deleteButton">
             <FaTrashAlt size={20} />
           </Link>

@@ -50,9 +50,9 @@ const SortAndFilter = ({ setSort }: SortAndFilterProps) => {
                         {visibleSort.map((x) => {
                             return (
                             <>
-                            <li className="btn btn-ghost" onClick={() => setSort(x.sort)}>
-                                {x.sort}
-                            </li>
+                                <li key={x.sort} className="btn btn-ghost" onClick={() => setSort(x.sort)}>
+                                    {x.sort}
+                                </li>
                             </>
                             )
                         })}

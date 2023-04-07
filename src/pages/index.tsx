@@ -9,15 +9,21 @@ import { api } from "~/utils/api";
 import { useSession } from "next-auth/react";
 import { UtilButtonsContent } from "~/hooks/useUtilButtons";
 import LoadingBar from "~/components/LoadingBar";
+import { useRouter } from "next/router";
 
 
 const Home: NextPage = () => {
-  const userId = useSession().data?.user.id
+  const router = useRouter()
+  const user = useSession().data?.user
 
-  const sessionsQuery = api.sessions.getSessionsBySpeaker.useQuery({ id: userId ?? "error" })
+  const sessionsQuery = api.sessions.getSessionsBySpeaker.useQuery({ id: user?.id ?? "error" })
   const sessions = sessionsQuery.data
-  if (sessionsQuery.isLoading || !sessions) {
+  if (sessionsQuery.isLoading || !sessions || !user) {
     return <LoadingBar />;
+  }
+
+  if (sessions.length === 0) {
+    router.replace("/out").catch(console.error)
   }
 
   return (

@@ -71,13 +71,13 @@ const NavBar = () => {
                             <label tabIndex={0} className="btn btn-ghost btn-circle m-1" data-cy='SettingsButton'><BsGearFill /></label>
                             <ul tabIndex={0} className="dropdown-content menu p-2 shadow bg-base-100 rounded-box w-52">
                                 <li>
-                                    <ThemeButton />
-                                </li>
-                                <li>
                                     <label className="label cursor-pointer">
                                         <span className="label-text">Notifications</span>
                                         <input type="checkbox" className="toggle" />
                                     </label>
+                                </li>
+                                <li>
+                                    <ThemeButton />
                                 </li>
                             </ul>
                         </div>

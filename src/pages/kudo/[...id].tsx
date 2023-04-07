@@ -10,6 +10,8 @@ import { AiOutlineHeart, AiFillHeart } from 'react-icons/ai'
 import { useState } from "react";
 import { FiSend } from "react-icons/fi";
 import ConfirmationModal from '~/components/input/ConfirmationModal';
+import { useSession } from "next-auth/react";
+import { UserRole } from "~/types";
 
 
 export function getServerSideProps(context: { query: { id: string }; }) {
@@ -22,6 +24,7 @@ export function getServerSideProps(context: { query: { id: string }; }) {
 }
 
 const KudoDetail: NextPage<{ id: string }> = ({ id }) => {
+  const user = useSession().data?.user
 
   const deleteKudo = api.kudos.deleteKudoById.useMutation()
   const deleteImage = api.kudos.deleteImageById.useMutation()
@@ -78,9 +81,11 @@ const KudoDetail: NextPage<{ id: string }> = ({ id }) => {
         <h1>Kudo {session?.title ?? "no title"}</h1>
       </NavigationBarContent>
       <UtilButtonsContent>
-        <Link className="btn btn-ghost btn-circle" onClick={del} href="/out" data-cy="deleteButton">
-          <FaTrashAlt size={20} />
-        </Link>
+        {user?.id === kudo?.userId ||user?.role === UserRole.ADMIN && 
+          <Link className="btn btn-ghost btn-circle" onClick={del} href="/out" data-cy="deleteButton">
+            <FaTrashAlt size={20} />
+          </Link>
+        }
       </UtilButtonsContent>
       {/* <div className="flex justify-center ">
         <div className="card bg-white text-gray-800 aspect-[3/2] rounded-none w-[320px] h-[208px] mt-20">

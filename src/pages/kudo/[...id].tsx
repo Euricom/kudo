@@ -35,7 +35,8 @@ const KudoDetail: NextPage<{ id: string }> = ({ id }) => {
 
   const { data: kudo, refetch: refetchKudo } = api.kudos.getKudoById.useQuery({ id: id })
   const image: string | undefined = api.kudos.getImageById.useQuery({ id: kudo?.image ?? "error" }).data?.dataUrl
-  const session = api.sessions.getSessionById.useQuery({ id: kudo?.sessionId ?? "error" }).data
+  const sessionQuery = api.sessions.getSessionById.useQuery({ id: kudo?.sessionId ?? "error" })
+  const session = sessionQuery.data
   const [comment, setComment] = useState<string>("")
   const [sendReady, setSendReady] = useState<boolean>(false)
 
@@ -64,10 +65,10 @@ const KudoDetail: NextPage<{ id: string }> = ({ id }) => {
   }
 
   useEffect(() => {
-    if(!user) return
+    if(!user || sessionQuery.isLoading) return
     if(user?.role !== UserRole.ADMIN && user?.id !== kudo?.userId && user?.id !== session?.speakerId) 
       router.replace("/403").catch(console.error)
-  }, [user, router, kudo?.userId, session?.speakerId])
+  }, [user, router, kudo?.userId, session?.speakerId, sessionQuery.isLoading])
 
   if (!image || !kudo) {
     return <div>loading...</div>

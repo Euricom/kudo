@@ -1,5 +1,5 @@
 import { type NextPage } from "next";
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import Head from "next/head";
 import FAB from "~/components/navigation/FAB";
 import { GrAdd } from 'react-icons/gr';
@@ -10,13 +10,24 @@ import { api } from "~/utils/api";
 import LoadingBar from "~/components/LoadingBar";
 import SpeakerCard from "~/components/speaker/SpeakerCard";
 import SortAndFilter from "~/components/input/SortAndFilter";
-import { sortPosibillities } from "~/types";
+import { UserRole, sortPosibillities } from "~/types";
+import { useSession } from "next-auth/react";
+import { useRouter } from "next/router";
 
 const All: NextPage = () => {
+  const router = useRouter()
+
   const usersQuery = api.users.getRelevantUsers.useQuery()
   const users = usersQuery.data
 
+  const user = useSession().data?.user
+
   const [sort, setSort] = useState<sortPosibillities>(sortPosibillities.SpeakerA)
+
+  useEffect(() => {
+    if(user?.role !== UserRole.ADMIN) 
+      router.replace("/403").catch(console.error)
+  }, [user, router])
 
   if (!users || usersQuery.isLoading) {
     return <LoadingBar />;

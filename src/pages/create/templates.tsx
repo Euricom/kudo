@@ -39,7 +39,7 @@ const Templates: NextPage<{ res: Template[], sess: string, speaker: string, anon
     toast.clearWaitingQueue();
     if (!sessionQuery.isLoading && !session) {
       toast.error('Session is incorrect', { delay: 500 })
-      router.replace('/create').catch(e => console.log(e));
+      router.replace('/create').catch(console.error);
     }
   }, [router, session, sessionQuery])
 
@@ -49,6 +49,7 @@ const Templates: NextPage<{ res: Template[], sess: string, speaker: string, anon
   if (sessionQuery.isLoading || !session) {
     return <LoadingBar />
   }
+
   return (
     <>
       <Head>

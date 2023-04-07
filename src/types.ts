@@ -67,6 +67,12 @@ export type AADResponseUsers = {
     value: User[]
     '@odata.nextLink': string
 }
+
+export enum UserRole {
+    ADMIN = "ADMIN",
+    USER = "USER",
+}
+
 export type User = {
     businessPhones: string[],
     displayName: string,

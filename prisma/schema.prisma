@@ -62,7 +62,7 @@ model User {
     image         String?
     accounts      Account[]
     sessions      Session[] 
-    isAdmin       Boolean   @default(false)
+    role          String?     
 }
 
 model VerificationToken {

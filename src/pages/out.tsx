@@ -14,15 +14,26 @@ import SortAndFilter from "~/components/input/SortAndFilter";
 import { api } from "~/utils/api";
 import LoadingBar from "~/components/LoadingBar";
 
-const Out: NextPage = () => {
+export function getServerSideProps(context: { query: { searchtext: string, sort: SortPosibillities }; }) {
+
+  return {
+    props: {
+      filterIn: context.query.searchtext ?? "",
+      sortIn: context.query.sort ?? "",
+    }
+  }
+}
+
+const Out: NextPage<{ filterIn: string, sortIn: SortPosibillities }> = ({ filterIn, sortIn }) => {
 
   const sessions = api.sessions.getAll.useQuery().data
   const users = api.users.getAllUsers.useQuery().data
 
-  const [sort, setSort] = useState<SortPosibillities>(SortPosibillities.DateD)
-  const [filter, setFilter] = useState<string>("")
+  const [sort, setSort] = useState<SortPosibillities>(sortIn ?? SortPosibillities.DateD)
+  const [filter, setFilter] = useState<string>(filterIn ?? "")
 
   const userId = useSession().data?.user.id
+
   if (!userId) {
     throw new Error("No user signed in")
   }

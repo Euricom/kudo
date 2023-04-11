@@ -1,22 +1,32 @@
 import { type NextPage } from "next";
-import { useEffect, useState } from "react";
 import Head from "next/head";
 import FAB from "~/components/navigation/FAB";
 import { GrAdd } from 'react-icons/gr';
 import { UtilButtonsContent } from "~/hooks/useUtilButtons";
 import { NavigationBarContent } from "~/components/navigation/NavBarTitle";
 import NavButtons from "~/components/navigation/NavButtons";
+import SessionList from "~/components/sessions/SessionList";
 import { api } from "~/utils/api";
 import LoadingBar from "~/components/LoadingBar";
-import SpeakerCard from "~/components/speaker/SpeakerCard";
-import SortAndFilter from "~/components/input/SortAndFilter";
-import { Filter, UserRole, SortPosibillities } from "~/types";
-import { useSession } from "next-auth/react";
+import { Filter, SortPosibillities, UserRole } from "~/types";
 import { useRouter } from "next/router";
-import SessionList from "~/components/sessions/SessionList";
+import { useSession } from "next-auth/react";
+import { useEffect, useState } from "react";
+import SortAndFilter from "~/components/input/SortAndFilter";
 import KudoCard from "~/components/kudos/Kudo";
+import SpeakerCard from "~/components/speaker/SpeakerCard";
+export function getServerSideProps(context: { query: { searchtext: string, sort: SortPosibillities } }) {
 
-const All: NextPage = () => {
+  return {
+    props: {
+      searchtext: context.query.searchtext ?? "",
+      sortIn: context.query.sort ?? "",
+    }
+  }
+}
+
+const All: NextPage<{ searchtext: string, sortIn: SortPosibillities }> = ({ searchtext, sortIn }) => {
+
   const router = useRouter()
   const user = useSession().data?.user
 
@@ -29,8 +39,8 @@ const All: NextPage = () => {
   const kudoQuery = api.kudos.getFlaggedKudos.useQuery();
   const kudos = kudoQuery.data
 
-  const [sort, setSort] = useState<SortPosibillities>(SortPosibillities.SpeakerA)
-  const [search, setSearch] = useState<string>("")
+  const [sort, setSort] = useState<SortPosibillities>(sortIn ?? SortPosibillities.SpeakerA)
+  const [search, setSearch] = useState<string>(searchtext ?? "")
   const [filter, setFilter] = useState<Filter>(Filter.User)
 
   useEffect(() => {
@@ -109,6 +119,7 @@ const All: NextPage = () => {
     </>
   );
 };
+
 
 export default All;
 

@@ -1,16 +1,17 @@
 import { sortDate, sortSpeaker, sortTitle } from "~/server/services/sessionService";
-import { type Session, SortPosibillities, type SessionArray } from "~/types";
+import { type SessionListProps, SortPosibillities, type Session } from "~/types";
 import { api } from "~/utils/api";
 import SessionCard from "~/components/sessions/Session";
 import SortAndFilter from "~/components/input/SortAndFilter";
 import { useState } from 'react'
 
 
-const SessionList = ({ sessions }: SessionArray) => {
+const SessionList = ({ sessions, filterIn, sortIn }: SessionListProps) => {
     const users = api.users.getAllUsers.useQuery().data
 
-    const [sort, setSort] = useState<SortPosibillities>(SortPosibillities.DateD)
-    const [filter, setFilter] = useState<string>("")
+
+    const [sort, setSort] = useState<SortPosibillities>(sortIn ?? SortPosibillities.DateD)
+    const [filter, setFilter] = useState<string>(filterIn ?? "")
 
     function filtering(sessions: Session[]) {
         //Moet het in het nederlands gecheckt worden? zoja commentaar toevoegen.

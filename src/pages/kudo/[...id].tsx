@@ -68,8 +68,8 @@ const KudoDetail: NextPage<{ id: string }> = ({ id }) => {
   }
 
   useEffect(() => {
-    if(!user || sessionQuery.isLoading || kudoQuery.isLoading) return
-    if(user?.role !== UserRole.ADMIN && user?.id !== kudo?.userId && user?.id !== session?.speakerId) 
+    if (!user || sessionQuery.isLoading || kudoQuery.isLoading) return
+    if (user?.role !== UserRole.ADMIN && user?.id !== kudo?.userId && user?.id !== session?.speakerId)
       router.replace("/403").catch(console.error)
   }, [user, router, kudo?.userId, session?.speakerId, sessionQuery.isLoading, kudoQuery.isLoading])
 
@@ -95,7 +95,7 @@ const KudoDetail: NextPage<{ id: string }> = ({ id }) => {
         <h1>Kudo {session?.title ?? "no title"}</h1>
       </NavigationBarContent>
       <UtilButtonsContent>
-        {((user?.id === kudo?.userId || user?.role === UserRole.ADMIN) && user?.id !== session?.speakerId) && 
+        {((user?.id === kudo?.userId || user?.role === UserRole.ADMIN) && user?.id !== session?.speakerId) &&
           <Link className="btn btn-ghost btn-circle" onClick={del} href="/out" data-cy="deleteButton">
             <FaTrashAlt size={20} />
           </Link>
@@ -113,10 +113,10 @@ const KudoDetail: NextPage<{ id: string }> = ({ id }) => {
             <Image className="shadow-2xl" src={image} fill alt="Kudo" />
           </div>
           <div className="flex flex-row left-0 mt-2 gap-5 md:gap-10 ">
-            <div className={`btn btn-circle btn-ghost ${user?.id === session?.speakerId?"":"pointer-events-none"}`} data-cy="Like" onClick={() => void handleclick()}>
+            <div className={`btn btn-circle btn-ghost ${user?.id === session?.speakerId ? "" : "pointer-events-none"}`} data-cy="Like" onClick={() => void handleclick()}>
               {kudo.liked ? <AiFillHeart size={25} /> : <AiOutlineHeart size={25} />}
             </div>
-            {!kudo.comment && user?.id === session?.speakerId?
+            {!kudo.comment && user?.id === session?.speakerId ?
               <div className="flex flex-row left justify-end w-fit">
                 <input value={comment} onChange={(e) => setComment(e.target.value)} type="text" placeholder="place your comment here" className="input input-bordered max-w-xs w-full" data-cy="comment" />
                 <div className="btn btn-circle btn-ghost mt-2" onClick={() => setSendReady(true)}>

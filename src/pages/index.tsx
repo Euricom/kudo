@@ -6,13 +6,25 @@ import { NavigationBarContent } from "~/components/navigation/NavBarTitle";
 import NavButtons from "~/components/navigation/NavButtons";
 import SessionList from "~/components/sessions/SessionList";
 import { api } from "~/utils/api";
+import { type SortPosibillities } from "~/types";
 import { useSession } from "next-auth/react";
 import { UtilButtonsContent } from "~/hooks/useUtilButtons";
 import LoadingBar from "~/components/LoadingBar";
 import { useRouter } from "next/router";
 
 
-const Home: NextPage = () => {
+export function getServerSideProps(context: { query: { searchtext: string, sort: SortPosibillities }; }) {
+
+  return {
+    props: {
+      filter: context.query.searchtext ?? "",
+      sort: context.query.sort ?? "",
+    }
+  }
+}
+
+const Home: NextPage<{ filter: string, sort: SortPosibillities }> = ({ filter, sort }) => {
+
   const router = useRouter()
   const user = useSession().data?.user
 
@@ -40,7 +52,7 @@ const Home: NextPage = () => {
         <></>
       </UtilButtonsContent >
       <main className="flex flex-col items-center justify-center h-full">
-        <SessionList sessions={sessions} />
+        <SessionList sessions={sessions} filterIn={filter} sortIn={sort} />
       </main>
       <FAB text={"Create Kudo"} icon={<GrAdd />} url="/create" />
     </>

@@ -2,7 +2,7 @@
 import { env } from "~/env.mjs";
 import * as msal from "@azure/msal-node";
 import { type UserWCount, type AADResponseUsers, type User, type SessionArray } from "~/types";
-import { type PrismaClient, type Kudo } from "@prisma/client";
+import { type PrismaClient } from "@prisma/client";
 
 
 const msalConfig = {
@@ -53,10 +53,8 @@ export const findUserById = async (id: string): Promise<User> => {
     return user
 };
 
-export const findRelevantUsers = async (ctx: {prisma: PrismaClient}): Promise<UserWCount[]> => {
+export const findRelevantUsers = async (ctx: { prisma: PrismaClient }): Promise<UserWCount[]> => {
     const users = await findAllUsers()
-
-    // Vragen aan Yannick: Is dit wel juist? Ik heb het gevoel dat ik hier iets fout doe.
     const kudos = await ctx.prisma.kudo.findMany({})
     const sessions = await fetch(`${env.SESSION_URL}`).then(result => result.json()) as SessionArray
 

@@ -57,6 +57,13 @@ export type SessionArray = {
     sort?: SortPosibillities
 }
 
+export type SessionListProps = {
+    sessions: Session[],
+    filterIn?: string,
+    sortIn?: SortPosibillities,
+
+}
+
 export type Temp = {
     id: string,
     Color: string,
@@ -105,6 +112,7 @@ export type SessionContextValue = {
     setAnonymous: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
+
 export type SessionProps = {
     session: Session
 }
@@ -120,13 +128,14 @@ export type NewSessionSpeaker = {
 }
 
 export enum SortPosibillities {
-    DateA = 'Date ↓',
-    DateD = 'Date ↑',
-    SpeakerA = 'Speaker ↓',
-    SpeakerD = 'Speaker ↑',
-    TitleA = 'Title ↓',
-    TitleD = 'Title ↑',
+    DateA = 'Date Asc ↓ ',
+    DateD = 'Date Desc ↑',
+    SpeakerA = 'Speaker Asc ↓',
+    SpeakerD = 'Speaker Desc ↑',
+    TitleA = 'Title Asc ↓',
+    TitleD = 'Title Desc ↑',
 }
+
 
 export type SortAndFilterProps = {
     setSort: React.Dispatch<React.SetStateAction<SortPosibillities>>;

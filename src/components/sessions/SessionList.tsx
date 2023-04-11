@@ -10,7 +10,7 @@ const SessionList = ({ sessions }: SessionArray) => {
     const users = api.users.getAllUsers.useQuery().data
 
     const [sort, setSort] = useState<sortPosibillities>(sortPosibillities.DateD)
-    const [filter, setFilter] = useState<string>()
+    const [filter, setFilter] = useState<string>("")
 
     function filtering(sessions: Session[]) {
         //Moet het in het nederlands gecheckt worden? zoja commentaar toevoegen.

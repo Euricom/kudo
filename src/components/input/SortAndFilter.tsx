@@ -3,37 +3,38 @@ import { MdSort } from "react-icons/md"
 import { type SortAndFilterProps, sortPosibillities } from "~/types"
 import { useRouter } from "next/router"
 
-const SortAndFilter = ({ setSort, filter, setFilter }: SortAndFilterProps) => {
-    function useVisibleSort() {
-        const router = useRouter();
+function useVisibleSort() {
+    const router = useRouter();
 
-        return [
-            {
-                sort: sortPosibillities.DateA,
-                routes: ['/', '/out', '/speaker/[...id]'],
-            },
-            {
-                sort: sortPosibillities.DateD,
-                routes: ['/', '/out', '/speaker/[...id]'],
-            },
-            {
-                sort: sortPosibillities.SpeakerA,
-                routes: ['/out', '/all'],
-            },
-            {
-                sort: sortPosibillities.SpeakerD,
-                routes: ['/out', '/all'],
-            },
-            {
-                sort: sortPosibillities.TitleA,
-                routes: ['/', '/out', '/speaker/[...id]'],
-            },
-            {
-                sort: sortPosibillities.TitleD,
-                routes: ['/', '/out', '/speaker/[...id]'],
-            },
-        ].filter((item) => item.routes.includes(router.pathname));
-    }
+    return [
+        {
+            sort: sortPosibillities.DateA,
+            routes: ['/', '/out', '/speaker/[...id]'],
+        },
+        {
+            sort: sortPosibillities.DateD,
+            routes: ['/', '/out', '/speaker/[...id]'],
+        },
+        {
+            sort: sortPosibillities.SpeakerA,
+            routes: ['/out', '/all'],
+        },
+        {
+            sort: sortPosibillities.SpeakerD,
+            routes: ['/out', '/all'],
+        },
+        {
+            sort: sortPosibillities.TitleA,
+            routes: ['/', '/out', '/speaker/[...id]'],
+        },
+        {
+            sort: sortPosibillities.TitleD,
+            routes: ['/', '/out', '/speaker/[...id]'],
+        },
+    ].filter((item) => item.routes.includes(router.pathname));
+}
+
+const SortAndFilter = ({ setSort, filter, setFilter }: SortAndFilterProps) => {
     const visibleSort = useVisibleSort();
 
     return (

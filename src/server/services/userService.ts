@@ -16,7 +16,7 @@ const tokenRequest = {
     scopes: ['https://graph.microsoft.com/.default']
 };
 
-export const getToken = async () => {
+const getToken = async () => {
     const authenticationResult: msal.AuthenticationResult | null = await new msal.ConfidentialClientApplication(
         msalConfig
     ).acquireTokenByClientCredential(tokenRequest);
@@ -68,4 +68,17 @@ export const findRelevantUsers = async (ctx: { prisma: PrismaClient }): Promise<
     })
 
     return returnUsers.filter(user => user.sessionCount > 0 || user.sendKudoCount > 0 || user.receiveKudoCount > 0)
+};
+
+export const getImageById = async (id: string) => {
+    if (!id) {
+        return
+    }
+    console.log(id);
+
+
+    const options = await getToken()
+    const imageRes = await fetch('https://graph.microsoft.com/v1.0/users/' + id.toString() + '/photo/$value', options);
+
+    return imageRes
 };

@@ -50,6 +50,7 @@ export type Session = {
     title: string,
     date: string,
     speakerId: string,
+    speakerImage?: string,
 }
 
 export type SessionArray = {

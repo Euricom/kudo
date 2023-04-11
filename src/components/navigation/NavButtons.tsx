@@ -5,10 +5,8 @@ import { MdArrowDropDown } from "react-icons/md";
 
 const NavButtons = () => {
   const router = useRouter()
-  const path = router.asPath
+  const path = router.pathname
   const [state, setState] = useState<boolean>(false)
-
-
 
   return (
     <>

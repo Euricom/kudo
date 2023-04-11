@@ -14,11 +14,11 @@ import SortAndFilter from "~/components/input/SortAndFilter";
 import { api } from "~/utils/api";
 import LoadingBar from "~/components/LoadingBar";
 
-export function getServerSideProps(context: { query: { filter: string, sort: sortPosibillities }; }) {
+export function getServerSideProps(context: { query: { searchtext: string, sort: sortPosibillities }; }) {
 
   return {
     props: {
-      filterIn: context.query.filter ?? "",
+      filterIn: context.query.searchtext ?? "",
       sortIn: context.query.sort ?? "",
     }
   }

@@ -54,8 +54,15 @@ export type Session = {
 export type SessionArray = {
     sessions: Session[],
     sort?: sortPosibillities
-    filterIn?: string
 }
+
+export type SessionListProps = {
+    sessions: Session[],
+    filterIn?: string,
+    sortIn?: sortPosibillities,
+
+}
+
 
 export type temp = {
     id: string,
@@ -106,12 +113,12 @@ export type newSessionSpeaker = {
 }
 
 export enum sortPosibillities {
-    DateA = 'Date ↓',
-    DateD = 'Date ↑',
-    SpeakerA = 'Speaker ↓',
-    SpeakerD = 'Speaker ↑',
-    TitleA = 'Title ↓',
-    TitleD = 'Title ↑',
+    DateA = 'Date Asc ↓ ',
+    DateD = 'Date Desc ↑',
+    SpeakerA = 'Speaker Asc ↓',
+    SpeakerD = 'Speaker Desc ↑',
+    TitleA = 'Title Asc ↓',
+    TitleD = 'Title Desc ↑',
 }
 
 

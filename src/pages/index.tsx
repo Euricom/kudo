@@ -6,22 +6,23 @@ import { NavigationBarContent } from "~/components/navigation/NavBarTitle";
 import NavButtons from "~/components/navigation/NavButtons";
 import SessionList from "~/components/sessions/SessionList";
 import { api } from "~/utils/api";
-import { type Session } from "~/types";
+import { type sortPosibillities, type Session } from "~/types";
 import { useSession } from "next-auth/react";
 import { UtilButtonsContent } from "~/hooks/useUtilButtons";
 import LoadingBar from "~/components/LoadingBar";
 
 
-export function getServerSideProps(context: { query: { filter: string }; }) {
+export function getServerSideProps(context: { query: { searchtext: string, sort: sortPosibillities }; }) {
 
   return {
     props: {
-      filter: context.query.filter ?? ""
+      filter: context.query.searchtext ?? "",
+      sort: context.query.sort ?? "",
     }
   }
 }
 
-const Home: NextPage<{ filter: string }> = ({ filter }) => {
+const Home: NextPage<{ filter: string, sort: sortPosibillities }> = ({ filter, sort }) => {
   const userId: string | undefined = useSession().data?.user.id
 
   const sessions: Session[] | undefined = api.sessions.getSessionsBySpeaker.useQuery({ id: userId ?? "error" }).data
@@ -43,7 +44,7 @@ const Home: NextPage<{ filter: string }> = ({ filter }) => {
         <></>
       </UtilButtonsContent >
       <main className="flex flex-col items-center justify-center h-full">
-        <SessionList sessions={sessions} filterIn={filter} />
+        <SessionList sessions={sessions} filterIn={filter} sortIn={sort} />
       </main>
       <FAB text={"Create Kudo"} icon={<GrAdd />} url="/create" />
     </>

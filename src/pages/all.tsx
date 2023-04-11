@@ -8,16 +8,18 @@ import NavButtons from "~/components/navigation/NavButtons";
 import SessionList from "~/components/sessions/SessionList";
 import { api } from "~/utils/api";
 import LoadingBar from "~/components/LoadingBar";
-export function getServerSideProps(context: { query: { filter: string }; }) {
+import { type sortPosibillities } from "~/types";
+export function getServerSideProps(context: { query: { searchtext: string, sort: sortPosibillities } }) {
 
   return {
     props: {
-      filter: context.query.filter ?? ""
+      filter: context.query.searchtext ?? "",
+      sortIn: context.query.sort ?? "",
     }
   }
 }
 
-const All: NextPage<{ filter: string }> = ({ filter }) => {
+const All: NextPage<{ filter: string, sort: sortPosibillities }> = ({ filter, sort }) => {
   const sessions = api.sessions.getAll.useQuery().data
 
   if (!sessions) {
@@ -38,7 +40,7 @@ const All: NextPage<{ filter: string }> = ({ filter }) => {
         <></>
       </UtilButtonsContent >
       <main className="flex flex-col items-center justify-center h-full">
-        <SessionList sessions={sessions} filterIn={filter} />
+        <SessionList sessions={sessions} filterIn={filter} sortIn={sort} />
       </main>
       <FAB text={"Create Kudo"} icon={<GrAdd />} url="/create" />
     </>

@@ -31,22 +31,22 @@ const SortAndFilter = ({ setSort, filter, setFilter }: SortAndFilterProps) => {
                     <label tabIndex={0} className="btn btn-primary btn-circle m-1" data-cy='SettingsButton'><MdSort size={20} /></label>
                     <ul tabIndex={0} className="dropdown-content menu p-2 shadow bg-base-100 rounded-box w-52">
 
-                        <li className="btn btn-ghost" onClick={() => changeSort(sortPosibillities.DateD)}>
+                        <li className="btn btn-ghost normal-case" onClick={() => changeSort(sortPosibillities.DateD)}>
                             {sortPosibillities.DateD}
                         </li>
-                        <li className="btn btn-ghost" onClick={() => changeSort(sortPosibillities.DateA)}>
+                        <li className="btn btn-ghost normal-case" onClick={() => changeSort(sortPosibillities.DateA)}>
                             {sortPosibillities.DateA}
                         </li>
-                        <li className="btn btn-ghost" onClick={() => changeSort(sortPosibillities.SpeakerA)}>
+                        <li className="btn btn-ghost normal-case" onClick={() => changeSort(sortPosibillities.SpeakerA)}>
                             {sortPosibillities.SpeakerA}
                         </li>
-                        <li className="btn btn-ghost" onClick={() => changeSort(sortPosibillities.SpeakerD)}>
+                        <li className="btn btn-ghost normal-case" onClick={() => changeSort(sortPosibillities.SpeakerD)}>
                             {sortPosibillities.SpeakerD}
                         </li>
-                        <li className="btn btn-ghost" onClick={() => changeSort(sortPosibillities.TitleA)}>
+                        <li className="btn btn-ghost normal-case" onClick={() => changeSort(sortPosibillities.TitleA)}>
                             {sortPosibillities.TitleA}
                         </li>
-                        <li className="btn btn-ghost" onClick={() => changeSort(sortPosibillities.TitleD)}>
+                        <li className="btn btn-ghost normal-case" onClick={() => changeSort(sortPosibillities.TitleD)}>
                             {sortPosibillities.TitleD}
                         </li>
 

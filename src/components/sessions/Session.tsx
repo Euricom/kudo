@@ -27,14 +27,13 @@ const SessionCard = ({ session }: SessionProps) => {
                 <div className="card-body">
                     <h2 className="card-title text-2xl" data-cy='SessionTitle'>{session.title}</h2>
                     <div className="flex w-full gap-3">
-                        <div className="avatar">
-                            <div className="w-10 rounded-full">
-                                <Image
-                                    src={imgUrl}
-                                    alt="Profile picture"
-                                    fill
-                                />
-                            </div>
+                        <div className="avatar w-12 aspect-square">
+                            <Image
+                                className="rounded-full"
+                                src={imgUrl}
+                                alt="Profile picture"
+                                fill
+                            />
                         </div>
                         <div>
                             <h3 className="">{speaker.displayName}</h3>

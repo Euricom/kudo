@@ -1,14 +1,21 @@
 import Image from 'next/image';
-import React from 'react';
-import { type MenuProps } from '~/types';
-import avatar from '../../contents/images/EMAvatar.jpg'
+import React, { useEffect, useState } from 'react';
+import { type ImageData, type MenuProps } from '~/types';
 import { signOut, useSession } from 'next-auth/react';
 import ThemeButton from '~/components/input/ThemeButton';
 
-
-
-
 const Menu = ({ children }: MenuProps) => {
+
+    const userId: string = useSession().data?.user.id ?? ""
+    const [imgUrl, setImgUrl] = useState<string>('');
+
+    useEffect(() => {
+        fetch('api/images/' + userId)
+            .then((res) => res.json())
+            .then((json: ImageData) => setImgUrl(json.dataUrl))
+            .catch(e => console.log(e));
+    }, [userId]);
+
     const user = useSession().data?.user
 
     return (
@@ -26,7 +33,7 @@ const Menu = ({ children }: MenuProps) => {
                             <div className="avatar ">
                                 <div className="w-24 rounded-xl relative">
                                     <Image
-                                        src={user?.image ?? avatar}
+                                        src={imgUrl}
                                         alt="Profile picture"
                                         fill
                                     />

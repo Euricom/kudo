@@ -54,10 +54,10 @@ export type Session = {
 
 export type SessionArray = {
     sessions: Session[],
-    sort?: sortPosibillities
+    sort?: SortPosibillities
 }
 
-export type temp = {
+export type Temp = {
     id: string,
     Color: string,
     Title: string,
@@ -109,17 +109,17 @@ export type SessionProps = {
     session: Session
 }
 
-export type newSessionDate = {
+export type NewSessionDate = {
     date: string,
     sessions: Session[]
 }
 
-export type newSessionSpeaker = {
+export type NewSessionSpeaker = {
     speakerId: string,
     sessions: Session[]
 }
 
-export enum sortPosibillities {
+export enum SortPosibillities {
     DateA = 'Date ↓',
     DateD = 'Date ↑',
     SpeakerA = 'Speaker ↓',
@@ -129,7 +129,7 @@ export enum sortPosibillities {
 }
 
 export type SortAndFilterProps = {
-    setSort: React.Dispatch<React.SetStateAction<sortPosibillities>>;
+    setSort: React.Dispatch<React.SetStateAction<SortPosibillities>>;
     filter?: string
     setFilter: React.Dispatch<React.SetStateAction<string>>;
 }
@@ -140,6 +140,10 @@ export type PresentationKudo = {
     y: number,
     rot: number,
     kudo: Kudo,
+}
+
+export type ImageData = {
+    dataUrl: string;
 }
 export enum CanvasShapes {
     Text,
@@ -226,7 +230,7 @@ export const Fonts = [
     "FranklinGothic",
     "Univers",
     "Frutiger"]
-    
+
 export enum Filter {
     Session = 'By session',
     User = 'By user',

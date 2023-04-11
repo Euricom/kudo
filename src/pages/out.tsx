@@ -8,7 +8,7 @@ import { NavigationBarContent } from "~/components/navigation/NavBarTitle";
 import NavButtons from "~/components/navigation/NavButtons";
 import { useSession } from "next-auth/react";
 import { FindAllKudosSortedByUserId } from "~/server/services/kudoService";
-import { sortPosibillities } from "~/types";
+import { SortPosibillities } from "~/types";
 import { useState } from "react"
 import SortAndFilter from "~/components/input/SortAndFilter";
 import { api } from "~/utils/api";
@@ -19,7 +19,7 @@ const Out: NextPage = () => {
   const sessions = api.sessions.getAll.useQuery().data
   const users = api.users.getAllUsers.useQuery().data
 
-  const [sort, setSort] = useState<sortPosibillities>(sortPosibillities.DateD)
+  const [sort, setSort] = useState<SortPosibillities>(SortPosibillities.DateD)
   const [filter, setFilter] = useState<string>("")
 
   const userId = useSession().data?.user.id

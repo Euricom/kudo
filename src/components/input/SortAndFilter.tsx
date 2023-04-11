@@ -1,34 +1,34 @@
+import { useRouter } from "next/router";
 import { FiSearch } from "react-icons/fi"
 import { MdSort } from "react-icons/md"
-import { type SortAndFilterProps, sortPosibillities } from "~/types"
-import { useRouter } from "next/router"
+import { type SortAndFilterProps, SortPosibillities } from "~/types"
 
 function useVisibleSort() {
     const router = useRouter();
 
     return [
         {
-            sort: sortPosibillities.DateA,
+            sort: SortPosibillities.DateA,
             routes: ['/', '/out', '/speaker/[...id]'],
         },
         {
-            sort: sortPosibillities.DateD,
+            sort: SortPosibillities.DateD,
             routes: ['/', '/out', '/speaker/[...id]'],
         },
         {
-            sort: sortPosibillities.SpeakerA,
+            sort: SortPosibillities.SpeakerA,
             routes: ['/out', '/all'],
         },
         {
-            sort: sortPosibillities.SpeakerD,
+            sort: SortPosibillities.SpeakerD,
             routes: ['/out', '/all'],
         },
         {
-            sort: sortPosibillities.TitleA,
+            sort: SortPosibillities.TitleA,
             routes: ['/', '/out', '/speaker/[...id]'],
         },
         {
-            sort: sortPosibillities.TitleD,
+            sort: SortPosibillities.TitleD,
             routes: ['/', '/out', '/speaker/[...id]'],
         },
     ].filter((item) => item.routes.includes(router.pathname));

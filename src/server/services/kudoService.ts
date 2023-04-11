@@ -1,10 +1,8 @@
 import { type Kudo } from "@prisma/client";
-import { sortPosibillities } from "~/types";
+import { SortPosibillities } from "~/types";
 import { api } from "~/utils/api";
 
-
-
-export const FindAllKudosSortedByUserId = (id: string, sort: sortPosibillities): Kudo[] => {
+export const FindAllKudosSortedByUserId = (id: string, sort: SortPosibillities): Kudo[] => {
     const kudoQuery = api.kudos.getKudosByUserId.useQuery({ id: id });
     const kudos: Kudo[] = kudoQuery.data as Kudo[]
     const sessions = api.sessions.getAll.useQuery().data
@@ -17,22 +15,22 @@ export const FindAllKudosSortedByUserId = (id: string, sort: sortPosibillities):
     }
 
     switch (sort) {
-        case sortPosibillities.TitleA:
-        case sortPosibillities.TitleD:
+        case SortPosibillities.TitleA:
+        case SortPosibillities.TitleD:
             sortedKudos = kudos.sort((a, b) => ((sessions?.find(s => s.id === a.sessionId)?.title ?? "a") < (sessions?.find(s => s.id === b.sessionId)?.title ?? "b")) ? 1 : -1)
-            if (sort === sortPosibillities.TitleD)
+            if (sort === SortPosibillities.TitleD)
                 return sortedKudos.reverse()
             return sortedKudos
-        case sortPosibillities.SpeakerA:
-        case sortPosibillities.SpeakerD:
+        case SortPosibillities.SpeakerA:
+        case SortPosibillities.SpeakerD:
             sortedKudos = kudos.sort((a, b) => ((users.find(u => u.id === sessions?.find(s => s.id === a.sessionId)?.speakerId)?.displayName ?? "a") < (users.find(u => u.id === sessions?.find(s => s.id === b.sessionId)?.speakerId)?.displayName ?? "b")) ? 1 : -1)
-            if (sort === sortPosibillities.SpeakerD)
+            if (sort === SortPosibillities.SpeakerD)
                 return sortedKudos.reverse()
             return sortedKudos
-        case sortPosibillities.DateA:
+        case SortPosibillities.DateA:
         default:
             sortedKudos = kudos.sort((a, b) => ((sessions?.find(s => s.id === a.sessionId)?.date ?? 1) < (sessions?.find(s => s.id === b.sessionId)?.date ?? 2)) ? -1 : 1)
-            if (sort === sortPosibillities.DateA)
+            if (sort === SortPosibillities.DateA)
                 return sortedKudos.reverse()
             return sortedKudos
     }

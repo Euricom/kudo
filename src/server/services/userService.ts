@@ -16,7 +16,7 @@ const tokenRequest = {
     scopes: ['https://graph.microsoft.com/.default']
 };
 
-const getToken = async () => {
+export const getToken = async () => {
     const authenticationResult: msal.AuthenticationResult | null = await new msal.ConfidentialClientApplication(
         msalConfig
     ).acquireTokenByClientCredential(tokenRequest);

@@ -17,12 +17,12 @@ export function getServerSideProps(context: { query: { session: string }; }) {
 
   return {
     props: {
-      sess: context.query.session??"",
+      sess: context.query.session ?? "",
     }
   }
 }
 
-const New: NextPage<{sess: string}> = ({ sess }) => {
+const New: NextPage<{ sess: string }> = ({ sess }) => {
   const users = api.users.getAllUsers.useQuery().data
   const [session, setSession] = useState<Session>();
   const [speaker, setSpeaker] = useState<User>();

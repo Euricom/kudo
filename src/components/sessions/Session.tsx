@@ -1,13 +1,22 @@
 import Link from "next/link";
-import { type SessionProps } from "~/types";
+import { type SessionProps, type ImageData } from "~/types";
 import { api } from "~/utils/api";
 import Image from 'next/image';
-import avatar from '../../contents/images/EMAvatar.jpg'
+import { useEffect, useState } from "react";
 
 
 
 const SessionCard = ({ session }: SessionProps) => {
     const speaker = api.users.getUserById.useQuery({ id: session.speakerId }).data
+
+    const [imgUrl, setImgUrl] = useState<string>('');
+
+    useEffect(() => {
+        fetch('api/images/' + session.speakerId)
+            .then((res) => res.json())
+            .then((json: ImageData) => setImgUrl(json.dataUrl))
+            .catch(e => console.log(e));
+    }, [session.speakerId]);
 
     if (!session || !speaker) {
         return <></>
@@ -18,13 +27,13 @@ const SessionCard = ({ session }: SessionProps) => {
                 <div className="card-body">
                     <h2 className="card-title text-2xl" data-cy='SessionTitle'>{session.title}</h2>
                     <div className="flex w-full gap-3">
-                        <div className="avatar w-1/6">
-                            <div className="rounded-full">
-                                <Image
-                                    src={avatar}
-                                    alt="Profile picture"
-                                />
-                            </div>
+                        <div className="avatar w-12 aspect-square">
+                            <Image
+                                className="rounded-full"
+                                src={imgUrl}
+                                alt="Profile picture"
+                                fill
+                            />
                         </div>
                         <div>
                             <h3 className="">{speaker.displayName}</h3>

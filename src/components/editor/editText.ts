@@ -68,6 +68,10 @@ const createTextArea = (textNode: Konva.Text, areaPosition: Vector2d, tr: Konva.
   // after browsers resized it we can set actual value
   textarea.style.height = (textarea.scrollHeight + 3).toString() + 'px';
 
+  
+  textarea.focus()
+  window?.getSelection()?.selectAllChildren(textarea)
+  window?.getSelection()?.collapseToEnd()
 
   textarea.addEventListener('keydown', function (e) {
     // hide on enter

@@ -1,5 +1,5 @@
 import { type NextPage } from "next";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 import Head from "next/head";
 import FAB from "~/components/navigation/FAB";
 import { GrAdd } from 'react-icons/gr';
@@ -10,9 +10,11 @@ import { api } from "~/utils/api";
 import LoadingBar from "~/components/LoadingBar";
 import SpeakerCard from "~/components/speaker/SpeakerCard";
 import SortAndFilter from "~/components/input/SortAndFilter";
-import { UserRole, sortPosibillities } from "~/types";
+import { Filter, UserRole, sortPosibillities } from "~/types";
 import { useSession } from "next-auth/react";
 import { useRouter } from "next/router";
+import SessionList from "~/components/sessions/SessionList";
+import KudoCard from "~/components/kudos/Kudo";
 
 const All: NextPage = () => {
   const router = useRouter()
@@ -21,15 +23,22 @@ const All: NextPage = () => {
   const usersQuery = api.users.getRelevantUsers.useQuery()
   const users = usersQuery.data
 
+  const sessionsQuery = api.sessions.getAll.useQuery()
+  const sessions = sessionsQuery.data
+  
+  const kudoQuery = api.kudos.getFlaggedKudos.useQuery();
+  const kudos = kudoQuery.data
 
   const [sort, setSort] = useState<sortPosibillities>(sortPosibillities.SpeakerA)
+  const [search, setSearch] = useState<string>("")
+  const [filter, setFilter] = useState<Filter>(Filter.User)
 
   useEffect(() => {
     if(user?.role !== UserRole.ADMIN) 
       router.replace("/403").catch(console.error)
   }, [user, router])
 
-  if (!users || usersQuery.isLoading) {
+  if (!users || usersQuery.isLoading || !sessions || sessionsQuery.isLoading || !kudos || kudoQuery.isLoading) {
     return <LoadingBar />;
   }
 
@@ -39,6 +48,40 @@ const All: NextPage = () => {
       return [...sorted].reverse()
     }
     return sorted
+  }
+
+  function getContent() {
+    switch (filter) {
+      case Filter.Session:
+        if (!sessions) return <></>
+        return (
+          <>
+            <SessionList sessions={sessions} />
+          </>
+        )
+      case Filter.User:
+        return (
+          <>
+            <SortAndFilter setSort={setSort} filter={search} setFilter={setSearch}/>
+            <div className="flex flex-wrap gap-4 h-full justify-center w-fit">
+              {sortedUsers().filter(user => user.user.displayName.toLowerCase().includes(search?.toLowerCase())).map((u) => <SpeakerCard key={u.user.id} user={u} />)}
+            </div>
+          </>
+        )
+      case Filter.Flagged:
+        if(!kudos || !sessions) return <></>
+        return (
+          <>
+            <SortAndFilter setSort={setSort} filter={search} setFilter={setSearch}/>
+            <div className="flex flex-wrap gap-4 h-full justify-center w-fit">
+              {kudos == undefined || kudos.length == 0 ? <h1>No flagged Kudos yet</h1> :
+                kudos.filter(k => sessions.find(s => s.id == k.sessionId)?.title.toLowerCase().includes(filter?.toLowerCase() ?? "") || users?.find(u => u.user.id === (sessions.find(s => s.id == k.sessionId)?.speakerId))?.user.displayName.toLowerCase().includes(filter?.toLowerCase() ?? "")).map((kudo) => (
+                <KudoCard key={kudo.id} kudo={kudo} />
+              ))}
+            </div>
+          </>
+        )
+    }
   }
 
   return (
@@ -54,11 +97,13 @@ const All: NextPage = () => {
       <UtilButtonsContent>
         <></>
       </UtilButtonsContent >
-      <main className="flex flex-col items-center justify-center h-full ">
-          <SortAndFilter setSort={setSort} />
-          <div className="flex flex-wrap gap-4 h-full justify-center w-fit">
-            {sortedUsers().map((u) => <SpeakerCard key={u.user.id} user={u} />)}
-          </div>
+      <main className="flex flex-col items-center justify-start h-full ">
+        <div className="flex gap-3 mt-4">
+          <span className={`badge ${filter===Filter.User?"badge-accent":"badge-secondary"}`} onClick={() => setFilter(Filter.User)}>By user</span>
+          <span className={`badge ${filter===Filter.Session?"badge-accent":"badge-secondary"}`} onClick={() => setFilter(Filter.Session)}>By session</span>
+          <span className={`badge ${filter===Filter.Flagged?"badge-accent":"badge-secondary"}`} onClick={() => setFilter(Filter.Flagged)}>Flagged</span>
+        </div>
+        {getContent()}
       </main>
       <FAB text={"Create Kudo"} icon={<GrAdd />} url="/create" />
     </>

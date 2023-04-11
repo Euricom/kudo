@@ -26,6 +26,7 @@ export type SelectProps<T> = {
 }
 export type KudoProps = {
     kudo: Kudo
+    isPresentation?: boolean
 }
 
 export type FabProps = {
@@ -130,7 +131,15 @@ export enum SortPosibillities {
 export type SortAndFilterProps = {
     setSort: React.Dispatch<React.SetStateAction<SortPosibillities>>;
     filter?: string
-    setFilter?: React.Dispatch<React.SetStateAction<string>>;
+    setFilter: React.Dispatch<React.SetStateAction<string>>;
+}
+
+export type PresentationKudo = {
+    id: string,
+    x: number,
+    y: number,
+    rot: number,
+    kudo: Kudo,
 }
 
 export type ImageData = {
@@ -221,3 +230,9 @@ export const Fonts = [
     "FranklinGothic",
     "Univers",
     "Frutiger"]
+
+export enum Filter {
+    Session = 'By session',
+    User = 'By user',
+    Flagged = 'Flagged',
+}

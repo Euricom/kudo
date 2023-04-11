@@ -78,6 +78,17 @@ export const kudoRouter = createTRPCRouter({
         return kudo
     }),
 
+    getFlaggedKudos: protectedProcedure.query(({ ctx }) => {
+        return ctx.prisma.kudo.findMany({
+            where: {
+                flagged: true,
+            },
+            orderBy: {
+                id: 'desc'
+            }
+        });
+    }),
+
     getImagesByIds: protectedProcedure.input(inputGetImagesByIds).query(({ input, ctx }) => {
         return ctx.prisma.image.findMany({
             where: {

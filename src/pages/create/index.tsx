@@ -8,20 +8,38 @@ import { NavigationBarContent } from "~/components/navigation/NavBarTitle";
 import { useState } from "react";
 import { api } from "~/utils/api";
 import { useSession } from "next-auth/react";
+import { useEffect } from "react";
 import { type Session, type User } from "~/types";
 import { UtilButtonsContent } from "~/hooks/useUtilButtons";
+import LoadingBar from "~/components/LoadingBar";
 
-const New: NextPage = () => {
+export function getServerSideProps(context: { query: { session: string }; }) {
 
+  return {
+    props: {
+      sess: context.query.session ?? "",
+    }
+  }
+}
+
+const New: NextPage<{ sess: string }> = ({ sess }) => {
   const users = api.users.getAllUsers.useQuery().data
   const [session, setSession] = useState<Session>();
   const [speaker, setSpeaker] = useState<User>();
   const [anonymous, setAnonymous] = useState<boolean>(false);
   const me = useSession().data?.user.id
 
-  const sessions: Session[] | undefined = api.sessions.getAll.useQuery().data
-  if (!sessions || !users) {
-    return <div>Loading...</div>;
+  const sessionsQuery = api.sessions.getAll.useQuery()
+  const sessions = sessionsQuery.data
+
+  useEffect(() => {
+    if (!sessionsQuery.isLoading && sessions) {
+      setSession(sessions?.find(s => s.id === sess))
+    }
+  }, [sess, sessions, sessionsQuery.isLoading])
+
+  if (sessionsQuery.isLoading || !sessions || !users) {
+    return <LoadingBar />;
   }
 
   const visibleSpeakers = () => {

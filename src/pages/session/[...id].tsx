@@ -7,7 +7,8 @@ import { NavigationBarContent } from "~/components/navigation/NavBarTitle";
 import { api } from "~/utils/api";
 import FileSaver from "file-saver";
 import LoadingBar from "~/components/LoadingBar";
-import { FiDownload } from "react-icons/fi";
+import { FiDownload, FiMonitor } from "react-icons/fi";
+import Link from "next/link";
 import { useRouter } from "next/router";
 import { useSession } from "next-auth/react";
 import { UserRole } from "~/types";
@@ -73,8 +74,6 @@ const Session: NextPage<{ id: string }> = ({ id }) => {
     }
   };
 
-  console.log(kudos);
-
   return (
     <>
       <Head>
@@ -93,6 +92,13 @@ const Session: NextPage<{ id: string }> = ({ id }) => {
         >
           <FiDownload size={20} />
         </button>
+        <Link
+          href={`/session/presentation/${id}`}
+          className="btn btn-ghost btn-circle hidden lg:flex"
+          data-cy='PresentationButton'
+        >
+          <FiMonitor size={20} />
+        </Link>
       </UtilButtonsContent>
       <main
         className="flex flex-col items-center justify-center"

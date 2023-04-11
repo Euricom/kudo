@@ -30,7 +30,7 @@ function useVisibleStartNavbarActions() {
         {
             Component: BackArrow,
             key: 'backArrow',
-            routes: ['/session/[...id]', '/kudo/[...id]','/speaker/[...id]', '/notifications', '/create', '/create/editor', '/create/templates', '/403'],
+            routes: ['/session/[...id]', '/session/presentation/[...id]', '/kudo/[...id]','/speaker/[...id]', '/notifications', '/create', '/create/editor', '/create/templates', '/403'],
         },
         {
             Component: logo,
@@ -51,7 +51,7 @@ const NavBar = () => {
 
     return (
         <>
-            <div className="w-full navbar bg-base-100 shadow sticky z-50 top-0 left-0 " data-cy='Navbar'>
+            <div className="navbar bg-base-100 shadow sticky z-50 top-0 left-0 " data-cy='Navbar'>
                 <div className="navbar-start w-full sm:pl-8 pl-2">
                     {visibleStartNavbarActions.map((x) => (
                         <x.Component key={x.key} />

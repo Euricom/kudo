@@ -3,7 +3,7 @@ import {
     protectedProcedure,
 } from "~/server/api/trpc";
 import { object, string } from "zod";
-import { findAllUsers, findUserById, findUserImageById } from "~/server/services/userService";
+import { findAllUsers, findUserById } from "~/server/services/userService";
 
 const inputGetById = object({
     id: string(),
@@ -25,13 +25,14 @@ export const userRouter = createTRPCRouter({
         return await findUserById(input.id)
     }),
 
-    getUserImageById: protectedProcedure.input(inputGetById).query(async ({ input }) => {
-        const blob = await findUserImageById(input.id)
-        console.log(blob);
+    // getUserImageById: protectedProcedure.input(inputGetById).query(async ({ input }) => {
+    //     const blob = await findUserImageById(input.id, )
+    //     console.log(blob);
 
-        return blob
+    //     return blob
 
-    }),
+    // }),
+
 
     updateUserIdAfterLogin: protectedProcedure.input(inputUpdate).mutation(async ({ input, ctx }) => {
 

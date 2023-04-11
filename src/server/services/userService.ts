@@ -15,7 +15,7 @@ const tokenRequest = {
     scopes: ['https://graph.microsoft.com/.default']
 };
 
-const getToken = async () => {
+export const getToken = async () => {
     const authenticationResult: msal.AuthenticationResult | null = await new msal.ConfidentialClientApplication(
         msalConfig
     ).acquireTokenByClientCredential(tokenRequest);
@@ -53,11 +53,17 @@ export const findUserById = async (id: string): Promise<User> => {
 };
 
 
-export const findUserImageById = async (id: string): Promise<Blob> => {
-    const options = await getToken()
-    const response = await fetch('https://graph.microsoft.com/v1.0/users/' + id + '/photo/$value', options)
-    const blob = await response.blob();
-    console.log(blob);
-    return blob
+// export const findUserImageById = async (id: string, res): Promise<string> => {
+//     const options = await getToken()
 
-};
+
+//     const imageRes = await fetch('https://graph.microsoft.com/v1.0/users/' + id + '/photo/$value', options);
+
+//     res.send({
+//         dataUrl:
+//             `data:${imageRes.headers.get('content-type')};base64,` +
+//             Buffer.from(await imageRes.arrayBuffer()).toString('base64'),
+//     });
+//     res.end();
+
+// };

@@ -1,4 +1,4 @@
-import { sortPosibillities, type newSessionDate, type newSessionSpeaker, type SessionArray } from "~/types"
+import { SortPosibillities, type NewSessionDate, type NewSessionSpeaker, type SessionArray } from "~/types"
 
 
 export function sortDate({ sessions, sort }: SessionArray) {
@@ -8,16 +8,16 @@ export function sortDate({ sessions, sort }: SessionArray) {
             return [...previous, { date: current.date, sessions: sessions.filter(s => s.date === current.date) }]
         }
         else return previous
-    }, [] as newSessionDate[])
+    }, [] as NewSessionDate[])
 
-    if (sort === sortPosibillities.DateA) {
+    if (sort === SortPosibillities.DateA) {
         return sorted.reverse()
     }
     return sorted
 }
 export function sortTitle({ sessions, sort }: SessionArray) {
     const sorted = sessions.sort((a, b) => a.title > b.title ? 1 : -1)
-    if (sort === sortPosibillities.TitleD) {
+    if (sort === SortPosibillities.TitleD) {
         return sorted.reverse()
     }
     return sorted
@@ -28,8 +28,8 @@ export function sortSpeaker({ sessions, sort }: SessionArray) {
             return [...previous, { speakerId: current.speakerId, sessions: sessions.filter(s => s.speakerId === current.speakerId) }]
         }
         else return previous
-    }, [] as newSessionSpeaker[])
-    if (sort === sortPosibillities.SpeakerD) {
+    }, [] as NewSessionSpeaker[])
+    if (sort === SortPosibillities.SpeakerD) {
         return sorted.reverse()
     }
     return sorted

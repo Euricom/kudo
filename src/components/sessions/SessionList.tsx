@@ -1,22 +1,22 @@
 import { sortDate, sortSpeaker, sortTitle } from "~/server/services/sessionService";
-import { sortPosibillities, type SessionArray } from "~/types";
+import { SortPosibillities, type SessionArray } from "~/types";
 import { api } from "~/utils/api";
 import SessionCard from "~/components/sessions/Session";
-import SortAndFilter from "~/input/SortAndFilter";
+import SortAndFilter from "~/components/input/SortAndFilter";
 import { useState } from 'react'
 
 
 const SessionList = ({ sessions }: SessionArray) => {
     const users = api.users.getAllUsers.useQuery().data
 
-    const [sort, setSort] = useState<sortPosibillities>(sortPosibillities.DateD)
+    const [sort, setSort] = useState<SortPosibillities>(SortPosibillities.DateD)
 
 
 
     function sortSessions() {
         switch (sort) {
-            case sortPosibillities.TitleA:
-            case sortPosibillities.TitleD:
+            case SortPosibillities.TitleA:
+            case SortPosibillities.TitleD:
                 return (
                     <>
                         <div className="w-full flex flex-wrap gap-4">
@@ -26,8 +26,8 @@ const SessionList = ({ sessions }: SessionArray) => {
                         </div>
                     </>
                 )
-            case sortPosibillities.SpeakerA:
-            case sortPosibillities.SpeakerD:
+            case SortPosibillities.SpeakerA:
+            case SortPosibillities.SpeakerD:
 
                 return sortSpeaker({ sessions: sessions.sort((a, b) => (users?.find(u => u.id === a.speakerId)?.displayName ?? "a") > (users?.find(u => u.id === b.speakerId)?.displayName ?? "b") ? 1 : -1), sort: sort }).map((s) => {
                     const speaker = users?.find(u => u.id === s.speakerId);

@@ -8,13 +8,13 @@ import { NavigationBarContent } from "~/components/navigation/NavBarTitle";
 import NavButtons from "~/components/navigation/NavButtons";
 import { useSession } from "next-auth/react";
 import { FindAllKudosSortedByUserId } from "~/server/services/kudoService";
-import { sortPosibillities } from "~/types";
+import { SortPosibillities } from "~/types";
 import { useState } from "react"
-import SortAndFilter from "~/input/SortAndFilter";
+import SortAndFilter from "~/components/input/SortAndFilter";
 
 const Out: NextPage = () => {
 
-  const [sort, setSort] = useState<sortPosibillities>(sortPosibillities.DateD)
+  const [sort, setSort] = useState<SortPosibillities>(SortPosibillities.DateD)
 
   const userId = useSession().data?.user.id
   if (!userId) {

@@ -26,8 +26,6 @@ export async function getServerSideProps(context: { query: { session: string, sp
   }
 }
 
-
-
 const Editor: NextPage<{ res: Template[], sess: string, speaker: string, anonymous: string }> = ({ res, sess, speaker, anonymous }) => {
   const title = api.sessions.getSessionById.useQuery({ id: sess }).data?.title
   useSessionSpeaker(sess, speaker, anonymous)

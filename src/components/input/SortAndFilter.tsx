@@ -1,6 +1,6 @@
 import { FiSearch } from "react-icons/fi"
 import { MdSort } from "react-icons/md"
-import { type SortAndFilterProps, sortPosibillities } from "~/types"
+import { type SortAndFilterProps, SortPosibillities } from "~/types"
 
 const SortAndFilter = ({ setSort }: SortAndFilterProps) => {
 
@@ -16,23 +16,23 @@ const SortAndFilter = ({ setSort }: SortAndFilterProps) => {
                     <label tabIndex={0} className="btn btn-primary btn-circle m-1" data-cy='SettingsButton'><MdSort size={20} /></label>
                     <ul tabIndex={0} className="dropdown-content menu p-2 shadow bg-base-100 rounded-box w-52">
 
-                        <li className="btn btn-ghost" onClick={() => setSort(sortPosibillities.DateD)}>
-                            {sortPosibillities.DateD}
+                        <li className="btn btn-ghost" onClick={() => setSort(SortPosibillities.DateD)}>
+                            {SortPosibillities.DateD}
                         </li>
-                        <li className="btn btn-ghost" onClick={() => setSort(sortPosibillities.DateA)}>
-                            {sortPosibillities.DateA}
+                        <li className="btn btn-ghost" onClick={() => setSort(SortPosibillities.DateA)}>
+                            {SortPosibillities.DateA}
                         </li>
-                        <li className="btn btn-ghost" onClick={() => setSort(sortPosibillities.SpeakerA)}>
-                            {sortPosibillities.SpeakerA}
+                        <li className="btn btn-ghost" onClick={() => setSort(SortPosibillities.SpeakerA)}>
+                            {SortPosibillities.SpeakerA}
                         </li>
-                        <li className="btn btn-ghost" onClick={() => setSort(sortPosibillities.SpeakerD)}>
-                            {sortPosibillities.SpeakerD}
+                        <li className="btn btn-ghost" onClick={() => setSort(SortPosibillities.SpeakerD)}>
+                            {SortPosibillities.SpeakerD}
                         </li>
-                        <li className="btn btn-ghost" onClick={() => setSort(sortPosibillities.TitleA)}>
-                            {sortPosibillities.TitleA}
+                        <li className="btn btn-ghost" onClick={() => setSort(SortPosibillities.TitleA)}>
+                            {SortPosibillities.TitleA}
                         </li>
-                        <li className="btn btn-ghost" onClick={() => setSort(sortPosibillities.TitleD)}>
-                            {sortPosibillities.TitleD}
+                        <li className="btn btn-ghost" onClick={() => setSort(SortPosibillities.TitleD)}>
+                            {SortPosibillities.TitleD}
                         </li>
 
                     </ul>

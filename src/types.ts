@@ -1,5 +1,7 @@
-import { type Kudo } from "@prisma/client";
+import { type Kudo, type Template } from "@prisma/client";
 import { type Url } from "url";
+import { type Vector2d } from 'konva/lib/types';
+import type Konva from "konva";
 
 export type AuthProps = {
     children?: React.ReactNode
@@ -66,6 +68,12 @@ export type AADResponseUsers = {
     value: User[]
     '@odata.nextLink': string
 }
+
+export enum UserRole {
+    ADMIN = "ADMIN",
+    USER = "USER",
+}
+
 export type User = {
     businessPhones: string[],
     displayName: string,
@@ -79,6 +87,15 @@ export type User = {
     userPrincipalName: string,
     id: string
 }
+
+export type UserWCount = {
+    user: User,
+    sessionCount: number
+    sendKudoCount: number
+    receiveKudoCount: number
+}
+
+
 export type SessionContextValue = {
     session: string;
     setSession: React.Dispatch<React.SetStateAction<string>>;
@@ -124,3 +141,88 @@ export type PresentationKudo = {
     rot: number,
     kudo: Kudo,
 }
+export enum CanvasShapes {
+    Text,
+    Sticker,
+    Line,
+    Rect
+}
+
+export type KonvaCanvasProps = {
+    editorFunction: EditorFunctions | undefined,
+    template: Template,
+    thickness: number,
+    color: string,
+    fontFamily: string,
+    setFunction: (type: EditorFunctions) => void,
+    setStage: (stage: Konva.Stage) => void
+}
+
+
+
+export type Shapes = {
+    type: CanvasShapes,
+    id: string,
+    x?: number,
+    y?: number,
+    width?: number,
+    height?: number,
+    fill?: string,
+    text?: string,
+    tool?: string,
+    points?: number[],
+    thickness?: number,
+    color?: string,
+    align?: string,
+    verticalAlign?: string,
+    fontSize?: number,
+    draggable?: boolean,
+    rotation?: number,
+}
+
+export type CanvasTextProps = {
+    container?: HTMLDivElement,
+    shapeProps: Shapes,
+    scale: number,
+    isSelected: boolean,
+    onSelect: () => void,
+    onChange: (shapeProps: Shapes) => void,
+    areaPosition: Vector2d,
+    onDelete: (id: string) => void,
+    onChangeEnd: (shapeProps: Shapes) => void,
+    editorFunction: EditorFunctions
+}
+
+export enum EditorFunctions {
+    Text = 'text',
+    Draw = 'draw',
+    Erase = 'erase',
+    Sticker = 'sticker',
+    Color = 'color',
+    Clear = 'clear',
+    Undo = 'undo',
+    Submit = 'submit',
+    None = 'none'
+}
+
+
+export type RectangleProps = {
+    shapeProps: Shapes,
+    scale: number,
+    isSelected: boolean,
+    onSelect: () => void,
+    onChange: (shapeProps: Shapes) => void
+}
+
+export const Fonts = [
+    "Helvetica",
+    "Garamond",
+    "Futura",
+    "Bodoni",
+    "Arial",
+    "Times New Roman",
+    "Verdana",
+    "Rockwell",
+    "FranklinGothic",
+    "Univers",
+    "Frutiger"]

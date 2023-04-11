@@ -10,7 +10,8 @@ import { useSession } from "next-auth/react";
 import { FindAllKudosSortedByUserId } from "~/server/services/kudoService";
 import { sortPosibillities } from "~/types";
 import { useState } from "react"
-import SortAndFilter from "~/input/SortAndFilter";
+import SortAndFilter from "~/components/input/SortAndFilter";
+import LoadingBar from "~/components/LoadingBar";
 
 const Out: NextPage = () => {
 
@@ -22,8 +23,8 @@ const Out: NextPage = () => {
   }
   const kudos = FindAllKudosSortedByUserId(userId, sort)
 
-  if (!userId) {
-    return <div>Loading...</div>
+  if (!userId || !kudos) {
+    return <LoadingBar />
   }
 
   return (
@@ -43,7 +44,7 @@ const Out: NextPage = () => {
       <main className="flex flex-col items-center justify-start">
         <SortAndFilter setSort={setSort} />
         <div className="flex flex-wrap gap-5 justify-center px-5 mb-8 md:mb-28">
-          {kudos == undefined || kudos.length == 0 ? <h1>No Kudos Sent Yet</h1> :
+          {kudos.length == 0 ? <h1>No Kudos Sent Yet</h1> :
             kudos.map((kudo) => (
               <KudoCard key={kudo.id} kudo={kudo} />
             ))}

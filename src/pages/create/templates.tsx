@@ -6,9 +6,13 @@ import { type Template } from "@prisma/client";
 import Link from "next/link";
 import { useSessionSpeaker } from "~/components/sessions/SelectedSessionAndSpeaker";
 import FAB from "~/components/navigation/FAB";
+import { useEffect } from 'react'
 import { GrNext } from "react-icons/gr";
 import { api } from "~/utils/api";
 import { UtilButtonsContent } from "~/hooks/useUtilButtons";
+import { useRouter } from "next/router";
+import LoadingBar from "~/components/LoadingBar";
+import { toast } from "react-toastify";
 
 
 
@@ -26,15 +30,25 @@ export async function getServerSideProps(context: { query: { session: string, sp
   }
 }
 
+const Templates: NextPage<{ res: Template[], sess: string, speaker: string, anonymous: string }> = ({ res, sess, speaker, anonymous }) => {
+  const sessionQuery = api.sessions.getSessionById.useQuery({ id: sess })
+  const session = sessionQuery.data
+  const router = useRouter()
+
+  useEffect(() => {
+    toast.clearWaitingQueue();
+    if (!sessionQuery.isLoading && !session) {
+      toast.error('Session is incorrect', { delay: 500 })
+      router.replace('/create').catch(console.error);
+    }
+  }, [router, session, sessionQuery])
 
 
-const Editor: NextPage<{ res: Template[], sess: string, speaker: string, anonymous: string }> = ({ res, sess, speaker, anonymous }) => {
-  const title = api.sessions.getSessionById.useQuery({ id: sess }).data?.title
   useSessionSpeaker(sess, speaker, anonymous)
-  // if (sess == undefined || speaker == undefined) {
-  //   // throw ERROR!
-  //   return <></>
-  // }
+
+  if (sessionQuery.isLoading || !session) {
+    return <LoadingBar />
+  }
 
   return (
     <>
@@ -49,8 +63,9 @@ const Editor: NextPage<{ res: Template[], sess: string, speaker: string, anonymo
       <UtilButtonsContent>
         <></>
       </UtilButtonsContent>
+
       <div className="w-full h-fit bg-base-200 p-1 text-center sticky top-16 z-50">
-        <h1 data-cy="session" className="lg:inline">&emsp;&emsp;&emsp;&emsp;Session: {title}&emsp;&emsp;</h1><h1 data-cy="speaker" className="lg:inline"> Speaker: {speaker}</h1>
+        <h1 data-cy="session" className="lg:inline">&emsp;&emsp;&emsp;&emsp;Session: {session?.title}&emsp;&emsp;</h1><h1 data-cy="speaker" className="lg:inline"> Speaker: {speaker}</h1>
       </div>
       <main className="flex flex-col items-center justify-center">
 
@@ -75,4 +90,4 @@ const Editor: NextPage<{ res: Template[], sess: string, speaker: string, anonymo
   );
 };
 
-export default Editor;
+export default Templates;

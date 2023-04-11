@@ -3,7 +3,7 @@ import { type NextPage } from "next";
 import Head from "next/head";
 import { UtilButtonsContent } from "~/hooks/useUtilButtons";
 import { GrEmoji } from "react-icons/gr"
-import { BiPencil, BiPalette, BiText, BiTrash } from "react-icons/bi"
+import { BiPencil, BiPalette, BiText, BiTrash, BiEraser, BiCircle, BiUndo } from "react-icons/bi"
 import { NavigationBarContent } from "~/components/navigation/NavBarTitle";
 import { type Template } from "@prisma/client";
 import { findTemplateById } from "~/server/services/templateService";
@@ -16,6 +16,12 @@ import { useSession } from 'next-auth/react';
 import { useSessionSpeaker } from '~/components/sessions/SelectedSessionAndSpeaker';
 import type Konva from 'konva';
 import ConfirmationModal from '~/components/input/ConfirmationModal';
+import LoadingBar from '~/components/LoadingBar';
+import { BsFillCircleFill } from 'react-icons/bs';
+
+import { type ColorResult, HuePicker } from 'react-color';
+import { EditorFunctions, Fonts } from '~/types';
+
 
 export async function getServerSideProps(context: { query: { template: string; }; }) {
   const id = context.query.template
@@ -27,15 +33,7 @@ export async function getServerSideProps(context: { query: { template: string; }
   }
 }
 
-export enum EditorFunctions {
-  Text = 'text',
-  Draw = 'draw',
-  Sticker = 'sticker',
-  Color = 'color',
-  Clear = 'clear',
-  Submit = 'submit',
-  None = 'none'
-}
+
 
 const KonvaCanvas = dynamic(
   () => import('../../components/editor/KonvaCanvas'),
@@ -44,18 +42,24 @@ const KonvaCanvas = dynamic(
 
 const Editor: NextPage<{ res: Template }> = ({ res }) => {
   const [selectedButton, setSelectedButton] = useState<EditorFunctions>()
+  const [thickness, setThickness] = useState<number>(5)
   const [stage, setStage] = useState<Konva.Stage>()
   const createKudo = api.kudos.createKudo.useMutation()
   const createImage = api.kudos.createKudoImage.useMutation()
   const router = useRouter()
+  const [color, setColor] = useState<string>("#121212");
+  const [font, setFont] = useState<string>("Arial");
 
   const userId: string = useSession().data?.user.id ?? "error"
 
   const { session, speaker, anonymous } = useSessionSpeaker().data
 
   if (!userId || !session || !speaker || userId == undefined) {
-    console.log("een probleem");
+    <LoadingBar />
+  }
 
+  const handleColorChange = (color: ColorResult) => {
+    setColor(color.hex)
   }
 
   const submit = async () => {
@@ -101,25 +105,67 @@ const Editor: NextPage<{ res: Template }> = ({ res }) => {
         />
       }
       {/* Main */}
-      <main className="flex flex-col items-center justify-center h-full z-50" >
+      <main className="flex flex-col items-center justify-center h-full z-50 relative overflow-x-hidden" >
         <div className="w-full lg:w-1/2 p-5 z-40 flex justify-center gap-2 mx-auto">
-          <button onClick={() => setSelectedButton(EditorFunctions.Text)} className={"btn btn-circle btn-secondary " + (selectedButton == EditorFunctions.Text ? "btn-accent" : "")}>
-            <BiText size={20} />
-          </button>
-          <button onClick={() => setSelectedButton(EditorFunctions.Draw)} className={"btn btn-circle btn-secondary " + (selectedButton == EditorFunctions.Draw ? "btn-accent" : "")}>
-            <BiPencil size={20} />
-          </button>
+
+          <div className="dropdown dropdown-start ">
+            <label tabIndex={0} className=""><button onClick={() => setSelectedButton(EditorFunctions.Text)} className={"btn btn-circle btn-secondary " + (selectedButton == EditorFunctions.Text ? "btn-accent" : "")}><BiText size={20} /> </button></label>
+            <ul tabIndex={0} className=" dropdown-content menu p-2 shadow bg-base-100 rounded-box w-52">
+              <label className="label text-xs">Font</label>
+              <select className="select select-bordered w-full max-w-xs" value={font} onChange={(e) => setFont(e.target.value)}>
+                {Fonts.sort((a, b) => b < a ? 1 : -1).map(f =>
+                  <option style={{ fontFamily: f }} key={f}>{f}</option>
+                )}
+              </select>
+            </ul>
+          </div>
+          <div className="dropdown dropdown-start">
+            <label tabIndex={0} className=""><button onClick={() => setSelectedButton(selectedButton == EditorFunctions.Erase ? EditorFunctions.Erase : EditorFunctions.Draw)} className={"btn btn-circle btn-secondary " + ((selectedButton == EditorFunctions.Draw || selectedButton == EditorFunctions.Erase) ? "btn-accent" : "")}>{selectedButton === EditorFunctions.Erase ? <BiEraser size={20} /> : <BiPencil size={20} />}</button></label>
+            <ul tabIndex={0} className="dropdown-content menu p-2 shadow bg-base-100 rounded-box w-52">
+              <div className='flex w-full items-center'>
+                <div>
+                  <li>
+                    <BiPencil size={50} onClick={() => setSelectedButton(EditorFunctions.Draw)} />
+                  </li>
+                  <li >
+                    <BiEraser size={50} onClick={() => setSelectedButton(EditorFunctions.Erase)} />
+                  </li>
+                </div>
+                <li className='flex-auto w-full h-full items-center pointer-events-none'>
+                  {selectedButton == EditorFunctions.Erase ?
+                    <BiCircle size={40 + thickness} /> :
+                    <BsFillCircleFill size={33 + thickness} color={color} />}
+                </li>
+              </div>
+              <li>
+                <div className='text-xs'>Thickness
+                  <input type="range" min="1" height={thickness} max="50" value={thickness} className="range" onChange={(e) => setThickness(parseInt(e.target.value))} />
+                </div>
+              </li>
+            </ul>
+          </div>
           <button onClick={() => setSelectedButton(EditorFunctions.Sticker)} className={"btn btn-circle btn-secondary " + (selectedButton == EditorFunctions.Sticker ? "btn-accent" : "")}>
             <GrEmoji size={20} />
           </button>
-          <button onClick={() => setSelectedButton(EditorFunctions.Color)} className={"btn btn-circle btn-secondary " + (selectedButton == EditorFunctions.Color ? "btn-accent" : "")}>
-            <BiPalette size={20} />
+          <div className="dropdown dropdown-start ">
+            <label tabIndex={0} className=""> <button className={"btn btn-circle btn-secondary " + (selectedButton == EditorFunctions.Color ? "btn-accent" : "")}><BiPalette size={20} /></button></label>
+            <ul tabIndex={0} className=" dropdown-content p-2 bg-secondary rounded-full w-80 ml-5 lg:w-fit -translate-x-2/3 lg:translate-x-0">
+              <li className='align-middle flex gap-4'>
+                <BsFillCircleFill size={16} onClick={() => setColor("#121212")} color={"#121212"} />
+                <HuePicker color={color}
+                  onChange={handleColorChange}
+                />
+              </li>
+            </ul>
+          </div>
+          <button onClick={() => setSelectedButton(EditorFunctions.Undo)} className={"btn btn-circle btn-secondary" + (selectedButton == EditorFunctions.Undo ? "btn-accent" : "")}>
+            <BiUndo size={20} />
           </button>
           <button onClick={() => setSelectedButton(EditorFunctions.Clear)} className={"btn btn-circle btn-secondary " + (selectedButton == EditorFunctions.Clear ? "btn-accent" : "")}>
             <BiTrash size={20} />
           </button>
         </div>
-        <KonvaCanvas editorFunction={selectedButton} template={res} setFunction={setSelectedButton} setStage={setStage} />
+        <KonvaCanvas editorFunction={selectedButton} template={res} thickness={thickness} color={color} fontFamily={font} setFunction={setSelectedButton} setStage={setStage} />
       </main>
       <FAB text={"Send"} icon={<FiSend />} onClick={() => setSelectedButton(EditorFunctions.Submit)} />
     </>

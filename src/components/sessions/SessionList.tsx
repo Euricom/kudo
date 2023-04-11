@@ -1,5 +1,5 @@
 import { sortDate, sortSpeaker, sortTitle } from "~/server/services/sessionService";
-import { type SessionListProps, sortPosibillities } from "~/types";
+import { type SessionListProps, SortPosibillities, type Session } from "~/types";
 import { api } from "~/utils/api";
 import SessionCard from "~/components/sessions/Session";
 import SortAndFilter from "~/components/input/SortAndFilter";
@@ -10,27 +10,32 @@ const SessionList = ({ sessions, filterIn, sortIn }: SessionListProps) => {
     const users = api.users.getAllUsers.useQuery().data
 
 
-    const [sort, setSort] = useState<sortPosibillities>(sortIn ?? sortPosibillities.DateD)
+    const [sort, setSort] = useState<SortPosibillities>(sortIn ?? SortPosibillities.DateD)
     const [filter, setFilter] = useState<string>(filterIn ?? "")
+
+    function filtering(sessions: Session[]) {
+        //Moet het in het nederlands gecheckt worden? zoja commentaar toevoegen.
+        return sessions.filter(s => (new Date(s.date).toLocaleString('en-GB', { month: 'long' }).toLowerCase().includes(filter?.toLowerCase() ?? "")) /*|| (new Date(s.date).toLocaleString('nl-NL', { month: 'long' }).toLowerCase().includes(filter?.toLowerCase() ?? "")) */ || (new Date(s.date).toLocaleDateString('en-GB').toLowerCase().includes(filter?.toLowerCase() ?? "")) || (new Date(s.date).toDateString().toLowerCase().includes(filter?.toLowerCase() ?? "")) || (s.title.toLowerCase().includes(filter?.toLowerCase() ?? "")) || (users?.find(u => u.id == s.speakerId)?.displayName.toLowerCase().includes(filter?.toLowerCase() ?? "")))
+    }
 
 
     function sortSessions() {
         switch (sort) {
-            case sortPosibillities.TitleA:
-            case sortPosibillities.TitleD:
+            case SortPosibillities.TitleA:
+            case SortPosibillities.TitleD:
                 return (
                     <>
                         <div className="w-full flex flex-wrap gap-4">
-                            {sortTitle({ sessions: sessions, sort: sort }).filter(s => (s.title.toLowerCase().includes(filter?.toLowerCase() ?? "")) || (users?.find(u => u.id == s.speakerId)?.displayName.toLowerCase().includes(filter?.toLowerCase() ?? ""))).map((s) =>
+                            {filtering(sortTitle({ sessions: sessions, sort: sort })).map((s) =>
                                 <SessionCard key={s.id} session={s} />
                             )}
                         </div>
                     </>
                 )
-            case sortPosibillities.SpeakerA:
-            case sortPosibillities.SpeakerD:
+            case SortPosibillities.SpeakerA:
+            case SortPosibillities.SpeakerD:
 
-                return sortSpeaker({ sessions: sessions.filter(s => (s.title.toLowerCase().includes(filter?.toLowerCase() ?? "")) || (users?.find(u => u.id == s.speakerId)?.displayName.toLowerCase().includes(filter?.toLowerCase() ?? ""))).sort((a, b) => (users?.find(u => u.id === a.speakerId)?.displayName ?? "a") > (users?.find(u => u.id === b.speakerId)?.displayName ?? "b") ? 1 : -1), sort: sort }).map((s) => {
+                return sortSpeaker({ sessions: filtering(sessions).sort((a, b) => (users?.find(u => u.id === a.speakerId)?.displayName ?? "a") > (users?.find(u => u.id === b.speakerId)?.displayName ?? "b") ? 1 : -1), sort: sort }).map((s) => {
                     const speaker = users?.find(u => u.id === s.speakerId);
                     return (
                         <>
@@ -46,7 +51,7 @@ const SessionList = ({ sessions, filterIn, sortIn }: SessionListProps) => {
                     )
                 })
             default:
-                return sortDate({ sessions: sessions.filter(s => (s.title.toLowerCase().includes(filter?.toLowerCase() ?? "")) || (users?.find(u => u.id == s.speakerId)?.displayName.toLowerCase().includes(filter?.toLowerCase() ?? ""))), sort: sort }).map((d) => {
+                return sortDate({ sessions: filtering(sessions), sort: sort }).map((d) => {
                     const sessionDate = new Date(d.date);
                     return (
                         <>
@@ -66,7 +71,7 @@ const SessionList = ({ sessions, filterIn, sortIn }: SessionListProps) => {
     }
     return (
         <>
-            <SortAndFilter sort={sort} setSort={setSort} filter={filter} setFilter={setFilter} />
+            <SortAndFilter setSort={setSort} filter={filter} setFilter={setFilter} />
             <div className="flex flex-col gap-8 h-full justify-start p-5">
                 {sortSessions()}
             </div>

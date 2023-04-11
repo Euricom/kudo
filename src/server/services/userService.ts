@@ -1,7 +1,8 @@
 
 import { env } from "~/env.mjs";
 import * as msal from "@azure/msal-node";
-import { type AADResponseUsers, type User } from "~/types";
+import { type UserWCount, type AADResponseUsers, type User, type SessionArray } from "~/types";
+import { type PrismaClient } from "@prisma/client";
 
 
 const msalConfig = {
@@ -50,4 +51,21 @@ export const findUserById = async (id: string): Promise<User> => {
     const options = await getToken()
     const user: User = await fetch('https://graph.microsoft.com/v1.0/users/' + id, options).then(r => r.json()) as User
     return user
+};
+
+export const findRelevantUsers = async (ctx: { prisma: PrismaClient }): Promise<UserWCount[]> => {
+    const users = await findAllUsers()
+    const kudos = await ctx.prisma.kudo.findMany({})
+    const sessions = await fetch(`${env.SESSION_URL}`).then(result => result.json()) as SessionArray
+
+    const returnUsers = users.map((user) => {
+        return {
+            user: user,
+            sessionCount: sessions.sessions?.filter(session => session.speakerId === user.id).length ?? 0,
+            sendKudoCount: kudos?.filter(kudo => kudo.userId === user.id).length ?? 0,
+            receiveKudoCount: kudos?.filter(kudo => kudo.userId === user.id).length ?? 0,
+        }
+    })
+
+    return returnUsers.filter(user => user.sessionCount > 0 || user.sendKudoCount > 0 || user.receiveKudoCount > 0)
 };

@@ -26,6 +26,7 @@ export type SelectProps<T> = {
 }
 export type KudoProps = {
     kudo: Kudo
+    isPresentation?: boolean
 }
 
 export type FabProps = {
@@ -53,18 +54,17 @@ export type Session = {
 
 export type SessionArray = {
     sessions: Session[],
-    sort?: sortPosibillities
+    sort?: SortPosibillities
 }
 
 export type SessionListProps = {
     sessions: Session[],
     filterIn?: string,
-    sortIn?: sortPosibillities,
+    sortIn?: SortPosibillities,
 
 }
 
-
-export type temp = {
+export type Temp = {
     id: string,
     Color: string,
     Title: string,
@@ -75,6 +75,12 @@ export type AADResponseUsers = {
     value: User[]
     '@odata.nextLink': string
 }
+
+export enum UserRole {
+    ADMIN = "ADMIN",
+    USER = "USER",
+}
+
 export type User = {
     businessPhones: string[],
     displayName: string,
@@ -88,6 +94,15 @@ export type User = {
     userPrincipalName: string,
     id: string
 }
+
+export type UserWCount = {
+    user: User,
+    sessionCount: number
+    sendKudoCount: number
+    receiveKudoCount: number
+}
+
+
 export type SessionContextValue = {
     session: string;
     setSession: React.Dispatch<React.SetStateAction<string>>;
@@ -102,17 +117,17 @@ export type SessionProps = {
     session: Session
 }
 
-export type newSessionDate = {
+export type NewSessionDate = {
     date: string,
     sessions: Session[]
 }
 
-export type newSessionSpeaker = {
+export type NewSessionSpeaker = {
     speakerId: string,
     sessions: Session[]
 }
 
-export enum sortPosibillities {
+export enum SortPosibillities {
     DateA = 'Date Asc ↓ ',
     DateD = 'Date Desc ↑',
     SpeakerA = 'Speaker Asc ↓',
@@ -123,10 +138,17 @@ export enum sortPosibillities {
 
 
 export type SortAndFilterProps = {
-    sort: sortPosibillities;
-    setSort: React.Dispatch<React.SetStateAction<sortPosibillities>>;
+    setSort: React.Dispatch<React.SetStateAction<SortPosibillities>>;
     filter?: string
     setFilter: React.Dispatch<React.SetStateAction<string>>;
+}
+
+export type PresentationKudo = {
+    id: string,
+    x: number,
+    y: number,
+    rot: number,
+    kudo: Kudo,
 }
 export enum CanvasShapes {
     Text,
@@ -213,3 +235,9 @@ export const Fonts = [
     "FranklinGothic",
     "Univers",
     "Frutiger"]
+
+export enum Filter {
+    Session = 'By session',
+    User = 'By user',
+    Flagged = 'Flagged',
+}

@@ -62,6 +62,7 @@ model User {
     image         String?
     accounts      Account[]
     sessions      Session[] 
+    role          String?     
 }
 
 model VerificationToken {
@@ -80,11 +81,12 @@ model Image {
 model Kudo {
   id        String     @id @default(cuid())
   image     String
-  liked     Boolean
-  comment   String
+  liked     Boolean    @default(false)
+  comment   String     @default("")
   sessionId String
   userId    String
   anonymous Boolean
+  flagged   Boolean    @default(false)
 
 }
 model Template {

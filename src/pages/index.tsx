@@ -6,13 +6,14 @@ import { NavigationBarContent } from "~/components/navigation/NavBarTitle";
 import NavButtons from "~/components/navigation/NavButtons";
 import SessionList from "~/components/sessions/SessionList";
 import { api } from "~/utils/api";
-import { type sortPosibillities, type Session } from "~/types";
+import { type SortPosibillities } from "~/types";
 import { useSession } from "next-auth/react";
 import { UtilButtonsContent } from "~/hooks/useUtilButtons";
 import LoadingBar from "~/components/LoadingBar";
+import { useRouter } from "next/router";
 
 
-export function getServerSideProps(context: { query: { searchtext: string, sort: sortPosibillities }; }) {
+export function getServerSideProps(context: { query: { searchtext: string, sort: SortPosibillities }; }) {
 
   return {
     props: {
@@ -22,12 +23,19 @@ export function getServerSideProps(context: { query: { searchtext: string, sort:
   }
 }
 
-const Home: NextPage<{ filter: string, sort: sortPosibillities }> = ({ filter, sort }) => {
-  const userId: string | undefined = useSession().data?.user.id
+const Home: NextPage<{ filter: string, sort: SortPosibillities }> = ({ filter, sort }) => {
 
-  const sessions: Session[] | undefined = api.sessions.getSessionsBySpeaker.useQuery({ id: userId ?? "error" }).data
-  if (!sessions) {
-    return <LoadingBar />
+  const router = useRouter()
+  const user = useSession().data?.user
+
+  const sessionsQuery = api.sessions.getSessionsBySpeaker.useQuery({ id: user?.id ?? "error" })
+  const sessions = sessionsQuery.data
+  if (sessionsQuery.isLoading || !sessions || !user) {
+    return <LoadingBar />;
+  }
+
+  if (sessions.length === 0) {
+    router.replace("/out").catch(console.error)
   }
 
   return (

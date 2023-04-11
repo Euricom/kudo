@@ -34,6 +34,10 @@ const inputGetImagesByIds = object({
 
 export const kudoRouter = createTRPCRouter({
 
+    getAllKudos: protectedProcedure.query(({ ctx }) => {
+        const kudo = ctx.prisma.kudo.findMany({})
+        return kudo
+    }),
 
     getKudosByUserId: protectedProcedure.input(inputGetById).query(({ input, ctx }) => {
         return ctx.prisma.kudo.findMany({
@@ -72,6 +76,17 @@ export const kudoRouter = createTRPCRouter({
             }
         });
         return kudo
+    }),
+
+    getFlaggedKudos: protectedProcedure.query(({ ctx }) => {
+        return ctx.prisma.kudo.findMany({
+            where: {
+                flagged: true,
+            },
+            orderBy: {
+                id: 'desc'
+            }
+        });
     }),
 
     getImagesByIds: protectedProcedure.input(inputGetImagesByIds).query(({ input, ctx }) => {
@@ -116,8 +131,6 @@ export const kudoRouter = createTRPCRouter({
         const kudo = (await ctx.prisma.kudo.create({
             data: {
                 image: input.image,
-                liked: false,
-                comment: '',
                 sessionId: input.sessionId,
                 userId: input.userId,
                 anonymous: input.anonymous,

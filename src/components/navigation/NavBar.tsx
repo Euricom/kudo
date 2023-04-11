@@ -30,7 +30,7 @@ function useVisibleStartNavbarActions() {
         {
             Component: BackArrow,
             key: 'backArrow',
-            routes: ['/session/[...id]', '/kudo/[...id]', '/notifications', '/create', '/create/editor', '/create/templates'],
+            routes: ['/session/[...id]', '/session/presentation/[...id]', '/kudo/[...id]','/speaker/[...id]', '/notifications', '/create', '/create/editor', '/create/templates', '/403'],
         },
         {
             Component: logo,
@@ -51,7 +51,7 @@ const NavBar = () => {
 
     return (
         <>
-            <div className="w-full navbar bg-base-100 shadow sticky z-50 top-0 left-0 " data-cy='Navbar'>
+            <div className="navbar bg-base-100 shadow sticky z-50 top-0 left-0 " data-cy='Navbar'>
                 <div className="navbar-start w-full sm:pl-8 pl-2">
                     {visibleStartNavbarActions.map((x) => (
                         <x.Component key={x.key} />
@@ -71,13 +71,13 @@ const NavBar = () => {
                             <label tabIndex={0} className="btn btn-ghost btn-circle m-1" data-cy='SettingsButton'><BsGearFill /></label>
                             <ul tabIndex={0} className="dropdown-content menu p-2 shadow bg-base-100 rounded-box w-52">
                                 <li>
-                                    <ThemeButton />
-                                </li>
-                                <li>
                                     <label className="label cursor-pointer">
                                         <span className="label-text">Notifications</span>
                                         <input type="checkbox" className="toggle" />
                                     </label>
+                                </li>
+                                <li>
+                                    <ThemeButton />
                                 </li>
                             </ul>
                         </div>

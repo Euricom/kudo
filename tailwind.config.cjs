@@ -5,13 +5,12 @@ module.exports = {
     extend: {
       backgroundImage: {
         'honeycomb': "url('../contents/images/HoneycombPatternEuricomGreen.png')",
-        },
-        backdropBlur: {
-          xs: '2px',
-        },
+      },
+      backdropBlur: {
+        xs: '2px',
+      },
       // daisy-ui is handling the theme colors
       extend: {
-        
         fontFamily: {
           poppins: ['Poppins', 'serif'],
         },

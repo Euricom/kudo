@@ -86,6 +86,7 @@ model Kudo {
   sessionId String
   userId    String
   anonymous Boolean
+  flagged   Boolean    @default(false)
 
 }
 model Template {

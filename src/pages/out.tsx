@@ -20,7 +20,7 @@ const Out: NextPage = () => {
   const users = api.users.getAllUsers.useQuery().data
 
   const [sort, setSort] = useState<sortPosibillities>(sortPosibillities.DateD)
-  const [filter, setFilter] = useState<string>()
+  const [filter, setFilter] = useState<string>("")
 
   const userId = useSession().data?.user.id
   if (!userId) {

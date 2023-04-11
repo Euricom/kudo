@@ -131,7 +131,7 @@ export enum sortPosibillities {
 export type SortAndFilterProps = {
     setSort: React.Dispatch<React.SetStateAction<sortPosibillities>>;
     filter?: string
-    setFilter: React.Dispatch<React.SetStateAction<string | undefined>>;
+    setFilter: React.Dispatch<React.SetStateAction<string>>;
 }
 
 export type PresentationKudo = {
@@ -226,3 +226,9 @@ export const Fonts = [
     "FranklinGothic",
     "Univers",
     "Frutiger"]
+    
+export enum Filter {
+    Session = 'By session',
+    User = 'By user',
+    Flagged = 'Flagged',
+}

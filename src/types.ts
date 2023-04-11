@@ -150,6 +150,10 @@ export type PresentationKudo = {
     rot: number,
     kudo: Kudo,
 }
+
+export type ImageData = {
+    dataUrl: string;
+}
 export enum CanvasShapes {
     Text,
     Sticker,

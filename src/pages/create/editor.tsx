@@ -64,7 +64,6 @@ const Editor: NextPage<{ res: Template }> = ({ res }) => {
 
   const submit = async () => {
     if (!stage) {
-      console.log("Stage doesn't exist.");
       return
     }
     try {

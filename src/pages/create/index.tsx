@@ -12,6 +12,7 @@ import { useSession } from "next-auth/react";
 
 import { type Session, type User } from "~/types";
 import { UtilButtonsContent } from "~/hooks/useUtilButtons";
+import LoadingBar from "~/components/LoadingBar";
 
 
 const New: NextPage = () => {
@@ -24,7 +25,7 @@ const New: NextPage = () => {
 
   const sessions: Session[] | undefined = api.sessions.getAll.useQuery().data
   if (!sessions || !users) {
-    return <div>Loading...</div>;
+    return <LoadingBar />
   }
 
   const visibleSpeakers = () => {

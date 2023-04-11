@@ -8,34 +8,30 @@ import { NavigationBarContent } from "~/components/navigation/NavBarTitle";
 import NavButtons from "~/components/navigation/NavButtons";
 import { useSession } from "next-auth/react";
 import { FindAllKudosSortedByUserId } from "~/server/services/kudoService";
-import { pages, sortPosibillities } from "~/types";
-import { useEffect, useState } from "react"
+import { sortPosibillities } from "~/types";
+import { useState } from "react"
 import SortAndFilter from "~/components/input/SortAndFilter";
 import { api } from "~/utils/api";
-import { useFilters } from "~/components/input/RememberFilter";
+import LoadingBar from "~/components/LoadingBar";
 
-const Out: NextPage = () => {
+export function getServerSideProps(context: { query: { filter: string, sort: sortPosibillities }; }) {
+
+  return {
+    props: {
+      filterIn: context.query.filter ?? "",
+      sortIn: context.query.sort ?? "",
+    }
+  }
+}
+
+const Out: NextPage<{ filterIn: string, sortIn: sortPosibillities }> = ({ filterIn, sortIn }) => {
 
   const sessions = api.sessions.getAll.useQuery().data
-  const data = useFilters().data
-  let index = -1
-  if (data.pages.includes(pages.Out)) {
-    index = data.pages.indexOf(pages.Out)
-  }
 
-  const [sort, setSort] = useState<sortPosibillities>(data.sorts[index] ?? sortPosibillities.DateD)
-  const [filter, setFilter] = useState<string>(data.filters[index] ?? "")
+  const [sort, setSort] = useState<sortPosibillities>(sortIn ?? sortPosibillities.DateD)
+  const [filter, setFilter] = useState<string>(filterIn ?? "")
 
   const userId = useSession().data?.user.id
-
-  useEffect(() => {
-    if (data.pages.includes(pages.Out)) {
-      const index = data.pages.indexOf(pages.Out)
-      setFilter(data.filters[index] ?? "")
-      setSort(data.sorts[index] ?? sortPosibillities.DateD)
-
-    }
-  }, [data.pages, data.filters, data.sorts])
 
   if (!userId) {
     throw new Error("No user signed in")
@@ -43,7 +39,7 @@ const Out: NextPage = () => {
   const kudos = FindAllKudosSortedByUserId(userId, sort)
 
   if (!userId || !sessions) {
-    return <div>Loading...</div>
+    return <LoadingBar />
   }
 
   return (
@@ -61,7 +57,7 @@ const Out: NextPage = () => {
         <></>
       </UtilButtonsContent >
       <main className="flex flex-col items-center justify-start">
-        <SortAndFilter page={pages.Out} sort={sort} setSort={setSort} filter={filter} setFilter={setFilter} />
+        <SortAndFilter sort={sort} setSort={setSort} filter={filter} setFilter={setFilter} />
         <div className="flex flex-wrap gap-5 justify-center px-5 mb-8 md:mb-28">
           {kudos == undefined || kudos.length == 0 ? <h1>No Kudos Sent Yet</h1> :
             kudos.filter(k => sessions.find(s => s.id == k.sessionId)?.title.toLowerCase().includes(filter?.toLowerCase() ?? "")).map((kudo) => (

@@ -1,13 +1,22 @@
+import { useRouter } from "next/router"
 import { FiSearch } from "react-icons/fi"
 import { MdSort } from "react-icons/md"
 import { type SortAndFilterProps, sortPosibillities } from "~/types"
-import { useFilters } from "./RememberFilter"
 
-const SortAndFilter = ({ page, sort, setSort, filter, setFilter }: SortAndFilterProps) => {
+const SortAndFilter = ({ setSort, filter, setFilter }: SortAndFilterProps) => {
 
+    const router = useRouter()
+    const query = router.query
 
-    useFilters(page, filter ?? "", sort);
+    const changeSort = (newSort: sortPosibillities) => {
+        setSort(newSort)
+        router.replace({ query: { ...query, sort: newSort } }).catch(e => console.log(e))
+    }
 
+    const changeFilter = (newFilter: string) => {
+        setFilter(newFilter)
+        router.replace({ query: { ...query, filter: newFilter } }).catch(e => console.log(e))
+    }
 
     return (
         <>
@@ -15,29 +24,29 @@ const SortAndFilter = ({ page, sort, setSort, filter, setFilter }: SortAndFilter
                 <div className="flex w-full max-w-md bg-base-100 rounded-full items-center px-4">
                     <FiSearch size={20} className="" />
                     <input type="text" value={filter} onChange={(e) => {
-                        setFilter(e.target.value)
+                        changeFilter(e.target.value)
                     }} placeholder={"Search..."} className="input w-full bg-transparent rounded-full p-3 focus:outline-none" />
                 </div>
                 <div className="dropdown dropdown-end">
                     <label tabIndex={0} className="btn btn-primary btn-circle m-1" data-cy='SettingsButton'><MdSort size={20} /></label>
                     <ul tabIndex={0} className="dropdown-content menu p-2 shadow bg-base-100 rounded-box w-52">
 
-                        <li className="btn btn-ghost" onClick={() => setSort(sortPosibillities.DateD)}>
+                        <li className="btn btn-ghost" onClick={() => changeSort(sortPosibillities.DateD)}>
                             {sortPosibillities.DateD}
                         </li>
-                        <li className="btn btn-ghost" onClick={() => setSort(sortPosibillities.DateA)}>
+                        <li className="btn btn-ghost" onClick={() => changeSort(sortPosibillities.DateA)}>
                             {sortPosibillities.DateA}
                         </li>
-                        <li className="btn btn-ghost" onClick={() => setSort(sortPosibillities.SpeakerA)}>
+                        <li className="btn btn-ghost" onClick={() => changeSort(sortPosibillities.SpeakerA)}>
                             {sortPosibillities.SpeakerA}
                         </li>
-                        <li className="btn btn-ghost" onClick={() => setSort(sortPosibillities.SpeakerD)}>
+                        <li className="btn btn-ghost" onClick={() => changeSort(sortPosibillities.SpeakerD)}>
                             {sortPosibillities.SpeakerD}
                         </li>
-                        <li className="btn btn-ghost" onClick={() => setSort(sortPosibillities.TitleA)}>
+                        <li className="btn btn-ghost" onClick={() => changeSort(sortPosibillities.TitleA)}>
                             {sortPosibillities.TitleA}
                         </li>
-                        <li className="btn btn-ghost" onClick={() => setSort(sortPosibillities.TitleD)}>
+                        <li className="btn btn-ghost" onClick={() => changeSort(sortPosibillities.TitleD)}>
                             {sortPosibillities.TitleD}
                         </li>
 

@@ -9,14 +9,24 @@ import { api } from "~/utils/api";
 import { type Session } from "~/types";
 import { useSession } from "next-auth/react";
 import { UtilButtonsContent } from "~/hooks/useUtilButtons";
+import LoadingBar from "~/components/LoadingBar";
 
 
-const Home: NextPage = () => {
+export function getServerSideProps(context: { query: { filter: string }; }) {
+
+  return {
+    props: {
+      filter: context.query.filter ?? ""
+    }
+  }
+}
+
+const Home: NextPage<{ filter: string }> = ({ filter }) => {
   const userId: string | undefined = useSession().data?.user.id
 
   const sessions: Session[] | undefined = api.sessions.getSessionsBySpeaker.useQuery({ id: userId ?? "error" }).data
   if (!sessions) {
-    return <div>Loading...</div>;
+    return <LoadingBar />
   }
 
   return (
@@ -33,7 +43,7 @@ const Home: NextPage = () => {
         <></>
       </UtilButtonsContent >
       <main className="flex flex-col items-center justify-center h-full">
-        <SessionList sessions={sessions} />
+        <SessionList sessions={sessions} filterIn={filter} />
       </main>
       <FAB text={"Create Kudo"} icon={<GrAdd />} url="/create" />
     </>

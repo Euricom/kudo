@@ -7,14 +7,21 @@ import { NavigationBarContent } from "~/components/navigation/NavBarTitle";
 import NavButtons from "~/components/navigation/NavButtons";
 import SessionList from "~/components/sessions/SessionList";
 import { api } from "~/utils/api";
+import LoadingBar from "~/components/LoadingBar";
+export function getServerSideProps(context: { query: { filter: string }; }) {
 
+  return {
+    props: {
+      filter: context.query.filter ?? ""
+    }
+  }
+}
 
-
-const All: NextPage = () => {
+const All: NextPage<{ filter: string }> = ({ filter }) => {
   const sessions = api.sessions.getAll.useQuery().data
 
   if (!sessions) {
-    return <div>Loading...</div>;
+    return <LoadingBar />
   }
 
   return (
@@ -31,7 +38,7 @@ const All: NextPage = () => {
         <></>
       </UtilButtonsContent >
       <main className="flex flex-col items-center justify-center h-full">
-        <SessionList sessions={sessions} />
+        <SessionList sessions={sessions} filterIn={filter} />
       </main>
       <FAB text={"Create Kudo"} icon={<GrAdd />} url="/create" />
     </>

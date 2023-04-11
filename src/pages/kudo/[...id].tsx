@@ -10,6 +10,7 @@ import { AiOutlineHeart, AiFillHeart } from 'react-icons/ai'
 import { useState } from "react";
 import { FiSend } from "react-icons/fi";
 import ConfirmationModal from '~/components/input/ConfirmationModal';
+import LoadingBar from "~/components/LoadingBar";
 
 
 export function getServerSideProps(context: { query: { id: string }; }) {
@@ -57,7 +58,7 @@ const KudoDetail: NextPage<{ id: string }> = ({ id }) => {
   }
 
   if (!image || !kudo) {
-    return <div>loading...</div>
+    return <LoadingBar />
   }
 
 

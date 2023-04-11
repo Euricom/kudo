@@ -1,10 +1,6 @@
 import type Konva from "konva";
 import { type Vector2d } from "konva/lib/types";
 
-// type Document = {
-//   documentMode?: number;
-// }
-
 const editText = (areaPosition: Vector2d, textNode: Konva.Text, tr: Konva.Transformer, scale: number, onChange: (text: string) => void, container?: HTMLDivElement) => {
   const textarea = createTextArea(textNode, areaPosition, tr, scale, onChange, container)
   textarea.focus();
@@ -26,7 +22,7 @@ const createTextArea = (textNode: Konva.Text, areaPosition: Vector2d, tr: Konva.
   textarea.style.position = 'absolute';
   textarea.style.top = (areaPosition.y).toString() + 'px';
   textarea.style.left = (areaPosition.x).toString() + 'px';
-  textarea.style.width = "auto" //((textNode.width() - textNode.padding() * 2) * scale * textNode.scaleX()).toString() + 'px';
+  textarea.style.width = "auto"
   textarea.style.height =
     ((textNode.height() - textNode.padding() * 2 + 5) * scale).toString() + 'px';
 
@@ -37,7 +33,6 @@ const createTextArea = (textNode: Konva.Text, areaPosition: Vector2d, tr: Konva.
   textarea.style.overflow = 'visible';
   textarea.style.background = 'none';
   textarea.style.outline = 'none';
-  // textarea.style.maxWidth = "100%"
   textarea.style.resize = 'none';
   textarea.style.lineHeight = textNode.lineHeight().toString();
   textarea.style.fontFamily = textNode.fontFamily();
@@ -68,7 +63,7 @@ const createTextArea = (textNode: Konva.Text, areaPosition: Vector2d, tr: Konva.
   // after browsers resized it we can set actual value
   textarea.style.height = (textarea.scrollHeight + 3).toString() + 'px';
 
-  
+
   textarea.focus()
   window?.getSelection()?.selectAllChildren(textarea)
   window?.getSelection()?.collapseToEnd()

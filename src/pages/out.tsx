@@ -12,6 +12,7 @@ import { sortPosibillities } from "~/types";
 import { useState } from "react"
 import SortAndFilter from "~/components/input/SortAndFilter";
 import { api } from "~/utils/api";
+import LoadingBar from "~/components/LoadingBar";
 
 const Out: NextPage = () => {
 
@@ -27,8 +28,8 @@ const Out: NextPage = () => {
   }
   const kudos = FindAllKudosSortedByUserId(userId, sort)
 
-  if (!userId || !sessions || !users) {
-    return <div>Loading...</div>
+  if (!userId || !kudos || !sessions || !users) {
+    return <LoadingBar />
   }
 
   return (

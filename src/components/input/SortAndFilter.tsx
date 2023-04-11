@@ -1,9 +1,40 @@
 import { FiSearch } from "react-icons/fi"
 import { MdSort } from "react-icons/md"
 import { type SortAndFilterProps, sortPosibillities } from "~/types"
+import { useRouter } from "next/router"
 
 const SortAndFilter = ({ setSort, filter, setFilter }: SortAndFilterProps) => {
+    function useVisibleSort() {
+        const router = useRouter();
 
+        return [
+            {
+                sort: sortPosibillities.DateA,
+                routes: ['/', '/out', '/speaker/[...id]'],
+            },
+            {
+                sort: sortPosibillities.DateD,
+                routes: ['/', '/out', '/speaker/[...id]'],
+            },
+            {
+                sort: sortPosibillities.SpeakerA,
+                routes: ['/out', '/all'],
+            },
+            {
+                sort: sortPosibillities.SpeakerD,
+                routes: ['/out', '/all'],
+            },
+            {
+                sort: sortPosibillities.TitleA,
+                routes: ['/', '/out', '/speaker/[...id]'],
+            },
+            {
+                sort: sortPosibillities.TitleD,
+                routes: ['/', '/out', '/speaker/[...id]'],
+            },
+        ].filter((item) => item.routes.includes(router.pathname));
+    }
+    const visibleSort = useVisibleSort();
 
     return (
         <>
@@ -15,26 +46,15 @@ const SortAndFilter = ({ setSort, filter, setFilter }: SortAndFilterProps) => {
                 <div className="dropdown dropdown-end">
                     <label tabIndex={0} className="btn btn-primary btn-circle m-1" data-cy='SettingsButton'><MdSort size={20} /></label>
                     <ul tabIndex={0} className="dropdown-content menu p-2 shadow bg-base-100 rounded-box w-52">
-
-                        <li className="btn btn-ghost" onClick={() => setSort(sortPosibillities.DateD)}>
-                            {sortPosibillities.DateD}
-                        </li>
-                        <li className="btn btn-ghost" onClick={() => setSort(sortPosibillities.DateA)}>
-                            {sortPosibillities.DateA}
-                        </li>
-                        <li className="btn btn-ghost" onClick={() => setSort(sortPosibillities.SpeakerA)}>
-                            {sortPosibillities.SpeakerA}
-                        </li>
-                        <li className="btn btn-ghost" onClick={() => setSort(sortPosibillities.SpeakerD)}>
-                            {sortPosibillities.SpeakerD}
-                        </li>
-                        <li className="btn btn-ghost" onClick={() => setSort(sortPosibillities.TitleA)}>
-                            {sortPosibillities.TitleA}
-                        </li>
-                        <li className="btn btn-ghost" onClick={() => setSort(sortPosibillities.TitleD)}>
-                            {sortPosibillities.TitleD}
-                        </li>
-
+                        {visibleSort.map((x) => {
+                            return (
+                                <>
+                                    <li key={x.sort} className="btn btn-ghost" onClick={() => setSort(x.sort)}>
+                                        {x.sort}
+                                    </li>
+                                </>
+                            )
+                        })}
                     </ul>
                 </div>
             </div>

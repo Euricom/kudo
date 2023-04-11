@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { type User, type SessionProps } from "~/types";
+import { type SessionProps } from "~/types";
 import { api } from "~/utils/api";
 import Image from 'next/image';
 import avatar from '../../contents/images/EMAvatar.jpg'
@@ -7,7 +7,7 @@ import avatar from '../../contents/images/EMAvatar.jpg'
 
 
 const SessionCard = ({ session }: SessionProps) => {
-    const speaker: User | undefined = api.users.getUserById.useQuery({ id: session.speakerId }).data
+    const speaker = api.users.getUserById.useQuery({ id: session.speakerId }).data
 
     if (!session || !speaker) {
         return <></>
@@ -18,8 +18,8 @@ const SessionCard = ({ session }: SessionProps) => {
                 <div className="card-body">
                     <h2 className="card-title text-2xl" data-cy='SessionTitle'>{session.title}</h2>
                     <div className="flex w-full gap-3">
-                        <div className="avatar">
-                            <div className="w-10 rounded-full">
+                        <div className="avatar w-1/6">
+                            <div className="rounded-full">
                                 <Image
                                     src={avatar}
                                     alt="Profile picture"

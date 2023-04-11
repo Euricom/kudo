@@ -10,8 +10,8 @@ import { useRouter } from "next/router";
 import { useRef, useState, useEffect } from "react";
 import { type PresentationKudo } from "~/types";
 import { useTransition, animated } from '@react-spring/web';
-import Image from "next/image";
-import QR_Placeholder from "~/contents/images/QR_code_Placeholder.png";
+import { QRCode } from 'react-qrcode-logo';
+import icon from '~/../public/favicon.ico';
 
 export function getServerSideProps(context: { query: { id: string } }) {
   return {
@@ -107,13 +107,11 @@ const Presentation: NextPage<{ id: string }> = ({ id }) => {
         data-cy="Session"
       >
         <div ref={dropzoneRef} className="relative flex justify-center items-center h-full w-full overflow-hidden">
-          <div className="relative w-64 h-64">
-            <Image
-              src={QR_Placeholder}
-              alt="QR Code"
-              fill
-            />
-          </div>
+          <QRCode 
+            value={window.location.hostname + "/create?session=" + session?.id}
+            logoImage={icon.src}
+            size={256}
+          />
           {kudos == undefined || kudos.length == 0 ? (
               <></>
             ) : (
@@ -127,6 +125,13 @@ const Presentation: NextPage<{ id: string }> = ({ id }) => {
                   </animated.div>
               ))
           )}
+          <div className="absolute bottom-0 left-0 z-50">
+            <QRCode
+              value={window.location.hostname + "/create?session=" + session?.id}
+              logoImage={icon.src}
+              size={128}
+            />
+          </div>
         </div>
       </main>
     </>

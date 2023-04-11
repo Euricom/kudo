@@ -2,12 +2,7 @@ import { type Kudo } from "@prisma/client";
 import { SortPosibillities } from "~/types";
 import { api } from "~/utils/api";
 
-
-
 export const FindAllKudosSortedByUserId = (id: string, sort: SortPosibillities): Kudo[] => {
-
-
-
     const kudoQuery = api.kudos.getKudosByUserId.useQuery({ id: id });
     const kudos: Kudo[] = kudoQuery.data as Kudo[]
     const sessions = api.sessions.getAll.useQuery().data

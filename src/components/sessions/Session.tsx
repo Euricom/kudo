@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { type User, type SessionProps, type ImageData } from "~/types";
+import { type SessionProps, type ImageData } from "~/types";
 import { api } from "~/utils/api";
 import Image from 'next/image';
 import { useEffect, useState } from "react";
@@ -7,7 +7,7 @@ import { useEffect, useState } from "react";
 
 
 const SessionCard = ({ session }: SessionProps) => {
-    const speaker: User | undefined = api.users.getUserById.useQuery({ id: session.speakerId }).data
+    const speaker = api.users.getUserById.useQuery({ id: session.speakerId }).data
 
     const [imgUrl, setImgUrl] = useState<string>('');
 

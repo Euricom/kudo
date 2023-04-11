@@ -15,6 +15,9 @@ const Menu = ({ children }: MenuProps) => {
             .then((json: ImageData) => setImgUrl(json.dataUrl))
             .catch(e => console.log(e));
     }, [userId]);
+
+    const user = useSession().data?.user
+
     return (
         <>
             <div className="drawer" data-cy='Menu'>
@@ -28,7 +31,7 @@ const Menu = ({ children }: MenuProps) => {
                         <label className='btn btn-circle absolute top-3 right-3 btn-ghost text-2xl' htmlFor="my-drawer-3" data-cy='CloseMenu'>X</label>
                         <div className='flex flex-col w-fit'>
                             <div className="avatar ">
-                                <div className="w-24 rounded-xl">
+                                <div className="w-24 rounded-xl relative">
                                     <Image
                                         src={imgUrl}
                                         alt="Profile picture"
@@ -36,7 +39,7 @@ const Menu = ({ children }: MenuProps) => {
                                     />
                                 </div>
                             </div>
-                            <a>Yi Long Ma</a>
+                            <a>{user?.name}</a>
                         </div>
 
                         <div className="divider"></div>

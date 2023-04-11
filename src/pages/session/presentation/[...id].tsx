@@ -115,7 +115,7 @@ const Presentation: NextPage<{ id: string }> = ({ id }) => {
                     className="absolute -translate-x-1/2 -translate-y-1/2"
                     style={{...style}}
                   >
-                    <KudoCard kudo={kudo.kudo} hideLiked={true}/>
+                    <KudoCard kudo={kudo.kudo} isPresentation={true}/>
                   </animated.div>
               ))
           )}

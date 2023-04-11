@@ -7,7 +7,7 @@ import { AiOutlineHeart, AiFillHeart } from 'react-icons/ai'
 
 
 
-const KudoCard = ({ kudo, hideLiked }: KudoProps) => {
+const KudoCard = ({ kudo, isPresentation }: KudoProps) => {
   const image = api.kudos.getImageById.useQuery({ id: kudo.image }).data?.dataUrl
   const user = api.users.getUserById.useQuery({ id: kudo.userId }).data?.displayName
 
@@ -15,13 +15,13 @@ const KudoCard = ({ kudo, hideLiked }: KudoProps) => {
     return <></>
   }
   return (
-    <><div className="items-start">
+    <>
+    <div className="items-start">
       <Link className="card bg-white text-gray-800 justify-end items-center shadow-xl aspect-[3/2] rounded-none w-80 h-52" data-cy="Kudo" href={"/kudo/" + kudo.id} id={kudo.sessionId}>
-
         <Image className="absolute h-full" src={image} width={320} height={208} alt="Kudo" />
         {kudo.anonymous ? <></> : <h1 className="relative">Sent by {user}</h1>}
       </Link>
-      {hideLiked ? "" : kudo.liked ? <AiFillHeart size={25} /> : <AiOutlineHeart size={25} />}
+      {isPresentation ? "" : kudo.liked ? <AiFillHeart size={25} /> : <AiOutlineHeart size={25} />}
     </div>
     </>
   );

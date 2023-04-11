@@ -24,7 +24,7 @@ export type SelectProps<T> = {
 }
 export type KudoProps = {
     kudo: Kudo
-    hideLiked?: boolean
+    isPresentation?: boolean
 }
 
 export type FabProps = {

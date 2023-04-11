@@ -9,7 +9,9 @@ import { FiMonitor } from "react-icons/fi";
 import { useRouter } from "next/router";
 import { useRef, useState, useEffect } from "react";
 import { type PresentationKudo } from "~/types";
-import { useTransition, animated } from '@react-spring/web'; 
+import { useTransition, animated } from '@react-spring/web';
+import Image from "next/image";
+import QR_Placeholder from "~/contents/images/QR_code_Placeholder.png";
 
 export function getServerSideProps(context: { query: { id: string } }) {
   return {
@@ -105,7 +107,13 @@ const Presentation: NextPage<{ id: string }> = ({ id }) => {
         data-cy="Session"
       >
         <div ref={dropzoneRef} className="relative flex justify-center items-center h-full w-full overflow-hidden">
-          <div className="w-64 h-64 bg-white border-4"></div>
+          <div className="relative w-64 h-64">
+            <Image
+              src={QR_Placeholder}
+              alt="QR Code"
+              fill
+            />
+          </div>
           {kudos == undefined || kudos.length == 0 ? (
               <></>
             ) : (

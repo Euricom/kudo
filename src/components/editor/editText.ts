@@ -11,7 +11,7 @@ const editText = (areaPosition: Vector2d, textNode: Konva.Text, tr: Konva.Transf
 }
 
 const createTextArea = (textNode: Konva.Text, areaPosition: Vector2d, tr: Konva.Transformer, scale: number, onChange: (text: string) => void, container?: HTMLDivElement) => {
-  const textarea = document.createElement('textarea');
+  const textarea = document.createElement('span');
   if (container) {
     container.appendChild(textarea)
   } else {
@@ -21,11 +21,12 @@ const createTextArea = (textNode: Konva.Text, areaPosition: Vector2d, tr: Konva.
   // apply many styles to match text on canvas as close as possible
   // remember that text rendering on canvas and on the textarea can be different
   // and sometimes it is hard to make it 100% the same. But we will try...
-  textarea.value = textNode.text();
+  textarea.contentEditable = 'true';
+  textarea.innerText = textNode.text();
   textarea.style.position = 'absolute';
   textarea.style.top = (areaPosition.y).toString() + 'px';
   textarea.style.left = (areaPosition.x).toString() + 'px';
-  textarea.style.width = "auto"//((textNode.width() - textNode.padding() * 2) * scale * textNode.scaleX()).toString() + 'px';
+  textarea.style.width = "auto" //((textNode.width() - textNode.padding() * 2) * scale * textNode.scaleX()).toString() + 'px';
   textarea.style.height =
     ((textNode.height() - textNode.padding() * 2 + 5) * scale).toString() + 'px';
 
@@ -33,7 +34,7 @@ const createTextArea = (textNode: Konva.Text, areaPosition: Vector2d, tr: Konva.
   textarea.style.border = 'none';
   textarea.style.padding = '0px';
   textarea.style.margin = '0px';
-  textarea.style.overflow = 'hidden';
+  textarea.style.overflow = 'visible';
   textarea.style.background = 'none';
   textarea.style.outline = 'none';
   // textarea.style.maxWidth = "100%"
@@ -72,8 +73,8 @@ const createTextArea = (textNode: Konva.Text, areaPosition: Vector2d, tr: Konva.
     // hide on enter
     // but don't hide on shift + enter
     if (e.key === 'Enter' && !e.shiftKey) {
-      textNode.text(textarea.value);
-      onChange(textarea.value)
+      textNode.text(textarea.innerText);
+      onChange(textarea.innerText)
       removeTextarea(textNode, textarea, tr);
     }
     // on esc do not set value back to node
@@ -83,22 +84,20 @@ const createTextArea = (textNode: Konva.Text, areaPosition: Vector2d, tr: Konva.
   });
 
   textarea.addEventListener('keydown', function () {
-    // const absScale = textNode.getAbsoluteScale().x;
-    // setTextareaWidth(textNode.width() * absScale * scale, textNode, textarea);
     textarea.style.height = 'auto';
     textarea.style.height =
-      Math.min(300, textarea.scrollHeight + textNode.fontSize()).toString() + 'px';
+      (textarea.scrollHeight + textNode.fontSize()).toString() + 'px';
   });
 
   function handleOutsideClick(e: Event) {
     if (e.target !== textarea) {
-      textNode.text(textarea.value);
-      onChange(textarea.value)
+      textNode.text(textarea.innerText);
+      onChange(textarea.innerText)
       removeTextarea(textNode, textarea, tr);
     }
   }
 
-  function removeTextarea(textNode: Konva.Text, textarea: HTMLTextAreaElement, tr: Konva.Transformer) {
+  function removeTextarea(textNode: Konva.Text, textarea: HTMLSpanElement, tr: Konva.Transformer) {
     textarea.parentNode?.removeChild(textarea);
     window.removeEventListener('click', handleOutsideClick);
     textNode.show();
@@ -112,27 +111,5 @@ const createTextArea = (textNode: Konva.Text, areaPosition: Vector2d, tr: Konva.
 
   return textarea;
 };
-
-// function setTextareaWidth(newWidth: number, textNode: Konva.Text, textarea: HTMLTextAreaElement) {
-//   if (!newWidth) {
-//     // set width for placeholder
-//     newWidth = textNode.getTextWidth() * textNode.fontSize();
-//   }
-//   // some extra fixes on different browsers
-//   const isSafari = /^((?!chrome|android).)*safari/i.test(
-//     navigator.userAgent
-//   );
-//   const isFirefox = navigator.userAgent.toLowerCase().indexOf('firefox') > -1;
-//   if (isSafari || isFirefox) {
-//     newWidth = Math.ceil(newWidth);
-//   }
-
-//   const isEdge = (document as Document).documentMode || /Edge/.test(navigator.userAgent);
-//   if (isEdge) {
-//     newWidth += 1;
-//   }
-//   textarea.style.width = newWidth.toString() + 'px';
-// }
-
 
 export default editText;

@@ -5,17 +5,19 @@ import avatar from '../../contents/images/EMAvatar.jpg'
 
 
 
-const SpeakerCard = ({ user }: {user: UserWCount}) => {
+const SpeakerCard = ({ user }: { user: UserWCount }) => {
     return (
         <>
             <Link key={user.user.id} className="card bg-base-100 shadow-xl w-full h-fit md:w-96" data-cy="Session" href={"/speaker/" + user.user.id.toString()} >
                 <div className="card-body">
                     <div className="flex w-full gap-3">
-                        <div className="avatar w-1/4">
-                            <div className="rounded-full">
+                        <div className="avatar w-1/4 h-1/6 aspect-square">
+                            <div className="relative">
                                 <Image
-                                    src={avatar}
+                                    className="rounded-full"
+                                    src={user.user.image ?? avatar}
                                     alt="Profile picture"
+                                    fill
                                 />
                             </div>
                         </div>

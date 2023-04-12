@@ -31,7 +31,7 @@ const All: NextPage<{ searchtext: string, sortIn: SortPosibillities }> = ({ sear
   const user = useSession().data?.user
 
   const usersQuery = api.users.getRelevantUsers.useQuery()
-  const users = usersQuery.data
+  const { data: users, refetch: refetchUsers } = usersQuery
 
   const sessionsQuery = api.sessions.getAll.useQuery()
   const sessions = sessionsQuery.data
@@ -47,6 +47,21 @@ const All: NextPage<{ searchtext: string, sortIn: SortPosibillities }> = ({ sear
     if (user?.role !== UserRole.ADMIN)
       router.replace("/403").catch(console.error)
   }, [user, router])
+
+  useEffect(() => {
+    async function fetchData() {
+      await refetchUsers()
+    }
+
+    if (users) {
+      users.forEach(user => {
+        if (!user.user.image) {
+          fetchData().catch(console.error);
+        }
+      })
+    }
+  }, [users, refetchUsers])
+
 
   if (!users || usersQuery.isLoading || !sessions || sessionsQuery.isLoading || !kudos || kudoQuery.isLoading) {
     return <LoadingBar />;

@@ -18,7 +18,7 @@ const SessionCard = ({ session }: SessionProps) => {
                 <div className="card-body">
                     <h2 className="card-title text-2xl" data-cy='SessionTitle'>{session.title}</h2>
                     <div className="flex w-full gap-3">
-                        <div className="avatar w-12 aspect-square">
+                        <div className="avatar w-12 aspect-square relative">
                             <Image
                                 className="rounded-full"
                                 src={session.speakerImage ?? avatar}

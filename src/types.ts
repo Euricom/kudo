@@ -94,6 +94,7 @@ export type User = {
     surname: string,
     userPrincipalName: string,
     id: string
+    image?: string
 }
 
 export type UserWCount = {

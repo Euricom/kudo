@@ -23,6 +23,9 @@ describe('navbar title spec', () => {
     cy.get('[data-cy=FAB]').click()
     cy.get('[data-cy=NavButtons]').should('not.exist')
     cy.get('[data-cy=NavbarTitle]').contains('New')
+    cy.get('[data-cy=Session]').get('input[list=Session]').get("[data-cy=option]").first().invoke('text').then((text) => {
+      cy.get('[data-cy=Session]').get('input[list=Session]').type(text)
+    })
 
     cy.get('[data-cy=FAB]').click()
     cy.get('[data-cy=NavButtons]').should('not.exist')

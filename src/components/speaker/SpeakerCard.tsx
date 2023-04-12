@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { type UserWCount } from "~/types";
 import Image from 'next/image';
-import avatar from '../../contents/images/EMAvatar.jpg'
+import avatar from '../../contents/images/AnonymousPicture.jpg'
 
 
 

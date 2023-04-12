@@ -2,7 +2,7 @@ import Link from "next/link";
 import { type SessionProps } from "~/types";
 import { api } from "~/utils/api";
 import Image from 'next/image';
-import avatar from '~/contents/images/EMAvatar.jpg'
+import avatar from '~/contents/images/AnonymousPicture.jpg'
 
 
 

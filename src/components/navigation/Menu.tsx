@@ -3,6 +3,7 @@ import React, { useEffect, useState } from 'react';
 import { type ImageData, type MenuProps } from '~/types';
 import { signOut, useSession } from 'next-auth/react';
 import ThemeButton from '~/components/input/ThemeButton';
+import avatar from '../../contents/images/AnonymousPicture.jpg'
 
 const Menu = ({ children }: MenuProps) => {
 
@@ -33,7 +34,7 @@ const Menu = ({ children }: MenuProps) => {
                             <div className="avatar ">
                                 <div className="w-24 rounded-xl relative">
                                     <Image
-                                        src={imgUrl}
+                                        src={imgUrl ?? avatar}
                                         alt="Profile picture"
                                         fill
                                     />

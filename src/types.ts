@@ -50,6 +50,7 @@ export type Session = {
     title: string,
     date: string,
     speakerId: string,
+    speakerImage?: string,
 }
 
 export type SessionArray = {
@@ -93,6 +94,7 @@ export type User = {
     surname: string,
     userPrincipalName: string,
     id: string
+    image?: string
 }
 
 export type UserWCount = {

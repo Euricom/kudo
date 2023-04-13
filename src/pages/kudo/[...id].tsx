@@ -6,9 +6,8 @@ import { FaTrashAlt } from "react-icons/fa";
 import { UtilButtonsContent } from "~/hooks/useUtilButtons";
 import Link from "next/link";
 import { api } from "~/utils/api";
-import { AiOutlineHeart, AiFillHeart, AiFillWarning, AiOutlineWarning } from 'react-icons/ai'
+import { AiOutlineHeart, AiFillHeart, AiFillWarning, AiOutlineWarning, AiOutlineSend } from 'react-icons/ai'
 import { useEffect, useState } from "react";
-import { FiSend } from "react-icons/fi";
 import ConfirmationModal from '~/components/input/ConfirmationModal';
 import { useSession } from "next-auth/react";
 import { UserRole } from "~/types";
@@ -139,15 +138,15 @@ const KudoDetail: NextPage<{ id: string }> = ({ id }) => {
           <div className="aspect-[3/2] w-full max-h-full max-w-2xl bg-white relative">
             <Image className="shadow-2xl" src={image} fill alt="Kudo" />
           </div>
-          <div className="flex flex-row left-0 mt-2 gap-5 md:gap-10 ">
+          <div className="flex flex-row m-2 gap-2">
             <div className={`btn btn-circle btn-ghost ${user?.id === session?.speakerId ? "" : "pointer-events-none"}`} data-cy="Like" onClick={() => void handleclick()}>
               {kudo.liked ? <AiFillHeart size={25} /> : <AiOutlineHeart size={25} />}
             </div>
             {!kudo.comment && user?.id === session?.speakerId ?
-              <div className="flex flex-row left justify-end w-fit">
-                <input value={comment} onChange={(e) => setComment(e.target.value)} type="text" placeholder="place your comment here" className="input input-bordered max-w-xs w-full" data-cy="comment" />
-                <div className="btn btn-circle btn-ghost mt-2" onClick={() => setSendReady(true)}>
-                  <FiSend size={20} />
+              <div className="relative flex flex-row item justify-start w-full">
+                <input value={comment} onChange={(e) => setComment(e.target.value)} type="text" placeholder="place your comment here" className="input input-bordered w-full" data-cy="comment" />
+                <div className="absolute btn btn-circle btn-ghost right-0" onClick={() => setSendReady(true)}>
+                  <AiOutlineSend size={20} />
                 </div>
               </div>
               :

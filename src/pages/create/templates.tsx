@@ -71,12 +71,11 @@ const Templates: NextPage<{ res: Template[], sess: string, speaker: string, anon
 
         <div className="flex flex-wrap gap-5 justify-center px-5 mb-8 md:mb-28">
           {res.map((x: Template) => (
-            <Link className="card bg-white text-gray-800 shadow-xl aspect-[3/2] rounded-none w-80 h-52" data-cy="template" href={{ pathname: "/create/editor", query: { template: x.id } }} key={x.id}>
-              <div className="card-body p-0">
+            <Link className="card bg-white text-gray-800 shadow-xl aspect-[3/2] rounded-none w-80 h-52" data-id={x.id} data-cy="template" href={{ pathname: "/create/editor", query: { template: x.id } }} key={x.id} >
+              <div className="card-body p-0" >
                 <h2 className='card-title text-white justify-center p-4' style={{ backgroundColor: x.Color }} data-cy="templateTitle">{x.Title}</h2>
                 <div className="flex p-8">
                   <figure>
-                    {x.Sticker}
                   </figure>
                   <p></p>
                 </div>

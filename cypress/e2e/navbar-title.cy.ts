@@ -2,8 +2,6 @@ import { Component } from 'react'
 
 describe('navbar title spec', () => {
   it('passes', () => {
-
-
     cy.login(Cypress.env('username') as string, Cypress.env('password') as string)
 
     cy.get('[data-cy=NavButtons]').should('exist')
@@ -23,8 +21,11 @@ describe('navbar title spec', () => {
     cy.get('[data-cy=FAB]').click()
     cy.get('[data-cy=NavButtons]').should('not.exist')
     cy.get('[data-cy=NavbarTitle]').contains('New')
-    cy.get('[data-cy=Session]').get('input[list=Session]').get("[data-cy=option]").first().invoke('text').then((text) => {
-      cy.get('[data-cy=Session]').get('input[list=Session]').type(text)
+    cy.get("[data-cy=optionSession]").first().invoke('text').then((Title) => {
+      cy.get('[data-cy=optionSpeaker]').first().invoke('text').then((Speaker) => {
+        cy.get('[data-cy=Session]').get('input[list=Session]').type(Title)
+        cy.get('[data-cy=Speaker]').get('input[list=Speaker]').type(Speaker)
+      })
     })
 
     cy.get('[data-cy=FAB]').click()

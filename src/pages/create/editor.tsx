@@ -164,6 +164,7 @@ const Editor: NextPage<{ res: Template }> = ({ res }) => {
             <BiTrash size={20} />
           </button>
         </div>
+        <div data-cy={res.id}></div>
         <KonvaCanvas editorFunction={selectedButton} template={res} thickness={thickness} color={color} fontFamily={font} setFunction={setSelectedButton} setStage={setStage} />
       </main>
       <FAB text={"Send"} icon={<FiSend />} onClick={() => setSelectedButton(EditorFunctions.Submit)} />

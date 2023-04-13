@@ -13,6 +13,7 @@ import { useSession } from "next-auth/react";
 import { UserRole } from "~/types";
 import { useRouter } from "next/router";
 import LoadingBar from "~/components/LoadingBar";
+import avatar from '../../contents/images/AnonymousPicture.jpg';
 
 
 export function getServerSideProps(context: { query: { id: string }; }) {
@@ -150,8 +151,18 @@ const KudoDetail: NextPage<{ id: string }> = ({ id }) => {
                 </div>
               </div>
               :
-              <div className="h-full w-full pt-3">
-                <h1 >{kudo.comment}</h1>
+              <div className="chat chat-end w-full">
+                <h1 className="chat-bubble">{kudo.comment}</h1>
+                <div className="chat-image avatar">
+                  <div className="w-10 rounded-full">
+                    <Image
+                        className="rounded-full"
+                        src={session.speakerImage ?? avatar}
+                        alt="Profile picture"
+                        fill
+                    />
+                  </div>
+                </div>
               </div>
             }
           </div>

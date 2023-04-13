@@ -40,6 +40,29 @@ async function main() {
             anonymous: false,
         }
     })
+    const kudo = await prisma.kudo.findUnique({
+        where: {
+            id: "testKudo",
+        }
+    })
+
+    if (kudo) {
+        await prisma.kudo.delete({
+            where: {
+                id: "testKudo",
+            }
+        })
+    }
+
+    await prisma.kudo.create({
+        data: {
+            id: "testKudo",
+            image: imageid.id,
+            sessionId: "3",
+            userId: "cdb23f58-65db-4b6b-b132-cf2d13d08e76",
+            anonymous: false,
+        }
+    })
 }
 main()
     .then(async () => {

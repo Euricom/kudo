@@ -110,21 +110,21 @@ const KudoDetail: NextPage<{ id: string }> = ({ id }) => {
       <div className="flex flex-col items-center justify-center h-full w-full">
         <div className="aspect-[3/2] w-full max-h-full max-w-2xl">
           <div className="aspect-[3/2] w-full max-h-full max-w-2xl bg-white relative">
-            <Image className="shadow-2xl" src={image} fill alt="Kudo" />
+            <Image className="shadow-2xl" src={image} fill alt="Kudo" data-id={kudo.id} />
           </div>
           <div className="flex flex-row left-0 mt-2 gap-5 md:gap-10 ">
             <div className={`btn btn-circle btn-ghost ${user?.id === session?.speakerId ? "" : "pointer-events-none"}`} data-cy="Like" onClick={() => void handleclick()}>
-              {kudo.liked ? <AiFillHeart size={25} /> : <AiOutlineHeart size={25} />}
+              {kudo.liked ? <AiFillHeart size={25} data-cy="liked" /> : <AiOutlineHeart size={25} data-cy="notLiked" />}
             </div>
             {!kudo.comment && user?.id === session?.speakerId ?
               <div className="flex flex-row left justify-end w-fit">
-                <input value={comment} onChange={(e) => setComment(e.target.value)} type="text" placeholder="place your comment here" className="input input-bordered max-w-xs w-full" data-cy="comment" />
-                <div className="btn btn-circle btn-ghost mt-2" onClick={() => setSendReady(true)}>
+                <input value={comment} onChange={(e) => setComment(e.target.value)} type="text" placeholder="place your comment here" className="input input-bordered max-w-xs w-full" data-cy="commentInput" />
+                <div className="btn btn-circle btn-ghost mt-2" data-cy="sendComment" onClick={() => setSendReady(true)}>
                   <FiSend size={20} />
                 </div>
               </div>
               :
-              <div className="h-full w-full pt-3">
+              <div className="h-full w-full pt-3" data-cy="comment">
                 <h1 >{kudo.comment}</h1>
               </div>
             }

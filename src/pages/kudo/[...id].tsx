@@ -6,14 +6,14 @@ import { FaTrashAlt } from "react-icons/fa";
 import { UtilButtonsContent } from "~/hooks/useUtilButtons";
 import Link from "next/link";
 import { api } from "~/utils/api";
-import { AiOutlineHeart, AiFillHeart } from 'react-icons/ai'
+import { AiOutlineHeart, AiFillHeart, AiFillWarning, AiOutlineWarning, AiOutlineSend } from 'react-icons/ai'
 import { useEffect, useState } from "react";
-import { FiSend } from "react-icons/fi";
 import ConfirmationModal from '~/components/input/ConfirmationModal';
 import { useSession } from "next-auth/react";
 import { UserRole } from "~/types";
 import { useRouter } from "next/router";
 import LoadingBar from "~/components/LoadingBar";
+import avatar from '../../contents/images/AnonymousPicture.jpg';
 
 
 export function getServerSideProps(context: { query: { id: string }; }) {
@@ -33,6 +33,7 @@ const KudoDetail: NextPage<{ id: string }> = ({ id }) => {
   const deleteImage = api.kudos.deleteImageById.useMutation()
   const likeKudoById = api.kudos.likeKudoById.useMutation()
   const commentKudoById = api.kudos.commentKudoById.useMutation()
+  const flagKudoById = api.kudos.flagKudoById.useMutation()
 
   const kudoQuery = api.kudos.getKudoById.useQuery({ id: id })
   const { data: kudo, refetch: refetchKudo } = kudoQuery
@@ -83,6 +84,27 @@ const KudoDetail: NextPage<{ id: string }> = ({ id }) => {
     deleteImage.mutate({ id: kudo?.image ?? "error" })
   }
 
+  async function flag() {
+    if (user?.id === session?.speakerId && kudo?.flagged === false) {
+      try {
+        await flagKudoById.mutateAsync({ id: kudo?.id ?? "error", flagged: !kudo?.flagged })
+        await refetchKudo()
+      }
+      catch (e) {
+        console.log(e);
+      }
+    }
+    if (user?.role === UserRole.ADMIN && kudo?.flagged === true) {
+      try {
+        await flagKudoById.mutateAsync({ id: kudo?.id ?? "error", flagged: !kudo?.flagged })
+        await refetchKudo()
+      }
+      catch (e) {
+        console.log(e);
+      }
+    }
+  }
+
 
   return (
     <>
@@ -100,6 +122,11 @@ const KudoDetail: NextPage<{ id: string }> = ({ id }) => {
             <FaTrashAlt size={20} />
           </Link>
         }
+        {((user?.id === session?.speakerId || user?.role === UserRole.ADMIN) && user?.id !== kudo?.userId) &&
+          <button className="btn btn-ghost btn-circle" onClick={() => void flag()} data-cy="flagButton">
+            {kudo.flagged?<AiFillWarning size={20} />:<AiOutlineWarning size={20} />}
+          </button>
+        }
       </UtilButtonsContent>
       {/* <div className="flex justify-center ">
         <div className="card bg-white text-gray-800 aspect-[3/2] rounded-none w-[320px] h-[208px] mt-20">
@@ -112,20 +139,33 @@ const KudoDetail: NextPage<{ id: string }> = ({ id }) => {
           <div className="aspect-[3/2] w-full max-h-full max-w-2xl bg-white relative">
             <Image className="shadow-2xl" src={image} fill alt="Kudo" />
           </div>
-          <div className="flex flex-row left-0 mt-2 gap-5 md:gap-10 ">
+          <div className="flex flex-row m-2 gap-2">
             <div className={`btn btn-circle btn-ghost ${user?.id === session?.speakerId ? "" : "pointer-events-none"}`} data-cy="Like" onClick={() => void handleclick()}>
               {kudo.liked ? <AiFillHeart size={25} /> : <AiOutlineHeart size={25} />}
             </div>
             {!kudo.comment && user?.id === session?.speakerId ?
-              <div className="flex flex-row left justify-end w-fit">
-                <input value={comment} onChange={(e) => setComment(e.target.value)} type="text" placeholder="place your comment here" className="input input-bordered max-w-xs w-full" data-cy="comment" />
-                <div className="btn btn-circle btn-ghost mt-2" onClick={() => setSendReady(true)}>
-                  <FiSend size={20} />
+              <div className="relative flex flex-row item justify-start w-full">
+                <input value={comment} onChange={(e) => setComment(e.target.value)} type="text" placeholder="place your comment here" className="input input-bordered w-full" data-cy="comment" />
+                <div className="absolute btn btn-circle btn-ghost right-0" onClick={() => setSendReady(true)}>
+                  <AiOutlineSend size={20} />
                 </div>
               </div>
               :
-              <div className="h-full w-full pt-3">
-                <h1 >{kudo.comment}</h1>
+              <div className="chat chat-end w-full">
+                <div className="chat-header">
+                  {session.speakerId}
+                </div>
+                <h1 className="chat-bubble chat-bubble-primary">{kudo.comment}</h1>
+                <div className="chat-image avatar">
+                  <div className="w-10 rounded-full">
+                    <Image
+                        className="rounded-full"
+                        src={session.speakerImage ?? avatar}
+                        alt="Profile picture"
+                        fill
+                    />
+                  </div>
+                </div>
               </div>
             }
           </div>

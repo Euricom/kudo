@@ -124,7 +124,7 @@ const KudoDetail: NextPage<{ id: string }> = ({ id }) => {
         }
         {((user?.id === session?.speakerId || user?.role === UserRole.ADMIN) && user?.id !== kudo?.userId) &&
           <button className="btn btn-ghost btn-circle" onClick={() => void flag()} data-cy="flagButton">
-            {kudo.flagged?<AiFillWarning size={20} />:<AiOutlineWarning size={20} />}
+            {kudo.flagged ? <AiFillWarning size={20} /> : <AiOutlineWarning size={20} />}
           </button>
         }
       </UtilButtonsContent>
@@ -153,16 +153,16 @@ const KudoDetail: NextPage<{ id: string }> = ({ id }) => {
               :
               <div className="chat chat-end w-full">
                 <div className="chat-header">
-                  {session.speakerId}
+                  {session.speaker?.displayName}
                 </div>
                 <h1 className="chat-bubble chat-bubble-primary">{kudo.comment}</h1>
                 <div className="chat-image avatar">
-                  <div className="w-10 rounded-full">
+                  <div className="w-10 rounded-full relative">
                     <Image
-                        className="rounded-full"
-                        src={session.speakerImage ?? avatar}
-                        alt="Profile picture"
-                        fill
+                      className="rounded-full"
+                      src={session.speaker?.image ?? avatar}
+                      alt="Profile picture"
+                      fill
                     />
                   </div>
                 </div>

@@ -50,7 +50,7 @@ export type Session = {
     title: string,
     date: string,
     speakerId: string,
-    speakerImage?: string,
+    speaker?: User,
 }
 
 export type SessionArray = {
@@ -172,8 +172,6 @@ export type KonvaCanvasProps = {
     setFunction: (type: EditorFunctions) => void,
     setStage: (stage: Konva.Stage) => void
 }
-
-
 
 export type Shapes = {
     type: CanvasShapes,

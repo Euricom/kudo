@@ -31,6 +31,11 @@ const inputGetImagesByIds = object({
     ids: string().array(),
 })
 
+const inputFlag = object({
+    id: string(),
+    flagged: boolean(),
+})
+
 
 export const kudoRouter = createTRPCRouter({
 
@@ -171,6 +176,22 @@ export const kudoRouter = createTRPCRouter({
             },
             data: {
                 comment: input.comment,
+            }
+        });
+
+        if (kudo == undefined) {
+            throw new Error()
+        }
+    }),
+    
+    flagKudoById: protectedProcedure.input(inputFlag).mutation(async ({ input, ctx }) => {
+
+        const kudo = await ctx.prisma.kudo.update({
+            where: {
+                id: input.id,
+            },
+            data: {
+                flagged: input.flagged,
             }
         });
 

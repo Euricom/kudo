@@ -6,7 +6,7 @@ import { FaTrashAlt } from "react-icons/fa";
 import { UtilButtonsContent } from "~/hooks/useUtilButtons";
 import Link from "next/link";
 import { api } from "~/utils/api";
-import { AiOutlineHeart, AiFillHeart } from 'react-icons/ai'
+import { AiOutlineHeart, AiFillHeart, AiFillWarning, AiOutlineWarning } from 'react-icons/ai'
 import { useEffect, useState } from "react";
 import { FiSend } from "react-icons/fi";
 import ConfirmationModal from '~/components/input/ConfirmationModal';
@@ -33,6 +33,7 @@ const KudoDetail: NextPage<{ id: string }> = ({ id }) => {
   const deleteImage = api.kudos.deleteImageById.useMutation()
   const likeKudoById = api.kudos.likeKudoById.useMutation()
   const commentKudoById = api.kudos.commentKudoById.useMutation()
+  const flagKudoById = api.kudos.flagKudoById.useMutation()
 
   const kudoQuery = api.kudos.getKudoById.useQuery({ id: id })
   const { data: kudo, refetch: refetchKudo } = kudoQuery
@@ -83,6 +84,27 @@ const KudoDetail: NextPage<{ id: string }> = ({ id }) => {
     deleteImage.mutate({ id: kudo?.image ?? "error" })
   }
 
+  async function flag() {
+    if (user?.id === session?.speakerId && kudo?.flagged === false) {
+      try {
+        await flagKudoById.mutateAsync({ id: kudo?.id ?? "error", flagged: !kudo?.flagged })
+        await refetchKudo()
+      }
+      catch (e) {
+        console.log(e);
+      }
+    }
+    if (user?.role === UserRole.ADMIN && kudo?.flagged === true) {
+      try {
+        await flagKudoById.mutateAsync({ id: kudo?.id ?? "error", flagged: !kudo?.flagged })
+        await refetchKudo()
+      }
+      catch (e) {
+        console.log(e);
+      }
+    }
+  }
+
 
   return (
     <>
@@ -99,6 +121,11 @@ const KudoDetail: NextPage<{ id: string }> = ({ id }) => {
           <Link className="btn btn-ghost btn-circle" onClick={del} href="/out" data-cy="deleteButton">
             <FaTrashAlt size={20} />
           </Link>
+        }
+        {((user?.id === session?.speakerId || user?.role === UserRole.ADMIN) && user?.id !== kudo?.userId) &&
+          <button className="btn btn-ghost btn-circle" onClick={() => void flag()} data-cy="flagButton">
+            {kudo.flagged?<AiFillWarning size={20} />:<AiOutlineWarning size={20} />}
+          </button>
         }
       </UtilButtonsContent>
       {/* <div className="flex justify-center ">

@@ -152,7 +152,11 @@ const KudoDetail: NextPage<{ id: string }> = ({ id }) => {
               </div>
               :
               <div className="chat chat-end w-full">
-                <h1 className="chat-bubble">{kudo.comment}</h1>
+                <div className="chat-header">
+                  {session.speakerId}
+                  <time className="text-xs opacity-50">12:45</time>
+                </div>
+                <h1 className="chat-bubble chat-bubble-primary">{kudo.comment}</h1>
                 <div className="chat-image avatar">
                   <div className="w-10 rounded-full">
                     <Image

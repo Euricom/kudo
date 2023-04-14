@@ -178,6 +178,7 @@ export type Shapes = {
     id: string,
     x?: number,
     y?: number,
+    scale?: Vector2d,
     width?: number,
     height?: number,
     fill?: string,

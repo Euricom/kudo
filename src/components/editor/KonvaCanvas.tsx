@@ -11,7 +11,7 @@ import { CanvasShapes, EditorFunctions, type KonvaCanvasProps, type Shapes } fro
 
 const initialShapes: Shapes[] = [];
 
-const KonvaCanvas = ({ editorFunction, template, thickness, color, fontFamily, setFunction, setStage }: KonvaCanvasProps) => {
+const KonvaCanvas = ({ editorFunction, template, thickness, color, fontFamily, emoji, setFunction, setStage }: KonvaCanvasProps) => {
   const containerRef = useRef<HTMLDivElement>(null);
   const stageRef = useRef<Konva.Stage>() as MutableRefObject<Konva.Stage>;
   const layerRef = useRef<Konva.Layer>() as MutableRefObject<Konva.Layer>;
@@ -170,6 +170,18 @@ const KonvaCanvas = ({ editorFunction, template, thickness, color, fontFamily, s
 
 
   const addSticker = () => {
+    const pos = stageRef.current.getPointerPosition() ?? { x: 50, y: 50 }
+    const sticker = {
+      id: v4(),
+      type: CanvasShapes.Image,
+      image: emoji,
+      x: pos.x / (stageDimensions.scale?.x ?? 1),
+      y: pos.y / (stageDimensions.scale?.y ?? 1),
+      draggable: true
+    }
+    history.unshift(sticker)
+    shapes.push(sticker)
+    selectShape(sticker.id)
     setFunction(EditorFunctions.None)
   }
 

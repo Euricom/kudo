@@ -113,7 +113,7 @@ const KudoDetail: NextPage<{ id: string }> = ({ id }) => {
             <Image className="shadow-2xl" src={image} fill alt="Kudo" data-id={kudo.id} />
           </div>
           <div className="flex flex-row left-0 mt-2 gap-5 md:gap-10 ">
-            <div className={`btn btn-circle btn-ghost ${user?.id === session?.speakerId ? "" : "pointer-events-none"}`} data-cy="Like" onClick={() => void handleclick()}>
+            <div className={`btn btn-circle btn-ghost ${user?.id === session?.speakerId ? "" : "pointer-events-none"}`} data-cy="like" onClick={() => void handleclick()}>
               {kudo.liked ? <AiFillHeart size={25} data-cy="liked" /> : <AiOutlineHeart size={25} data-cy="notLiked" />}
             </div>
             {!kudo.comment && user?.id === session?.speakerId ?

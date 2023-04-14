@@ -34,8 +34,6 @@ export async function getServerSideProps(context: { query: { template: string; }
   }
 }
 
-
-
 const KonvaCanvas = dynamic(
   () => import('../../components/editor/KonvaCanvas'),
   { ssr: false }
@@ -89,7 +87,6 @@ const Editor: NextPage<{ res: Template }> = ({ res }) => {
     }
   }
 
-
   return (
     <>
       <Head>
@@ -127,7 +124,6 @@ const Editor: NextPage<{ res: Template }> = ({ res }) => {
       {/* Main */}
       <main className="flex flex-col items-center justify-center h-full z-50 relative overflow-x-hidden" >
         <div className="w-full lg:w-1/2 p-5 z-40 flex justify-center gap-2 mx-auto">
-
           <div className="dropdown dropdown-start ">
             <label tabIndex={0} className=""><button onClick={() => setSelectedButton(EditorFunctions.Text)} className={"btn btn-circle btn-secondary " + (selectedButton == EditorFunctions.Text ? "btn-accent" : "")}><BiText size={20} /> </button></label>
             <ul tabIndex={0} className=" dropdown-content menu p-2 shadow bg-base-100 rounded-box w-52">
@@ -166,10 +162,10 @@ const Editor: NextPage<{ res: Template }> = ({ res }) => {
           </div>
           <div className="dropdown dropdown-start">
             <label tabIndex={0} className=""><button onClick={handleEmoji} className={"btn btn-circle btn-secondary " + (selectedButton == EditorFunctions.Sticker ? "btn-accent" : "")}>
-              {selectedEmoji?<Emoji unified={selectedEmoji.unified} size={20} />:<GrEmoji size={20} />}
+              {selectedEmoji?<Emoji unified={selectedEmoji.unified} size={20} emojiStyle={EmojiStyle.GOOGLE} />:<GrEmoji size={20} />}
             </button></label>
             {emojiDropdownState && <ul tabIndex={0} className="dropdown-content ">
-              <EmojiPicker theme={Theme.DARK} onEmojiClick={onClick} emojiStyle={EmojiStyle.NATIVE}/>
+              <EmojiPicker theme={Theme.DARK} onEmojiClick={onClick} emojiStyle={EmojiStyle.GOOGLE}/>
             </ul>}
           </div>
           <div className="dropdown dropdown-start ">

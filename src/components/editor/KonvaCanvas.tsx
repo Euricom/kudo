@@ -181,7 +181,7 @@ const KonvaCanvas = ({ editorFunction, template, thickness, color, fontFamily, e
     const sticker = {
       id: v4(),
       type: CanvasShapes.Image,
-      image: emoji.getImageUrl(EmojiStyle.NATIVE),
+      image: emoji.getImageUrl(EmojiStyle.GOOGLE),
       x: pos.x / (stageDimensions.scale?.x ?? 1),
       y: pos.y / (stageDimensions.scale?.y ?? 1),
       draggable: true
@@ -192,8 +192,6 @@ const KonvaCanvas = ({ editorFunction, template, thickness, color, fontFamily, e
     selectShape(sticker.id)
     setFunction(EditorFunctions.None)
   }
-
-
 
   const handleMouseDown = () => {
     if (editorFunction === EditorFunctions.Draw || editorFunction === EditorFunctions.Erase) {

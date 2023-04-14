@@ -2,6 +2,7 @@ import { type Kudo, type Template } from "@prisma/client";
 import { type Url } from "url";
 import { type Vector2d } from 'konva/lib/types';
 import type Konva from "konva";
+import { type EmojiClickData } from "emoji-picker-react";
 
 export type AuthProps = {
     children?: React.ReactNode
@@ -170,7 +171,7 @@ export type KonvaCanvasProps = {
     thickness: number,
     color: string,
     fontFamily: string,
-    emoji: string,
+    emoji?: EmojiClickData,
     setFunction: (type: EditorFunctions) => void,
     setStage: (stage: Konva.Stage) => void
 }

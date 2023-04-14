@@ -21,7 +21,7 @@ import { BsFillCircleFill } from 'react-icons/bs';
 
 import { type ColorResult, HuePicker } from 'react-color';
 import { EditorFunctions, Fonts } from '~/types';
-import EmojiPicker, { type EmojiClickData, Theme } from 'emoji-picker-react';
+import EmojiPicker, { type EmojiClickData, Theme, Emoji, EmojiStyle } from 'emoji-picker-react';
 
 
 export async function getServerSideProps(context: { query: { template: string; }; }) {
@@ -47,10 +47,11 @@ const Editor: NextPage<{ res: Template }> = ({ res }) => {
   const createKudo = api.kudos.createKudo.useMutation()
   const createImage = api.kudos.createKudoImage.useMutation()
   const router = useRouter()
+  const [emojiDropdownState, setEmojiDropdownState] = useState<boolean>(false);
   const [color, setColor] = useState<string>("#121212");
   const [font, setFont] = useState<string>("Arial");
   const [thickness, setThickness] = useState<number>(5)
-  const [selectedEmoji, setSelectedEmoji] = useState<string>("");
+  const [selectedEmoji, setSelectedEmoji] = useState<EmojiClickData>();
 
   const userId: string = useSession().data?.user.id ?? "error"
 
@@ -64,8 +65,14 @@ const Editor: NextPage<{ res: Template }> = ({ res }) => {
     setColor(color.hex)
   }
 
+  const handleEmoji = () => {
+    setEmojiDropdownState(!emojiDropdownState)
+    setSelectedButton(EditorFunctions.Sticker)
+  }
+
   function onClick(emojiData: EmojiClickData) {
-    setSelectedEmoji(emojiData.unified);
+    setSelectedEmoji(emojiData);
+    setEmojiDropdownState(false)
   }
 
   const submit = async () => {
@@ -158,10 +165,12 @@ const Editor: NextPage<{ res: Template }> = ({ res }) => {
             </ul>
           </div>
           <div className="dropdown dropdown-start">
-            <label tabIndex={0} className=""><button onClick={() => setSelectedButton(EditorFunctions.Sticker)} className={"btn btn-circle btn-secondary " + (selectedButton == EditorFunctions.Sticker ? "btn-accent" : "")}><GrEmoji size={20} /></button></label>
-            <ul tabIndex={0} className="dropdown-content ">
-              <EmojiPicker theme={Theme.DARK} onEmojiClick={onClick}/>
-            </ul>
+            <label tabIndex={0} className=""><button onClick={handleEmoji} className={"btn btn-circle btn-secondary " + (selectedButton == EditorFunctions.Sticker ? "btn-accent" : "")}>
+              {selectedEmoji?<Emoji unified={selectedEmoji.unified} size={20} />:<GrEmoji size={20} />}
+            </button></label>
+            {emojiDropdownState && <ul tabIndex={0} className="dropdown-content ">
+              <EmojiPicker theme={Theme.DARK} onEmojiClick={onClick} emojiStyle={EmojiStyle.NATIVE}/>
+            </ul>}
           </div>
           <div className="dropdown dropdown-start ">
             <label tabIndex={0} className=""> <button className={"btn btn-circle btn-secondary " + (selectedButton == EditorFunctions.Color ? "btn-accent" : "")}><BiPalette size={20} /></button></label>

@@ -8,10 +8,10 @@ import avatar from '../../contents/images/AnonymousPicture.jpg'
 const Menu = ({ children }: MenuProps) => {
 
     const userId: string = useSession().data?.user.id ?? ""
-    const [imgUrl, setImgUrl] = useState<string>('');
+    const [imgUrl, setImgUrl] = useState<string>("");
 
     useEffect(() => {
-        fetch('api/images/' + userId)
+        fetch('/api/images/' + userId)
             .then((res) => res.json())
             .then((json: ImageData) => setImgUrl(json.dataUrl))
             .catch(e => console.log(e));
@@ -34,7 +34,7 @@ const Menu = ({ children }: MenuProps) => {
                             <div className="avatar ">
                                 <div className="w-24 rounded-xl relative">
                                     <Image
-                                        src={imgUrl ?? avatar}
+                                        src={imgUrl??avatar}
                                         alt="Profile picture"
                                         fill
                                     />

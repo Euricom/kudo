@@ -11,6 +11,7 @@ const CanvasImage = ({ shapeProps, scale, isSelected, editorFunction, onSelect, 
   const image = new window.Image();
   image.src = shapeProps.image??"";
 
+
   useEffect(() => {
     if (isSelected) {
       if (editorFunction === EditorFunctions.Clear) {

@@ -45,12 +45,6 @@ const All: NextPage<{ searchtext: string, sortIn: SortPosibillities, filterIn: F
   const kudos = kudoQuery.data
   const query = router.query
 
-
-
-  useEffect(() => {
-    console.log(filter);
-  }, [filter])
-
   useEffect(() => {
     if (user?.role !== UserRole.ADMIN)
       router.replace("/403").catch(console.error)

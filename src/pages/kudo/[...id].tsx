@@ -155,7 +155,7 @@ const KudoDetail: NextPage<{ id: string }> = ({ id }) => {
                   <div className="chat-header">
                     {session.speaker?.displayName}
                   </div>
-                  <h1 className="chat-bubble chat-bubble-primary">{kudo.comment}</h1>
+                  <h1 className="chat-bubble chat-bubble-primary" data-cy="comment" >{kudo.comment}</h1>
                   <div className="chat-image avatar">
                     <div className="w-10 rounded-full relative">
                       <Image

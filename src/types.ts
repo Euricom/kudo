@@ -107,11 +107,8 @@ export type UserWCount = {
 
 export type SessionContextValue = {
     session: string;
-    setSession: React.Dispatch<React.SetStateAction<string>>;
     speaker: string;
-    setSpeaker: React.Dispatch<React.SetStateAction<string>>;
     anonymous: boolean;
-    setAnonymous: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
 
@@ -178,6 +175,7 @@ export type Shapes = {
     id: string,
     x?: number,
     y?: number,
+    scale?: Vector2d,
     width?: number,
     height?: number,
     fill?: string,

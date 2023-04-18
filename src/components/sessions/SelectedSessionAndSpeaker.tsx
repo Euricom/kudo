@@ -2,26 +2,14 @@ import React from "react";
 import { type SessionContextValue } from "~/types";
 
 
-const SessionContext = React.createContext<SessionContextValue>({ session: "", setSession: () => { /* do nothing */ }, speaker: "", setSpeaker: () => { /* do nothing */ }, anonymous: false, setAnonymous: () => { /* do nothing */ } });
-
-export function SessionSpeakerProvider(props: React.PropsWithChildren<object>) {
-    const [session, setSession] = React.useState<string>("");
-    const [speaker, setSpeaker] = React.useState<string>("");
-    const [anonymous, setAnonymous] = React.useState<boolean>(false);
-    return (
-        <SessionContext.Provider value={{ session, setSession, speaker, setSpeaker, anonymous, setAnonymous }}>
-            {props.children}
-        </SessionContext.Provider>
-    );
-}
-
+const SessionContext = React.createContext<SessionContextValue>({ session: "", speaker: "", anonymous: false });
 
 export function useSessionSpeaker(newSession?: string, newSpeaker?: string, anonymous?: string) {
     const context = React.useContext(SessionContext);
     if (newSession !== undefined && newSpeaker !== undefined && anonymous !== undefined) {
-        context.setSession(newSession);
-        context.setSpeaker(newSpeaker);
-        context.setAnonymous(anonymous === 'true' ? true : false);
+        context.session = (newSession);
+        context.speaker = (newSpeaker);
+        context.anonymous = (anonymous === 'true' ? true : false);
     }
     return {
         data: {

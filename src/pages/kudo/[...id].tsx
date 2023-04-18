@@ -105,7 +105,6 @@ const KudoDetail: NextPage<{ id: string }> = ({ id }) => {
     }
   }
 
-
   return (
     <>
       <Head>
@@ -151,22 +150,24 @@ const KudoDetail: NextPage<{ id: string }> = ({ id }) => {
                 </div>
               </div>
               :
-              <div className="chat chat-end w-full">
-                <div className="chat-header">
-                  {session.speaker?.displayName}
-                </div>
-                <h1 className="chat-bubble chat-bubble-primary">{kudo.comment}</h1>
-                <div className="chat-image avatar">
-                  <div className="w-10 rounded-full relative">
-                    <Image
-                      className="rounded-full"
-                      src={session.speaker?.image ?? avatar}
-                      alt="Profile picture"
-                      fill
-                    />
+              <>
+                {!kudo.comment ? <></> : <div className="chat chat-end w-full">
+                  <div className="chat-header">
+                    {session.speaker?.displayName}
                   </div>
-                </div>
-              </div>
+                  <h1 className="chat-bubble chat-bubble-primary">{kudo.comment}</h1>
+                  <div className="chat-image avatar">
+                    <div className="w-10 rounded-full relative">
+                      <Image
+                        className="rounded-full"
+                        src={session.speaker?.image ?? avatar}
+                        alt="Profile picture"
+                        fill
+                      />
+                    </div>
+                  </div>
+                </div>}
+              </>
             }
           </div>
         </div>

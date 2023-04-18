@@ -33,8 +33,6 @@ const CanvasImage = ({ shapeProps, scale, isSelected, editorFunction, onSelect, 
         {...shapeProps}
         image={image}
         alt={shapeProps.image}
-        x={shapeProps.x ?? 1 * scale}
-        y={shapeProps.y ?? 1 * scale}
         draggable={(!shapeProps.draggable) ? false : isSelected}
         onDragEnd={(e) => {
           onChange({
@@ -57,6 +55,7 @@ const CanvasImage = ({ shapeProps, scale, isSelected, editorFunction, onSelect, 
           node.scaleY(1);
           onChange({
             ...shapeProps,
+            rotation: node.rotation(),
             x: node.x(),
             y: node.y(),
             // set minimal value

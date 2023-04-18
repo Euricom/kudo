@@ -32,14 +32,30 @@ async function main() {
         }
     })
 
+    const kudoJona = await prisma.kudo.findUnique({
+        where: {
+            id: "AdilNaarJona",
+        }
+    })
+
+    if (kudoJona) {
+        await prisma.kudo.delete({
+            where: {
+                id: "AdilNaarJona",
+            }
+        })
+    }
     await prisma.kudo.create({
         data: {
+            id: "AdilNaarJona",
             image: imageid.id,
             sessionId: "14",
             userId: "cdb23f58-65db-4b6b-b132-cf2d13d08e76",
             anonymous: false,
         }
     })
+
+
     const kudo = await prisma.kudo.findUnique({
         where: {
             id: "testKudo",

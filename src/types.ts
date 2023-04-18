@@ -2,6 +2,7 @@ import { type Kudo, type Template } from "@prisma/client";
 import { type Url } from "url";
 import { type Vector2d } from 'konva/lib/types';
 import type Konva from "konva";
+import { type EmojiClickData } from "emoji-picker-react";
 
 export type AuthProps = {
     children?: React.ReactNode
@@ -157,6 +158,7 @@ export enum CanvasShapes {
     Text,
     Sticker,
     Line,
+    Image,
     Rect
 }
 
@@ -166,6 +168,7 @@ export type KonvaCanvasProps = {
     thickness: number,
     color: string,
     fontFamily: string,
+    emoji?: EmojiClickData,
     setFunction: (type: EditorFunctions) => void,
     setStage: (stage: Konva.Stage) => void
 }
@@ -180,6 +183,7 @@ export type Shapes = {
     height?: number,
     fill?: string,
     text?: string,
+    image?: string,
     tool?: string,
     points?: number[],
     thickness?: number,
@@ -189,6 +193,18 @@ export type Shapes = {
     fontSize?: number,
     draggable?: boolean,
     rotation?: number,
+}
+
+export enum EditorFunctions {
+    Text = 'text',
+    Draw = 'draw',
+    Erase = 'erase',
+    Sticker = 'sticker',
+    Color = 'color',
+    Clear = 'clear',
+    Undo = 'undo',
+    Submit = 'submit',
+    None = 'none'
 }
 
 export type CanvasTextProps = {
@@ -204,18 +220,14 @@ export type CanvasTextProps = {
     editorFunction: EditorFunctions
 }
 
-export enum EditorFunctions {
-    Text = 'text',
-    Draw = 'draw',
-    Erase = 'erase',
-    Sticker = 'sticker',
-    Color = 'color',
-    Clear = 'clear',
-    Undo = 'undo',
-    Submit = 'submit',
-    None = 'none'
+export type CanvasImageProps = {
+    shapeProps: Shapes,
+    isSelected: boolean,
+    editorFunction: EditorFunctions,
+    onSelect: () => void,
+    onChange: (shapeProps: Shapes) => void,
+    onDelete: (id: string) => void,
 }
-
 
 export type RectangleProps = {
     shapeProps: Shapes,

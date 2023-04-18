@@ -29,7 +29,7 @@ export const FindAllKudosSortedByUserId = (id: string, sort: SortPosibillities):
             return sortedKudos
         case SortPosibillities.DateA:
         default:
-            sortedKudos = kudos.sort((a, b) => ((sessions?.find(s => s.id === a.sessionId)?.date ?? 1) < (sessions?.find(s => s.id === b.sessionId)?.date ?? 2)) ? -1 : 1)
+            sortedKudos = kudos.sort((a, b) => ((sessions?.find(s => s.id === a.sessionId)?.date ?? 1) > (sessions?.find(s => s.id === b.sessionId)?.date ?? 2)) ? -1 : 1)
             if (sort === SortPosibillities.DateA)
                 return sortedKudos.reverse()
             return sortedKudos

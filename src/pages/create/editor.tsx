@@ -163,10 +163,10 @@ const Editor: NextPage<{ res: Template }> = ({ res }) => {
           </div>
           <div className="dropdown dropdown-start">
             <label tabIndex={0} className=""><button onClick={handleEmoji} className={"btn btn-circle btn-secondary " + (selectedButton == EditorFunctions.Sticker ? "btn-accent" : "")}>
-              {selectedEmoji?<Emoji unified={selectedEmoji.unified} size={20} emojiStyle={EmojiStyle.GOOGLE} />:<GrEmoji size={20} />}
+              {selectedEmoji ? <Emoji unified={selectedEmoji.unified} size={20} emojiStyle={EmojiStyle.GOOGLE} /> : <GrEmoji size={20} />}
             </button></label>
             {emojiDropdownState && <ul tabIndex={0} className="dropdown-content ">
-              <EmojiPicker theme={Theme.DARK} onEmojiClick={onClick} emojiStyle={EmojiStyle.GOOGLE}/>
+              <EmojiPicker theme={Theme.DARK} onEmojiClick={onClick} emojiStyle={EmojiStyle.GOOGLE} />
             </ul>}
           </div>
           <div className="dropdown dropdown-start ">
@@ -187,7 +187,8 @@ const Editor: NextPage<{ res: Template }> = ({ res }) => {
             <BiTrash size={20} />
           </button>
         </div>
-        <KonvaCanvas editorFunction={selectedButton} template={res} thickness={thickness} color={color} fontFamily={font} setFunction={setSelectedButton} setStage={setStage} emoji={selectedEmoji}/>
+        <div data-cy={res.id}></div>
+        <KonvaCanvas editorFunction={selectedButton} template={res} thickness={thickness} color={color} fontFamily={font} setFunction={setSelectedButton} setStage={setStage} emoji={selectedEmoji} />
       </main>
       <FAB text={"Send"} icon={<FiSend />} onClick={() => setSelectedButton(EditorFunctions.Submit)} />
     </>

@@ -9,6 +9,7 @@ describe('toolbar spec', () => {
     cy.get('[data-cy=Footer]').should('exist')
 
     cy.get('[data-cy=FAB]').click()
+    cy.wait(2000)
     cy.get('[data-cy=NavButtons]').should('not.exist')
     cy.url().should('eq', 'http://localhost:3000/create')
     cy.get('[data-cy=HomeButton]').click()
@@ -21,6 +22,6 @@ describe('toolbar spec', () => {
     cy.get('[data-cy=CloseMenu]').click()
     cy.get('[data-cy=CloseMenu]').should('not.be.visible')
 
-    
+
   })
 })

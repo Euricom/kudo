@@ -136,16 +136,16 @@ const KudoDetail: NextPage<{ id: string }> = ({ id }) => {
       <div className="flex flex-col items-center justify-center h-full w-full">
         <div className="aspect-[3/2] w-full max-h-full max-w-2xl">
           <div className="aspect-[3/2] w-full max-h-full max-w-2xl bg-white relative">
-            <Image className="shadow-2xl" src={image} fill alt="Kudo" />
+            <Image className="shadow-2xl" src={image} fill alt="Kudo" data-id={kudo.id} />
           </div>
           <div className="flex flex-row m-2 gap-2">
-            <div className={`btn btn-circle btn-ghost ${user?.id === session?.speakerId ? "" : "pointer-events-none"}`} data-cy="Like" onClick={() => void handleclick()}>
-              {kudo.liked ? <AiFillHeart size={25} /> : <AiOutlineHeart size={25} />}
+            <div className={`btn btn-circle btn-ghost ${user?.id === session?.speakerId ? "" : "pointer-events-none"}`} data-cy="like" onClick={() => void handleclick()}>
+              {kudo.liked ? <AiFillHeart size={25} data-cy="liked" /> : <AiOutlineHeart size={25} data-cy="notLiked" />}
             </div>
             {!kudo.comment && user?.id === session?.speakerId ?
               <div className="relative flex flex-row item justify-start w-full">
-                <input value={comment} onChange={(e) => setComment(e.target.value)} type="text" placeholder="place your comment here" className="input input-bordered w-full" data-cy="comment" />
-                <div className="absolute btn btn-circle btn-ghost right-0" onClick={() => setSendReady(true)}>
+                <input value={comment} onChange={(e) => setComment(e.target.value)} type="text" placeholder="place your comment here" className="input input-bordered w-full" data-cy="commentInput" />
+                <div className="absolute btn btn-circle btn-ghost right-0" data-cy="sendComment" onClick={() => setSendReady(true)}>
                   <AiOutlineSend size={20} />
                 </div>
               </div>
@@ -155,7 +155,7 @@ const KudoDetail: NextPage<{ id: string }> = ({ id }) => {
                   <div className="chat-header">
                     {session.speaker?.displayName}
                   </div>
-                  <h1 className="chat-bubble chat-bubble-primary">{kudo.comment}</h1>
+                  <h1 className="chat-bubble chat-bubble-primary" data-cy="comment" >{kudo.comment}</h1>
                   <div className="chat-image avatar">
                     <div className="w-10 rounded-full relative">
                       <Image

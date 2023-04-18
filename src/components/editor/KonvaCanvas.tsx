@@ -9,7 +9,6 @@ import { type Vector2d } from 'konva/lib/types';
 import { v4 } from 'uuid';
 import { CanvasShapes, EditorFunctions, type KonvaCanvasProps, type Shapes } from '~/types';
 import CanvasImage from './canvasShapes/CanvasImage';
-import { EmojiStyle } from 'emoji-picker-react';
 import { toast } from 'react-toastify';
 
 const initialShapes: Shapes[] = [];
@@ -158,7 +157,7 @@ const KonvaCanvas = ({ editorFunction, template, thickness, color, fontFamily, e
   const makeText = (pos: Vector2d) => {
     const text = {
       id: v4(),
-      type: CanvasShapes.Text,
+      type: CanvasShapes.Sticker,
       text: 'Text',
       fill: color,
       fontFamily: fontFamily,
@@ -180,13 +179,12 @@ const KonvaCanvas = ({ editorFunction, template, thickness, color, fontFamily, e
     const pos = stageRef.current.getPointerPosition() ?? { x: 50, y: 50 }
     const sticker = {
       id: v4(),
-      type: CanvasShapes.Image,
-      image: emoji.getImageUrl(EmojiStyle.GOOGLE),
+      type: CanvasShapes.Sticker,
+      text: emoji.native,
       x: pos.x / (stageDimensions.scale?.x ?? 1),
       y: pos.y / (stageDimensions.scale?.y ?? 1),
       draggable: true
     }
-    console.log(sticker.image);
     history.unshift(sticker)
     shapes.push(sticker)
     selectShape(sticker.id)
@@ -310,23 +308,36 @@ const KonvaCanvas = ({ editorFunction, template, thickness, color, fontFamily, e
                     editorFunction={editorFunction ?? EditorFunctions.None}
                   />
                 );
-              case CanvasShapes.Image:
-                return <CanvasImage
-                  key={i}
-                  shapeProps={s}
-                  isSelected={s.id === selectedId}
-                  editorFunction={editorFunction ?? EditorFunctions.None}
-                  onSelect={() => {
-                    selectShape(s.id);
-                  }}
-                  onChange={(newAttrs) => {
-                    const newShapes = shapes.slice();
-                    newShapes[i] = newAttrs;
-                    setShapes(newShapes);
-                    history.unshift(newAttrs)
-                  }}
-                  onDelete={onDelete}
-                />
+              case CanvasShapes.Sticker:
+                return (
+                  <CanvasText
+                    container={containerRef.current ?? undefined}
+                    key={i}
+                    shapeProps={s}
+                    scale={stageDimensions.scale?.x ?? 1}
+                    isSelected={s.id === selectedId}
+                    onSelect={() => {
+                      selectShape(s.id);
+                    }}
+                    onChange={(newAttrs) => {
+                      const newShapes = shapes.slice();
+                      newShapes[i] = newAttrs;
+                      setShapes(newShapes);
+
+                    }}
+                    onChangeEnd={(newAttrs) => {
+
+                      history.unshift(newAttrs)
+
+                    }}
+                    areaPosition={{
+                      x: (stageRef.current?.container().offsetLeft ?? 0) + (s.x ?? 1) * (stageDimensions?.scale?.x ?? 1),
+                      y: (stageRef.current?.container().offsetTop ?? 0) + (s.y ?? 1) * (stageDimensions?.scale?.y ?? 1),
+                    }}
+                    onDelete={onDelete}
+                    editorFunction={editorFunction ?? EditorFunctions.None}
+                  />
+                )
               case CanvasShapes.Rect:
                 return (
                   <Rectangle

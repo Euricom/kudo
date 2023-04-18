@@ -83,7 +83,7 @@ const CanvasText = ({ container, shapeProps, scale, isSelected, onSelect, onChan
           ref={trRef}
           anchorX={0.5}
           anchorY={0.5}
-          enabledAnchors={shapeProps.draggable ? ['bottom-right'] : []}
+          enabledAnchors={shapeProps.draggable ? ['top-left', 'top-center', 'top-right', 'middle-right', 'middle-left', 'bottom-left', 'bottom-center', 'bottom-right'] : []}
           boundBoxFunc={(oldBox, newBox) => {
             newBox.width = Math.max(30, newBox.width);
             return newBox;

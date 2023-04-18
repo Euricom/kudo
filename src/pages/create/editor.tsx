@@ -20,8 +20,9 @@ import LoadingBar from '~/components/LoadingBar';
 import { BsFillCircleFill } from 'react-icons/bs';
 
 import { type ColorResult, HuePicker } from 'react-color';
-import { EditorFunctions, Fonts } from '~/types';
-import EmojiPicker, { type EmojiClickData, Theme, Emoji, EmojiStyle } from 'emoji-picker-react';
+import { EditorFunctions, type EmojiObject, Fonts } from '~/types';
+import data from '@emoji-mart/data';
+import Picker from '@emoji-mart/react';
 
 
 export async function getServerSideProps(context: { query: { template: string; }; }) {
@@ -49,7 +50,7 @@ const Editor: NextPage<{ res: Template }> = ({ res }) => {
   const [color, setColor] = useState<string>("#121212");
   const [font, setFont] = useState<string>("Arial");
   const [thickness, setThickness] = useState<number>(5)
-  const [selectedEmoji, setSelectedEmoji] = useState<EmojiClickData>();
+  const [selectedEmoji, setSelectedEmoji] = useState<EmojiObject>();
 
   const userId: string = useSession().data?.user.id ?? "error"
 
@@ -68,8 +69,10 @@ const Editor: NextPage<{ res: Template }> = ({ res }) => {
     setSelectedButton(EditorFunctions.Sticker)
   }
 
-  function onClick(emojiData: EmojiClickData) {
-    setSelectedEmoji(emojiData);
+  function onClickEmoji(emoji: EmojiObject) {
+    console.log(emoji);
+    
+    setSelectedEmoji(emoji);
     setEmojiDropdownState(false)
   }
 
@@ -94,15 +97,6 @@ const Editor: NextPage<{ res: Template }> = ({ res }) => {
         <meta name="description" content="eKudo app" />
         <link rel="icon" href="/favicon.ico" />
       </Head>
-      <style>
-        {`
-        .EmojiPickerReact.epr-dark-theme {
-          --epr-bg-color: #062a30;
-          --epr-category-label-bg-color: #062a30;
-          --epr-search-input-bg-color: #1e3f44;
-        }
-        `}
-      </style>
       <NavigationBarContent>
         <h1>Editor</h1>
       </NavigationBarContent>
@@ -163,10 +157,10 @@ const Editor: NextPage<{ res: Template }> = ({ res }) => {
           </div>
           <div className="dropdown dropdown-start">
             <label tabIndex={0} className=""><button onClick={handleEmoji} className={"btn btn-circle btn-secondary " + (selectedButton == EditorFunctions.Sticker ? "btn-accent" : "")}>
-              {selectedEmoji ? <Emoji unified={selectedEmoji.unified} size={20} emojiStyle={EmojiStyle.GOOGLE} /> : <GrEmoji size={20} />}
+              {selectedEmoji ? <>{selectedEmoji.native}</> : <GrEmoji size={20} />}
             </button></label>
             {emojiDropdownState && <ul tabIndex={0} className="dropdown-content ">
-              <EmojiPicker theme={Theme.DARK} onEmojiClick={onClick} emojiStyle={EmojiStyle.GOOGLE} />
+              <Picker data={data} onEmojiSelect={onClickEmoji} />
             </ul>}
           </div>
           <div className="dropdown dropdown-start ">

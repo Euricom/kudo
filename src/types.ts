@@ -50,7 +50,7 @@ export type Session = {
     title: string,
     date: string,
     speakerId: string,
-    speakerImage?: string,
+    speaker?: User,
 }
 
 export type SessionArray = {
@@ -107,11 +107,8 @@ export type UserWCount = {
 
 export type SessionContextValue = {
     session: string;
-    setSession: React.Dispatch<React.SetStateAction<string>>;
     speaker: string;
-    setSpeaker: React.Dispatch<React.SetStateAction<string>>;
     anonymous: boolean;
-    setAnonymous: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
 
@@ -173,13 +170,12 @@ export type KonvaCanvasProps = {
     setStage: (stage: Konva.Stage) => void
 }
 
-
-
 export type Shapes = {
     type: CanvasShapes,
     id: string,
     x?: number,
     y?: number,
+    scale?: Vector2d,
     width?: number,
     height?: number,
     fill?: string,

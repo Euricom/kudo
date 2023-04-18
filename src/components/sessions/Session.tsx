@@ -21,7 +21,7 @@ const SessionCard = ({ session }: SessionProps) => {
                         <div className="avatar w-12 aspect-square relative">
                             <Image
                                 className="rounded-full"
-                                src={session.speakerImage ?? avatar}
+                                src={session.speaker?.image ?? avatar}
                                 alt="Profile picture"
                                 fill
                             />

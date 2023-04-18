@@ -99,8 +99,8 @@ const All: NextPage<{ searchtext: string, sortIn: SortPosibillities }> = ({ sear
           <>
             <SortAndFilter setSort={setSort} filter={search} setFilter={setSearch} />
             <div className="flex flex-wrap gap-4 h-full justify-center w-fit">
-              {kudos == undefined || kudos.length == 0 ? <h1>No flagged Kudos yet</h1> :
-                kudos.filter(k => sessions.find(s => s.id == k.sessionId)?.title.toLowerCase().includes(filter?.toLowerCase() ?? "") || users?.find(u => u.user.id === (sessions.find(s => s.id == k.sessionId)?.speakerId))?.user.displayName.toLowerCase().includes(filter?.toLowerCase() ?? "")).map((kudo) => (
+              {kudos.length == 0 ? <h1>No flagged Kudos yet</h1> :
+                kudos.filter(k => sessions.find(s => s.id === k.sessionId)?.title.toLowerCase().includes(search?.toLowerCase() ?? "") || users?.find(u => u.user.id === (sessions.find(s => s.id === k.sessionId)?.speakerId))?.user.displayName.toLowerCase().includes(search?.toLowerCase() ?? "")).map((kudo) => (
                   <KudoCard key={kudo.id} kudo={kudo} />
                 ))}
             </div>

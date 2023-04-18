@@ -47,7 +47,7 @@ const SortAndFilter = ({ setSort, filter, setFilter }: SortAndFilterProps) => {
 
     const changeFilter = (newFilter: string) => {
         setFilter(newFilter)
-        router.replace({ query: { ...query, filter: newFilter } }).catch(e => console.log(e))
+        router.replace({ query: { ...query, searchtext: newFilter } }).catch(e => console.log(e))
     }
     return (
         <>

@@ -15,20 +15,25 @@ import { useEffect, useState } from "react";
 import SortAndFilter from "~/components/input/SortAndFilter";
 import KudoCard from "~/components/kudos/Kudo";
 import SpeakerCard from "~/components/speaker/SpeakerCard";
-export function getServerSideProps(context: { query: { searchtext: string, sort: SortPosibillities } }) {
+export function getServerSideProps(context: { query: { searchtext: string, sort: SortPosibillities, filter: Filter } }) {
 
   return {
     props: {
       searchtext: context.query.searchtext ?? "",
       sortIn: context.query.sort ?? "",
+      filterIn: context.query.filter ?? Filter.User,
     }
   }
 }
 
-const All: NextPage<{ searchtext: string, sortIn: SortPosibillities }> = ({ searchtext, sortIn }) => {
+const All: NextPage<{ searchtext: string, sortIn: SortPosibillities, filterIn: Filter }> = ({ searchtext, sortIn, filterIn }) => {
 
   const router = useRouter()
   const user = useSession().data?.user
+
+  const [sort, setSort] = useState<SortPosibillities>(sortIn ?? SortPosibillities.SpeakerA)
+  const [search, setSearch] = useState<string>(searchtext ?? "")
+  const [filter, setFilter] = useState<Filter>(filterIn)
 
   const usersQuery = api.users.getRelevantUsers.useQuery()
   const { data: users, refetch: refetchUsers } = usersQuery
@@ -38,10 +43,7 @@ const All: NextPage<{ searchtext: string, sortIn: SortPosibillities }> = ({ sear
 
   const kudoQuery = api.kudos.getFlaggedKudos.useQuery();
   const kudos = kudoQuery.data
-
-  const [sort, setSort] = useState<SortPosibillities>(sortIn ?? SortPosibillities.SpeakerA)
-  const [search, setSearch] = useState<string>(searchtext ?? "")
-  const [filter, setFilter] = useState<Filter>(Filter.User)
+  const query = router.query
 
   useEffect(() => {
     if (user?.role !== UserRole.ADMIN)
@@ -75,13 +77,18 @@ const All: NextPage<{ searchtext: string, sortIn: SortPosibillities }> = ({ sear
     return sorted
   }
 
+  const changeFilter = (newFilter: Filter) => {
+    setFilter(newFilter)
+    router.replace({ query: { ...query, filter: newFilter } }).catch(e => console.log(e))
+  }
+
   function getContent() {
     switch (filter) {
       case Filter.Session:
         if (!sessions) return <></>
         return (
           <>
-            <SessionList sessions={sessions} />
+            <SessionList sessions={sessions} filterIn={search} />
           </>
         )
       case Filter.User:
@@ -124,9 +131,9 @@ const All: NextPage<{ searchtext: string, sortIn: SortPosibillities }> = ({ sear
       </UtilButtonsContent >
       <main className="flex flex-col items-center justify-start h-full ">
         <div className="flex gap-3 mt-4">
-          <span className={`badge ${filter === Filter.User ? "badge-accent" : "badge-secondary"}`} onClick={() => setFilter(Filter.User)}>By user</span>
-          <span className={`badge ${filter === Filter.Session ? "badge-accent" : "badge-secondary"}`} onClick={() => setFilter(Filter.Session)}>By session</span>
-          <span className={`badge ${filter === Filter.Flagged ? "badge-accent" : "badge-secondary"}`} onClick={() => setFilter(Filter.Flagged)}>Flagged</span>
+          <span className={`badge ${filter === Filter.User ? "badge-accent" : "badge-secondary"}`} onClick={() => changeFilter(Filter.User)}>By user</span>
+          <span className={`badge ${filter === Filter.Session ? "badge-accent" : "badge-secondary"}`} onClick={() => changeFilter(Filter.Session)}>By session</span>
+          <span className={`badge ${filter === Filter.Flagged ? "badge-accent" : "badge-secondary"}`} onClick={() => changeFilter(Filter.Flagged)}>Flagged</span>
         </div>
         {getContent()}
       </main>

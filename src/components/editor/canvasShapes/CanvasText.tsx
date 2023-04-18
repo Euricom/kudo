@@ -69,6 +69,7 @@ const CanvasText = ({ container, shapeProps, scale, isSelected, onSelect, onChan
           onChange({
             ...shapeProps,
             rotation: node.rotation(),
+            scale: node.scale(),
             x: node.x(),
             y: node.y(),
           });

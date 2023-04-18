@@ -21,6 +21,7 @@ import { BsFillCircleFill } from 'react-icons/bs';
 
 import { type ColorResult, HuePicker } from 'react-color';
 import { EditorFunctions, Fonts } from '~/types';
+import EmojiPicker, { type EmojiClickData, Theme, Emoji, EmojiStyle } from 'emoji-picker-react';
 
 
 export async function getServerSideProps(context: { query: { template: string; }; }) {
@@ -33,8 +34,6 @@ export async function getServerSideProps(context: { query: { template: string; }
   }
 }
 
-
-
 const KonvaCanvas = dynamic(
   () => import('../../components/editor/KonvaCanvas'),
   { ssr: false }
@@ -42,13 +41,15 @@ const KonvaCanvas = dynamic(
 
 const Editor: NextPage<{ res: Template }> = ({ res }) => {
   const [selectedButton, setSelectedButton] = useState<EditorFunctions>()
-  const [thickness, setThickness] = useState<number>(5)
   const [stage, setStage] = useState<Konva.Stage>()
   const createKudo = api.kudos.createKudo.useMutation()
   const createImage = api.kudos.createKudoImage.useMutation()
   const router = useRouter()
+  const [emojiDropdownState, setEmojiDropdownState] = useState<boolean>(false);
   const [color, setColor] = useState<string>("#121212");
   const [font, setFont] = useState<string>("Arial");
+  const [thickness, setThickness] = useState<number>(5)
+  const [selectedEmoji, setSelectedEmoji] = useState<EmojiClickData>();
 
   const userId: string = useSession().data?.user.id ?? "error"
 
@@ -60,6 +61,16 @@ const Editor: NextPage<{ res: Template }> = ({ res }) => {
 
   const handleColorChange = (color: ColorResult) => {
     setColor(color.hex)
+  }
+
+  const handleEmoji = () => {
+    setEmojiDropdownState(!emojiDropdownState)
+    setSelectedButton(EditorFunctions.Sticker)
+  }
+
+  function onClick(emojiData: EmojiClickData) {
+    setSelectedEmoji(emojiData);
+    setEmojiDropdownState(false)
   }
 
   const submit = async () => {
@@ -76,7 +87,6 @@ const Editor: NextPage<{ res: Template }> = ({ res }) => {
     }
   }
 
-
   return (
     <>
       <Head>
@@ -84,6 +94,15 @@ const Editor: NextPage<{ res: Template }> = ({ res }) => {
         <meta name="description" content="eKudo app" />
         <link rel="icon" href="/favicon.ico" />
       </Head>
+      <style>
+        {`
+        .EmojiPickerReact.epr-dark-theme {
+          --epr-bg-color: #062a30;
+          --epr-category-label-bg-color: #062a30;
+          --epr-search-input-bg-color: #1e3f44;
+        }
+        `}
+      </style>
       <NavigationBarContent>
         <h1>Editor</h1>
       </NavigationBarContent>
@@ -106,7 +125,6 @@ const Editor: NextPage<{ res: Template }> = ({ res }) => {
       {/* Main */}
       <main className="flex flex-col items-center justify-center h-full z-50 relative overflow-x-hidden" >
         <div className="w-full lg:w-1/2 p-5 z-40 flex justify-center gap-2 mx-auto">
-
           <div className="dropdown dropdown-start ">
             <label tabIndex={0} className=""><button onClick={() => setSelectedButton(EditorFunctions.Text)} className={"btn btn-circle btn-secondary " + (selectedButton == EditorFunctions.Text ? "btn-accent" : "")}><BiText size={20} /> </button></label>
             <ul tabIndex={0} className=" dropdown-content menu p-2 shadow bg-base-100 rounded-box w-52">
@@ -143,9 +161,14 @@ const Editor: NextPage<{ res: Template }> = ({ res }) => {
               </li>
             </ul>
           </div>
-          <button onClick={() => setSelectedButton(EditorFunctions.Sticker)} className={"btn btn-circle btn-secondary " + (selectedButton == EditorFunctions.Sticker ? "btn-accent" : "")}>
-            <GrEmoji size={20} />
-          </button>
+          <div className="dropdown dropdown-start">
+            <label tabIndex={0} className=""><button onClick={handleEmoji} className={"btn btn-circle btn-secondary " + (selectedButton == EditorFunctions.Sticker ? "btn-accent" : "")}>
+              {selectedEmoji?<Emoji unified={selectedEmoji.unified} size={20} emojiStyle={EmojiStyle.GOOGLE} />:<GrEmoji size={20} />}
+            </button></label>
+            {emojiDropdownState && <ul tabIndex={0} className="dropdown-content ">
+              <EmojiPicker theme={Theme.DARK} onEmojiClick={onClick} emojiStyle={EmojiStyle.GOOGLE}/>
+            </ul>}
+          </div>
           <div className="dropdown dropdown-start ">
             <label tabIndex={0} className=""> <button className={"btn btn-circle btn-secondary " + (selectedButton == EditorFunctions.Color ? "btn-accent" : "")}><BiPalette size={20} /></button></label>
             <ul tabIndex={0} className=" dropdown-content p-2 bg-secondary rounded-full w-80 ml-5 lg:w-fit -translate-x-2/3 lg:translate-x-0">
@@ -164,7 +187,7 @@ const Editor: NextPage<{ res: Template }> = ({ res }) => {
             <BiTrash size={20} />
           </button>
         </div>
-        <KonvaCanvas editorFunction={selectedButton} template={res} thickness={thickness} color={color} fontFamily={font} setFunction={setSelectedButton} setStage={setStage} />
+        <KonvaCanvas editorFunction={selectedButton} template={res} thickness={thickness} color={color} fontFamily={font} setFunction={setSelectedButton} setStage={setStage} emoji={selectedEmoji}/>
       </main>
       <FAB text={"Send"} icon={<FiSend />} onClick={() => setSelectedButton(EditorFunctions.Submit)} />
     </>

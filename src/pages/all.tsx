@@ -88,7 +88,7 @@ const All: NextPage<{ searchtext: string, sortIn: SortPosibillities, filterIn: F
         if (!sessions) return <></>
         return (
           <>
-            <SessionList sessions={sessions} />
+            <SessionList sessions={sessions} filterIn={search} />
           </>
         )
       case Filter.User:

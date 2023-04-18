@@ -314,7 +314,6 @@ const KonvaCanvas = ({ editorFunction, template, thickness, color, fontFamily, e
                 return <CanvasImage
                   key={i}
                   shapeProps={s}
-                  scale={stageDimensions.scale?.x ?? 1}
                   isSelected={s.id === selectedId}
                   editorFunction={editorFunction ?? EditorFunctions.None}
                   onSelect={() => {

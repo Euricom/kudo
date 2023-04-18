@@ -4,7 +4,7 @@ import type Konva from 'konva';
 import { EditorFunctions, type CanvasImageProps } from '~/types';
 
 
-const CanvasImage = ({ shapeProps, scale, isSelected, editorFunction, onSelect, onChange, onDelete }: CanvasImageProps) => {
+const CanvasImage = ({ shapeProps, isSelected, editorFunction, onSelect, onChange, onDelete }: CanvasImageProps) => {
   const shapeRef = useRef<Konva.Image>() as MutableRefObject<Konva.Image>;
   const trRef = useRef<Konva.Transformer>() as MutableRefObject<Konva.Transformer>;
 

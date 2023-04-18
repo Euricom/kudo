@@ -99,6 +99,7 @@ const Editor: NextPage<{ res: Template }> = ({ res }) => {
         .EmojiPickerReact.epr-dark-theme {
           --epr-bg-color: #062a30;
           --epr-category-label-bg-color: #062a30;
+          --epr-search-input-bg-color: #1e3f44;
         }
         `}
       </style>

@@ -222,7 +222,6 @@ export type CanvasTextProps = {
 
 export type CanvasImageProps = {
     shapeProps: Shapes,
-    scale: number,
     isSelected: boolean,
     editorFunction: EditorFunctions,
     onSelect: () => void,

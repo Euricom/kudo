@@ -10,6 +10,7 @@ import { v4 } from 'uuid';
 import { CanvasShapes, EditorFunctions, type KonvaCanvasProps, type Shapes } from '~/types';
 import CanvasImage from './canvasShapes/CanvasImage';
 import { toast } from 'react-toastify';
+import CanvasSticker from './canvasShapes/CanvasSticker';
 
 const initialShapes: Shapes[] = [];
 
@@ -183,7 +184,8 @@ const KonvaCanvas = ({ editorFunction, template, thickness, color, fontFamily, e
       text: emoji.native,
       x: pos.x / (stageDimensions.scale?.x ?? 1),
       y: pos.y / (stageDimensions.scale?.y ?? 1),
-      draggable: true
+      draggable: true,
+      fontSize: (stageDimensions?.height ?? 0) / 5,
     }
     history.unshift(sticker)
     shapes.push(sticker)
@@ -293,12 +295,9 @@ const KonvaCanvas = ({ editorFunction, template, thickness, color, fontFamily, e
                       const newShapes = shapes.slice();
                       newShapes[i] = newAttrs;
                       setShapes(newShapes);
-
                     }}
                     onChangeEnd={(newAttrs) => {
-
                       history.unshift(newAttrs)
-
                     }}
                     areaPosition={{
                       x: (stageRef.current?.container().offsetLeft ?? 0) + (s.x ?? 1) * (stageDimensions?.scale?.x ?? 1),
@@ -310,11 +309,9 @@ const KonvaCanvas = ({ editorFunction, template, thickness, color, fontFamily, e
                 );
               case CanvasShapes.Sticker:
                 return (
-                  <CanvasText
-                    container={containerRef.current ?? undefined}
+                  <CanvasSticker
                     key={i}
                     shapeProps={s}
-                    scale={stageDimensions.scale?.x ?? 1}
                     isSelected={s.id === selectedId}
                     onSelect={() => {
                       selectShape(s.id);
@@ -323,16 +320,9 @@ const KonvaCanvas = ({ editorFunction, template, thickness, color, fontFamily, e
                       const newShapes = shapes.slice();
                       newShapes[i] = newAttrs;
                       setShapes(newShapes);
-
                     }}
                     onChangeEnd={(newAttrs) => {
-
                       history.unshift(newAttrs)
-
-                    }}
-                    areaPosition={{
-                      x: (stageRef.current?.container().offsetLeft ?? 0) + (s.x ?? 1) * (stageDimensions?.scale?.x ?? 1),
-                      y: (stageRef.current?.container().offsetTop ?? 0) + (s.y ?? 1) * (stageDimensions?.scale?.y ?? 1),
                     }}
                     onDelete={onDelete}
                     editorFunction={editorFunction ?? EditorFunctions.None}

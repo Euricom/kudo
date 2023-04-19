@@ -1,11 +1,10 @@
 import React, { useRef, type MutableRefObject, useEffect } from 'react';
 import { Transformer, Text } from 'react-konva';
 import type Konva from 'konva';
-import editText from '../editText';
-import { EditorFunctions, type CanvasTextProps } from '~/types';
+import { EditorFunctions, type CanvasStickerProps } from '~/types';
 
 
-const CanvasText = ({ container, shapeProps, scale, isSelected, onSelect, onChange, areaPosition, onDelete, editorFunction, onChangeEnd }: CanvasTextProps) => {
+const CanvasSticker = ({ shapeProps, isSelected, editorFunction, onSelect, onChange, onDelete, onChangeEnd }: CanvasStickerProps) => {
   const shapeRef = useRef<Konva.Text>() as MutableRefObject<Konva.Text>;
   const trRef = useRef<Konva.Transformer>() as MutableRefObject<Konva.Transformer>;
   // const [isEditing, setIsEditing] = useState(false)
@@ -22,30 +21,11 @@ const CanvasText = ({ container, shapeProps, scale, isSelected, onSelect, onChan
     }
   }, [isSelected, onDelete, shapeProps, editorFunction]);
 
-  const onDoubleClick = () => {
-    shapeRef.current.hide();
-    trRef.current?.hide();
-    editText(areaPosition, shapeRef.current, trRef.current, scale, onTextChange, container)
-  }
-
-  const onTextChange = (text: string) => {
-    onChange({
-      ...shapeProps,
-      text: text
-    })
-    onChangeEnd({
-      ...shapeProps,
-      text: text
-    })
-  }
-
   return (
     <React.Fragment>
       <Text
         onClick={onSelect}
         onTap={onSelect}
-        onDblClick={onDoubleClick}
-        onDblTap={onDoubleClick}
         ref={shapeRef}
         {...shapeProps}
         draggable={(!shapeProps.draggable) ? false : isSelected}
@@ -85,7 +65,7 @@ const CanvasText = ({ container, shapeProps, scale, isSelected, onSelect, onChan
           anchorY={0.5}
           enabledAnchors={shapeProps.draggable ? ['top-left', 'top-center', 'top-right', 'middle-right', 'middle-left', 'bottom-left', 'bottom-center', 'bottom-right'] : []}
           boundBoxFunc={(oldBox, newBox) => {
-            newBox.width = Math.max(30, newBox.width);
+            newBox.width = Math.max(10, newBox.width);
             return newBox;
           }}
         />
@@ -94,4 +74,4 @@ const CanvasText = ({ container, shapeProps, scale, isSelected, onSelect, onChan
   );
 };
 
-export default CanvasText;
+export default CanvasSticker;

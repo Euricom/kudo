@@ -219,6 +219,16 @@ export type CanvasTextProps = {
     editorFunction: EditorFunctions
 }
 
+export type CanvasStickerProps = {
+    shapeProps: Shapes,
+    isSelected: boolean,
+    editorFunction: EditorFunctions
+    onSelect: () => void,
+    onChange: (shapeProps: Shapes) => void,
+    onDelete: (id: string) => void,
+    onChangeEnd: (shapeProps: Shapes) => void,
+}
+
 export type CanvasImageProps = {
     shapeProps: Shapes,
     isSelected: boolean,

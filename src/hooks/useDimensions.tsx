@@ -2,7 +2,7 @@ import { type Vector2d } from 'konva/lib/types';
 import { useState, useEffect, type RefObject } from 'react';
 
 export default function useDimensions(ref: RefObject<HTMLElement>) {
-  const [dimensions, setDimensions] = useState<{width: number, height: number, scale: Vector2d}>();
+  const [dimensions, setDimensions] = useState<{width?: number, height?: number, scale?: Vector2d}>();
   const [initialDimensions, setInitialDimensions] = useState<{width: number, height: number}>();
 
   useEffect(() => {
@@ -16,7 +16,7 @@ export default function useDimensions(ref: RefObject<HTMLElement>) {
     
     function handleResize() {
       const scale = (container?.offsetWidth??0)/(initialDimensions?.width??1)
-      setDimensions({width: (initialDimensions?.width??1), height: (initialDimensions?.height??1), scale: {x: scale, y: scale}});
+      setDimensions({width: initialDimensions?.width, height: initialDimensions?.height, scale: {x: scale, y: scale}});
     }
     
     handleResize()

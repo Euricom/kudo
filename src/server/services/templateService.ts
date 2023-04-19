@@ -1,19 +1,19 @@
+import { type Template } from "@prisma/client";
 import { prisma } from "~/server/db";
-import { type Temp } from "~/types";
 
 
 
 
-export const findAllTemplates = async (): Promise<Temp[]> => {
-    const temps: Temp[] = (await prisma.template.findMany({})) as Temp[];
+export const findAllTemplates = async (): Promise<Template[]> => {
+    const temps = await prisma.template.findMany({});
     return temps;
 };
 
-export const findTemplateById = async (id: string): Promise<Temp> => {
-    const temp: Temp = (await prisma.template.findUnique({
+export const findTemplateById = async (id: string): Promise<Template> => {
+    const temp = (await prisma.template.findUnique({
         where: {
             id: id
         }
-    })) as Temp;
+    })) as Template;
     return temp;
 };

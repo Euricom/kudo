@@ -13,6 +13,7 @@ import { UtilButtonsContent } from "~/hooks/useUtilButtons";
 import { useRouter } from "next/router";
 import LoadingBar from "~/components/LoadingBar";
 import { toast } from "react-toastify";
+import Image from "next/image";
 
 
 
@@ -34,6 +35,9 @@ const Templates: NextPage<{ res: Template[], sess: string, speaker: string, anon
   const sessionQuery = api.sessions.getSessionById.useQuery({ id: sess })
   const session = sessionQuery.data
   const router = useRouter()
+  
+  const imageQuery = api.kudos.getImagesByIds.useQuery({ ids: res.map(r => r.image) })
+  const images = imageQuery.data
 
   useEffect(() => {
     toast.clearWaitingQueue();
@@ -72,14 +76,7 @@ const Templates: NextPage<{ res: Template[], sess: string, speaker: string, anon
         <div className="flex flex-wrap gap-5 justify-center px-5 mb-8 md:mb-28">
           {res.map((x: Template) => (
             <Link className="card bg-white text-gray-800 shadow-xl aspect-[3/2] rounded-none w-80 h-52" data-id={x.id} data-cy="template" href={{ pathname: "/create/editor", query: { template: x.id } }} key={x.id} >
-              <div className="card-body p-0" >
-                <h2 className='card-title text-white justify-center p-4' style={{ backgroundColor: x.Color }} data-cy="templateTitle">{x.Title}</h2>
-                <div className="flex p-8">
-                  <figure>
-                  </figure>
-                  <p></p>
-                </div>
-              </div>
+              <Image className="absolute h-full" src={images?.find(i => i.id === x.image)?.dataUrl ?? ""} width={320} height={208} alt={`Template ${x.name}`} />
             </Link>
           ))}
         </div>

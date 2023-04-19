@@ -8,23 +8,20 @@ import Rectangle from './canvasShapes/Rectangle';
 import { type Vector2d } from 'konva/lib/types';
 import { v4 } from 'uuid';
 import { CanvasShapes, EditorFunctions, type KonvaCanvasProps, type Shapes } from '~/types';
-import CanvasImage from './canvasShapes/CanvasImage';
 import { toast } from 'react-toastify';
 import CanvasSticker from './canvasShapes/CanvasSticker';
-
-const initialShapes: Shapes[] = [];
+import CanvasCircle from './canvasShapes/CanvasCircle';
 
 const KonvaCanvas = ({ editorFunction, template, thickness, color, fontFamily, emoji, setFunction, setStage }: KonvaCanvasProps) => {
   const containerRef = useRef<HTMLDivElement>(null);
   const stageRef = useRef<Konva.Stage>() as MutableRefObject<Konva.Stage>;
   const layerRef = useRef<Konva.Layer>() as MutableRefObject<Konva.Layer>;
   const staticLayerRef = useRef<Konva.Layer>() as MutableRefObject<Konva.Layer>;
-  const [shapes, setShapes] = useState(initialShapes);
+  const [shapes, setShapes] = useState<Shapes[]>([]);
   const [selectedId, selectShape] = useState<string | null>(null);
   const [history] = useState<Shapes[]>([])
 
   const [line, setLine] = useState<Shapes[]>([]);
-
 
   const isDrawing = useRef(false);
 
@@ -37,46 +34,6 @@ const KonvaCanvas = ({ editorFunction, template, thickness, color, fontFamily, e
     }),
     [dimensions]
   );
-
-  const makeHeader = useCallback(() => {
-    const header = {
-      type: CanvasShapes.Text,
-      id: "header",
-      x: 0,
-      y: 0,
-      text: template.Title,
-      fill: "white",
-      align: "center",
-      verticalAlign: "middle",
-      width: stageDimensions.width,
-      height: (stageDimensions.height ?? 0) / 4,
-      fontSize: (stageDimensions.height ?? 0) / 6,
-      draggable: false,
-    }
-    if (shapes.find(s => s.id === "header")?.width !== header.width) {
-      const newShapes = shapes.slice();
-      newShapes[0] = header;
-      history.shift()
-      history.unshift(header)
-      setShapes(newShapes);
-    }
-    if (shapes.find(s => s.id === "header")) {
-      return
-    }
-    setShapes([])
-    shapes.push(header)
-    setShapes(shapes)
-
-  }, [shapes, stageDimensions, template, history])
-
-
-  useEffect(() => {
-    makeHeader()
-  }, [makeHeader, template])
-
-  useEffect(() => {
-    setShapes([])
-  }, [template])
 
   const undo = useCallback(() => {
     const lastShape = history.shift()
@@ -105,16 +62,6 @@ const KonvaCanvas = ({ editorFunction, template, thickness, color, fontFamily, e
     setFunction(EditorFunctions.None)
   }, [setFunction, history, shapes])
 
-
-  useEffect(() => {
-    if (editorFunction === EditorFunctions.Submit) {
-      selectShape(null);
-    }
-    if (editorFunction === EditorFunctions.Undo) {
-      undo();
-    }
-  }, [editorFunction, undo]);
-
   const onDelete = (id: string) => {
     const shape = shapes.find(s => s.id === id)
     if (!shape) {
@@ -129,9 +76,6 @@ const KonvaCanvas = ({ editorFunction, template, thickness, color, fontFamily, e
   }
 
   const clickListener = (e: KonvaEventObject<Event>) => {
-    // deselect when clicked on empty area
-
-    // selectShape(null);
     const clickedOnEmpty = e.target?.getLayer() === staticLayerRef.current
 
     if (clickedOnEmpty) {
@@ -145,6 +89,7 @@ const KonvaCanvas = ({ editorFunction, template, thickness, color, fontFamily, e
         addSticker()
         break
     }
+    console.log(template.content);
   }
 
   const addText = (pos: Vector2d) => {
@@ -158,7 +103,7 @@ const KonvaCanvas = ({ editorFunction, template, thickness, color, fontFamily, e
   const makeText = (pos: Vector2d) => {
     const text = {
       id: v4(),
-      type: CanvasShapes.Sticker,
+      type: CanvasShapes.Text,
       text: 'Text',
       fill: color,
       fontFamily: fontFamily,
@@ -169,8 +114,6 @@ const KonvaCanvas = ({ editorFunction, template, thickness, color, fontFamily, e
     }
     return text
   }
-
-
 
   const addSticker = () => {
     if (!emoji) {
@@ -201,6 +144,7 @@ const KonvaCanvas = ({ editorFunction, template, thickness, color, fontFamily, e
       setLine([...line, { type: CanvasShapes.Line, id: v4(), tool: editorFunction === EditorFunctions.Erase ? "destination-out" : "source-over", points: [pos.x, pos.y], thickness: thickness, color: color }]);
     }
   };
+
   const handleMouseMove = () => {
     // no drawing - skipping
     if (!isDrawing.current) {
@@ -234,7 +178,84 @@ const KonvaCanvas = ({ editorFunction, template, thickness, color, fontFamily, e
 
   useEffect(() => {
     setStage(stageRef.current)
-  }, [setStage])
+    layerRef.current.offset({x: -(stageDimensions?.width ?? 0)/2, y: -(stageDimensions?.height ?? 0)/2})
+  }, [setStage, stageDimensions])
+
+  useEffect(() => {
+    if (editorFunction === EditorFunctions.Submit) {
+      selectShape(null);
+    }
+    if (editorFunction === EditorFunctions.Undo) {
+      undo();
+    }
+    if (editorFunction === EditorFunctions.Save) {
+      saveTemplate();
+    }
+  }, [editorFunction, undo]);
+
+  useEffect(() => {
+    console.log(stageDimensions);
+    if (!template||shapes.length>0||!stageDimensions.height) {
+      return
+    }
+    
+    const initialShapes: Shapes[] = [
+      {
+        type: CanvasShapes.Circle,
+        id: "BigCircle",
+        x: -0.3,
+        y: 0.5,
+        fill: "#ffe587",
+        radius: 380,
+        draggable: true
+      },
+      {
+        type: CanvasShapes.Circle,
+        id: "SmallCircle",
+        x: 0.1,
+        y: 0.6,
+        fill: "#ffc700",
+        radius: 200,
+        draggable: true
+      },
+      {
+        type: CanvasShapes.Text,
+        id: "headerText",
+        x: 0,
+        y: -0.2,
+        text: "Fiiiiire!",
+        fill: "#ffc700",
+        fontSize: 100,
+        draggable: true
+      },
+      {
+        type: CanvasShapes.Text,
+        id: "bodyText",
+        x: 0,
+        y: 0.1,
+        text: "Top sessie <3",
+        fill: "#ec8e29",
+        fontSize: 40,
+        draggable: true
+      },
+    ].map(s => {
+      return {
+        ...s,
+        x: (s.x??0) * (stageDimensions?.width??0),
+        y: (s.y??0) * (stageDimensions?.height??0),
+      }
+    })
+    console.log(initialShapes);
+    
+    const templateShapes = (template.content as unknown as Shapes[]).map(s => {
+      return {
+        ...s,
+        x: (s.x??0) * (stageDimensions?.width??0),
+        y: (s.y??0) * (stageDimensions?.height??0),
+      }
+    })
+    setShapes(initialShapes)
+  }, [template, stageDimensions, shapes.length])
 
   return (
     <><div ref={containerRef} id='kudo' className="aspect-[3/2] w-full max-h-full max-w-xl lg:max-w-3xl bg-neutral">
@@ -255,12 +276,7 @@ const KonvaCanvas = ({ editorFunction, template, thickness, color, fontFamily, e
           <Rect
             width={stageDimensions?.width}
             height={stageDimensions?.height}
-            fill={'white'}
-          />
-          <Rect
-            width={stageDimensions?.width}
-            height={(stageDimensions?.height ?? 0) / 4}
-            fill={template.Color}
+            fill={template.color}
           />
         </Layer>
 
@@ -333,7 +349,6 @@ const KonvaCanvas = ({ editorFunction, template, thickness, color, fontFamily, e
                   <Rectangle
                     key={i}
                     shapeProps={s}
-                    scale={stageDimensions.scale?.x ?? 1}
                     isSelected={s.id === selectedId}
                     onSelect={() => {
                       selectShape(s.id);
@@ -346,6 +361,23 @@ const KonvaCanvas = ({ editorFunction, template, thickness, color, fontFamily, e
                     }}
                   />
                 );
+                case CanvasShapes.Circle:
+                  return (
+                    <CanvasCircle
+                      key={i}
+                      shapeProps={s}
+                      isSelected={s.id === selectedId}
+                      onSelect={() => {
+                        selectShape(s.id);
+                      }}
+                      onChange={(newAttrs) => {
+                        const newShapes = shapes.slice();
+                        newShapes[i] = newAttrs;
+                        setShapes(newShapes);
+                        history.unshift(newAttrs)
+                      }}
+                    />
+                  );
             }
           })}
           {

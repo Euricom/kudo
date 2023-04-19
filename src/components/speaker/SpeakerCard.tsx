@@ -1,11 +1,21 @@
 import Link from "next/link";
-import { type UserWCount } from "~/types";
+import { type ImageData, type UserWCount } from "~/types";
 import Image from 'next/image';
 import avatar from '../../contents/images/AnonymousPicture.jpg'
+import { useEffect, useState } from "react";
 
 
 
 const SpeakerCard = ({ user }: { user: UserWCount }) => {
+    const [imgUrl, setImgUrl] = useState<string>(avatar.src);
+
+    useEffect(() => {
+        fetch('/api/images/' + user.user.id)
+            .then((res) => res.json())
+            .then((json: ImageData) => setImgUrl(json.dataUrl))
+            .catch(e => console.log(e));
+    }, [user]);
+
     return (
         <>
             <Link key={user.user.id} className="card bg-base-100 shadow-xl w-full h-fit md:w-96" data-cy="Session" href={"/speaker/" + user.user.id.toString()} >
@@ -15,7 +25,7 @@ const SpeakerCard = ({ user }: { user: UserWCount }) => {
                             <div className="relative">
                                 <Image
                                     className="rounded-full"
-                                    src={user.user.image ?? avatar}
+                                    src={imgUrl ?? avatar}
                                     alt="Profile picture"
                                     fill
                                 />

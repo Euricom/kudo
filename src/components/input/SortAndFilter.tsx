@@ -9,27 +9,27 @@ function useVisibleSort() {
     return [
         {
             sort: SortPosibillities.DateA,
-            routes: ['/', '/out', '/speaker/[...id]'],
+            routes: ['/', '/out', '/speaker/[...id]', '/all/sessions', '/all/flagged'],
         },
         {
             sort: SortPosibillities.DateD,
-            routes: ['/', '/out', '/speaker/[...id]'],
+            routes: ['/', '/out', '/speaker/[...id]', '/all/sessions', '/all/flagged'],
         },
         {
             sort: SortPosibillities.SpeakerA,
-            routes: ['/out', '/all'],
+            routes: ['/out', '/all', '/all/sessions', '/all/flagged'],
         },
         {
             sort: SortPosibillities.SpeakerD,
-            routes: ['/out', '/all'],
+            routes: ['/out', '/all', '/all/sessions', '/all/flagged'],
         },
         {
             sort: SortPosibillities.TitleA,
-            routes: ['/', '/out', '/speaker/[...id]'],
+            routes: ['/', '/out', '/speaker/[...id]', '/all/sessions', '/all/flagged'],
         },
         {
             sort: SortPosibillities.TitleD,
-            routes: ['/', '/out', '/speaker/[...id]'],
+            routes: ['/', '/out', '/speaker/[...id]', '/all/sessions', '/all/flagged'],
         },
     ].filter((item) => item.routes.includes(router.pathname));
 }
@@ -40,14 +40,15 @@ const SortAndFilter = ({ setSort, filter, setFilter }: SortAndFilterProps) => {
     const router = useRouter()
     const query = router.query
 
+
     const changeSort = (newSort: SortPosibillities) => {
         setSort(newSort)
-        router.replace({ query: { ...query, sort: newSort } }).catch(e => console.log(e))
+        void router.replace({ query: { ...query, sort: newSort } }).catch(e => console.log(e))
     }
 
     const changeFilter = (newFilter: string) => {
         setFilter(newFilter)
-        router.replace({ query: { ...query, searchtext: newFilter } }).catch(e => console.log(e))
+        void router.replace({ query: { ...query, searchtext: newFilter } }).catch(e => console.log(e))
     }
     return (
         <>

@@ -1,38 +1,26 @@
 import { type Kudo } from "@prisma/client";
-import { SortPosibillities } from "~/types";
-import { api } from "~/utils/api";
+import { type Session, SortPosibillities, type User } from "~/types";
 
-export const FindAllKudosSortedByUserId = (id: string, sort: SortPosibillities): Kudo[] => {
-    const kudoQuery = api.kudos.getKudosByUserId.useQuery({ id: id });
-    const kudos: Kudo[] = kudoQuery.data as Kudo[]
-    const sessions = api.sessions.getAll.useQuery().data
-    const users = api.users.getAllUsers.useQuery().data
+export const FindAllKudosSortedByUserId = (sort: SortPosibillities, kudos?: Kudo[], sessions?: Session[], users?: User[],): Kudo[] => {
 
-    let sortedKudos: Kudo[] = []
 
     if (!kudos || !users) {
-        return kudos
+        return []
     }
 
     switch (sort) {
         case SortPosibillities.TitleA:
+            return kudos.sort((a, b) => ((sessions?.find(s => s.id === a.sessionId)?.title ?? "a") < (sessions?.find(s => s.id === b.sessionId)?.title ?? "b")) ? 1 : -1)
         case SortPosibillities.TitleD:
-            sortedKudos = kudos.sort((a, b) => ((sessions?.find(s => s.id === a.sessionId)?.title ?? "a") < (sessions?.find(s => s.id === b.sessionId)?.title ?? "b")) ? 1 : -1)
-            if (sort === SortPosibillities.TitleD)
-                return sortedKudos.reverse()
-            return sortedKudos
+            return kudos.sort((a, b) => ((sessions?.find(s => s.id === a.sessionId)?.title ?? "a") > (sessions?.find(s => s.id === b.sessionId)?.title ?? "b")) ? 1 : -1)
         case SortPosibillities.SpeakerA:
+            return kudos.sort((a, b) => ((users.find(u => u.id === sessions?.find(s => s.id === a.sessionId)?.speakerId)?.displayName ?? "a") < (users.find(u => u.id === sessions?.find(s => s.id === b.sessionId)?.speakerId)?.displayName ?? "b")) ? 1 : -1)
         case SortPosibillities.SpeakerD:
-            sortedKudos = kudos.sort((a, b) => ((users.find(u => u.id === sessions?.find(s => s.id === a.sessionId)?.speakerId)?.displayName ?? "a") < (users.find(u => u.id === sessions?.find(s => s.id === b.sessionId)?.speakerId)?.displayName ?? "b")) ? 1 : -1)
-            if (sort === SortPosibillities.SpeakerD)
-                return sortedKudos.reverse()
-            return sortedKudos
+            return kudos.sort((a, b) => ((users.find(u => u.id === sessions?.find(s => s.id === a.sessionId)?.speakerId)?.displayName ?? "a") > (users.find(u => u.id === sessions?.find(s => s.id === b.sessionId)?.speakerId)?.displayName ?? "b")) ? 1 : -1)
         case SortPosibillities.DateA:
+            return kudos.sort((a, b) => ((sessions?.find(s => s.id === a.sessionId)?.date ?? 1) < (sessions?.find(s => s.id === b.sessionId)?.date ?? 2)) ? -1 : 1)
         default:
-            sortedKudos = kudos.sort((a, b) => ((sessions?.find(s => s.id === a.sessionId)?.date ?? 1) > (sessions?.find(s => s.id === b.sessionId)?.date ?? 2)) ? -1 : 1)
-            if (sort === SortPosibillities.DateA)
-                return sortedKudos.reverse()
-            return sortedKudos
+            return kudos.sort((a, b) => ((sessions?.find(s => s.id === a.sessionId)?.date ?? 1) > (sessions?.find(s => s.id === b.sessionId)?.date ?? 2)) ? -1 : 1)
     }
 };
 

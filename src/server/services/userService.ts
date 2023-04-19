@@ -3,8 +3,6 @@ import { env } from "~/env.mjs";
 import * as msal from "@azure/msal-node";
 import { type UserWCount, type AADResponseUsers, type User, type SessionArray } from "~/types";
 import { type PrismaClient } from "@prisma/client";
-import { makeDataUrl } from "../api/routers/sessions";
-
 
 const msalConfig = {
     auth: {
@@ -67,13 +65,8 @@ export const findRelevantUsers = async (ctx: { prisma: PrismaClient }): Promise<
             receiveKudoCount: kudos?.filter(kudo => kudo.userId === user.id).length ?? 0,
         }
     })
-    const returnUsers = await Promise.all(usersWcount.filter(user => user.sessionCount > 0 || user.sendKudoCount > 0 || user.receiveKudoCount > 0)
-        .map(async (user) => {
-            return await addDataUrl(user)
 
-        }))
-
-    return returnUsers
+    return usersWcount.filter(user => user.sessionCount > 0 || user.sendKudoCount > 0 || user.receiveKudoCount > 0)
 };
 
 export const getImageById = async (id: string) => {
@@ -84,8 +77,3 @@ export const getImageById = async (id: string) => {
     const imageRes = await fetch('https://graph.microsoft.com/v1.0/users/' + id.toString() + '/photo/$value', options);
     return imageRes
 };
-
-async function addDataUrl(user: UserWCount) {
-    await getImageById(user.user.id).then(im => makeDataUrl(im).then(url => user.user.image = url?.dataUrl))
-    return user
-}

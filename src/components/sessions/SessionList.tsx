@@ -9,15 +9,13 @@ import { useState } from 'react'
 const SessionList = ({ sessions, filterIn, sortIn }: SessionListProps) => {
     const users = api.users.getAllUsers.useQuery().data
 
-
     const [sort, setSort] = useState<SortPosibillities>(sortIn ?? SortPosibillities.DateD)
     const [filter, setFilter] = useState<string>(filterIn ?? "")
 
     function filtering(sessions: Session[]) {
         //Moet het in het nederlands gecheckt worden? zoja commentaar toevoegen.
-        return sessions.filter(s => (new Date(s.date).toLocaleString('en-GB', { month: 'long' }).toLowerCase().includes(filter?.toLowerCase() ?? "")) /*|| (new Date(s.date).toLocaleString('nl-NL', { month: 'long' }).toLowerCase().includes(filter?.toLowerCase() ?? "")) */ || (new Date(s.date).toLocaleDateString('en-GB').toLowerCase().includes(filter?.toLowerCase() ?? "")) || (new Date(s.date).toDateString().toLowerCase().includes(filter?.toLowerCase() ?? "")) || (s.title.toLowerCase().includes(filter?.toLowerCase() ?? "")) || (users?.find(u => u.id == s.speakerId)?.displayName.toLowerCase().includes(filter?.toLowerCase() ?? "")))
+        return sessions.filter(s => (new Date(s.date).toLocaleString('en-GB', { month: 'long' }).toLowerCase().includes(filter?.toLowerCase() ?? "")) || (new Date(s.date).toLocaleString('nl-NL', { month: 'long' }).toLowerCase().includes(filter?.toLowerCase() ?? "")) || (new Date(s.date).toLocaleDateString('en-GB').toLowerCase().includes(filter?.toLowerCase() ?? "")) || (new Date(s.date).toDateString().toLowerCase().includes(filter?.toLowerCase() ?? "")) || (s.title.toLowerCase().includes(filter?.toLowerCase() ?? "")) || (users?.find(u => u.id == s.speakerId)?.displayName.toLowerCase().includes(filter?.toLowerCase() ?? "")))
     }
-
 
     function sortSessions() {
         switch (sort) {

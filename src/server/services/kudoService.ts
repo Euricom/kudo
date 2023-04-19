@@ -1,7 +1,7 @@
 import { type Kudo } from "@prisma/client";
 import { type Session, SortPosibillities, type User } from "~/types";
 
-export const FindAllKudosSortedByUserId = (id: string, sort: SortPosibillities, kudos?: Kudo[], sessions?: Session[], users?: User[],): Kudo[] => {
+export const FindAllKudosSortedByUserId = (sort: SortPosibillities, kudos?: Kudo[], sessions?: Session[], users?: User[],): Kudo[] => {
 
 
     if (!kudos || !users) {

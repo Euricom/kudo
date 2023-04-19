@@ -13,6 +13,8 @@ import { useSession } from "next-auth/react";
 import { useEffect, useState } from "react";
 import SortAndFilter from "~/components/input/SortAndFilter";
 import KudoCard from "~/components/kudos/Kudo";
+import { FindAllKudosSortedByUserId } from "~/server/services/kudoService";
+import { type Kudo } from "@prisma/client";
 export function getServerSideProps(context: { query: { searchtext: string, sort: SortPosibillities } }) {
 
     return {
@@ -28,11 +30,12 @@ const Flagged: NextPage<{ searchtext: string, sortIn: SortPosibillities }> = ({ 
     const router = useRouter()
     const user = useSession().data?.user
 
-    const [, setSort] = useState<SortPosibillities>(sortIn ?? SortPosibillities.SpeakerA)
+    const [sort, setSort] = useState<SortPosibillities>(sortIn ?? SortPosibillities.SpeakerA)
     const [search, setSearch] = useState<string>(searchtext ?? "")
 
     const usersQuery = api.users.getRelevantUsers.useQuery()
-    const { data: users } = usersQuery
+    const usersWCount = usersQuery.data
+    const users = usersWCount?.map(u => u.user)
 
     const sessionsQuery = api.sessions.getAll.useQuery()
     const sessions = sessionsQuery.data
@@ -45,6 +48,13 @@ const Flagged: NextPage<{ searchtext: string, sortIn: SortPosibillities }> = ({ 
         if (user?.role !== UserRole.ADMIN)
             router.replace("/403").catch(console.error)
     }, [user, router])
+
+
+    const [sortedKudos, setKudos] = useState<Kudo[]>(FindAllKudosSortedByUserId(sort, kudos, sessions, users))
+
+    useEffect(() => {
+        setKudos(FindAllKudosSortedByUserId(sort, kudos, sessions, users))
+    }, [sort, kudos, sessions, users])
 
 
 
@@ -73,8 +83,8 @@ const Flagged: NextPage<{ searchtext: string, sortIn: SortPosibillities }> = ({ 
                 </div>
                 <SortAndFilter setSort={setSort} filter={search} setFilter={setSearch} />
                 <div className="flex flex-wrap gap-4 h-full justify-center w-fit">
-                    {kudos.length == 0 ? <h1>No flagged Kudos yet</h1> :
-                        kudos.filter(k => sessions.find(s => s.id === k.sessionId)?.title.toLowerCase().includes(search?.toLowerCase() ?? "") || users?.find(u => u.user.id === (sessions.find(s => s.id === k.sessionId)?.speakerId))?.user.displayName.toLowerCase().includes(search?.toLowerCase() ?? "")).map((kudo) => (
+                    {sortedKudos.length == 0 ? <h1>No flagged Kudos yet</h1> :
+                        sortedKudos.filter(k => sessions.find(s => s.id === k.sessionId)?.title.toLowerCase().includes(search?.toLowerCase() ?? "") || usersWCount?.find(u => u.user.id === (sessions.find(s => s.id === k.sessionId)?.speakerId))?.user.displayName.toLowerCase().includes(search?.toLowerCase() ?? "")).map((kudo) => (
                             <KudoCard key={kudo.id} kudo={kudo} />
                         ))}
                 </div>

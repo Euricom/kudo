@@ -40,9 +40,9 @@ const Out: NextPage<{ filterIn: string, sortIn: SortPosibillities }> = ({ filter
   }
   const kudos = api.kudos.getKudosByUserId.useQuery({ id: userId }).data
 
-  const [sortedKudos, setKudos] = useState<Kudo[]>(FindAllKudosSortedByUserId(userId, sort, kudos, sessions, users))
+  const [sortedKudos, setKudos] = useState<Kudo[]>(FindAllKudosSortedByUserId(sort, kudos, sessions, users))
   useEffect(() => {
-    setKudos(FindAllKudosSortedByUserId(userId, sort, kudos, sessions, users))
+    setKudos(FindAllKudosSortedByUserId(sort, kudos, sessions, users))
   }, [userId, sort, kudos, sessions, users])
 
   if (!kudos || !sessions || !users) {

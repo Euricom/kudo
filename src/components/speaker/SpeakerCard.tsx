@@ -9,7 +9,6 @@ import { useEffect, useState } from "react";
 const SpeakerCard = ({ user }: { user: UserWCount }) => {
     const [imgUrl, setImgUrl] = useState<string>(avatar.src);
 
-
     useEffect(() => {
         fetch('/api/images/' + user.user.id)
             .then((res) => res.json())

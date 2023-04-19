@@ -28,7 +28,7 @@ const Flagged: NextPage<{ searchtext: string, sortIn: SortPosibillities }> = ({ 
     const router = useRouter()
     const user = useSession().data?.user
 
-    const [sort, setSort] = useState<SortPosibillities>(sortIn ?? SortPosibillities.SpeakerA)
+    const [, setSort] = useState<SortPosibillities>(sortIn ?? SortPosibillities.SpeakerA)
     const [search, setSearch] = useState<string>(searchtext ?? "")
 
     const usersQuery = api.users.getRelevantUsers.useQuery()

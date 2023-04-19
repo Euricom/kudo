@@ -9,10 +9,11 @@ import NavButtons from "~/components/navigation/NavButtons";
 import { useSession } from "next-auth/react";
 import { FindAllKudosSortedByUserId } from "~/server/services/kudoService";
 import { SortPosibillities } from "~/types";
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import SortAndFilter from "~/components/input/SortAndFilter";
 import { api } from "~/utils/api";
 import LoadingBar from "~/components/LoadingBar";
+import { type Kudo } from "@prisma/client";
 
 export function getServerSideProps(context: { query: { searchtext: string, sort: SortPosibillities }; }) {
 
@@ -37,9 +38,14 @@ const Out: NextPage<{ filterIn: string, sortIn: SortPosibillities }> = ({ filter
   if (!userId) {
     throw new Error("No user signed in")
   }
-  const kudos = FindAllKudosSortedByUserId(userId, sort)
+  const kudos = api.kudos.getKudosByUserId.useQuery({ id: userId }).data
 
-  if (!userId || !kudos || !sessions || !users) {
+  const [sortedKudos, setKudos] = useState<Kudo[]>(FindAllKudosSortedByUserId(userId, sort, kudos, sessions, users))
+  useEffect(() => {
+    setKudos(FindAllKudosSortedByUserId(userId, sort, kudos, sessions, users))
+  }, [userId, sort, kudos, sessions, users])
+
+  if (!kudos || !sessions || !users) {
     return <LoadingBar />
   }
 
@@ -60,8 +66,8 @@ const Out: NextPage<{ filterIn: string, sortIn: SortPosibillities }> = ({ filter
       <main className="flex flex-col items-center justify-start">
         <SortAndFilter setSort={setSort} filter={filter} setFilter={setFilter} />
         <div className="flex flex-wrap gap-5 justify-center px-5 mb-8 md:mb-28">
-          {kudos == undefined || kudos.length == 0 ? <h1>No Kudos Sent Yet</h1> :
-            kudos.filter(k => sessions.find(s => s.id == k.sessionId)?.title.toLowerCase().includes(filter?.toLowerCase() ?? "") || users.find(u => u.id === (sessions.find(s => s.id == k.sessionId)?.speakerId))?.displayName.toLowerCase().includes(filter?.toLowerCase() ?? "")).map((kudo) => (
+          {sortedKudos == undefined || sortedKudos.length == 0 ? <h1>No Kudos Sent Yet</h1> :
+            sortedKudos.filter(k => sessions.find(s => s.id == k.sessionId)?.title.toLowerCase().includes(filter?.toLowerCase() ?? "") || users.find(u => u.id === (sessions.find(s => s.id == k.sessionId)?.speakerId))?.displayName.toLowerCase().includes(filter?.toLowerCase() ?? "")).map((kudo) => (
               <KudoCard key={kudo.id} kudo={kudo} />
             ))}
         </div>

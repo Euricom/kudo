@@ -2,7 +2,6 @@ import { type Kudo, type Template } from "@prisma/client";
 import { type Url } from "url";
 import { type Vector2d } from 'konva/lib/types';
 import type Konva from "konva";
-import { type EmojiClickData } from "emoji-picker-react";
 
 export type AuthProps = {
     children?: React.ReactNode
@@ -168,7 +167,7 @@ export type KonvaCanvasProps = {
     thickness: number,
     color: string,
     fontFamily: string,
-    emoji?: EmojiClickData,
+    emoji?: EmojiObject,
     setFunction: (type: EditorFunctions) => void,
     setStage: (stage: Konva.Stage) => void
 }
@@ -220,6 +219,16 @@ export type CanvasTextProps = {
     editorFunction: EditorFunctions
 }
 
+export type CanvasStickerProps = {
+    shapeProps: Shapes,
+    isSelected: boolean,
+    editorFunction: EditorFunctions
+    onSelect: () => void,
+    onChange: (shapeProps: Shapes) => void,
+    onDelete: (id: string) => void,
+    onChangeEnd: (shapeProps: Shapes) => void,
+}
+
 export type CanvasImageProps = {
     shapeProps: Shapes,
     isSelected: boolean,
@@ -254,4 +263,14 @@ export enum Filter {
     Session = 'By session',
     User = 'By user',
     Flagged = 'Flagged',
+}
+
+export type EmojiObject = {
+    id: string;
+    name: string;
+    native: string;
+    unified: string;
+    keywords: string[];
+    shortcodes: string;
+    emoticons: string[];
 }

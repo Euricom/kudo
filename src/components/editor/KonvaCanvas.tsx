@@ -158,7 +158,7 @@ const KonvaCanvas = ({ editorFunction, template, thickness, color, fontFamily, e
   const makeText = (pos: Vector2d) => {
     const text = {
       id: v4(),
-      type: CanvasShapes.Sticker,
+      type: CanvasShapes.Text,
       text: 'Text',
       fill: color,
       fontFamily: fontFamily,

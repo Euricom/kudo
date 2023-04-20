@@ -237,8 +237,10 @@ export type CanvasImageProps = {
 export type RectangleProps = {
     shapeProps: Shapes,
     isSelected: boolean,
+    editorFunction: EditorFunctions,
     onSelect: () => void,
     onChange: (shapeProps: Shapes) => void
+    onDelete: (id: string) => void,
 }
 
 export const Fonts = [

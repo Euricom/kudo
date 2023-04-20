@@ -11,6 +11,7 @@ import { CanvasShapes, EditorFunctions, type KonvaCanvasProps, type Shapes } fro
 import { toast } from 'react-toastify';
 import CanvasSticker from './canvasShapes/CanvasSticker';
 import CanvasCircle from './canvasShapes/CanvasCircle';
+import { api } from '~/utils/api';
 
 const KonvaCanvas = ({ editorFunction, template, thickness, color, fontFamily, emoji, setFunction, setStage }: KonvaCanvasProps) => {
   const containerRef = useRef<HTMLDivElement>(null);
@@ -20,6 +21,9 @@ const KonvaCanvas = ({ editorFunction, template, thickness, color, fontFamily, e
   const [shapes, setShapes] = useState<Shapes[]>([]);
   const [selectedId, selectShape] = useState<string | null>(null);
   const [history] = useState<Shapes[]>([])
+  
+  const createTemplate = api.templates.createTemplate.useMutation()
+  const createImage = api.kudos.createKudoImage.useMutation()
 
   const [line, setLine] = useState<Shapes[]>([]);
 
@@ -77,22 +81,23 @@ const KonvaCanvas = ({ editorFunction, template, thickness, color, fontFamily, e
 
   const clickListener = (e: KonvaEventObject<Event>) => {
     const clickedOnEmpty = e.target?.getLayer() === staticLayerRef.current
-
     if (clickedOnEmpty) {
       selectShape(null);
     }
     switch (editorFunction) {
       case EditorFunctions.Text:
-        addText(stageRef.current.getPointerPosition() ?? { x: 50, y: 50 })
+        addText()
         break
       case EditorFunctions.Sticker:
         addSticker()
         break
     }
-    console.log(template.content);
   }
 
-  const addText = (pos: Vector2d) => {
+  const addText = () => {
+    const pos = layerRef.current.getRelativePointerPosition()??{x: 0, y: 0}
+    console.log(pos);
+    
     const text = makeText(pos)
     history.unshift(text)
     shapes.push(text)
@@ -120,7 +125,7 @@ const KonvaCanvas = ({ editorFunction, template, thickness, color, fontFamily, e
       toast.error("No emoji selected")
       return
     }
-    const pos = stageRef.current.getPointerPosition() ?? { x: 50, y: 50 }
+    const pos = layerRef.current.getRelativePointerPosition() ?? { x: 50, y: 50 }
     const sticker = {
       id: v4(),
       type: CanvasShapes.Sticker,
@@ -136,11 +141,18 @@ const KonvaCanvas = ({ editorFunction, template, thickness, color, fontFamily, e
     setFunction(EditorFunctions.None)
   }
 
+  const saveTemplate = useCallback(async () => {
+    setFunction(EditorFunctions.None)
+    selectShape(null)
+    const image = await createImage.mutateAsync({ dataUrl: stageRef.current.toDataURL() })
+    await createTemplate.mutateAsync({name: v4(), color: template.color, image: image.id, content: shapes})
+  }, [createTemplate, shapes, stageRef, template.color, setFunction, createImage]);
+
   const handleMouseDown = () => {
     if (editorFunction === EditorFunctions.Draw || editorFunction === EditorFunctions.Erase) {
       selectShape(null)
       isDrawing.current = true;
-      const pos = stageRef.current.getPointerPosition() ?? { x: 0, y: 0 };
+      const pos = layerRef.current.getRelativePointerPosition() ?? { x: 0, y: 0 };
       setLine([...line, { type: CanvasShapes.Line, id: v4(), tool: editorFunction === EditorFunctions.Erase ? "destination-out" : "source-over", points: [pos.x, pos.y], thickness: thickness, color: color }]);
     }
   };
@@ -150,8 +162,7 @@ const KonvaCanvas = ({ editorFunction, template, thickness, color, fontFamily, e
     if (!isDrawing.current) {
       return;
     }
-    const stage = stageRef.current;
-    const point = stage.getPointerPosition() ?? { x: 0, y: 0 };
+    const point = layerRef.current.getRelativePointerPosition() ?? { x: 0, y: 0 };
     if (line) {
       const lastLine = line[line.length - 1] ?? { type: CanvasShapes.Line, id: "1", tool: "source-over", points: [0, 0], thickness: thickness, color: color };
       // add point
@@ -179,7 +190,13 @@ const KonvaCanvas = ({ editorFunction, template, thickness, color, fontFamily, e
   useEffect(() => {
     setStage(stageRef.current)
     layerRef.current.offset({x: -(stageDimensions?.width ?? 0)/2, y: -(stageDimensions?.height ?? 0)/2})
+    console.log("testCenterLayer");
   }, [setStage, stageDimensions])
+  
+  useEffect(() => {
+    console.log("Shapes", shapes);
+    console.log("History", history);
+  }, [shapes, history])
 
   useEffect(() => {
     if (editorFunction === EditorFunctions.Submit) {
@@ -189,73 +206,20 @@ const KonvaCanvas = ({ editorFunction, template, thickness, color, fontFamily, e
       undo();
     }
     if (editorFunction === EditorFunctions.Save) {
-      saveTemplate();
+      saveTemplate().catch(console.error);
     }
-  }, [editorFunction, undo]);
+  }, [editorFunction, undo, saveTemplate]);
 
   useEffect(() => {
     console.log(stageDimensions);
-    if (!template||shapes.length>0||!stageDimensions.height) {
+    if (!template||!stageDimensions.height) {
       return
     }
-    
-    const initialShapes: Shapes[] = [
-      {
-        type: CanvasShapes.Circle,
-        id: "BigCircle",
-        x: -0.3,
-        y: 0.5,
-        fill: "#ffe587",
-        radius: 380,
-        draggable: true
-      },
-      {
-        type: CanvasShapes.Circle,
-        id: "SmallCircle",
-        x: 0.1,
-        y: 0.6,
-        fill: "#ffc700",
-        radius: 200,
-        draggable: true
-      },
-      {
-        type: CanvasShapes.Text,
-        id: "headerText",
-        x: 0,
-        y: -0.2,
-        text: "Fiiiiire!",
-        fill: "#ffc700",
-        fontSize: 100,
-        draggable: true
-      },
-      {
-        type: CanvasShapes.Text,
-        id: "bodyText",
-        x: 0,
-        y: 0.1,
-        text: "Top sessie <3",
-        fill: "#ec8e29",
-        fontSize: 40,
-        draggable: true
-      },
-    ].map(s => {
-      return {
-        ...s,
-        x: (s.x??0) * (stageDimensions?.width??0),
-        y: (s.y??0) * (stageDimensions?.height??0),
-      }
-    })
-    console.log(initialShapes);
-    
-    const templateShapes = (template.content as unknown as Shapes[]).map(s => {
-      return {
-        ...s,
-        x: (s.x??0) * (stageDimensions?.width??0),
-        y: (s.y??0) * (stageDimensions?.height??0),
-      }
-    })
-    setShapes(initialShapes)
-  }, [template, stageDimensions, shapes.length])
+    console.log("testFillTemp");
+    const templateShapes = (template.content as unknown as Shapes[]) ?? []
+    history.unshift(...templateShapes)
+    setShapes(templateShapes)
+  }, [template, stageDimensions, history])
 
   return (
     <><div ref={containerRef} id='kudo' className="aspect-[3/2] w-full max-h-full max-w-xl lg:max-w-3xl bg-neutral">
@@ -350,6 +314,7 @@ const KonvaCanvas = ({ editorFunction, template, thickness, color, fontFamily, e
                     key={i}
                     shapeProps={s}
                     isSelected={s.id === selectedId}
+                    editorFunction={editorFunction ?? EditorFunctions.None}
                     onSelect={() => {
                       selectShape(s.id);
                     }}
@@ -359,6 +324,7 @@ const KonvaCanvas = ({ editorFunction, template, thickness, color, fontFamily, e
                       setShapes(newShapes);
                       history.unshift(newAttrs)
                     }}
+                    onDelete={onDelete}
                   />
                 );
                 case CanvasShapes.Circle:
@@ -367,6 +333,7 @@ const KonvaCanvas = ({ editorFunction, template, thickness, color, fontFamily, e
                       key={i}
                       shapeProps={s}
                       isSelected={s.id === selectedId}
+                      editorFunction={editorFunction ?? EditorFunctions.None}
                       onSelect={() => {
                         selectShape(s.id);
                       }}
@@ -376,6 +343,7 @@ const KonvaCanvas = ({ editorFunction, template, thickness, color, fontFamily, e
                         setShapes(newShapes);
                         history.unshift(newAttrs)
                       }}
+                      onDelete={onDelete}
                     />
                   );
             }

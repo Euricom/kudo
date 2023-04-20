@@ -1,21 +1,24 @@
 import React, { useRef, type MutableRefObject, useEffect } from 'react';
 import { Transformer, Rect } from 'react-konva';
 import type Konva from 'konva';
-import { type RectangleProps } from '~/types';
+import { EditorFunctions, type RectangleProps } from '~/types';
 
 
 
-const Rectangle = ({ shapeProps, isSelected, onSelect, onChange }: RectangleProps) => {
+const Rectangle = ({ shapeProps, isSelected, editorFunction, onSelect, onChange, onDelete }: RectangleProps) => {
   const shapeRef = useRef<Konva.Rect>() as MutableRefObject<Konva.Rect>;
   const trRef = useRef<Konva.Transformer>() as MutableRefObject<Konva.Transformer>;
 
   useEffect(() => {
     if (isSelected) {
+      if (editorFunction === EditorFunctions.Clear) {
+        onDelete(shapeProps.id)
+      }
       // we need to attach transformer manually
       trRef.current?.nodes([shapeRef.current]);
       trRef.current?.getLayer()?.batchDraw();
     }
-  }, [isSelected]);
+  }, [isSelected, editorFunction, onDelete, shapeProps.id]);
 
   return (
     <React.Fragment>

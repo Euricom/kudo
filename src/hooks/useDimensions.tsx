@@ -11,7 +11,7 @@ export default function useDimensions(ref: RefObject<HTMLElement>) {
       return ;
     }
     if (!initialDimensions) {
-      setInitialDimensions({width: ref.current?.offsetWidth, height: ref.current?.offsetHeight})
+      setInitialDimensions({width: 1500, height: 1000})
     }
     
     function handleResize() {

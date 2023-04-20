@@ -30,7 +30,7 @@ function useVisibleStartNavbarActions() {
         {
             Component: BackArrow,
             key: 'backArrow',
-            routes: ['/session/[...id]', '/session/presentation/[...id]', '/kudo/[...id]','/speaker/[...id]', '/notifications', '/create', '/create/editor', '/create/templates', '/403'],
+            routes: ['/session/[...id]', '/session/presentation/[...id]', '/kudo/[...id]', '/speaker/[...id]', '/notifications', '/create', '/create/editor', '/create/templates', '/403'],
         },
         {
             Component: logo,
@@ -92,9 +92,10 @@ const NavBar = () => {
 };
 
 function NotificationIcon() {
+    const router = useRouter();
     return (
         <>
-            <button className="btn btn-ghost btn-circle" data-cy='notificationButton'>
+            <button className="btn btn-ghost btn-circle" data-cy='notificationButton' onClick={() => void router.push("/notifications")}>
                 <div className="indicator">
                     <FiBell size={20} />
                     <span className="badge badge-sm badge-error border border-collapse border-neutral indicator-item">12</span>

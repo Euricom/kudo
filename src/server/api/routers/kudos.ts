@@ -40,6 +40,8 @@ const inputFlag = object({
 export const kudoRouter = createTRPCRouter({
 
     getAllKudos: protectedProcedure.query(({ ctx }) => {
+        console.log(ctx.prisma.kudo);
+
         const kudo = ctx.prisma.kudo.findMany({})
         return kudo
     }),
@@ -183,7 +185,7 @@ export const kudoRouter = createTRPCRouter({
             throw new Error()
         }
     }),
-    
+
     flagKudoById: protectedProcedure.input(inputFlag).mutation(async ({ input, ctx }) => {
 
         const kudo = await ctx.prisma.kudo.update({

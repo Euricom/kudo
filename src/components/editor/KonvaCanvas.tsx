@@ -96,7 +96,6 @@ const KonvaCanvas = ({ editorFunction, template, thickness, color, fontFamily, e
 
   const addText = () => {
     const pos = layerRef.current.getRelativePointerPosition()??{x: 0, y: 0}
-    console.log(pos);
     
     const text = makeText(pos)
     history.unshift(text)
@@ -112,8 +111,8 @@ const KonvaCanvas = ({ editorFunction, template, thickness, color, fontFamily, e
       text: 'Text',
       fill: color,
       fontFamily: fontFamily,
-      x: pos.x / (stageDimensions.scale?.x ?? 1),
-      y: pos.y / (stageDimensions.scale?.y ?? 1),
+      x: pos.x,
+      y: pos.y,
       fontSize: (stageDimensions?.height ?? 0) / 15,
       draggable: true
     }
@@ -125,13 +124,13 @@ const KonvaCanvas = ({ editorFunction, template, thickness, color, fontFamily, e
       toast.error("No emoji selected")
       return
     }
-    const pos = layerRef.current.getRelativePointerPosition() ?? { x: 50, y: 50 }
+    const pos = layerRef.current.getRelativePointerPosition()??{x: 0, y: 0}
     const sticker = {
       id: v4(),
       type: CanvasShapes.Sticker,
       text: emoji.native,
-      x: pos.x / (stageDimensions.scale?.x ?? 1),
-      y: pos.y / (stageDimensions.scale?.y ?? 1),
+      x: pos.x,
+      y: pos.y,
       draggable: true,
       fontSize: (stageDimensions?.height ?? 0) / 5,
     }
@@ -140,6 +139,7 @@ const KonvaCanvas = ({ editorFunction, template, thickness, color, fontFamily, e
     selectShape(sticker.id)
     setFunction(EditorFunctions.None)
   }
+
 
   const saveTemplate = useCallback(async () => {
     setFunction(EditorFunctions.None)

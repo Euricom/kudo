@@ -5,15 +5,13 @@ import { GrAdd } from 'react-icons/gr';
 import { UtilButtonsContent } from "~/hooks/useUtilButtons";
 import { NavigationBarContent } from "~/components/navigation/NavBarTitle";
 import NavButtons from "~/components/navigation/NavButtons";
-import SessionList from "~/components/sessions/SessionList";
 import { api } from "~/utils/api";
 import LoadingBar from "~/components/LoadingBar";
-import { Filter, ImageData, SortPosibillities, UserRole } from "~/types";
+import { type Filter, SortPosibillities, UserRole } from "~/types";
 import { useRouter } from "next/router";
 import { useSession } from "next-auth/react";
 import { useEffect, useState } from "react";
 import SortAndFilter from "~/components/input/SortAndFilter";
-import KudoCard from "~/components/kudos/Kudo";
 import SpeakerCard from "~/components/speaker/SpeakerCard";
 export function getServerSideProps(context: { query: { searchtext: string, sort: SortPosibillities } }) {
 

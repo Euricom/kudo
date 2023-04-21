@@ -10,7 +10,7 @@ import { AiOutlineHeart, AiFillHeart, AiFillWarning, AiOutlineWarning, AiOutline
 import { useEffect, useState } from "react";
 import ConfirmationModal from '~/components/input/ConfirmationModal';
 import { useSession } from "next-auth/react";
-import { UserRole } from "~/types";
+import { type ImageData, UserRole } from "~/types";
 import { useRouter } from "next/router";
 import LoadingBar from "~/components/LoadingBar";
 import avatar from '../../contents/images/AnonymousPicture.jpg';
@@ -43,6 +43,15 @@ const KudoDetail: NextPage<{ id: string }> = ({ id }) => {
   const session = sessionQuery.data
   const [comment, setComment] = useState<string>("")
   const [sendReady, setSendReady] = useState<boolean>(false)
+  const [imgUrl, setImgUrl] = useState<string>(avatar.src);
+
+  useEffect(() => {
+    if (kudo?.userId)
+      fetch('/api/images/' + kudo?.userId)
+        .then((res) => res.json())
+        .then((json: ImageData) => setImgUrl(json.dataUrl))
+        .catch(e => console.log(e));
+  }, [kudo?.userId]);
 
   async function handleclick() {
     if (user?.id === session?.speakerId) {
@@ -77,7 +86,6 @@ const KudoDetail: NextPage<{ id: string }> = ({ id }) => {
   if (!image || !kudo || !session || imageQuery.isLoading || sessionQuery.isLoading || kudoQuery.isLoading) {
     return <LoadingBar />
   }
-
 
   function del() {
     deleteKudo.mutate({ id: kudo?.id ?? "error" })
@@ -160,7 +168,7 @@ const KudoDetail: NextPage<{ id: string }> = ({ id }) => {
                     <div className="w-10 rounded-full relative">
                       <Image
                         className="rounded-full"
-                        src={session.speaker?.image ?? avatar}
+                        src={imgUrl}
                         alt="Profile picture"
                         fill
                       />

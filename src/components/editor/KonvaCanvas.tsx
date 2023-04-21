@@ -280,8 +280,8 @@ const KonvaCanvas = ({ editorFunction, template, thickness, color, fontFamily, e
                       history.unshift(newAttrs)
                     }}
                     areaPosition={{
-                      x: (stageRef.current?.container().offsetLeft ?? 0) + (s.x ?? 1) * (stageDimensions?.scale?.x ?? 1),
-                      y: (stageRef.current?.container().offsetTop ?? 0) + (s.y ?? 1) * (stageDimensions?.scale?.y ?? 1),
+                      x: (stageRef.current?.container().offsetLeft ?? 0) + (stageRef.current?.width() ?? 0)/2 + (s.x ?? 1) * (stageDimensions?.scale?.x ?? 1),
+                      y: (stageRef.current?.container().offsetTop ?? 0) + (stageRef.current?.height() ?? 0)/2 + (s.y ?? 1) * (stageDimensions?.scale?.y ?? 1),
                     }}
                     onDelete={onDelete}
                     editorFunction={editorFunction ?? EditorFunctions.None}

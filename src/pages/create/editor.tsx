@@ -18,12 +18,10 @@ import type Konva from 'konva';
 import ConfirmationModal from '~/components/input/ConfirmationModal';
 import LoadingBar from '~/components/LoadingBar';
 import { BsFillCircleFill } from 'react-icons/bs';
-
 import { type ColorResult, HuePicker } from 'react-color';
 import { EditorFunctions, type EmojiObject, Fonts } from '~/types';
 import data from '@emoji-mart/data';
 import Picker from '@emoji-mart/react';
-
 
 export async function getServerSideProps(context: { query: { template: string; }; }) {
   const id = context.query.template
@@ -51,12 +49,13 @@ const Editor: NextPage<{ res: Template }> = ({ res }) => {
   const [font, setFont] = useState<string>("Arial");
   const [thickness, setThickness] = useState<number>(5)
   const [selectedEmoji, setSelectedEmoji] = useState<EmojiObject>();
-
-  const userId: string = useSession().data?.user.id ?? "error"
-
+  const sendNotification = api.notifications.sendnotification.useMutation()
+  const user = useSession().data?.user
   const { session, speaker, anonymous } = useSessionSpeaker().data
+  const sessionTitle = api.sessions.getSessionById.useQuery({ id: session }).data?.title
+  const speakerId = api.users.getUserByName.useQuery({ id: speaker }).data?.id
 
-  if (!userId || !session || !speaker || userId == undefined) {
+  if (!user || !session || !speaker || user.id == undefined) {
     <LoadingBar />
   }
 
@@ -71,7 +70,6 @@ const Editor: NextPage<{ res: Template }> = ({ res }) => {
 
   function onClickEmoji(emoji: EmojiObject) {
     console.log(emoji);
-    
     setSelectedEmoji(emoji);
     setEmojiDropdownState(false)
   }
@@ -80,14 +78,15 @@ const Editor: NextPage<{ res: Template }> = ({ res }) => {
     if (!stage) {
       return
     }
-    try {
-      const image = await createImage.mutateAsync({ dataUrl: stage.toDataURL() })
-      await createKudo.mutateAsync({ image: image.id, sessionId: session, userId: userId, anonymous: anonymous });
-
-      await router.replace('/out')
-    } catch (e) {
-      console.log(e);
-    }
+    if (user && user.id && user.name && sessionTitle && speakerId)
+      try {
+        const image = await createImage.mutateAsync({ dataUrl: stage.toDataURL() })
+        const kudo = await createKudo.mutateAsync({ image: image.id, sessionId: session, userId: user.id, anonymous: anonymous });
+        await sendNotification.mutateAsync({ message: (user.name).toString() + " sent you a kudo for your session about " + (sessionTitle).toString(), userId: speakerId, kudoId: kudo.id, photo: user.id })
+        await router.replace('/out')
+      } catch (e) {
+        console.log(e);
+      }
   }
 
   return (

@@ -52,6 +52,11 @@ export const findUserById = async (id: string): Promise<User> => {
     return user
 };
 
+export const findUserByName = async (id: string): Promise<User | undefined> => {
+    const users = await findAllUsers()
+    return users.find(user => user.displayName === id)
+};
+
 export const findRelevantUsers = async (ctx: { prisma: PrismaClient }): Promise<UserWCount[]> => {
     const users = await findAllUsers()
     const kudos = await ctx.prisma.kudo.findMany({})

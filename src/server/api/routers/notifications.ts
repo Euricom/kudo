@@ -2,10 +2,18 @@ import {
     createTRPCRouter,
     protectedProcedure,
 } from "~/server/api/trpc";
-import { object, string } from "zod";
+import { object, optional, string } from "zod";
 
 const inputGetById = object({
     id: string(),
+})
+
+const inputsendNotification = object({
+    message: string(),
+    userId: string(),
+    kudoId: optional(string()),
+    sessionId: optional(string()),
+    photo: optional(string()),
 })
 
 export const notificationRouter = createTRPCRouter({
@@ -17,6 +25,16 @@ export const notificationRouter = createTRPCRouter({
             }
         })
     }),
+
+    getAmountOfNotificationsById: protectedProcedure.input(inputGetById).query(({ input, ctx }) => {
+        return ctx.prisma.notification.count({
+            where: {
+                userId: input.id,
+                read: false
+            }
+        })
+    }),
+
 
     readNotification: protectedProcedure.input(inputGetById).mutation(async ({ input, ctx }) => {
 
@@ -43,6 +61,19 @@ export const notificationRouter = createTRPCRouter({
             data: {
                 read: true,
             }
+        });
+    }),
+
+    // Create
+    sendnotification: protectedProcedure.input(inputsendNotification).mutation(async ({ input, ctx }) => {
+        await ctx.prisma.notification.create({
+            data: {
+                message: input.message,
+                userId: input.userId,
+                kudoId: input.kudoId,
+                sessionId: input.sessionId,
+                photo: input.photo
+            },
         });
     }),
 

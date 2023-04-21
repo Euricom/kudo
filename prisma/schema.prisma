@@ -7,8 +7,8 @@ generator client {
 }
 
 datasource db {
-  provider = "postgresql"
-  url      = env("DATABASE_URL")
+    provider = "postgresql"
+    url      = env("DATABASE_URL")
 }
 
 //datasource db {
@@ -79,19 +79,20 @@ model Image {
 }
 
 model Kudo {
-  id        String     @id @default(cuid())
-  image     String
-  liked     Boolean    @default(false)
-  comment   String     @default("")
-  sessionId String
-  userId    String
-  anonymous Boolean
-  flagged   Boolean    @default(false)
+    id        String     @id @default(cuid())
+    image     String
+    liked     Boolean    @default(false)
+    comment   String     @default("")
+    sessionId String
+    userId    String
+    anonymous Boolean
+    flagged   Boolean    @default(false)
 
 }
 model Template {
     id            String      @id @default(cuid())
-    Color         String   
-    Title         String
-    Sticker       String
+    color         String   
+    name          String
+    content       Json[]      @db.Json
+    image         String
 }

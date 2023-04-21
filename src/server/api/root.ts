@@ -3,6 +3,7 @@ import { exampleRouter } from "~/server/api/routers/example";
 import { sessionRouter } from "~/server/api/routers/sessions";
 import { kudoRouter } from "./routers/kudos";
 import { userRouter } from "./routers/users";
+import { templateRouter } from "./routers/template";
 
 /**
  * This is the primary router for your server.
@@ -14,6 +15,7 @@ export const appRouter = createTRPCRouter({
   sessions: sessionRouter,
   kudos: kudoRouter,
   users: userRouter,
+  templates: templateRouter,
 });
 
 // export type definition of API

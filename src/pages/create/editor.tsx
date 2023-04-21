@@ -18,9 +18,10 @@ import type Konva from 'konva';
 import ConfirmationModal from '~/components/input/ConfirmationModal';
 import LoadingBar from '~/components/LoadingBar';
 import { BsFillCircleFill } from 'react-icons/bs';
+import { FiSave } from 'react-icons/fi';
 
 import { type ColorResult, HuePicker } from 'react-color';
-import { EditorFunctions, type EmojiObject, Fonts } from '~/types';
+import { EditorFunctions, type EmojiObject, Fonts, UserRole } from '~/types';
 import data from '@emoji-mart/data';
 import Picker from '@emoji-mart/react';
 
@@ -52,11 +53,11 @@ const Editor: NextPage<{ res: Template }> = ({ res }) => {
   const [thickness, setThickness] = useState<number>(5)
   const [selectedEmoji, setSelectedEmoji] = useState<EmojiObject>();
 
-  const userId: string = useSession().data?.user.id ?? "error"
+  const user = useSession().data?.user
 
   const { session, speaker, anonymous } = useSessionSpeaker().data
 
-  if (!userId || !session || !speaker || userId == undefined) {
+  if (!user || !session || !speaker) {
     <LoadingBar />
   }
 
@@ -82,7 +83,7 @@ const Editor: NextPage<{ res: Template }> = ({ res }) => {
     }
     try {
       const image = await createImage.mutateAsync({ dataUrl: stage.toDataURL() })
-      await createKudo.mutateAsync({ image: image.id, sessionId: session, userId: userId, anonymous: anonymous });
+      await createKudo.mutateAsync({ image: image.id, sessionId: session, userId: user?.id?? "error", anonymous: anonymous });
 
       await router.replace('/out')
     } catch (e) {
@@ -101,7 +102,15 @@ const Editor: NextPage<{ res: Template }> = ({ res }) => {
         <h1>Editor</h1>
       </NavigationBarContent>
       <UtilButtonsContent>
-        <></>
+        {user?.role === UserRole.ADMIN &&
+        <button
+        className="btn btn-ghost btn-circle "
+        onClick={() => void setSelectedButton(EditorFunctions.Save)}
+        data-cy='SaveButton'
+        >
+          <FiSave size={20} />
+        </button>
+        }
       </UtilButtonsContent>
       {/* <div className="w-full h-fit bg-secondary text-white p-5 text-center">
         <h1 data-cy="session" className="lg:inline">&emsp;&emsp;&emsp;&emsp;Session: {sessionId}&emsp;&emsp;</h1><h1 data-cy="speaker" className="lg:inline"> Speaker: {speaker}</h1>

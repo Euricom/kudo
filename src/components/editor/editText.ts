@@ -36,7 +36,7 @@ const createTextArea = (textNode: Konva.Text, areaPosition: Vector2d, tr: Konva.
   textarea.style.resize = 'none';
   textarea.style.lineHeight = textNode.lineHeight().toString();
   textarea.style.fontFamily = textNode.fontFamily();
-  textarea.style.transformOrigin = 'left top';
+  textarea.style.transformOrigin = 'center';
   textarea.style.textAlign = textNode.align();
   textarea.style.color = textNode.fill();
 
@@ -45,15 +45,8 @@ const createTextArea = (textNode: Konva.Text, areaPosition: Vector2d, tr: Konva.
   if (rotation) {
     transform += 'rotateZ(' + rotation.toString() + 'deg)';
   }
-
-  let px = 0;
-  // also we need to slightly move textarea on firefox
-  // because it jumps a bit
-  const isFirefox = navigator.userAgent.toLowerCase().indexOf('firefox') > -1;
-  if (isFirefox) {
-    px += 2 + Math.round((textNode.fontSize()) / 20);
-  }
-  transform += 'translateY(-' + px.toString() + 'px)';
+  
+  transform += 'translate(-50%, -50%)';
 
   textarea.style.transform = transform;
 

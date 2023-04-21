@@ -22,6 +22,16 @@ const CanvasText = ({ container, shapeProps, scale, isSelected, onSelect, onChan
     }
   }, [isSelected, onDelete, shapeProps, editorFunction]);
 
+  useEffect(() => {
+    if (shapeRef.current) {
+      const shapeWidth = shapeRef.current.width();
+      const shapeHeight = shapeRef.current.height();
+      const xOffset = shapeWidth / 2;
+      const yOffset = shapeHeight / 2;
+      shapeRef.current.offset({ x: xOffset, y: yOffset });
+    }
+  }, [shapeProps.text]);
+
   const onDoubleClick = () => {
     shapeRef.current.hide();
     trRef.current?.hide();

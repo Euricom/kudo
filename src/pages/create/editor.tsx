@@ -5,10 +5,8 @@ import { UtilButtonsContent } from "~/hooks/useUtilButtons";
 import { GrEmoji } from "react-icons/gr"
 import { BiPencil, BiPalette, BiText, BiTrash, BiEraser, BiCircle, BiUndo } from "react-icons/bi"
 import { NavigationBarContent } from "~/components/navigation/NavBarTitle";
-import { type Template } from "@prisma/client";
-import { findTemplateById } from "~/server/services/templateService";
 import FAB from "~/components/navigation/FAB";
-import { FiSend } from "react-icons/fi"
+import { FiSave, FiSend } from "react-icons/fi"
 import { useRouter } from 'next/router';
 import { api } from '~/utils/api';
 import dynamic from 'next/dynamic';
@@ -19,16 +17,14 @@ import ConfirmationModal from '~/components/input/ConfirmationModal';
 import LoadingBar from '~/components/LoadingBar';
 import { BsFillCircleFill } from 'react-icons/bs';
 import { type ColorResult, HuePicker } from 'react-color';
-import { EditorFunctions, type EmojiObject, Fonts } from '~/types';
+import { EditorFunctions, type EmojiObject, Fonts, UserRole } from '~/types';
 import data from '@emoji-mart/data';
 import Picker from '@emoji-mart/react';
 
-export async function getServerSideProps(context: { query: { template: string; }; }) {
-  const id = context.query.template
-  const data: Template = await findTemplateById(id)
+export function getServerSideProps(context: { query: { template: string; }; }) {
   return {
     props: {
-      res: data,
+      id: context.query.template,
     }
   }
 }
@@ -38,7 +34,8 @@ const KonvaCanvas = dynamic(
   { ssr: false }
 );
 
-const Editor: NextPage<{ res: Template }> = ({ res }) => {
+const Editor: NextPage<{ id: string }> = ({ id }) => {
+  const res = api.templates.getTemplateById.useQuery({ id: id }).data
   const [selectedButton, setSelectedButton] = useState<EditorFunctions>()
   const [stage, setStage] = useState<Konva.Stage>()
   const createKudo = api.kudos.createKudo.useMutation()
@@ -55,8 +52,8 @@ const Editor: NextPage<{ res: Template }> = ({ res }) => {
   const sessionTitle = api.sessions.getSessionById.useQuery({ id: session }).data?.title
   const speakerId = api.users.getUserByName.useQuery({ id: speaker }).data?.id
 
-  if (!user || !session || !speaker || user.id == undefined) {
-    <LoadingBar />
+  if (!user || !session || !speaker || user.id == undefined || !res || res === null) {
+    return <LoadingBar />
   }
 
   const handleColorChange = (color: ColorResult) => {
@@ -100,7 +97,15 @@ const Editor: NextPage<{ res: Template }> = ({ res }) => {
         <h1>Editor</h1>
       </NavigationBarContent>
       <UtilButtonsContent>
-        <></>
+        {user?.role === UserRole.ADMIN &&
+          <button
+            className="btn btn-ghost btn-circle "
+            onClick={() => void setSelectedButton(EditorFunctions.Save)}
+            data-cy='SaveButton'
+          >
+            <FiSave size={20} />
+          </button>
+        }
       </UtilButtonsContent>
       {/* <div className="w-full h-fit bg-secondary text-white p-5 text-center">
         <h1 data-cy="session" className="lg:inline">&emsp;&emsp;&emsp;&emsp;Session: {sessionId}&emsp;&emsp;</h1><h1 data-cy="speaker" className="lg:inline"> Speaker: {speaker}</h1>

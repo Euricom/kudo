@@ -1,12 +1,12 @@
 import React, { useRef, type MutableRefObject, useEffect } from 'react';
-import { Transformer, Rect } from 'react-konva';
+import { Transformer, Circle } from 'react-konva';
 import type Konva from 'konva';
 import { EditorFunctions, type RectangleProps } from '~/types';
 
 
 
-const Rectangle = ({ shapeProps, isSelected, editorFunction, onSelect, onChange, onDelete }: RectangleProps) => {
-  const shapeRef = useRef<Konva.Rect>() as MutableRefObject<Konva.Rect>;
+const CanvasCircle = ({ shapeProps, isSelected, editorFunction, onSelect, onChange, onDelete }: RectangleProps) => {
+  const shapeRef = useRef<Konva.Circle>() as MutableRefObject<Konva.Circle>;
   const trRef = useRef<Konva.Transformer>() as MutableRefObject<Konva.Transformer>;
 
   useEffect(() => {
@@ -22,7 +22,7 @@ const Rectangle = ({ shapeProps, isSelected, editorFunction, onSelect, onChange,
 
   return (
     <React.Fragment>
-      <Rect
+      <Circle
         onClick={onSelect}
         onTap={onSelect}
         ref={shapeRef}
@@ -73,4 +73,4 @@ const Rectangle = ({ shapeProps, isSelected, editorFunction, onSelect, onChange,
   );
 };
 
-export default Rectangle;
+export default CanvasCircle;

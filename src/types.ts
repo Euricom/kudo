@@ -64,13 +64,6 @@ export type SessionListProps = {
     sortIn?: SortPosibillities,
 }
 
-export type Temp = {
-    id: string,
-    Color: string,
-    Title: string,
-    Sticker: string,
-}
-
 export type AADResponseUsers = {
     value: User[]
     '@odata.nextLink': string
@@ -156,7 +149,8 @@ export enum CanvasShapes {
     Sticker,
     Line,
     Image,
-    Rect
+    Rect,
+    Circle,
 }
 
 export type KonvaCanvasProps = {
@@ -190,6 +184,7 @@ export type Shapes = {
     fontSize?: number,
     draggable?: boolean,
     rotation?: number,
+    radius?: number,
 }
 
 export enum EditorFunctions {
@@ -201,6 +196,7 @@ export enum EditorFunctions {
     Clear = 'clear',
     Undo = 'undo',
     Submit = 'submit',
+    Save  = 'save',
     None = 'none'
 }
 
@@ -238,10 +234,11 @@ export type CanvasImageProps = {
 
 export type RectangleProps = {
     shapeProps: Shapes,
-    scale: number,
     isSelected: boolean,
+    editorFunction: EditorFunctions,
     onSelect: () => void,
     onChange: (shapeProps: Shapes) => void
+    onDelete: (id: string) => void,
 }
 
 export const Fonts = [

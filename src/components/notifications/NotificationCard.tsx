@@ -1,10 +1,18 @@
 import Link from "next/link";
 import { type Notification } from "@prisma/client";
 import { BsFillCircleFill } from "react-icons/bs";
+import { api } from "~/utils/api";
+import avatar from '~/contents/images/euricomLogo.png'
+import { useEffect, useState } from "react";
+import { type ImageData } from "~/types";
+import Image from "next/image";
 
 
 
 const NotificationCard = ({ notification }: { notification: Notification }) => {
+
+    const readNotification = api.notifications.readNotification.useMutation()
+    const [imgUrl, setImgUrl] = useState<string>(avatar.src);
 
     const getTimeAgo = () => {
         const milliseconds = Date.now().valueOf() - notification.time.valueOf()
@@ -19,6 +27,8 @@ const NotificationCard = ({ notification }: { notification: Notification }) => {
             return years.toString() + ` year${years > 1 ? "s" : ""} ago`
         if (months >= 1)
             return months.toString() + ` month${months > 1 ? "s" : ""} ago`
+        if (weeks >= 1)
+            return weeks.toString() + ` week${weeks > 1 ? "s" : ""} ago`
         if (days >= 1)
             return days.toString() + ` day${days > 1 ? "s" : ""} ago`
         if (hours >= 1)
@@ -28,11 +38,33 @@ const NotificationCard = ({ notification }: { notification: Notification }) => {
         return "less than 1 minute ago"
     }
 
+    useEffect(() => {
+        if (notification && notification.photo) {
+            fetch('/api/images/' + notification.photo)
+                .then((res) => res.json())
+                .then((json: ImageData) => setImgUrl(json.dataUrl))
+                .catch(e => console.log(e));
+        }
+    }, [notification, notification.photo]);
+
+    async function handleRead() {
+        if (!notification.read) {
+            await readNotification.mutateAsync({ id: notification.id })
+        }
+    }
     return (
         <>
-            <Link key={notification.id} className="card bg-base-100 w-full h-fit md:w-96" data-cy="Notification" href={notification.sessionId ? "/session/" + notification.sessionId.toString() : notification.kudoId ? "/kudo/" + notification.kudoId.toString() : "/"} >
+            <Link key={notification.id} onClick={() => void handleRead()} className="card bg-base-100 w-full h-fit md:w-96 hover:bg-base-200" data-cy="Notification" href={notification.sessionId ? "/session/" + notification.sessionId.toString() : notification.kudoId ? "/kudo/" + notification.kudoId.toString() : "/"} >
                 <div className="card-body align-middle">
                     <div className="flex w-full gap-3">
+                        <div className="avatar w-12 aspect-square relative">
+                            <Image
+                                className="rounded-full"
+                                src={imgUrl ?? avatar}
+                                alt="Profile picture"
+                                fill
+                            />
+                        </div>
                         <div className="flex flex-col gap-1">
                             <h2 className="  wrap" data-cy='SessionTitle'>{notification.message}</h2>
                             <div className="flex flex-wrap gap-1">

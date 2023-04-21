@@ -104,4 +104,5 @@ model Notification {
     time          DateTime    @default(now())
     kudoId        String?
     sessionId     String?
+    photo         String?
 }

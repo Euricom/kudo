@@ -17,4 +17,33 @@ export const notificationRouter = createTRPCRouter({
             }
         })
     }),
+
+    readNotification: protectedProcedure.input(inputGetById).mutation(async ({ input, ctx }) => {
+
+        const notification = await ctx.prisma.notification.update({
+            where: {
+                id: input.id,
+            },
+            data: {
+                read: true,
+            }
+        });
+
+        if (notification == undefined) {
+            throw new Error()
+        }
+    }),
+
+    readAllNotifications: protectedProcedure.input(inputGetById).mutation(async ({ input, ctx }) => {
+
+        await ctx.prisma.notification.updateMany({
+            where: {
+                userId: input.id,
+            },
+            data: {
+                read: true,
+            }
+        });
+    }),
+
 });

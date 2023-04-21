@@ -192,11 +192,6 @@ const KonvaCanvas = ({ editorFunction, template, thickness, color, fontFamily, e
     layerRef.current.offset({x: -(stageDimensions?.width ?? 0)/2, y: -(stageDimensions?.height ?? 0)/2})
     console.log("testCenterLayer");
   }, [setStage, stageDimensions])
-  
-  useEffect(() => {
-    console.log("Shapes", shapes);
-    console.log("History", history);
-  }, [shapes, history])
 
   useEffect(() => {
     if (editorFunction === EditorFunctions.Submit) {

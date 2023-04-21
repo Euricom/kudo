@@ -10,44 +10,74 @@ import { AiOutlineHeart, AiFillHeart, AiFillWarning, AiOutlineWarning, AiOutline
 import { useEffect, useState } from "react";
 import ConfirmationModal from '~/components/input/ConfirmationModal';
 import { useSession } from "next-auth/react";
-import { UserRole } from "~/types";
+import { type ImageData, UserRole } from "~/types";
 import { useRouter } from "next/router";
 import LoadingBar from "~/components/LoadingBar";
 import avatar from '../../contents/images/AnonymousPicture.jpg';
 
 
 export function getServerSideProps(context: { query: { id: string }; }) {
-
   return {
     props: {
-      id: context.query.id[0],
+      id: context.query.id[0]
     }
   }
 }
 
 const KudoDetail: NextPage<{ id: string }> = ({ id }) => {
   const router = useRouter()
+  const trpcContext = api.useContext();
   const user = useSession().data?.user
+
+  const kudoQuery = api.kudos.getKudoById.useQuery({ id: id })
+  const { data: kudo, refetch: refetchKudo } = kudoQuery
+  const sender = api.users.getUserById.useQuery({ id: kudo?.userId ?? "" }).data
+  const imageQuery = api.kudos.getImageById.useQuery({ id: kudo?.image ?? "error" })
+  const image = imageQuery.data?.dataUrl
+  const sessionQuery = api.sessions.getSessionById.useQuery({ id: kudo?.sessionId ?? "error" })
+  const session = sessionQuery.data
 
   const deleteKudo = api.kudos.deleteKudoById.useMutation()
   const deleteImage = api.kudos.deleteImageById.useMutation()
   const likeKudoById = api.kudos.likeKudoById.useMutation()
   const commentKudoById = api.kudos.commentKudoById.useMutation()
-  const flagKudoById = api.kudos.flagKudoById.useMutation()
+  const flagKudoById = api.kudos.flagKudoById.useMutation({
+    onMutate: async (newEntry) => {
+      await trpcContext.kudos.getKudoById.cancel();
+      trpcContext.kudos.getKudoById.setData({ id: id }, (prevEntry) => {
 
-  const kudoQuery = api.kudos.getKudoById.useQuery({ id: id })
-  const { data: kudo, refetch: refetchKudo } = kudoQuery
-  const imageQuery = api.kudos.getImageById.useQuery({ id: kudo?.image ?? "error" })
-  const image = imageQuery.data?.dataUrl
-  const sessionQuery = api.sessions.getSessionById.useQuery({ id: kudo?.sessionId ?? "error" })
-  const session = sessionQuery.data
+        if (prevEntry) {
+          prevEntry.flagged = newEntry.flagged;
+        }
+        return prevEntry;
+      });
+    },
+    onSettled: async () => {
+      await trpcContext.kudos.getKudoById.invalidate();
+    },
+  })
+  const sendNotification = api.notifications.sendnotification.useMutation()
+  const sendNotificationsToAdmins = api.notifications.sendnotificationsToAdmins.useMutation()
+
+
   const [comment, setComment] = useState<string>("")
   const [sendReady, setSendReady] = useState<boolean>(false)
+  const [imgUrl, setImgUrl] = useState<string>(avatar.src);
+
+  useEffect(() => {
+    if (kudo?.userId)
+      fetch('/api/images/' + kudo?.userId)
+        .then((res) => res.json())
+        .then((json: ImageData) => setImgUrl(json.dataUrl))
+        .catch(e => console.log(e));
+  }, [kudo?.userId]);
 
   async function handleclick() {
-    if (user?.id === session?.speakerId) {
+    if (user?.id === session?.speakerId && kudo && kudo.id && session && session.title && user && user.name && sender && sender.id && user.id) {
       try {
-        await likeKudoById.mutateAsync({ id: kudo?.id ?? "error", liked: !kudo?.liked })
+        await likeKudoById.mutateAsync({ id: kudo.id, liked: !kudo.liked })
+        if (kudo.liked)
+          await sendNotification.mutateAsync({ message: (user.name).toString() + " liked the kudo you send for the session about " + (session.title).toString(), userId: sender.id, kudoId: kudo.id, photo: user.id })
         await refetchKudo()
       }
       catch (e) {
@@ -57,17 +87,19 @@ const KudoDetail: NextPage<{ id: string }> = ({ id }) => {
   }
 
   async function handleSubmit() {
-    try {
-      await commentKudoById.mutateAsync({ id: kudo?.id ?? "error", comment: comment })
-      setSendReady(false)
-      setComment("")
-      await refetchKudo()
-    }
-    catch (e) {
-      console.log(e);
+    if (user?.id === session?.speakerId && kudo && kudo.id && session && session.title && user && user.name && sender && sender.id && user.id) {
+      try {
+        await commentKudoById.mutateAsync({ id: kudo.id, comment: comment })
+        await sendNotification.mutateAsync({ message: (user.name).toString() + " commented on the kudo you send for the session about " + (session.title).toString() + ": " + comment, userId: sender.id, kudoId: kudo.id, photo: user.id })
+        setSendReady(false)
+        setComment("")
+        await refetchKudo()
+      }
+      catch (e) {
+        console.log(e);
+      }
     }
   }
-
   useEffect(() => {
     if (!user || sessionQuery.isLoading || kudoQuery.isLoading) return
     if (user?.role !== UserRole.ADMIN && user?.id !== kudo?.userId && user?.id !== session?.speakerId)
@@ -78,7 +110,6 @@ const KudoDetail: NextPage<{ id: string }> = ({ id }) => {
     return <LoadingBar />
   }
 
-
   function del() {
     deleteKudo.mutate({ id: kudo?.id ?? "error" })
     deleteImage.mutate({ id: kudo?.image ?? "error" })
@@ -88,13 +119,14 @@ const KudoDetail: NextPage<{ id: string }> = ({ id }) => {
     if (user?.id === session?.speakerId && kudo?.flagged === false) {
       try {
         await flagKudoById.mutateAsync({ id: kudo?.id ?? "error", flagged: !kudo?.flagged })
-        await refetchKudo()
+        await sendNotificationsToAdmins.mutateAsync({ message: "Kudo send by " + (sender?.displayName ?? "name not found").toString() + " is reported by " + (user?.name ?? "name not found").toString(), kudoId: kudo.id, photo: sender?.id })
+
       }
       catch (e) {
         console.log(e);
       }
     }
-    if (user?.role === UserRole.ADMIN && kudo?.flagged === true) {
+    else if (user?.role === UserRole.ADMIN && kudo?.flagged === true) {
       try {
         await flagKudoById.mutateAsync({ id: kudo?.id ?? "error", flagged: !kudo?.flagged })
         await refetchKudo()
@@ -160,7 +192,7 @@ const KudoDetail: NextPage<{ id: string }> = ({ id }) => {
                     <div className="w-10 rounded-full relative">
                       <Image
                         className="rounded-full"
-                        src={session.speaker?.image ?? avatar}
+                        src={imgUrl}
                         alt="Profile picture"
                         fill
                       />

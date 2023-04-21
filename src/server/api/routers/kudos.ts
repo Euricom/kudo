@@ -183,7 +183,7 @@ export const kudoRouter = createTRPCRouter({
             throw new Error()
         }
     }),
-    
+
     flagKudoById: protectedProcedure.input(inputFlag).mutation(async ({ input, ctx }) => {
 
         const kudo = await ctx.prisma.kudo.update({

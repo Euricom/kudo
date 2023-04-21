@@ -3,6 +3,7 @@ import { exampleRouter } from "~/server/api/routers/example";
 import { sessionRouter } from "~/server/api/routers/sessions";
 import { kudoRouter } from "./routers/kudos";
 import { userRouter } from "./routers/users";
+import { notificationRouter } from "./routers/notifications";
 import { templateRouter } from "./routers/template";
 
 /**
@@ -15,6 +16,7 @@ export const appRouter = createTRPCRouter({
   sessions: sessionRouter,
   kudos: kudoRouter,
   users: userRouter,
+  notifications: notificationRouter,
   templates: templateRouter,
 });
 

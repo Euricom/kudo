@@ -1,6 +1,6 @@
 import React from 'react';
 import { useRouter } from 'next/router';
-import { signOut } from 'next-auth/react';
+import { signOut, useSession } from 'next-auth/react';
 import { FiBell } from 'react-icons/fi';
 import { IoLogoChrome } from 'react-icons/io';
 import { BsGearFill, BsArrowLeft } from 'react-icons/bs'
@@ -8,6 +8,7 @@ import { useUtilButtons } from '~/hooks/useUtilButtons';
 
 import { useTitle } from "./NavBarTitle";
 import ThemeButton from '~/components/input/ThemeButton';
+import { api } from '~/utils/api';
 
 
 
@@ -30,7 +31,7 @@ function useVisibleStartNavbarActions() {
         {
             Component: BackArrow,
             key: 'backArrow',
-            routes: ['/session/[...id]', '/session/presentation/[...id]', '/kudo/[...id]','/speaker/[...id]', '/notifications', '/create', '/create/editor', '/create/templates', '/403'],
+            routes: ['/session/[...id]', '/session/presentation/[...id]', '/kudo/[...id]', '/speaker/[...id]', '/notifications', '/create', '/create/editor', '/create/templates', '/403'],
         },
         {
             Component: logo,
@@ -92,12 +93,15 @@ const NavBar = () => {
 };
 
 function NotificationIcon() {
+    const router = useRouter();
+    const user = useSession().data?.user
+    const amount = api.notifications.getAmountOfNotificationsById.useQuery({ id: user?.id ?? "" }).data ?? 0
     return (
         <>
-            <button className="btn btn-ghost btn-circle" data-cy='notificationButton'>
+            <button className="btn btn-ghost btn-circle" data-cy='notificationButton' onClick={() => void router.push("/notifications")}>
                 <div className="indicator">
                     <FiBell size={20} />
-                    <span className="badge badge-sm badge-error border border-collapse border-neutral indicator-item">12</span>
+                    {amount > 0 ? <span className="badge badge-sm badge-error border border-collapse border-neutral indicator-item">{amount}</span> : <></>}
                 </div>
             </button>
         </>

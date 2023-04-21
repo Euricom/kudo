@@ -5,10 +5,8 @@ import { UtilButtonsContent } from "~/hooks/useUtilButtons";
 import { GrEmoji } from "react-icons/gr"
 import { BiPencil, BiPalette, BiText, BiTrash, BiEraser, BiCircle, BiUndo } from "react-icons/bi"
 import { NavigationBarContent } from "~/components/navigation/NavBarTitle";
-import { type Template } from "@prisma/client";
-import { findTemplateById } from "~/server/services/templateService";
 import FAB from "~/components/navigation/FAB";
-import { FiSend } from "react-icons/fi"
+import { FiSave, FiSend } from "react-icons/fi"
 import { useRouter } from 'next/router';
 import { api } from '~/utils/api';
 import dynamic from 'next/dynamic';
@@ -18,20 +16,15 @@ import type Konva from 'konva';
 import ConfirmationModal from '~/components/input/ConfirmationModal';
 import LoadingBar from '~/components/LoadingBar';
 import { BsFillCircleFill } from 'react-icons/bs';
-import { FiSave } from 'react-icons/fi';
-
 import { type ColorResult, HuePicker } from 'react-color';
 import { EditorFunctions, type EmojiObject, Fonts, UserRole } from '~/types';
 import data from '@emoji-mart/data';
 import Picker from '@emoji-mart/react';
 
-
-export async function getServerSideProps(context: { query: { template: string; }; }) {
-  const id = context.query.template
-  const data: Template = await findTemplateById(id)
+export function getServerSideProps(context: { query: { template: string; }; }) {
   return {
     props: {
-      res: data,
+      id: context.query.template,
     }
   }
 }
@@ -41,7 +34,8 @@ const KonvaCanvas = dynamic(
   { ssr: false }
 );
 
-const Editor: NextPage<{ res: Template }> = ({ res }) => {
+const Editor: NextPage<{ id: string }> = ({ id }) => {
+  const res = api.templates.getTemplateById.useQuery({ id: id }).data
   const [selectedButton, setSelectedButton] = useState<EditorFunctions>()
   const [stage, setStage] = useState<Konva.Stage>()
   const createKudo = api.kudos.createKudo.useMutation()
@@ -52,13 +46,14 @@ const Editor: NextPage<{ res: Template }> = ({ res }) => {
   const [font, setFont] = useState<string>("Arial");
   const [thickness, setThickness] = useState<number>(5)
   const [selectedEmoji, setSelectedEmoji] = useState<EmojiObject>();
-
+  const sendNotification = api.notifications.sendnotification.useMutation()
   const user = useSession().data?.user
-
   const { session, speaker, anonymous } = useSessionSpeaker().data
+  const sessionTitle = api.sessions.getSessionById.useQuery({ id: session }).data?.title
+  const speakerId = api.users.getUserByName.useQuery({ id: speaker }).data?.id
 
-  if (!user || !session || !speaker) {
-    <LoadingBar />
+  if (!user || !session || !speaker || user.id == undefined || !res || res === null) {
+    return <LoadingBar />
   }
 
   const handleColorChange = (color: ColorResult) => {
@@ -72,7 +67,6 @@ const Editor: NextPage<{ res: Template }> = ({ res }) => {
 
   function onClickEmoji(emoji: EmojiObject) {
     console.log(emoji);
-    
     setSelectedEmoji(emoji);
     setEmojiDropdownState(false)
   }
@@ -81,14 +75,15 @@ const Editor: NextPage<{ res: Template }> = ({ res }) => {
     if (!stage) {
       return
     }
-    try {
-      const image = await createImage.mutateAsync({ dataUrl: stage.toDataURL() })
-      await createKudo.mutateAsync({ image: image.id, sessionId: session, userId: user?.id?? "error", anonymous: anonymous });
-
-      await router.replace('/out')
-    } catch (e) {
-      console.log(e);
-    }
+    if (user && user.id && user.name && sessionTitle && speakerId)
+      try {
+        const image = await createImage.mutateAsync({ dataUrl: stage.toDataURL() })
+        const kudo = await createKudo.mutateAsync({ image: image.id, sessionId: session, userId: user.id, anonymous: anonymous });
+        await sendNotification.mutateAsync({ message: (user.name).toString() + " sent you a kudo for your session about " + (sessionTitle).toString(), userId: speakerId, kudoId: kudo.id, photo: user.id })
+        await router.replace('/out')
+      } catch (e) {
+        console.log(e);
+      }
   }
 
   return (
@@ -103,13 +98,13 @@ const Editor: NextPage<{ res: Template }> = ({ res }) => {
       </NavigationBarContent>
       <UtilButtonsContent>
         {user?.role === UserRole.ADMIN &&
-        <button
-        className="btn btn-ghost btn-circle "
-        onClick={() => void setSelectedButton(EditorFunctions.Save)}
-        data-cy='SaveButton'
-        >
-          <FiSave size={20} />
-        </button>
+          <button
+            className="btn btn-ghost btn-circle "
+            onClick={() => void setSelectedButton(EditorFunctions.Save)}
+            data-cy='SaveButton'
+          >
+            <FiSave size={20} />
+          </button>
         }
       </UtilButtonsContent>
       {/* <div className="w-full h-fit bg-secondary text-white p-5 text-center">

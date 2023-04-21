@@ -8,10 +8,10 @@ import NavButtons from "~/components/navigation/NavButtons";
 import SessionList from "~/components/sessions/SessionList";
 import { api } from "~/utils/api";
 import LoadingBar from "~/components/LoadingBar";
-import { SortPosibillities, UserRole } from "~/types";
+import { type SortPosibillities, UserRole } from "~/types";
 import { useRouter } from "next/router";
 import { useSession } from "next-auth/react";
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 export function getServerSideProps(context: { query: { searchtext: string, sort: SortPosibillities } }) {
 
     return {
@@ -26,10 +26,6 @@ const Sessions: NextPage<{ searchtext: string, sortIn: SortPosibillities }> = ({
 
     const router = useRouter()
     const user = useSession().data?.user
-
-    const [sort, setSort] = useState<SortPosibillities>(sortIn ?? SortPosibillities.SpeakerA)
-    const [search, setSearch] = useState<string>(searchtext ?? "")
-
     const sessionsQuery = api.sessions.getAll.useQuery()
     const sessions = sessionsQuery.data
     const query = router.query
@@ -63,7 +59,7 @@ const Sessions: NextPage<{ searchtext: string, sortIn: SortPosibillities }> = ({
                     <span className="badge badge-accent">By session</span>
                     <span className="badge badge-secondary" onClick={() => void router.replace({ pathname: "/all/flagged", query: { ...query } })}>Flagged</span>
                 </div>
-                <SessionList sessions={sessions} filterIn={search} sortIn={sort} />
+                <SessionList sessions={sessions} filterIn={searchtext} sortIn={sortIn} />
             </main>
             <FAB text={"Create Kudo"} icon={<GrAdd />} url="/create" />
         </>

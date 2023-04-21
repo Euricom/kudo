@@ -54,10 +54,10 @@ const NotificationCard = ({ notification }: { notification: Notification }) => {
     }
     return (
         <>
-            <Link key={notification.id} onClick={() => void handleRead()} className="card bg-base-100 w-full h-fit md:w-96 hover:bg-base-200" data-cy="Notification" href={notification.sessionId ? "/session/" + notification.sessionId.toString() : notification.kudoId ? "/kudo/" + notification.kudoId.toString() : "/"} >
-                <div className="card-body align-middle">
+            <Link key={notification.id} onClick={() => void handleRead()} className="card bg-base-100 w-full h-fit hover:bg-base-200" data-cy="Notification" href={notification.sessionId ? "/session/" + notification.sessionId.toString() : notification.kudoId ? "/kudo/" + notification.kudoId.toString() : "/"} >
+                <div className="card-body align-middle py-8 px-0 md:px-2">
                     <div className="flex w-full gap-3">
-                        <div className="avatar w-12 aspect-square relative">
+                        <div className="avatar w-1/6 h-1/6 aspect-square relative">
                             <Image
                                 className="rounded-full"
                                 src={imgUrl ?? avatar}
@@ -65,14 +65,14 @@ const NotificationCard = ({ notification }: { notification: Notification }) => {
                                 fill
                             />
                         </div>
-                        <div className="flex flex-col gap-1">
-                            <h2 className="  wrap" data-cy='SessionTitle'>{notification.message}</h2>
+                        <div className="flex flex-col gap-1 w-full">
+                            <h2 className=" pr-4" data-cy='SessionTitle'>{notification.message}</h2>
                             <div className="flex flex-wrap gap-1">
                                 <h3 className="badge badge-primary">{getTimeAgo()}</h3>
                             </div>
                         </div>
                     </div>
-                    <div className="absolute right-5 bottom-1/2 translate-y-1/2">
+                    <div className="absolute right-0 md:right-2 bottom-1/2 translate-y-1/2">
                         {notification.read ? <></> : <BsFillCircleFill color={"#4570f0"} />
                         }
                     </div>

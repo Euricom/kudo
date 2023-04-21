@@ -60,7 +60,7 @@ const Notifications: NextPage = () => {
       </Head>
       <main className="flex flex-col items-center justify-start h-full align-middle">
         {sortedNotifications()?.length === 0 ? <p>No notifications received yet</p> :
-          <div className="flex flex-col justify-start rounded-3xl align-middle p-10 my-5 bg-base-100">
+          <div className="flex flex-col justify-start rounded-3xl align-middle p-5 my-5 bg-base-100">
             <div className="flex flex-row justify-evenly">
               <h1 className="text-3xl font-bold">Notifications</h1>
               <div className="btn btn-ghost text-lg" onClick={() => void handleReadAll()}>Read all</div>

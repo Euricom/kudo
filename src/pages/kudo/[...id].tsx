@@ -14,20 +14,17 @@ import { type ImageData, UserRole } from "~/types";
 import { useRouter } from "next/router";
 import LoadingBar from "~/components/LoadingBar";
 import avatar from '../../contents/images/AnonymousPicture.jpg';
-import { adminList } from "~/server/auth";
 
 
 export function getServerSideProps(context: { query: { id: string }; }) {
-  const admins = adminList
   return {
     props: {
-      id: context.query.id[0],
-      admins: admins,
+      id: context.query.id[0]
     }
   }
 }
 
-const KudoDetail: NextPage<{ id: string, admins: string[] }> = ({ id, admins }) => {
+const KudoDetail: NextPage<{ id: string }> = ({ id }) => {
   const router = useRouter()
   const trpcContext = api.useContext();
   const user = useSession().data?.user
@@ -60,6 +57,7 @@ const KudoDetail: NextPage<{ id: string, admins: string[] }> = ({ id, admins }) 
     },
   })
   const sendNotification = api.notifications.sendnotification.useMutation()
+  const sendNotificationsToAdmins = api.notifications.sendnotificationsToAdmins.useMutation()
 
 
   const [comment, setComment] = useState<string>("")
@@ -121,9 +119,8 @@ const KudoDetail: NextPage<{ id: string, admins: string[] }> = ({ id, admins }) 
     if (user?.id === session?.speakerId && kudo?.flagged === false) {
       try {
         await flagKudoById.mutateAsync({ id: kudo?.id ?? "error", flagged: !kudo?.flagged })
-        admins.map(async (admin) => {
-          await sendNotification.mutateAsync({ message: "Kudo send by " + (sender?.displayName ?? "name not found").toString() + " is reported by " + (user?.name ?? "name not found").toString(), userId: admin, kudoId: kudo.id, photo: sender?.id })
-        })
+        await sendNotificationsToAdmins.mutateAsync({ message: "Kudo send by " + (sender?.displayName ?? "name not found").toString() + " is reported by " + (user?.name ?? "name not found").toString(), kudoId: kudo.id, photo: sender?.id })
+
       }
       catch (e) {
         console.log(e);

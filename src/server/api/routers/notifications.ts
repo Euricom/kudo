@@ -1,103 +1,110 @@
-import {
-    createTRPCRouter,
-    protectedProcedure,
-} from "~/server/api/trpc";
+import { createTRPCRouter, protectedProcedure } from "~/server/api/trpc";
 import { object, optional, string } from "zod";
 import { adminList } from "~/server/auth";
+import { TRPCError } from "@trpc/server";
 
 const inputGetById = object({
-    id: string(),
-})
+  id: string(),
+});
 
 const inputsendNotification = object({
-    message: string(),
-    userId: string(),
-    kudoId: optional(string()),
-    sessionId: optional(string()),
-    photo: optional(string()),
-})
+  message: string(),
+  userId: string(),
+  kudoId: optional(string()),
+  sessionId: optional(string()),
+  photo: optional(string()),
+});
 const inputsendAdminsNotification = object({
-    message: string(),
-    kudoId: optional(string()),
-    sessionId: optional(string()),
-    photo: optional(string()),
-})
+  message: string(),
+  kudoId: optional(string()),
+  sessionId: optional(string()),
+  photo: optional(string()),
+});
 
 export const notificationRouter = createTRPCRouter({
-
-    getNotificationsById: protectedProcedure.input(inputGetById).query(({ input, ctx }) => {
-        return ctx.prisma.notification.findMany({
-            where: {
-                userId: input.id
-            }
-        })
+  getNotificationsById: protectedProcedure
+    .input(inputGetById)
+    .query(({ input, ctx }) => {
+      return ctx.prisma.notification.findMany({
+        where: {
+          userId: input.id,
+        },
+      });
     }),
 
-    getAmountOfNotificationsById: protectedProcedure.input(inputGetById).query(({ input, ctx }) => {
-        return ctx.prisma.notification.count({
-            where: {
-                userId: input.id,
-                read: false
-            }
-        })
+  getAmountOfNotificationsById: protectedProcedure
+    .input(inputGetById)
+    .query(({ input, ctx }) => {
+      return ctx.prisma.notification.count({
+        where: {
+          userId: input.id,
+          read: false,
+        },
+      });
     }),
 
+  readNotification: protectedProcedure
+    .input(inputGetById)
+    .mutation(async ({ input, ctx }) => {
+      const notification = await ctx.prisma.notification.update({
+        where: {
+          id: input.id,
+        },
+        data: {
+          read: true,
+        },
+      });
 
-    readNotification: protectedProcedure.input(inputGetById).mutation(async ({ input, ctx }) => {
-
-        const notification = await ctx.prisma.notification.update({
-            where: {
-                id: input.id,
-            },
-            data: {
-                read: true,
-            }
+      if (notification == undefined) {
+        throw new TRPCError({
+          code: "INTERNAL_SERVER_ERROR",
+          message: "An unexpected error occurred, please try again later.",
         });
-
-        if (notification == undefined) {
-            throw new Error()
-        }
+      }
     }),
 
-    readAllNotifications: protectedProcedure.input(inputGetById).mutation(async ({ input, ctx }) => {
-
-        await ctx.prisma.notification.updateMany({
-            where: {
-                userId: input.id,
-            },
-            data: {
-                read: true,
-            }
-        });
+  readAllNotifications: protectedProcedure
+    .input(inputGetById)
+    .mutation(async ({ input, ctx }) => {
+      await ctx.prisma.notification.updateMany({
+        where: {
+          userId: input.id,
+        },
+        data: {
+          read: true,
+        },
+      });
     }),
 
-    // Create
-    sendnotification: protectedProcedure.input(inputsendNotification).mutation(async ({ input, ctx }) => {
+  // Create
+  sendnotification: protectedProcedure
+    .input(inputsendNotification)
+    .mutation(async ({ input, ctx }) => {
+      await ctx.prisma.notification.create({
+        data: {
+          message: input.message,
+          userId: input.userId,
+          kudoId: input.kudoId,
+          sessionId: input.sessionId,
+          photo: input.photo,
+        },
+      });
+    }),
+  // Create
+  sendnotificationsToAdmins: protectedProcedure
+    .input(inputsendAdminsNotification)
+    .mutation(({ input, ctx }) => {
+      const admins = adminList;
+      admins.map(async (admin) => {
         await ctx.prisma.notification.create({
-            data: {
-                message: input.message,
-                userId: input.userId,
-                kudoId: input.kudoId,
-                sessionId: input.sessionId,
-                photo: input.photo
-            },
+          data: {
+            message: input.message,
+            userId: admin,
+            kudoId: input.kudoId,
+            sessionId: input.sessionId,
+            photo: input.photo,
+          },
         });
+      });
     }),
-    // Create
-    sendnotificationsToAdmins: protectedProcedure.input(inputsendAdminsNotification).mutation(({ input, ctx }) => {
-        const admins = adminList
-        admins.map(async (admin) => {
-            await ctx.prisma.notification.create({
-                data: {
-                    message: input.message,
-                    userId: admin,
-                    kudoId: input.kudoId,
-                    sessionId: input.sessionId,
-                    photo: input.photo
-                },
-            });
-        })
-
-    }),
-
 });

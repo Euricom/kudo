@@ -36,9 +36,6 @@ const KudoDetail: NextPage<{ id: string }> = ({ id }) => {
 
   const kudoQuery = api.kudos.getKudoById.useQuery({ id: id });
   const { data: kudo, refetch: refetchKudo } = kudoQuery;
-  const sender = api.users.getUserById.useQuery({
-    id: kudo?.userId ?? "",
-  }).data;
   const imageQuery = api.kudos.getImageById.useQuery({
     id: kudo?.image ?? "error",
   });
@@ -47,6 +44,9 @@ const KudoDetail: NextPage<{ id: string }> = ({ id }) => {
     id: kudo?.sessionId ?? "error",
   });
   const session = sessionQuery.data;
+  const speaker = api.users.getUserById.useQuery({
+    id: session?.speakerId ?? "error",
+  }).data;
 
   const { mutate: deleteKudo } = api.kudos.deleteKudoById.useMutation();
   const { mutate: deleteImage } = api.kudos.deleteImageById.useMutation();
@@ -80,29 +80,12 @@ const KudoDetail: NextPage<{ id: string }> = ({ id }) => {
   }, [kudo?.userId]);
 
   async function handleclick() {
-    if (
-      user?.id === session?.speakerId &&
-      kudo &&
-      kudo.id &&
-      session &&
-      session.title &&
-      user &&
-      user.name &&
-      sender &&
-      sender.id &&
-      user.id
-    ) {
+    if (user?.id === session?.speakerId && kudo && kudo.id) {
       try {
         if (kudo.liked) {
           await likeKudoById({
             id: kudo.id,
             liked: !kudo.liked,
-            message:
-              user.name.toString() +
-              " liked the kudo you send for the session about " +
-              session.title.toString(),
-            userId: sender.id,
-            photo: user.id,
           });
         } else {
           await likeKudoById({ id: kudo.id, liked: !kudo.liked });
@@ -116,30 +99,11 @@ const KudoDetail: NextPage<{ id: string }> = ({ id }) => {
   }
 
   async function handleSubmit() {
-    if (
-      user?.id === session?.speakerId &&
-      kudo &&
-      kudo.id &&
-      session &&
-      session.title &&
-      user &&
-      user.name &&
-      sender &&
-      sender.id &&
-      user.id
-    ) {
+    if (user?.id === session?.speakerId && kudo && kudo.id) {
       try {
         await commentKudoById({
           id: kudo.id,
           comment: comment,
-          message:
-            user.name.toString() +
-            " commented on the kudo you send for the session about " +
-            session.title.toString() +
-            ": " +
-            comment,
-          userId: sender.id,
-          photo: user.id,
         });
         setSendReady(false);
         setComment("");
@@ -188,12 +152,6 @@ const KudoDetail: NextPage<{ id: string }> = ({ id }) => {
         await flagKudoById({
           id: kudo?.id ?? "error",
           flagged: !kudo?.flagged,
-          message:
-            "Kudo send by " +
-            (sender?.displayName ?? "name not found").toString() +
-            " is reported by " +
-            (user?.name ?? "name not found").toString(),
-          photo: sender?.id ?? "",
         });
       } catch (e) {
         console.log(e);
@@ -303,9 +261,7 @@ const KudoDetail: NextPage<{ id: string }> = ({ id }) => {
                   <></>
                 ) : (
                   <div className="chat chat-end w-full">
-                    <div className="chat-header">
-                      {session.speaker?.displayName}
-                    </div>
+                    <div className="chat-header">{speaker?.displayName}</div>
                     <h1
                       className="chat-bubble chat-bubble-primary"
                       data-cy="comment"

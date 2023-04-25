@@ -75,11 +75,11 @@ const KudoDetail: NextPage<{ id: string }> = ({ id }) => {
 
   useEffect(() => {
     if (kudo?.userId)
-      fetch("/api/images/" + kudo?.userId)
+      fetch("/api/images/" + (speaker?.id ?? "").toString())
         .then((res) => res.json())
         .then((json: ImageData) => setImgUrl(json.dataUrl))
-        .catch((e) => console.log(e));
-  }, [kudo?.userId]);
+        .catch((e: TRPCError) => toast.error(e.message));
+  }, [kudo?.userId, speaker?.id]);
 
   async function handleclick() {
     if (user?.id === session?.speakerId && kudo && kudo.id) {
@@ -95,7 +95,7 @@ const KudoDetail: NextPage<{ id: string }> = ({ id }) => {
 
         await refetchKudo();
       } catch (e) {
-        console.log(e);
+        toast.error((e as TRPCError).message);
       }
     }
   }
@@ -111,7 +111,7 @@ const KudoDetail: NextPage<{ id: string }> = ({ id }) => {
         setComment("");
         await refetchKudo();
       } catch (e) {
-        console.log(e);
+        toast.error((e as TRPCError).message);
       }
     }
   }
@@ -156,7 +156,7 @@ const KudoDetail: NextPage<{ id: string }> = ({ id }) => {
           flagged: !kudo?.flagged,
         });
       } catch (e) {
-        console.log(e);
+        toast.error((e as TRPCError).message);
       }
     } else if (user?.role === UserRole.ADMIN && kudo?.flagged === true) {
       try {
@@ -164,10 +164,10 @@ const KudoDetail: NextPage<{ id: string }> = ({ id }) => {
           id: kudo?.id ?? "error",
           flagged: !kudo?.flagged,
         });
-        await refetchKudo();
       } catch (e) {
-        console.log(e);
+        toast.error((e as TRPCError).message);
       }
+      await refetchKudo();
     }
   }
 

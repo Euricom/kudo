@@ -43,24 +43,36 @@ const KonvaCanvas = dynamic(
 );
 
 const Editor: NextPage<{ id: string }> = ({ id }) => {
-  const res = api.templates.getTemplateById.useQuery({ id: id }).data;
-  const [selectedButton, setSelectedButton] = useState<EditorFunctions>();
-  const [stage, setStage] = useState<Konva.Stage>();
+  const { session, speaker, anonymous } = useSessionSpeaker().data;
+  const router = useRouter();
+  const user = useSession().data?.user;
+  //API
   const createKudo = api.kudos.createKudo.useMutation();
   const createImage = api.kudos.createKudoImage.useMutation();
-  const router = useRouter();
+  const sendNotification = api.notifications.sendnotification.useMutation();
+  const templateQuery = api.templates.getTemplateById.useQuery({ id: id });
+  const template = templateQuery.data;
+  const sessionQuery = api.sessions.getSessionById.useQuery({
+    id: session ?? "error",
+  });
+  const sessionTitle = sessionQuery.data?.title;
+  //UseStates
+  const [selectedButton, setSelectedButton] = useState<EditorFunctions>();
+  const [stage, setStage] = useState<Konva.Stage>();
   const [emojiDropdownState, setEmojiDropdownState] = useState<boolean>(false);
   const [color, setColor] = useState<string>("#121212");
   const [font, setFont] = useState<string>("Arial");
   const [thickness, setThickness] = useState<number>(5);
   const [selectedEmoji, setSelectedEmoji] = useState<EmojiObject>();
-  const sendNotification = api.notifications.sendnotification.useMutation();
-  const user = useSession().data?.user;
-  const { session, speaker, anonymous } = useSessionSpeaker().data;
-  const sessionTitle = api.sessions.getSessionById.useQuery({ id: session })
-    .data?.title;
 
-  if (!user || !session || !speaker || !user.id || !res || res === null) {
+  if (
+    templateQuery.isLoading ||
+    sessionQuery.isLoading ||
+    !user ||
+    !session ||
+    !speaker ||
+    !template
+  ) {
     return <LoadingBar />;
   }
 
@@ -83,7 +95,7 @@ const Editor: NextPage<{ id: string }> = ({ id }) => {
     if (!stage) {
       return;
     }
-    if (user && user.id && user.name && sessionTitle && speaker)
+    if (user && user.id && user.name && session && speaker && sessionTitle)
       try {
         const image = await createImage.mutateAsync({
           dataUrl: stage.toDataURL(),
@@ -150,10 +162,11 @@ const Editor: NextPage<{ id: string }> = ({ id }) => {
             <label tabIndex={0} className="">
               <button
                 onClick={() => setSelectedButton(EditorFunctions.Text)}
-                className={
-                  "btn-secondary btn-circle btn " +
-                  (selectedButton == EditorFunctions.Text ? "btn-accent" : "")
-                }
+                className={"btn-secondary btn-circle btn "}
+                style={{
+                  backgroundColor:
+                    selectedButton === EditorFunctions.Text ? color : "",
+                }}
               >
                 <BiText size={20} />{" "}
               </button>
@@ -188,11 +201,12 @@ const Editor: NextPage<{ id: string }> = ({ id }) => {
                 }
                 className={
                   "btn-secondary btn-circle btn " +
-                  (selectedButton == EditorFunctions.Draw ||
-                  selectedButton == EditorFunctions.Erase
-                    ? "btn-accent"
-                    : "")
+                  (selectedButton === EditorFunctions.Erase ? "btn-accent" : "")
                 }
+                style={{
+                  backgroundColor:
+                    selectedButton === EditorFunctions.Draw ? color : "",
+                }}
               >
                 {selectedButton === EditorFunctions.Erase ? (
                   <BiEraser size={20} />
@@ -270,12 +284,12 @@ const Editor: NextPage<{ id: string }> = ({ id }) => {
           </div>
           <div className="dropdown-start dropdown ">
             <label tabIndex={0} className="">
-              {" "}
               <button
-                className={
-                  "btn-secondary btn-circle btn " +
-                  (selectedButton == EditorFunctions.Color ? "btn-accent" : "")
-                }
+                onClick={() => setSelectedButton(EditorFunctions.Color)}
+                className={"btn-secondary btn-circle btn "}
+                style={{
+                  backgroundColor: color,
+                }}
               >
                 <BiPalette size={20} />
               </button>
@@ -313,10 +327,10 @@ const Editor: NextPage<{ id: string }> = ({ id }) => {
             <BiTrash size={20} />
           </button>
         </div>
-        <div data-cy={res.id}></div>
+        <div data-cy={template.id}></div>
         <KonvaCanvas
           editorFunction={selectedButton}
-          template={res}
+          template={template}
           thickness={thickness}
           color={color}
           fontFamily={font}

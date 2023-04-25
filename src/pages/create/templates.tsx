@@ -93,7 +93,7 @@ const Templates: NextPage<{
         <div className="mb-8 flex flex-wrap justify-center gap-5 px-5 md:mb-28">
           {templates?.map((x: Template) => (
             <Link
-              className="card aspect-[3/2] h-52 w-80 rounded-none bg-white text-gray-800 shadow-xl"
+              className="card aspect-[3/2] h-52 w-80 overflow-hidden rounded-xl bg-white text-gray-800 shadow-xl"
               data-id={x.id}
               data-cy="template"
               href={{ pathname: "/create/editor", query: { template: x.id } }}

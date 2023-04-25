@@ -1,24 +1,9 @@
 import { createTRPCRouter, protectedProcedure } from "~/server/api/trpc";
-import { object, optional, string } from "zod";
-import { adminList } from "~/server/auth";
+import { object, string } from "zod";
 import { TRPCError } from "@trpc/server";
 
 const inputGetById = object({
   id: string(),
-});
-
-const inputsendNotification = object({
-  message: string(),
-  userId: string(),
-  kudoId: optional(string()),
-  sessionId: optional(string()),
-  photo: optional(string()),
-});
-const inputsendAdminsNotification = object({
-  message: string(),
-  kudoId: optional(string()),
-  sessionId: optional(string()),
-  photo: optional(string()),
 });
 
 export const notificationRouter = createTRPCRouter({
@@ -73,38 +58,6 @@ export const notificationRouter = createTRPCRouter({
         data: {
           read: true,
         },
-      });
-    }),
-
-  // Create
-  sendnotification: protectedProcedure
-    .input(inputsendNotification)
-    .mutation(async ({ input, ctx }) => {
-      await ctx.prisma.notification.create({
-        data: {
-          message: input.message,
-          userId: input.userId,
-          kudoId: input.kudoId,
-          sessionId: input.sessionId,
-          photo: input.photo,
-        },
-      });
-    }),
-  // Create
-  sendnotificationsToAdmins: protectedProcedure
-    .input(inputsendAdminsNotification)
-    .mutation(({ input, ctx }) => {
-      const admins = adminList;
-      admins.map(async (admin) => {
-        await ctx.prisma.notification.create({
-          data: {
-            message: input.message,
-            userId: admin,
-            kudoId: input.kudoId,
-            sessionId: input.sessionId,
-            photo: input.photo,
-          },
-        });
       });
     }),
 });

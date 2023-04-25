@@ -9,6 +9,7 @@ import { useUtilButtons } from '~/hooks/useUtilButtons';
 import { useTitle } from "./NavBarTitle";
 import ThemeButton from '~/components/input/ThemeButton';
 import { api } from '~/utils/api';
+import Link from 'next/link';
 
 
 
@@ -93,17 +94,16 @@ const NavBar = () => {
 };
 
 function NotificationIcon() {
-    const router = useRouter();
     const user = useSession().data?.user
     const amount = api.notifications.getAmountOfNotificationsById.useQuery({ id: user?.id ?? "" }).data ?? 0
     return (
         <>
-            <button className="btn btn-ghost btn-circle" data-cy='notificationButton' onClick={() => void router.push("/notifications")}>
+            <Link className="btn btn-ghost btn-circle" data-cy='notificationButton' href="/notifications">
                 <div className="indicator">
                     <FiBell size={20} />
-                    {amount > 0 ? <span className="badge badge-sm badge-error border border-collapse border-neutral indicator-item">{amount}</span> : <></>}
+                    {amount > 0 && <span className="badge badge-sm badge-error border border-collapse border-neutral indicator-item">{amount}</span>}
                 </div>
-            </button>
+            </Link>
         </>
     );
 }

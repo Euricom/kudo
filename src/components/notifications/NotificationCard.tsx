@@ -11,7 +11,7 @@ import Image from "next/image";
 
 const NotificationCard = ({ notification }: { notification: Notification }) => {
 
-    const readNotification = api.notifications.readNotification.useMutation()
+    const { mutateAsync: readNotification } = api.notifications.readNotification.useMutation()
     const [imgUrl, setImgUrl] = useState<string>(avatar.src);
 
     const getTimeAgo = () => {
@@ -49,12 +49,12 @@ const NotificationCard = ({ notification }: { notification: Notification }) => {
 
     async function handleRead() {
         if (!notification.read) {
-            await readNotification.mutateAsync({ id: notification.id })
+            await readNotification({ id: notification.id })
         }
     }
     return (
         <>
-            <Link key={notification.id} onClick={() => void handleRead()} className="card bg-base-100 w-full h-fit hover:bg-base-200" data-cy="Notification" href={notification.sessionId ? "/session/" + notification.sessionId.toString() : notification.kudoId ? "/kudo/" + notification.kudoId.toString() : "/"} >
+            <Link key={notification.id} onClick={() => void handleRead()} className="card bg-base-100 w-full h-fit hover:bg-base-200" data-cy="Notification" href={notification.link} >
                 <div className="card-body align-middle py-8 px-0 md:px-2">
                     <div className="flex w-full gap-3">
                         <div className="avatar w-1/6 h-1/6 aspect-square relative">

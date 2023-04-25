@@ -50,11 +50,12 @@ const KudoDetail: NextPage<{ id: string }> = ({ id }) => {
   });
   const session = sessionQuery.data;
 
-  const deleteKudo = api.kudos.deleteKudoById.useMutation();
-  const deleteImage = api.kudos.deleteImageById.useMutation();
-  const likeKudoById = api.kudos.likeKudoById.useMutation();
-  const commentKudoById = api.kudos.commentKudoById.useMutation();
-  const flagKudoById = api.kudos.flagKudoById.useMutation({
+  const { mutate: deleteKudo } = api.kudos.deleteKudoById.useMutation();
+  const { mutate: deleteImage } = api.kudos.deleteImageById.useMutation();
+  const { mutateAsync: likeKudoById } = api.kudos.likeKudoById.useMutation();
+  const { mutateAsync: commentKudoById } =
+    api.kudos.commentKudoById.useMutation();
+  const { mutateAsync: flagKudoById } = api.kudos.flagKudoById.useMutation({
     onMutate: async (newEntry) => {
       await trpcContext.kudos.getKudoById.cancel();
       trpcContext.kudos.getKudoById.setData({ id: id }, (prevEntry) => {
@@ -68,10 +69,6 @@ const KudoDetail: NextPage<{ id: string }> = ({ id }) => {
       await trpcContext.kudos.getKudoById.invalidate();
     },
   });
-  const sendNotification = api.notifications.sendnotification.useMutation();
-  const sendNotificationsToAdmins =
-    api.notifications.sendnotificationsToAdmins.useMutation();
-
   const [comment, setComment] = useState<string>("");
   const [sendReady, setSendReady] = useState<boolean>(false);
   const [imgUrl, setImgUrl] = useState<string>(avatar.src);
@@ -97,24 +94,26 @@ const KudoDetail: NextPage<{ id: string }> = ({ id }) => {
       sender.id &&
       user.id
     ) {
-      await likeKudoById
-        .mutateAsync({ id: kudo.id, liked: !kudo.liked })
-        .catch((e: TRPCError) => toast.error(e.message, { delay: 500 }));
-
-      if (kudo.liked)
-        await sendNotification
-          .mutateAsync({
+      try {
+        if (kudo.liked) {
+          await likeKudoById({
+            id: kudo.id,
+            liked: !kudo.liked,
             message:
               user.name.toString() +
               " liked the kudo you send for the session about " +
               session.title.toString(),
             userId: sender.id,
-            kudoId: kudo.id,
             photo: user.id,
-          })
-          .catch((e: TRPCError) => toast.error(e.message, { delay: 500 }));
+          });
+        } else {
+          await likeKudoById({ id: kudo.id, liked: !kudo.liked });
+        }
 
-      await refetchKudo();
+        await refetchKudo();
+      } catch (e) {
+        console.log(e);
+      }
     }
   }
 
@@ -131,11 +130,10 @@ const KudoDetail: NextPage<{ id: string }> = ({ id }) => {
       sender.id &&
       user.id
     ) {
-      await commentKudoById
-        .mutateAsync({ id: kudo.id, comment: comment })
-        .catch((e: TRPCError) => toast.error(e.message, { delay: 500 }));
-      await sendNotification
-        .mutateAsync({
+      try {
+        await commentKudoById({
+          id: kudo.id,
+          comment: comment,
           message:
             user.name.toString() +
             " commented on the kudo you send for the session about " +
@@ -143,13 +141,14 @@ const KudoDetail: NextPage<{ id: string }> = ({ id }) => {
             ": " +
             comment,
           userId: sender.id,
-          kudoId: kudo.id,
           photo: user.id,
-        })
-        .catch((e: TRPCError) => toast.error(e.message, { delay: 500 }));
-      setSendReady(false);
-      setComment("");
-      await refetchKudo();
+        });
+        setSendReady(false);
+        setComment("");
+        await refetchKudo();
+      } catch (e) {
+        console.log(e);
+      }
     }
   }
   useEffect(() => {
@@ -181,37 +180,36 @@ const KudoDetail: NextPage<{ id: string }> = ({ id }) => {
   }
 
   function del() {
-    deleteKudo.mutate({ id: kudo?.id ?? "error" });
-    deleteImage.mutate({ id: kudo?.image ?? "error" });
+    deleteKudo({ id: kudo?.id ?? "error" });
+    deleteImage({ id: kudo?.image ?? "error" });
   }
 
   async function flag() {
     if (user?.id === session?.speakerId && kudo?.flagged === false) {
-      await flagKudoById
-        .mutateAsync({
+      try {
+        await flagKudoById({
           id: kudo?.id ?? "error",
           flagged: !kudo?.flagged,
-        })
-        .catch((e: TRPCError) => toast.error(e.message, { delay: 500 }));
-      await sendNotificationsToAdmins
-        .mutateAsync({
           message:
             "Kudo send by " +
             (sender?.displayName ?? "name not found").toString() +
             " is reported by " +
             (user?.name ?? "name not found").toString(),
-          kudoId: kudo.id,
-          photo: sender?.id,
-        })
-        .catch((e: TRPCError) => toast.error(e.message, { delay: 500 }));
+          photo: sender?.id ?? "",
+        });
+      } catch (e) {
+        console.log(e);
+      }
     } else if (user?.role === UserRole.ADMIN && kudo?.flagged === true) {
-      await flagKudoById
-        .mutateAsync({
+      try {
+        await flagKudoById({
           id: kudo?.id ?? "error",
           flagged: !kudo?.flagged,
-        })
-        .catch((e: TRPCError) => toast.error(e.message, { delay: 500 }));
-      await refetchKudo();
+        });
+        await refetchKudo();
+      } catch (e) {
+        console.log(e);
+      }
     }
   }
 

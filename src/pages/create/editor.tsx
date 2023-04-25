@@ -46,15 +46,14 @@ const Editor: NextPage<{ id: string }> = ({ id }) => {
   const res = api.templates.getTemplateById.useQuery({ id: id }).data;
   const [selectedButton, setSelectedButton] = useState<EditorFunctions>();
   const [stage, setStage] = useState<Konva.Stage>();
-  const createKudo = api.kudos.createKudo.useMutation();
-  const createImage = api.kudos.createKudoImage.useMutation();
   const router = useRouter();
   const [emojiDropdownState, setEmojiDropdownState] = useState<boolean>(false);
   const [color, setColor] = useState<string>("#121212");
   const [font, setFont] = useState<string>("Arial");
   const [thickness, setThickness] = useState<number>(5);
   const [selectedEmoji, setSelectedEmoji] = useState<EmojiObject>();
-  const sendNotification = api.notifications.sendnotification.useMutation();
+  const { mutateAsync: createKudo } = api.kudos.createKudo.useMutation();
+  const { mutateAsync: createImage } = api.kudos.createKudoImage.useMutation();
   const user = useSession().data?.user;
   const { session, speaker, anonymous } = useSessionSpeaker().data;
   const sessionTitle = api.sessions.getSessionById.useQuery({ id: session })
@@ -93,22 +92,17 @@ const Editor: NextPage<{ id: string }> = ({ id }) => {
     }
     if (user && user.id && user.name && sessionTitle && speakerId)
       try {
-        const image = await createImage.mutateAsync({
-          dataUrl: stage.toDataURL(),
-        });
-        const kudo = await createKudo.mutateAsync({
+        const image = await createImage({ dataUrl: stage.toDataURL() });
+        await createKudo({
           image: image.id,
           sessionId: session,
           userId: user.id,
           anonymous: anonymous,
-        });
-        await sendNotification.mutateAsync({
           message:
             user.name.toString() +
             " sent you a kudo for your session about " +
             sessionTitle.toString(),
-          userId: speakerId,
-          kudoId: kudo.id,
+          speakerId: speakerId,
           photo: user.id,
         });
         await router.replace("/out");

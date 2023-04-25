@@ -2,9 +2,8 @@ import type { Channel, PresenceChannel } from 'pusher-js'
 import type { StoreApi } from 'zustand'
 import type { PropsWithChildren } from 'react'
 
-import { useEffect, useRef, useState  } from 'react'
+import { useEffect, useRef, useState, createContext, useContext } from 'react'
 import Pusher from 'pusher-js'
-import createContext from 'zustand/context'
 import { create } from 'zustand'
 
 interface PusherZustandStore {
@@ -65,10 +64,7 @@ const createPusherStore = (slug: string) => {
  *
  * This creates a "Zustand React Context" that we can provide in the component tree.
  */
-const {
-  Provider: PusherZustandStoreProvider,
-  useStore: usePusherZustandStore,
-} = createContext<StoreApi<PusherZustandStore>>()
+const PusherZustandStoreContext = createContext<StoreApi<PusherZustandStore> | undefined>(undefined);
 
 /**
  * This provider is the thing you mount in the app to "give access to Pusher"
@@ -92,18 +88,27 @@ export const PusherProvider = ({
         '(Expect a warning in terminal after this, React Dev Mode and all)'
       )
       pusher.disconnect()
-      newStore.destroy()
+      const unsubscribe = newStore.subscribe(() => void 0)
+      unsubscribe()
     }
   }, [slug])
 
   if (!store) return null
 
   return (
-    <PusherZustandStoreProvider createStore={() => store}>
+    <PusherZustandStoreContext.Provider value={store}>
       {children}
-    </PusherZustandStoreProvider>
+    </PusherZustandStoreContext.Provider>
   )
 }
+
+export const usePusherZustandStore = () => {
+  const store = useContext(PusherZustandStoreContext);
+  if (!store) {
+    throw new Error("usePusherZustandStore must be used within a PusherZustandStoreProvider");
+  }
+  return store;
+};
 
 /**
  * Section 3: "The Hooks"
@@ -116,7 +121,7 @@ export function useSubscribeToEvent<MessageType>(
   eventName: string,
   callback: (data: MessageType) => void
 ) {
-  const channel: Channel = usePusherZustandStore(state => state.channel)
+  const channel: Channel = usePusherZustandStore().getState().channel
 
   const stableCallback = useRef(callback)
 
@@ -135,6 +140,3 @@ export function useSubscribeToEvent<MessageType>(
     }
   }, [channel, eventName])
 }
-
-export const useCurrentMemberCount = () =>
-  usePusherZustandStore(s => s.members.size)

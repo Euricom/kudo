@@ -37,11 +37,11 @@ const KudoDetail: NextPage<{ id: string }> = ({ id }) => {
   const sessionQuery = api.sessions.getSessionById.useQuery({ id: kudo?.sessionId ?? "error" })
   const session = sessionQuery.data
 
-  const deleteKudo = api.kudos.deleteKudoById.useMutation()
-  const deleteImage = api.kudos.deleteImageById.useMutation()
-  const likeKudoById = api.kudos.likeKudoById.useMutation()
-  const commentKudoById = api.kudos.commentKudoById.useMutation()
-  const flagKudoById = api.kudos.flagKudoById.useMutation({
+  const { mutate: deleteKudo } = api.kudos.deleteKudoById.useMutation()
+  const { mutate: deleteImage } = api.kudos.deleteImageById.useMutation()
+  const { mutateAsync: likeKudoById } = api.kudos.likeKudoById.useMutation()
+  const { mutateAsync: commentKudoById } = api.kudos.commentKudoById.useMutation()
+  const { mutateAsync: flagKudoById } = api.kudos.flagKudoById.useMutation({
     onMutate: async (newEntry) => {
       await trpcContext.kudos.getKudoById.cancel();
       trpcContext.kudos.getKudoById.setData({ id: id }, (prevEntry) => {
@@ -56,8 +56,8 @@ const KudoDetail: NextPage<{ id: string }> = ({ id }) => {
       await trpcContext.kudos.getKudoById.invalidate();
     },
   })
-  const sendNotification = api.notifications.sendnotification.useMutation()
-  const sendNotificationsToAdmins = api.notifications.sendnotificationsToAdmins.useMutation()
+  const { mutateAsync: sendNotification } = api.notifications.sendnotification.useMutation()
+  const { mutateAsync: sendNotificationsToAdmins } = api.notifications.sendnotificationsToAdmins.useMutation()
 
 
   const [comment, setComment] = useState<string>("")
@@ -75,9 +75,9 @@ const KudoDetail: NextPage<{ id: string }> = ({ id }) => {
   async function handleclick() {
     if (user?.id === session?.speakerId && kudo && kudo.id && session && session.title && user && user.name && sender && sender.id && user.id) {
       try {
-        await likeKudoById.mutateAsync({ id: kudo.id, liked: !kudo.liked })
+        await likeKudoById({ id: kudo.id, liked: !kudo.liked })
         if (kudo.liked)
-          await sendNotification.mutateAsync({ message: (user.name).toString() + " liked the kudo you send for the session about " + (session.title).toString(), userId: sender.id, kudoId: kudo.id, photo: user.id })
+          await sendNotification({ message: (user.name).toString() + " liked the kudo you send for the session about " + (session.title).toString(), userId: sender.id, link: '/kudo/' + kudo.id, photo: user.id })
         await refetchKudo()
       }
       catch (e) {
@@ -89,8 +89,8 @@ const KudoDetail: NextPage<{ id: string }> = ({ id }) => {
   async function handleSubmit() {
     if (user?.id === session?.speakerId && kudo && kudo.id && session && session.title && user && user.name && sender && sender.id && user.id) {
       try {
-        await commentKudoById.mutateAsync({ id: kudo.id, comment: comment })
-        await sendNotification.mutateAsync({ message: (user.name).toString() + " commented on the kudo you send for the session about " + (session.title).toString() + ": " + comment, userId: sender.id, kudoId: kudo.id, photo: user.id })
+        await commentKudoById({ id: kudo.id, comment: comment })
+        await sendNotification({ message: (user.name).toString() + " commented on the kudo you send for the session about " + (session.title).toString() + ": " + comment, userId: sender.id, link: '/kudo/' + kudo.id, photo: user.id })
         setSendReady(false)
         setComment("")
         await refetchKudo()
@@ -111,15 +111,15 @@ const KudoDetail: NextPage<{ id: string }> = ({ id }) => {
   }
 
   function del() {
-    deleteKudo.mutate({ id: kudo?.id ?? "error" })
-    deleteImage.mutate({ id: kudo?.image ?? "error" })
+    deleteKudo({ id: kudo?.id ?? "error" })
+    deleteImage({ id: kudo?.image ?? "error" })
   }
 
   async function flag() {
     if (user?.id === session?.speakerId && kudo?.flagged === false) {
       try {
-        await flagKudoById.mutateAsync({ id: kudo?.id ?? "error", flagged: !kudo?.flagged })
-        await sendNotificationsToAdmins.mutateAsync({ message: "Kudo send by " + (sender?.displayName ?? "name not found").toString() + " is reported by " + (user?.name ?? "name not found").toString(), kudoId: kudo.id, photo: sender?.id })
+        await flagKudoById({ id: kudo?.id ?? "error", flagged: !kudo?.flagged })
+        await sendNotificationsToAdmins({ message: "Kudo send by " + (sender?.displayName ?? "name not found").toString() + " is reported by " + (user?.name ?? "name not found").toString(), link: '/kudo/' + kudo.id, photo: sender?.id })
 
       }
       catch (e) {
@@ -128,7 +128,7 @@ const KudoDetail: NextPage<{ id: string }> = ({ id }) => {
     }
     else if (user?.role === UserRole.ADMIN && kudo?.flagged === true) {
       try {
-        await flagKudoById.mutateAsync({ id: kudo?.id ?? "error", flagged: !kudo?.flagged })
+        await flagKudoById({ id: kudo?.id ?? "error", flagged: !kudo?.flagged })
         await refetchKudo()
       }
       catch (e) {

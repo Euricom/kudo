@@ -14,7 +14,7 @@ const Notifications: NextPage = () => {
 
   const notificationQuery = api.notifications.getNotificationsById.useQuery({ id: user?.id ?? "" })
   const notifications = notificationQuery.data
-  const readAllNotifications = api.notifications.readAllNotifications.useMutation({
+  const { mutateAsync: readAllNotifications } = api.notifications.readAllNotifications.useMutation({
     onMutate: async (newEntry) => {
       await trpcContext.notifications.getNotificationsById.cancel();
       trpcContext.notifications.getNotificationsById.setData({ id: user?.id ?? "" }, (prevEntries) => {
@@ -41,7 +41,7 @@ const Notifications: NextPage = () => {
   }
 
   async function handleReadAll() {
-    await readAllNotifications.mutateAsync({ id: user?.id ?? "" })
+    await readAllNotifications({ id: user?.id ?? "" })
   }
 
   return (

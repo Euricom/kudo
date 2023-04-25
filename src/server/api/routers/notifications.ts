@@ -12,14 +12,12 @@ const inputGetById = object({
 const inputsendNotification = object({
     message: string(),
     userId: string(),
-    kudoId: optional(string()),
-    sessionId: optional(string()),
+    link: string(),
     photo: optional(string()),
 })
 const inputsendAdminsNotification = object({
     message: string(),
-    kudoId: optional(string()),
-    sessionId: optional(string()),
+    link: string(),
     photo: optional(string()),
 })
 
@@ -77,8 +75,7 @@ export const notificationRouter = createTRPCRouter({
             data: {
                 message: input.message,
                 userId: input.userId,
-                kudoId: input.kudoId,
-                sessionId: input.sessionId,
+                link: input.link,
                 photo: input.photo
             },
         });
@@ -91,8 +88,7 @@ export const notificationRouter = createTRPCRouter({
                 data: {
                     message: input.message,
                     userId: admin,
-                    kudoId: input.kudoId,
-                    sessionId: input.sessionId,
+                    link: input.link,
                     photo: input.photo
                 },
             });

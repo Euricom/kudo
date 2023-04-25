@@ -21,9 +21,9 @@ const KonvaCanvas = ({ editorFunction, template, thickness, color, fontFamily, e
   const [shapes, setShapes] = useState<Shapes[]>([]);
   const [selectedId, selectShape] = useState<string | null>(null);
   const [history] = useState<Shapes[]>([])
-  
-  const createTemplate = api.templates.createTemplate.useMutation()
-  const createImage = api.kudos.createKudoImage.useMutation()
+
+  const { mutateAsync: createTemplate } = api.templates.createTemplate.useMutation()
+  const { mutateAsync: createImage } = api.kudos.createKudoImage.useMutation()
 
   const [line, setLine] = useState<Shapes[]>([]);
 
@@ -95,8 +95,8 @@ const KonvaCanvas = ({ editorFunction, template, thickness, color, fontFamily, e
   }
 
   const addText = () => {
-    const pos = layerRef.current.getRelativePointerPosition()??{x: 0, y: 0}
-    
+    const pos = layerRef.current.getRelativePointerPosition() ?? { x: 0, y: 0 }
+
     const text = makeText(pos)
     history.unshift(text)
     shapes.push(text)
@@ -124,7 +124,7 @@ const KonvaCanvas = ({ editorFunction, template, thickness, color, fontFamily, e
       toast.error("No emoji selected")
       return
     }
-    const pos = layerRef.current.getRelativePointerPosition()??{x: 0, y: 0}
+    const pos = layerRef.current.getRelativePointerPosition() ?? { x: 0, y: 0 }
     const sticker = {
       id: v4(),
       type: CanvasShapes.Sticker,
@@ -144,8 +144,8 @@ const KonvaCanvas = ({ editorFunction, template, thickness, color, fontFamily, e
   const saveTemplate = useCallback(async () => {
     setFunction(EditorFunctions.None)
     selectShape(null)
-    const image = await createImage.mutateAsync({ dataUrl: stageRef.current.toDataURL() })
-    await createTemplate.mutateAsync({name: v4(), color: template.color, image: image.id, content: shapes})
+    const image = await createImage({ dataUrl: stageRef.current.toDataURL() })
+    await createTemplate({ name: v4(), color: template.color, image: image.id, content: shapes })
   }, [createTemplate, shapes, stageRef, template.color, setFunction, createImage]);
 
   const handleMouseDown = () => {
@@ -189,7 +189,7 @@ const KonvaCanvas = ({ editorFunction, template, thickness, color, fontFamily, e
 
   useEffect(() => {
     setStage(stageRef.current)
-    layerRef.current.offset({x: -(stageDimensions?.width ?? 0)/2, y: -(stageDimensions?.height ?? 0)/2})
+    layerRef.current.offset({ x: -(stageDimensions?.width ?? 0) / 2, y: -(stageDimensions?.height ?? 0) / 2 })
     console.log("testCenterLayer");
   }, [setStage, stageDimensions])
 
@@ -207,7 +207,7 @@ const KonvaCanvas = ({ editorFunction, template, thickness, color, fontFamily, e
 
   useEffect(() => {
     console.log(stageDimensions);
-    if (!template||!stageDimensions.height) {
+    if (!template || !stageDimensions.height) {
       return
     }
     console.log("testFillTemp");
@@ -275,8 +275,8 @@ const KonvaCanvas = ({ editorFunction, template, thickness, color, fontFamily, e
                       history.unshift(newAttrs)
                     }}
                     areaPosition={{
-                      x: (stageRef.current?.container().offsetLeft ?? 0) + (stageRef.current?.width() ?? 0)/2 + (s.x ?? 1) * (stageDimensions?.scale?.x ?? 1),
-                      y: (stageRef.current?.container().offsetTop ?? 0) + (stageRef.current?.height() ?? 0)/2 + (s.y ?? 1) * (stageDimensions?.scale?.y ?? 1),
+                      x: (stageRef.current?.container().offsetLeft ?? 0) + (stageRef.current?.width() ?? 0) / 2 + (s.x ?? 1) * (stageDimensions?.scale?.x ?? 1),
+                      y: (stageRef.current?.container().offsetTop ?? 0) + (stageRef.current?.height() ?? 0) / 2 + (s.y ?? 1) * (stageDimensions?.scale?.y ?? 1),
                     }}
                     onDelete={onDelete}
                     editorFunction={editorFunction ?? EditorFunctions.None}
@@ -322,25 +322,25 @@ const KonvaCanvas = ({ editorFunction, template, thickness, color, fontFamily, e
                     onDelete={onDelete}
                   />
                 );
-                case CanvasShapes.Circle:
-                  return (
-                    <CanvasCircle
-                      key={i}
-                      shapeProps={s}
-                      isSelected={s.id === selectedId}
-                      editorFunction={editorFunction ?? EditorFunctions.None}
-                      onSelect={() => {
-                        selectShape(s.id);
-                      }}
-                      onChange={(newAttrs) => {
-                        const newShapes = shapes.slice();
-                        newShapes[i] = newAttrs;
-                        setShapes(newShapes);
-                        history.unshift(newAttrs)
-                      }}
-                      onDelete={onDelete}
-                    />
-                  );
+              case CanvasShapes.Circle:
+                return (
+                  <CanvasCircle
+                    key={i}
+                    shapeProps={s}
+                    isSelected={s.id === selectedId}
+                    editorFunction={editorFunction ?? EditorFunctions.None}
+                    onSelect={() => {
+                      selectShape(s.id);
+                    }}
+                    onChange={(newAttrs) => {
+                      const newShapes = shapes.slice();
+                      newShapes[i] = newAttrs;
+                      setShapes(newShapes);
+                      history.unshift(newAttrs)
+                    }}
+                    onDelete={onDelete}
+                  />
+                );
             }
           })}
           {

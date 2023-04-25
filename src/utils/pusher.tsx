@@ -10,7 +10,7 @@ interface PusherZustandStore {
   pusherClient: Pusher
   channel: Channel
   presenceChannel: PresenceChannel
-  members: Map<string, any>
+  // members: Map<string, any>
 }
 
 const createPusherStore = (slug: string) => {
@@ -40,20 +40,20 @@ const createPusherStore = (slug: string) => {
       pusherClient,
       channel,
       presenceChannel,
-      members: new Map(),
+      // members: new Map(),
     })
 
     // Update helper that sets 'members' to contents of presence channel's current members
-    const updateMembers = () => {
-      set(() => ({
-        members: new Map(Object.entries(presenceChannel.members.members)),
-      }))
-    }
+    // const updateMembers = () => {
+    //   set(() => ({
+    //     members: new Map(Object.entries(presenceChannel.members.members)),
+    //   }))
+    // }
 
     // Bind all "present users changed" events to trigger updateMembers
-    presenceChannel.bind('pusher:subscription_succeeded', updateMembers)
-    presenceChannel.bind('pusher:member_added', updateMembers)
-    presenceChannel.bind('pusher:member_removed', updateMembers)
+    // presenceChannel.bind('pusher:subscription_succeeded', updateMembers)
+    // presenceChannel.bind('pusher:member_added', updateMembers)
+    // presenceChannel.bind('pusher:member_removed', updateMembers)
   })
 
   return store

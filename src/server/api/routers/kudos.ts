@@ -1,20 +1,19 @@
 import { createTRPCRouter, protectedProcedure } from "~/server/api/trpc";
 import { TRPCError } from "@trpc/server";
-import { boolean, object, optional, string } from "zod";
+import { boolean, object, string } from "zod";
 import { type Kudo, type Image } from "@prisma/client";
 import {
   sendnotification,
   sendnotificationsToAdmins,
 } from "~/server/services/notificationService";
+import { findUserById } from "~/server/services/userService";
+import { getSessionById } from "~/server/services/sessionService";
 
 const createKudoInput = object({
   image: string(),
   sessionId: string(),
   userId: string(),
   anonymous: boolean(),
-  message: optional(string()),
-  speakerId: optional(string()),
-  photo: optional(string()),
 });
 const createImageInput = object({
   dataUrl: string(),
@@ -26,16 +25,10 @@ const inputGetById = object({
 
 const inputLike = object({
   id: string(),
-  message: optional(string()),
-  userId: optional(string()),
-  photo: optional(string()),
   liked: boolean(),
 });
 const inputComment = object({
   id: string(),
-  message: optional(string()),
-  userId: optional(string()),
-  photo: optional(string()),
   comment: string(),
 });
 const inputGetImagesByIds = object({
@@ -44,8 +37,6 @@ const inputGetImagesByIds = object({
 
 const inputFlag = object({
   id: string(),
-  message: optional(string()),
-  photo: optional(string()),
   flagged: boolean(),
 });
 
@@ -172,13 +163,19 @@ export const kudoRouter = createTRPCRouter({
           anonymous: input.anonymous,
         },
       });
-      if (input.message && input.speakerId && input.photo) {
+      if (kudo) {
+        const sender = await findUserById(input.userId);
+        const session = await getSessionById(input.sessionId);
+        const speaker = await findUserById(session.speakerId);
+
         await sendnotification(
           ctx.prisma,
-          input.message,
+          sender.displayName +
+            " sent you a kudo for your session about " +
+            session.title,
           "/kudo/" + kudo.id,
-          input.speakerId,
-          input.photo
+          speaker.id,
+          sender.id
         );
       }
       return kudo;
@@ -198,15 +195,6 @@ export const kudoRouter = createTRPCRouter({
   likeKudoById: protectedProcedure
     .input(inputLike)
     .mutation(async ({ input, ctx }) => {
-      if (input.message && input.userId && input.photo) {
-        await sendnotification(
-          ctx.prisma,
-          input.message,
-          "/kudo/" + input.id,
-          input.userId,
-          input.photo
-        );
-      }
       const kudo = await ctx.prisma.kudo.update({
         where: {
           id: input.id,
@@ -216,7 +204,21 @@ export const kudoRouter = createTRPCRouter({
         },
       });
 
-      if (kudo == undefined) {
+      if (kudo) {
+        const sender = await findUserById(kudo.userId);
+        const session = await getSessionById(kudo.sessionId);
+        const speaker = await findUserById(session.speakerId);
+
+        await sendnotification(
+          ctx.prisma,
+          speaker.displayName +
+            " liked the kudo you send for the session about " +
+            session.title,
+          "/kudo/" + kudo.id,
+          sender.id,
+          speaker.id
+        );
+      } else {
         throw new TRPCError({
           code: "INTERNAL_SERVER_ERROR",
           message: "An unexpected error occurred, please try again later.",
@@ -226,15 +228,6 @@ export const kudoRouter = createTRPCRouter({
   commentKudoById: protectedProcedure
     .input(inputComment)
     .mutation(async ({ input, ctx }) => {
-      if (input.message && input.userId && input.photo) {
-        await sendnotification(
-          ctx.prisma,
-          input.message,
-          "/kudo/" + input.id,
-          input.userId,
-          input.photo
-        );
-      }
       const kudo = await ctx.prisma.kudo.update({
         where: {
           id: input.id,
@@ -243,8 +236,21 @@ export const kudoRouter = createTRPCRouter({
           comment: input.comment,
         },
       });
+      if (kudo) {
+        const sender = await findUserById(kudo.userId);
+        const session = await getSessionById(kudo.sessionId);
+        const speaker = await findUserById(session.speakerId);
 
-      if (kudo == undefined) {
+        await sendnotification(
+          ctx.prisma,
+          speaker.displayName +
+            " commented on the kudo you send for the session about " +
+            session.title,
+          "/kudo/" + kudo.id,
+          sender.id,
+          speaker.id
+        );
+      } else {
         throw new TRPCError({
           code: "INTERNAL_SERVER_ERROR",
           message: "An unexpected error occurred, please try again later.",
@@ -255,14 +261,6 @@ export const kudoRouter = createTRPCRouter({
   flagKudoById: protectedProcedure
     .input(inputFlag)
     .mutation(async ({ input, ctx }) => {
-      if (input.message && input.photo) {
-        sendnotificationsToAdmins(
-          ctx.prisma,
-          input.message,
-          "/kudo/" + input.id,
-          input.photo
-        );
-      }
       const kudo = await ctx.prisma.kudo.update({
         where: {
           id: input.id,
@@ -271,8 +269,21 @@ export const kudoRouter = createTRPCRouter({
           flagged: input.flagged,
         },
       });
+      if (kudo) {
+        const sender = await findUserById(kudo.userId);
+        const session = await getSessionById(kudo.sessionId);
+        const speaker = await findUserById(session.speakerId);
 
-      if (kudo == undefined) {
+        sendnotificationsToAdmins(
+          ctx.prisma,
+          "Kudo send by " +
+            sender.displayName +
+            " is reported by " +
+            speaker.displayName,
+          "/kudo/" + kudo.id,
+          sender.id
+        );
+      } else {
         throw new TRPCError({
           code: "INTERNAL_SERVER_ERROR",
           message: "An unexpected error occurred, please try again later.",

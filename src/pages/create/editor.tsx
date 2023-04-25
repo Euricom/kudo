@@ -56,9 +56,6 @@ const Editor: NextPage<{ id: string }> = ({ id }) => {
   const { mutateAsync: createImage } = api.kudos.createKudoImage.useMutation();
   const user = useSession().data?.user;
   const { session, speaker, anonymous } = useSessionSpeaker().data;
-  const sessionTitle = api.sessions.getSessionById.useQuery({ id: session })
-    .data?.title;
-  const speakerId = api.users.getUserByName.useQuery({ id: speaker }).data?.id;
 
   if (
     !user ||
@@ -90,7 +87,7 @@ const Editor: NextPage<{ id: string }> = ({ id }) => {
     if (!stage) {
       return;
     }
-    if (user && user.id && user.name && sessionTitle && speakerId)
+    if (user && user.id)
       try {
         const image = await createImage({ dataUrl: stage.toDataURL() });
         await createKudo({
@@ -98,12 +95,6 @@ const Editor: NextPage<{ id: string }> = ({ id }) => {
           sessionId: session,
           userId: user.id,
           anonymous: anonymous,
-          message:
-            user.name.toString() +
-            " sent you a kudo for your session about " +
-            sessionTitle.toString(),
-          speakerId: speakerId,
-          photo: user.id,
         });
         await router.replace("/out");
       } catch (e) {

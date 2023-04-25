@@ -59,7 +59,6 @@ const Editor: NextPage<{ id: string }> = ({ id }) => {
   const { session, speaker, anonymous } = useSessionSpeaker().data;
   const sessionTitle = api.sessions.getSessionById.useQuery({ id: session })
     .data?.title;
-  const speakerId = api.users.getUserByName.useQuery({ id: speaker }).data?.id;
 
   if (!user || !session || !speaker || !user.id || !res || res === null) {
     return <LoadingBar />;
@@ -84,7 +83,7 @@ const Editor: NextPage<{ id: string }> = ({ id }) => {
     if (!stage) {
       return;
     }
-    if (user && user.id && user.name && sessionTitle && speakerId)
+    if (user && user.id && user.name && sessionTitle && speaker)
       try {
         const image = await createImage.mutateAsync({
           dataUrl: stage.toDataURL(),
@@ -100,7 +99,7 @@ const Editor: NextPage<{ id: string }> = ({ id }) => {
             user.name.toString() +
             " sent you a kudo for your session about " +
             sessionTitle.toString(),
-          userId: speakerId,
+          userId: speaker,
           kudoId: kudo.id,
           photo: user.id,
         });

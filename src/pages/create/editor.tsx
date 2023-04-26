@@ -28,6 +28,8 @@ import { type ColorResult, HuePicker } from "react-color";
 import { EditorFunctions, type EmojiObject, Fonts, UserRole } from "~/types";
 import data from "@emoji-mart/data";
 import Picker from "@emoji-mart/react";
+import { toast } from "react-toastify";
+import { type TRPCError } from "@trpc/server";
 
 export function getServerSideProps(context: { query: { template: string } }) {
   return {
@@ -78,7 +80,6 @@ const Editor: NextPage<{ id: string }> = ({ id }) => {
   };
 
   function onClickEmoji(emoji: EmojiObject) {
-    console.log(emoji);
     setSelectedEmoji(emoji);
     setEmojiDropdownState(false);
   }
@@ -98,7 +99,7 @@ const Editor: NextPage<{ id: string }> = ({ id }) => {
         });
         await router.replace("/out");
       } catch (e) {
-        console.log(e);
+        toast.error((e as TRPCError).message);
       }
   };
 

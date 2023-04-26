@@ -78,7 +78,7 @@ const KudoDetail: NextPage<{ id: string }> = ({ id }) => {
       fetch("/api/images/" + (speaker?.id ?? "").toString())
         .then((res) => res.json())
         .then((json: ImageData) => setImgUrl(json.dataUrl))
-        .catch((e: TRPCError) => toast.error(e.message));
+        .catch((e) => toast.error((e as Error).message));
   }, [kudo?.userId, speaker?.id]);
 
   async function handleclick() {
@@ -122,7 +122,7 @@ const KudoDetail: NextPage<{ id: string }> = ({ id }) => {
       user?.id !== kudo?.userId &&
       user?.id !== session?.speakerId
     )
-      router.replace("/403").catch(console.error);
+      router.replace("/403").catch(toast.error);
   }, [
     user,
     router,

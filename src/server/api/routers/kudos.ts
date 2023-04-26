@@ -129,7 +129,8 @@ export const kudoRouter = createTRPCRouter({
       if (kudo == undefined) {
         throw new TRPCError({
           code: "INTERNAL_SERVER_ERROR",
-          message: "An unexpected error occurred, please try again later.",
+          message:
+            "An unexpected error occurred while deleting this kudo, please try again later.",
         });
       }
     }),
@@ -146,7 +147,8 @@ export const kudoRouter = createTRPCRouter({
       if (image == undefined) {
         throw new TRPCError({
           code: "INTERNAL_SERVER_ERROR",
-          message: "An unexpected error occurred, please try again later.",
+          message:
+            "An unexpected error occurred while deleting this kudo, please try again later.",
         });
       }
     }),
@@ -221,7 +223,8 @@ export const kudoRouter = createTRPCRouter({
       } else {
         throw new TRPCError({
           code: "INTERNAL_SERVER_ERROR",
-          message: "An unexpected error occurred, please try again later.",
+          message:
+            "An unexpected error occurred with your like, please try again later.",
         });
       }
     }),
@@ -253,7 +256,8 @@ export const kudoRouter = createTRPCRouter({
       } else {
         throw new TRPCError({
           code: "INTERNAL_SERVER_ERROR",
-          message: "An unexpected error occurred, please try again later.",
+          message:
+            "An unexpected error occurred with your comment, please try again later.",
         });
       }
     }),
@@ -269,25 +273,25 @@ export const kudoRouter = createTRPCRouter({
           flagged: input.flagged,
         },
       });
-      if (kudo) {
-        const sender = await findUserById(kudo.userId);
-        const session = await getSessionById(kudo.sessionId);
-        const speaker = await findUserById(session.speakerId);
+      // if (kudo) {
+      //   const sender = await findUserById(kudo.userId);
+      //   const session = await getSessionById(kudo.sessionId);
+      //   const speaker = await findUserById(session.speakerId);
 
-        sendnotificationsToAdmins(
-          ctx.prisma,
-          "Kudo send by " +
-            sender.displayName +
-            " is reported by " +
-            speaker.displayName,
-          "/kudo/" + kudo.id,
-          sender.id
-        );
-      } else {
-        throw new TRPCError({
-          code: "INTERNAL_SERVER_ERROR",
-          message: "An unexpected error occurred, please try again later.",
-        });
-      }
+      //   sendnotificationsToAdmins(
+      //     ctx.prisma,
+      //     "Kudo send by " +
+      //       sender.displayName +
+      //       " is reported by " +
+      //       speaker.displayName,
+      //     "/kudo/" + kudo.id,
+      //     sender.id
+      //   );
+      // } else {
+      throw new TRPCError({
+        code: "INTERNAL_SERVER_ERROR",
+        message: "Een probleem",
+      });
+      // }
     }),
 });

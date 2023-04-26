@@ -36,8 +36,6 @@ export const userRouter = createTRPCRouter({
   getUserByName: protectedProcedure
     .input(inputGetById)
     .query(async ({ input }) => {
-      console.log(input.id);
-
       return await findUserByName(input.id);
     }),
 

@@ -13,6 +13,7 @@ import { useRouter } from "next/router";
 import { useSession } from "next-auth/react";
 import { UserRole } from "~/types";
 import { useEffect } from "react";
+import { toast } from "react-toastify";
 
 export function getServerSideProps(context: { query: { id: string } }) {
   return {
@@ -23,8 +24,8 @@ export function getServerSideProps(context: { query: { id: string } }) {
 }
 
 const Session: NextPage<{ id: string }> = ({ id }) => {
-  const router = useRouter()
-  const user = useSession().data?.user
+  const router = useRouter();
+  const user = useSession().data?.user;
 
   const sessionQuery = api.sessions.getSessionById.useQuery({ id: id });
   const session = sessionQuery.data;
@@ -37,10 +38,10 @@ const Session: NextPage<{ id: string }> = ({ id }) => {
   const images = imagesQuery.data;
 
   useEffect(() => {
-    if(sessionQuery.isLoading) return
-    if(user?.role !== UserRole.ADMIN && user?.id !== session?.speakerId) 
-      router.replace("/403").catch(console.error)
-  }, [user, router, session?.speakerId, sessionQuery.isLoading])
+    if (sessionQuery.isLoading) return;
+    if (user?.role !== UserRole.ADMIN && user?.id !== session?.speakerId)
+      router.replace("/403").catch((e) => toast.error((e as Error).message));
+  }, [user, router, session?.speakerId, sessionQuery.isLoading]);
 
   if (sessionQuery.isLoading || kudosQuery.isLoading || imagesQuery.isLoading) {
     return <LoadingBar />;
@@ -86,16 +87,16 @@ const Session: NextPage<{ id: string }> = ({ id }) => {
       </NavigationBarContent>
       <UtilButtonsContent>
         <button
-          className="btn btn-ghost btn-circle "
+          className="btn-ghost btn-circle btn "
           onClick={() => void downloadZip()}
-          data-cy='DownloadButton'
+          data-cy="DownloadButton"
         >
           <FiDownload size={20} />
         </button>
         <Link
           href={`/session/presentation/${id}`}
-          className="btn btn-ghost btn-circle hidden lg:flex"
-          data-cy='PresentationButton'
+          className="btn-ghost btn-circle btn hidden lg:flex"
+          data-cy="PresentationButton"
         >
           <FiMonitor size={20} />
         </Link>

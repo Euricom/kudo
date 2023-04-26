@@ -19,7 +19,7 @@ import { useSession } from "next-auth/react";
 import { type ImageData, UserRole } from "~/types";
 import { useRouter } from "next/router";
 import LoadingBar from "~/components/LoadingBar";
-import avatar from "../../contents/images/AnonymousPicture.jpg";
+import avatar from "~/../public/images/AnonymousPicture.jpg";
 
 export function getServerSideProps(context: { query: { id: string } }) {
   return {

@@ -7,7 +7,7 @@ import LoadingBar from "~/components/LoadingBar";
 
 
 export function Auth({ children }: AuthProps) {
-  const update = api.users.updateUserIdAfterLogin.useMutation()
+  const { mutateAsync: update } = api.users.updateUserIdAfterLogin.useMutation()
   const [updated, setUpdated] = useState<boolean>(false)
 
   // if `{ required: true }` is supplied, `status` can only be "loading" or "authenticated"
@@ -18,7 +18,7 @@ export function Auth({ children }: AuthProps) {
     },
   });
   if (!updated && data?.user.id && data?.user.email) {
-    void update.mutateAsync({ id: data?.user.id, email: data?.user.email })
+    void update({ id: data?.user.id, email: data?.user.email })
     setUpdated(true)
   }
 

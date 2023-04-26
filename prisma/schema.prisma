@@ -103,7 +103,6 @@ model Notification {
     userId        String
     read          Boolean     @default(false)
     time          DateTime    @default(now())
-    kudoId        String?
-    sessionId     String?
+    link          String
     photo         String?
 }

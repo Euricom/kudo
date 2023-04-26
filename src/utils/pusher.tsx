@@ -5,12 +5,15 @@ import type { PropsWithChildren } from 'react'
 import { useEffect, useRef, useState, createContext, useContext } from 'react'
 import Pusher from 'pusher-js'
 import { create } from 'zustand'
+import { type Session } from '~/types'
+import { type Kudo } from '@prisma/client'
 
 interface PusherZustandStore {
   pusherClient: Pusher
   channel: Channel
   presenceChannel: PresenceChannel
-  // members: Map<string, any>
+  kudos: Kudo[]
+  sessions: Session[]
 }
 
 const createPusherStore = (slug: string) => {
@@ -35,27 +38,17 @@ const createPusherStore = (slug: string) => {
     `presence-${slug}`
   ) as PresenceChannel
 
-  const store = create<PusherZustandStore>((set) => {
-    set({
-      pusherClient,
-      channel,
-      presenceChannel,
-      // members: new Map(),
-    })
-
-    // Update helper that sets 'members' to contents of presence channel's current members
-    // const updateMembers = () => {
-    //   set(() => ({
-    //     members: new Map(Object.entries(presenceChannel.members.members)),
-    //   }))
-    // }
-
-    // Bind all "present users changed" events to trigger updateMembers
-    // presenceChannel.bind('pusher:subscription_succeeded', updateMembers)
-    // presenceChannel.bind('pusher:member_added', updateMembers)
-    // presenceChannel.bind('pusher:member_removed', updateMembers)
-  })
-
+  const store = create<PusherZustandStore>((set) => ({
+    pusherClient,
+    channel,
+    presenceChannel,
+    kudos: [],
+    sessions: [],
+    // addKudos: () => set((state) => ({ bears: state.bears + 1 })),
+    // addSessions: () => set((state) => ({ bears: state.bears + 1 })),
+    removeAllKudos: () => set({ kudos: [] }),
+    removeAllSessions: () => set({ sessions: [] }),
+  }))
   return store
 }
 

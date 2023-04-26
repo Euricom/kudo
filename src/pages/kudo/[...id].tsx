@@ -150,6 +150,7 @@ const KudoDetail: NextPage<{ id: string }> = ({ id }) => {
 
   async function flag() {
     toast.error("er is geflagd");
+    console.log("test1");
     if (user?.id === session?.speakerId && kudo?.flagged === false) {
       try {
         await flagKudoById({
@@ -158,7 +159,7 @@ const KudoDetail: NextPage<{ id: string }> = ({ id }) => {
         });
       } catch (e) {
         toast.error((e as TRPCError).message);
-        console.log("test");
+        console.log("test2");
       }
     } else if (/*user?.role === UserRole.ADMIN && */ kudo?.flagged === true) {
       try {

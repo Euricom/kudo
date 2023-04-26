@@ -12,6 +12,7 @@ import { type PresentationKudo } from "~/types";
 import { useTransition, animated } from '@react-spring/web';
 import { QRCode } from 'react-qrcode-logo';
 import icon from '~/../public/favicon.ico';
+import { PusherProvider } from "~/utils/pusher";
 
 export function getServerSideProps(context: { query: { id: string } }) {
   return {
@@ -102,38 +103,40 @@ const Presentation: NextPage<{ id: string }> = ({ id }) => {
           <FiMonitor size={20} />
         </button>
       </UtilButtonsContent>
-      <main
-        className="flex flex-col items-center justify-center h-full"
-        data-cy="Session"
-      >
-        <div ref={dropzoneRef} className="relative flex justify-center items-center h-full w-full overflow-hidden">
-          <QRCode 
-            value={window.location.hostname + "/create?session=" + session?.id}
-            logoImage={icon.src}
-            size={256}
-          />
-          {kudos == undefined || kudos.length == 0 ? (
-              <></>
-            ) : (
-              transitions((style, kudo) => ( kudo &&
-                  <animated.div 
-                    key={kudo.id} 
-                    className="absolute -translate-x-1/2 -translate-y-1/2"
-                    style={{...style}}
-                  >
-                    <KudoCard kudo={kudo.kudo} isPresentation={true}/>
-                  </animated.div>
-              ))
-          )}
-          <div className="absolute bottom-0 left-0 z-50">
-            <QRCode
+      <PusherProvider slug={`session-${session.id}`}>
+        <main
+          className="flex flex-col items-center justify-center h-full"
+          data-cy="Session"
+        >
+          <div ref={dropzoneRef} className="relative flex justify-center items-center h-full w-full overflow-hidden">
+            <QRCode 
               value={window.location.hostname + "/create?session=" + session?.id}
               logoImage={icon.src}
-              size={128}
+              size={256}
             />
+            {kudos == undefined || kudos.length == 0 ? (
+                <></>
+              ) : (
+                transitions((style, kudo) => ( kudo &&
+                    <animated.div 
+                      key={kudo.id} 
+                      className="absolute -translate-x-1/2 -translate-y-1/2"
+                      style={{...style}}
+                    >
+                      <KudoCard kudo={kudo.kudo} isPresentation={true}/>
+                    </animated.div>
+                ))
+            )}
+            <div className="absolute bottom-0 left-0 z-50">
+              <QRCode
+                value={window.location.hostname + "/create?session=" + session?.id}
+                logoImage={icon.src}
+                size={128}
+              />
+            </div>
           </div>
-        </div>
-      </main>
+        </main>
+      </PusherProvider>
     </>
   );
 };

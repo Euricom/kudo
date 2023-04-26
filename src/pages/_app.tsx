@@ -1,7 +1,6 @@
 import { type AppType } from "next/app";
 import { type Session } from "next-auth";
 import { SessionProvider } from "next-auth/react";
-import { PusherProvider } from '~/utils/pusher'
 
 import { api } from "~/utils/api";
 
@@ -22,33 +21,31 @@ const MyApp: AppType<{ session: Session | null }> = ({
   return (
     <SessionProvider session={session}>
       <Auth>
-        <PusherProvider>
-          <TitleProvider>
-            <UtilButtonsProvider>
-              <div className="h-screen w-full bg-base-200 dark:bg-base-300">
-                <Menu>
-                  <NavBar />
-                  <div className="flex-auto flex-shrink-0">
-                    <Component {...pageProps} />
-                    <ToastContainer
-                      position="top-right"
-                      autoClose={3000}
-                      hideProgressBar={false}
-                      newestOnTop={false}
-                      closeOnClick
-                      rtl={false}
-                      limit={5}
-                      pauseOnFocusLoss
-                      draggable
-                      pauseOnHover
-                      className=" mt-14" />
-                  </div>
-                  <Footer />
-                </Menu>
-              </div>
-            </UtilButtonsProvider>
-          </TitleProvider>
-        </PusherProvider>
+        <TitleProvider>
+          <UtilButtonsProvider>
+            <div className="h-screen w-full bg-base-200 dark:bg-base-300">
+              <Menu>
+                <NavBar />
+                <div className="flex-auto flex-shrink-0">
+                  <Component {...pageProps} />
+                  <ToastContainer
+                    position="top-right"
+                    autoClose={3000}
+                    hideProgressBar={false}
+                    newestOnTop={false}
+                    closeOnClick
+                    rtl={false}
+                    limit={5}
+                    pauseOnFocusLoss
+                    draggable
+                    pauseOnHover
+                    className=" mt-14" />
+                </div>
+                <Footer />
+              </Menu>
+            </div>
+          </UtilButtonsProvider>
+        </TitleProvider>
       </Auth>
     </SessionProvider>
   );

@@ -4,6 +4,7 @@ import {
 } from "~/server/api/trpc";
 import { boolean, object, string } from "zod";
 import { type Kudo, type Image } from "@prisma/client";
+import { pusherServerClient } from "~/server/pusher";
 
 const createKudoInput = object({
     image: string(),
@@ -39,8 +40,15 @@ const inputFlag = object({
 
 export const kudoRouter = createTRPCRouter({
 
-    getAllKudos: protectedProcedure.query(({ ctx }) => {
+    getAllKudos: protectedProcedure.query(async ({ ctx }) => {
         const kudo = ctx.prisma.kudo.findMany({})
+        
+        // await pusherServerClient.trigger(
+        //     `kudos`,
+        //     'new-question',
+        //     {}
+        // )
+        
         return kudo
     }),
 

@@ -23,7 +23,9 @@ const server = z.object({
   AZURE_AD_CLIENT_SECRET: z.string(),
   AZURE_AD_TENANT_ID: z.string(),
   SESSION_URL: z.string(),
+  PUSHER_APP_ID: z.string(),
   PUSHER_KEY: z.string(),
+  PUSHER_SECRET: z.string(),
   PUSHER_CLUSTER: z.string(),
 });
 
@@ -50,7 +52,9 @@ const processEnv = {
   AZURE_AD_CLIENT_SECRET: process.env.AZURE_AD_CLIENT_SECRET,
   AZURE_AD_TENANT_ID: process.env.AZURE_AD_TENANT_ID,
   SESSION_URL: process.env.SESSION_URL,
+  PUSHER_APP_ID: process.env.PUSHER_APP_ID,
   PUSHER_KEY: process.env.PUSHER_KEY,
+  PUSHER_SECRET: process.env.PUSHER_SECRET,
   PUSHER_CLUSTER: process.env.PUSHER_CLUSTER,
   // NEXT_PUBLIC_CLIENTVAR: process.env.NEXT_PUBLIC_CLIENTVAR,
 };

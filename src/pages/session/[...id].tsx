@@ -13,6 +13,7 @@ import { useRouter } from "next/router";
 import { useSession } from "next-auth/react";
 import { UserRole } from "~/types";
 import { useEffect } from "react";
+import { PusherProvider } from "~/utils/pusher";
 
 export function getServerSideProps(context: { query: { id: string } }) {
   return {
@@ -100,18 +101,20 @@ const Session: NextPage<{ id: string }> = ({ id }) => {
           <FiMonitor size={20} />
         </Link>
       </UtilButtonsContent>
-      <main
-        className="flex flex-col items-center justify-center"
-        data-cy="Session"
-      >
-        <div className="flex h-full flex-wrap justify-center gap-5 p-5">
-          {kudos == undefined || kudos.length == 0 ? (
-            <h1>No Kudos received Yet</h1>
-          ) : (
-            kudos.map((kudo) => <KudoCard key={kudo.id} kudo={kudo} />)
-          )}
-        </div>
-      </main>
+      <PusherProvider slug={`session-${session.id}`}>
+        <main
+          className="flex flex-col items-center justify-center"
+          data-cy="Session"
+        >
+          <div className="flex h-full flex-wrap justify-center gap-5 p-5">
+            {kudos == undefined || kudos.length == 0 ? (
+              <h1>No Kudos received Yet</h1>
+            ) : (
+              kudos.map((kudo) => <KudoCard key={kudo.id} kudo={kudo} />)
+            )}
+          </div>
+        </main>
+      </PusherProvider>
     </>
   );
 };

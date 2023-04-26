@@ -19,7 +19,7 @@ import { useSession } from "next-auth/react";
 import { type ImageData, UserRole } from "~/types";
 import { useRouter } from "next/router";
 import LoadingBar from "~/components/LoadingBar";
-import avatar from "../../contents/images/AnonymousPicture.jpg";
+import avatar from "~/../public/images/AnonymousPicture.jpg";
 import { toast } from "react-toastify";
 import { type TRPCError } from "@trpc/server";
 
@@ -38,6 +38,9 @@ const KudoDetail: NextPage<{ id: string }> = ({ id }) => {
 
   const kudoQuery = api.kudos.getKudoById.useQuery({ id: id });
   const { data: kudo, refetch: refetchKudo } = kudoQuery;
+  const sender = api.users.getUserById.useQuery({
+    id: kudo?.userId ?? "",
+  }).data;
   const imageQuery = api.kudos.getImageById.useQuery({
     id: kudo?.image ?? "error",
   });
@@ -78,7 +81,7 @@ const KudoDetail: NextPage<{ id: string }> = ({ id }) => {
       fetch("/api/images/" + (speaker?.id ?? "").toString())
         .then((res) => res.json())
         .then((json: ImageData) => setImgUrl(json.dataUrl))
-        .catch((e) => toast.error((e as Error).message));
+        .catch((e: Error) => toast.error(e.message));
   }, [kudo?.userId, speaker?.id]);
 
   async function handleclick() {
@@ -219,7 +222,7 @@ const KudoDetail: NextPage<{ id: string }> = ({ id }) => {
 
       <div className="flex h-full w-full flex-col items-center justify-center">
         <div className="aspect-[3/2] max-h-full w-full max-w-2xl">
-          <div className="relative aspect-[3/2] max-h-full w-full max-w-2xl bg-white">
+          <div className="relative aspect-[3/2] max-h-full w-full max-w-2xl overflow-hidden rounded-3xl bg-white">
             <Image
               className="shadow-2xl"
               src={image}

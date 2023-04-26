@@ -20,7 +20,7 @@ export function getServerSideProps(context: {
   return {
     props: {
       sess: context.query.session,
-      speaker: context.query.speaker,
+      speakerid: context.query.speaker,
       anonymous: context.query.anonymous,
     },
   };
@@ -28,11 +28,14 @@ export function getServerSideProps(context: {
 
 const Templates: NextPage<{
   sess: string;
-  speaker: string;
+  speakerid: string;
   anonymous: string;
-}> = ({ sess, speaker, anonymous }) => {
+}> = ({ sess, speakerid, anonymous }) => {
   const sessionQuery = api.sessions.getSessionById.useQuery({ id: sess });
   const session = sessionQuery.data;
+
+  const userQuery = api.users.getUserById.useQuery({ id: speakerid });
+  const speaker = userQuery.data;
   const router = useRouter();
 
   const templateQuery = api.templates.getAllTemplates.useQuery();
@@ -47,11 +50,11 @@ const Templates: NextPage<{
     toast.clearWaitingQueue();
     if (!sessionQuery.isLoading && !session) {
       toast.error("Session is incorrect", { delay: 500 });
-      router.replace("/create").catch((e) => toast.error((e as Error).message));
+      router.replace("/create").catch((e: Error) => toast.error(e.message));
     }
   }, [router, session, sessionQuery]);
 
-  useSessionSpeaker(sess, speaker, anonymous);
+  useSessionSpeaker(sess, speakerid, anonymous);
 
   if (
     sessionQuery.isLoading ||
@@ -83,14 +86,14 @@ const Templates: NextPage<{
         </h1>
         <h1 data-cy="speaker" className="lg:inline">
           {" "}
-          Speaker: {speaker}
+          Speaker: {speaker?.displayName}
         </h1>
       </div>
       <main className="flex flex-col items-center justify-center">
         <div className="mb-8 flex flex-wrap justify-center gap-5 px-5 md:mb-28">
           {templates?.map((x: Template) => (
             <Link
-              className="card aspect-[3/2] h-52 w-80 rounded-none bg-white text-gray-800 shadow-xl"
+              className="card aspect-[3/2] h-52 w-80 overflow-hidden rounded-xl bg-white text-gray-800 shadow-xl"
               data-id={x.id}
               data-cy="template"
               href={{ pathname: "/create/editor", query: { template: x.id } }}

@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { type ImageData, type UserWCount } from "~/types";
 import Image from "next/image";
-import avatar from "../../contents/images/AnonymousPicture.jpg";
+import avatar from "~/../public/images/AnonymousPicture.jpg";
 import { useEffect, useState } from "react";
 import { toast } from "react-toastify";
 
@@ -12,7 +12,7 @@ const SpeakerCard = ({ user }: { user: UserWCount }) => {
     fetch("/api/images/" + user.user.id)
       .then((res) => res.json())
       .then((json: ImageData) => setImgUrl(json.dataUrl))
-      .catch((e) => toast.error((e as Error).message));
+      .catch((e: Error) => toast.error(e.message));
   }, [user]);
 
   return (

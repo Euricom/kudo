@@ -2,7 +2,7 @@ import Link from "next/link";
 import { type Notification } from "@prisma/client";
 import { BsFillCircleFill } from "react-icons/bs";
 import { api } from "~/utils/api";
-import avatar from "~/contents/images/euricomLogo.png";
+import avatar from "~/../public/images/AnonymousPicture.jpg";
 import { useEffect, useState } from "react";
 import { type ImageData } from "~/types";
 import Image from "next/image";
@@ -41,7 +41,7 @@ const NotificationCard = ({ notification }: { notification: Notification }) => {
       fetch("/api/images/" + notification.photo)
         .then((res) => res.json())
         .then((json: ImageData) => setImgUrl(json.dataUrl))
-        .catch((e) => toast.error((e as Error).message));
+        .catch((e: Error) => toast.error(e.message));
     }
   }, [notification, notification.photo]);
 

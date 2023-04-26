@@ -50,6 +50,7 @@ export type Session = {
   title: string;
   date: string;
   speakerId: string;
+  speaker?: User;
 };
 
 export type SessionArray = {
@@ -95,8 +96,8 @@ export type UserWCount = {
 };
 
 export type SessionContextValue = {
-  session: string;
-  speaker: string;
+  session?: string;
+  speaker?: string;
   anonymous: boolean;
 };
 

@@ -254,7 +254,6 @@ const KonvaCanvas = ({
       x: -(stageDimensions?.width ?? 0) / 2,
       y: -(stageDimensions?.height ?? 0) / 2,
     });
-    console.log("testCenterLayer");
   }, [setStage, stageDimensions]);
 
   useEffect(() => {
@@ -270,11 +269,9 @@ const KonvaCanvas = ({
   }, [editorFunction, undo, saveTemplate]);
 
   useEffect(() => {
-    console.log(stageDimensions);
     if (!template || !stageDimensions.height) {
       return;
     }
-    console.log("testFillTemp");
     const templateShapes = (template.content as unknown as Shapes[]) ?? [];
     history.unshift(...templateShapes);
     setShapes(templateShapes);
@@ -285,7 +282,7 @@ const KonvaCanvas = ({
       <div
         ref={containerRef}
         id="kudo"
-        className="aspect-[3/2] max-h-full w-full max-w-xl bg-neutral lg:max-w-3xl"
+        className="aspect-[3/2] max-h-full w-full max-w-xl overflow-hidden rounded-3xl bg-neutral shadow-2xl lg:max-w-3xl"
       >
         <Stage
           ref={stageRef}

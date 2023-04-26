@@ -1,8 +1,8 @@
 import { type NextPage } from "next";
 import Head from "next/head";
 import FAB from "~/components/navigation/FAB";
-import { GrNext } from "react-icons/gr"
-import { FcPodiumWithSpeaker, FcPodiumWithAudience } from "react-icons/fc"
+import { GrNext } from "react-icons/gr";
+import { FcPodiumWithSpeaker, FcPodiumWithAudience } from "react-icons/fc";
 import Select from "~/components/input/Select";
 import { NavigationBarContent } from "~/components/navigation/NavBarTitle";
 import { useState } from "react";
@@ -13,47 +13,57 @@ import { type Session, type User } from "~/types";
 import { UtilButtonsContent } from "~/hooks/useUtilButtons";
 import LoadingBar from "~/components/LoadingBar";
 
-export function getServerSideProps(context: { query: { session: string }; }) {
-
+export function getServerSideProps(context: { query: { session: string } }) {
   return {
     props: {
       sess: context.query.session ?? "",
-    }
-  }
+    },
+  };
 }
 
 const New: NextPage<{ sess: string }> = ({ sess }) => {
-  const users = api.users.getAllUsers.useQuery().data
+  const users = api.users.getAllUsers.useQuery().data;
   const [session, setSession] = useState<Session>();
   const [speaker, setSpeaker] = useState<User>();
   const [anonymous, setAnonymous] = useState<boolean>(false);
-  const me = useSession().data?.user.id
+  const me = useSession().data?.user.id;
 
-  const sessionsQuery = api.sessions.getAll.useQuery()
-  const sessions = sessionsQuery.data
+  const sessionsQuery = api.sessions.getAll.useQuery();
+  const sessions = sessionsQuery.data;
 
   useEffect(() => {
     if (!sessionsQuery.isLoading && sessions) {
-      setSession(sessions?.find(s => s.id === sess))
+      setSession(sessions?.find((s) => s.id === sess));
     }
-  }, [sess, sessions, sessionsQuery.isLoading])
+  }, [sess, sessions, sessionsQuery.isLoading]);
 
   if (sessionsQuery.isLoading || !sessions || !users) {
     return <LoadingBar />;
   }
 
   const visibleSpeakers = () => {
-    const visible = users.filter(x => (x.id !== me)).filter(x => (sessions.filter(x => x.title.toLowerCase().includes(session?.title.toLowerCase() ?? ""))).map(x => x.speakerId).includes(x.id))
+    const visible = users
+      .filter((x) => x.id !== me)
+      .filter((x) =>
+        sessions
+          .filter((x) =>
+            x.title.toLowerCase().includes(session?.title.toLowerCase() ?? "")
+          )
+          .map((x) => x.speakerId)
+          .includes(x.id)
+      );
     if (visible.length === 1 && speaker !== visible[0]) {
       setSpeaker(visible[0]);
     }
-    return visible
-  }
+    return visible;
+  };
 
-  const visibibleSessions = sessions.filter(ses => ses.speakerId !== me).filter(session => speaker ? speaker.id === session.speakerId : true)
+  const visibibleSessions = sessions
+    .filter((ses) => ses.speakerId !== me)
+    .filter((session) => (speaker ? speaker.id === session.speakerId : true));
 
   function onclick() {
-    setAnonymous(!anonymous)
+    setAnonymous(!anonymous);
   }
 
   return (
@@ -72,15 +82,65 @@ const New: NextPage<{ sess: string }> = ({ sess }) => {
 
       <main className="flex flex-col items-center justify-center gap-4">
         <FcPodiumWithAudience size={100} />
-        <Select data-cy="SelectSession" value={session?.title} onChange={(e: React.ChangeEvent<HTMLInputElement>): void => setSession(sessions.find(s => s.title === e.target.value) ? sessions.find(s => s.title === e.target.value) : { id: "0", title: e.target.value, date: "0", speakerId: "no" })} label="Session" options={visibibleSessions} displayLabel="title" valueLabel="id" />
+        <Select
+          data-cy="SelectSession"
+          value={session?.title}
+          onChange={(e: React.ChangeEvent<HTMLInputElement>): void =>
+            setSession(
+              sessions.find((s) => s.title === e.target.value)
+                ? sessions.find((s) => s.title === e.target.value)
+                : { id: "0", title: e.target.value, date: "0", speakerId: "no" }
+            )
+          }
+          label="Session"
+          options={visibibleSessions}
+          displayLabel="title"
+          valueLabel="id"
+        />
         <FcPodiumWithSpeaker size={100} />
-        <Select data-cy="SelectSpeaker" value={speaker?.displayName} onChange={(e: React.ChangeEvent<HTMLInputElement>): void => setSpeaker(users.find(u => u.displayName === e.target.value))} label="Speaker" options={visibleSpeakers()} displayLabel="displayName" valueLabel="id" />
+        <Select
+          data-cy="SelectSpeaker"
+          value={speaker?.displayName}
+          onChange={(e: React.ChangeEvent<HTMLInputElement>): void =>
+            setSpeaker(users.find((u) => u.displayName === e.target.value))
+          }
+          label="Speaker"
+          options={visibleSpeakers()}
+          displayLabel="displayName"
+          valueLabel="id"
+        />
         <label className="label cursor-pointer gap-5">
-          <input type="checkbox" checked={anonymous} className="checkbox" onChange={onclick} />
+          <input
+            type="checkbox"
+            checked={anonymous}
+            className="checkbox"
+            onChange={onclick}
+          />
           <span className="label-text">Hide my name.</span>
         </label>
       </main>
-      <FAB text={"Next"} icon={<GrNext />} urlWithParams={{ pathname: "/create/templates", query: { session: session?.id, speaker: speaker?.displayName, anonymous: anonymous.toString() }, auth: null, hash: null, host: null, hostname: null, href: "/create/templates", path: null, protocol: null, search: null, slashes: null, port: null }} />
+      <FAB
+        text={"Next"}
+        icon={<GrNext />}
+        urlWithParams={{
+          pathname: "/create/templates",
+          query: {
+            session: session?.id,
+            speaker: speaker?.id,
+            anonymous: anonymous.toString(),
+          },
+          auth: null,
+          hash: null,
+          host: null,
+          hostname: null,
+          href: "/create/templates",
+          path: null,
+          protocol: null,
+          search: null,
+          slashes: null,
+          port: null,
+        }}
+      />
     </>
   );
 };

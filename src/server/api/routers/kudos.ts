@@ -1,4 +1,5 @@
 import { createTRPCRouter, protectedProcedure } from "~/server/api/trpc";
+import { TRPCError } from "@trpc/server";
 import { boolean, object, string } from "zod";
 import { type Kudo, type Image } from "@prisma/client";
 import {
@@ -126,7 +127,11 @@ export const kudoRouter = createTRPCRouter({
       });
 
       if (kudo == undefined) {
-        throw new Error();
+        throw new TRPCError({
+          code: "INTERNAL_SERVER_ERROR",
+          message:
+            "An unexpected error occurred while deleting this kudo, please try again later.",
+        });
       }
     }),
 
@@ -140,7 +145,11 @@ export const kudoRouter = createTRPCRouter({
       });
 
       if (image == undefined) {
-        throw new Error();
+        throw new TRPCError({
+          code: "INTERNAL_SERVER_ERROR",
+          message:
+            "An unexpected error occurred while deleting this kudo, please try again later.",
+        });
       }
     }),
 
@@ -212,7 +221,11 @@ export const kudoRouter = createTRPCRouter({
           speaker.id
         );
       } else {
-        throw new Error();
+        throw new TRPCError({
+          code: "INTERNAL_SERVER_ERROR",
+          message:
+            "An unexpected error occurred with your like, please try again later.",
+        });
       }
     }),
   commentKudoById: protectedProcedure
@@ -241,7 +254,11 @@ export const kudoRouter = createTRPCRouter({
           speaker.id
         );
       } else {
-        throw new Error();
+        throw new TRPCError({
+          code: "INTERNAL_SERVER_ERROR",
+          message:
+            "An unexpected error occurred with your comment, please try again later.",
+        });
       }
     }),
 
@@ -256,22 +273,25 @@ export const kudoRouter = createTRPCRouter({
           flagged: input.flagged,
         },
       });
-      if (kudo) {
-        const sender = await findUserById(kudo.userId);
-        const session = await getSessionById(kudo.sessionId);
-        const speaker = await findUserById(session.speakerId);
+      // if (kudo) {
+      //   const sender = await findUserById(kudo.userId);
+      //   const session = await getSessionById(kudo.sessionId);
+      //   const speaker = await findUserById(session.speakerId);
 
-        sendnotificationsToAdmins(
-          ctx.prisma,
-          "Kudo send by " +
-            sender.displayName +
-            " is reported by " +
-            speaker.displayName,
-          "/kudo/" + kudo.id,
-          sender.id
-        );
-      } else {
-        throw new Error();
-      }
+      //   sendnotificationsToAdmins(
+      //     ctx.prisma,
+      //     "Kudo send by " +
+      //       sender.displayName +
+      //       " is reported by " +
+      //       speaker.displayName,
+      //     "/kudo/" + kudo.id,
+      //     sender.id
+      //   );
+      // } else {
+      throw new TRPCError({
+        code: "INTERNAL_SERVER_ERROR",
+        message: "Een probleem",
+      });
+      // }
     }),
 });

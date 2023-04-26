@@ -11,6 +11,7 @@ import { useRouter } from "next/router";
 import { useSession } from "next-auth/react";
 import { useEffect } from "react";
 import { UserRole } from "~/types";
+import { toast } from "react-toastify";
 
 export function getServerSideProps(context: { query: { id: string } }) {
   return {
@@ -21,19 +22,21 @@ export function getServerSideProps(context: { query: { id: string } }) {
 }
 
 const Speaker: NextPage<{ id: string }> = ({ id }) => {
-  const router = useRouter()
-  const user = useSession().data?.user
-  const sessionsQuery = api.sessions.getSessionsBySpeaker.useQuery({ id: id ?? "error" })
-  const sessions = sessionsQuery.data
-  
-  const speaker = api.users.getUserById.useQuery({ id: id }).data
+  const router = useRouter();
+  const user = useSession().data?.user;
+  const sessionsQuery = api.sessions.getSessionsBySpeaker.useQuery({
+    id: id ?? "error",
+  });
+  const sessions = sessionsQuery.data;
+
+  const speaker = api.users.getUserById.useQuery({ id: id }).data;
 
   useEffect(() => {
-    if(user?.role !== UserRole.ADMIN) 
-      router.replace("/403").catch(console.error)
-  }, [user, router])
+    if (user?.role !== UserRole.ADMIN)
+      router.replace("/403").catch((e) => toast.error((e as Error).message));
+  }, [user, router]);
 
-  if (sessionsQuery.isLoading||!sessions) {
+  if (sessionsQuery.isLoading || !sessions) {
     return <LoadingBar />;
   }
 
@@ -45,12 +48,12 @@ const Speaker: NextPage<{ id: string }> = ({ id }) => {
         <link rel="icon" href="/favicon.ico" />
       </Head>
       <NavigationBarContent>
-        Sessions: {speaker?.displayName} 
+        Sessions: {speaker?.displayName}
       </NavigationBarContent>
       <UtilButtonsContent>
         <></>
-      </UtilButtonsContent >
-      <main className="flex flex-col items-center justify-center h-full">
+      </UtilButtonsContent>
+      <main className="flex h-full flex-col items-center justify-center">
         <SessionList sessions={sessions} />
       </main>
       <FAB text={"Create Kudo"} icon={<GrAdd />} url="/create" />

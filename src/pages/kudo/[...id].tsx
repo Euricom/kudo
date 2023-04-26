@@ -20,6 +20,8 @@ import { type ImageData, UserRole } from "~/types";
 import { useRouter } from "next/router";
 import LoadingBar from "~/components/LoadingBar";
 import avatar from "../../contents/images/AnonymousPicture.jpg";
+import { toast } from "react-toastify";
+import { type TRPCError } from "@trpc/server";
 
 export function getServerSideProps(context: { query: { id: string } }) {
   return {
@@ -73,11 +75,11 @@ const KudoDetail: NextPage<{ id: string }> = ({ id }) => {
 
   useEffect(() => {
     if (kudo?.userId)
-      fetch("/api/images/" + kudo?.userId)
+      fetch("/api/images/" + (speaker?.id ?? "").toString())
         .then((res) => res.json())
         .then((json: ImageData) => setImgUrl(json.dataUrl))
-        .catch((e) => console.log(e));
-  }, [kudo?.userId]);
+        .catch((e) => toast.error((e as Error).message));
+  }, [kudo?.userId, speaker?.id]);
 
   async function handleclick() {
     if (user?.id === session?.speakerId && kudo && kudo.id) {
@@ -93,7 +95,7 @@ const KudoDetail: NextPage<{ id: string }> = ({ id }) => {
 
         await refetchKudo();
       } catch (e) {
-        console.log(e);
+        toast.error((e as TRPCError).message);
       }
     }
   }
@@ -109,7 +111,7 @@ const KudoDetail: NextPage<{ id: string }> = ({ id }) => {
         setComment("");
         await refetchKudo();
       } catch (e) {
-        console.log(e);
+        toast.error((e as TRPCError).message);
       }
     }
   }
@@ -120,7 +122,7 @@ const KudoDetail: NextPage<{ id: string }> = ({ id }) => {
       user?.id !== kudo?.userId &&
       user?.id !== session?.speakerId
     )
-      router.replace("/403").catch(console.error);
+      router.replace("/403").catch(toast.error);
   }, [
     user,
     router,
@@ -154,7 +156,7 @@ const KudoDetail: NextPage<{ id: string }> = ({ id }) => {
           flagged: !kudo?.flagged,
         });
       } catch (e) {
-        console.log(e);
+        toast.error((e as TRPCError).message);
       }
     } else if (user?.role === UserRole.ADMIN && kudo?.flagged === true) {
       try {
@@ -162,10 +164,10 @@ const KudoDetail: NextPage<{ id: string }> = ({ id }) => {
           id: kudo?.id ?? "error",
           flagged: !kudo?.flagged,
         });
-        await refetchKudo();
       } catch (e) {
-        console.log(e);
+        toast.error((e as TRPCError).message);
       }
+      await refetchKudo();
     }
   }
 

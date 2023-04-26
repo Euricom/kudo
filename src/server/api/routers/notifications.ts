@@ -1,5 +1,6 @@
 import { createTRPCRouter, protectedProcedure } from "~/server/api/trpc";
 import { object, string } from "zod";
+import { TRPCError } from "@trpc/server";
 
 const inputGetById = object({
   id: string(),
@@ -40,7 +41,10 @@ export const notificationRouter = createTRPCRouter({
       });
 
       if (notification == undefined) {
-        throw new Error();
+        throw new TRPCError({
+          code: "INTERNAL_SERVER_ERROR",
+          message: "An unexpected error occurred, please try again later.",
+        });
       }
     }),
 

@@ -153,19 +153,19 @@ async function main() {
             {
                 message: 'Good job, is Read',
                 read: true,
-                sessionId: "2",
+                link: "/session/2",
                 userId: "18d332af-2d5b-49e5-8c42-9168b3910f97",
                 photo: "5e1378cf-21d2-425d-97f2-f5cf91d9c0c2",
             },
             {
                 message: 'Not Me',
-                sessionId: "5",
+                link: "/session/5",
                 userId: "notMe",
                 photo: "cdb23f58-65db-4b6b-b132-cf2d13d08e76",
             },
             {
                 message: 'Terrific!, not read',
-                sessionId: "7",
+                link: "/session/7",
                 userId: "18d332af-2d5b-49e5-8c42-9168b3910f97",
                 photo: "63061de7-0a1f-471f-b9bd-5db02536157b",
             }

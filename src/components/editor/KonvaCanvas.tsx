@@ -43,8 +43,9 @@ const KonvaCanvas = ({
   const [selectedId, selectShape] = useState<string | null>(null);
   const [history] = useState<Shapes[]>([]);
 
-  const createTemplate = api.templates.createTemplate.useMutation();
-  const createImage = api.kudos.createKudoImage.useMutation();
+  const { mutateAsync: createTemplate } =
+    api.templates.createTemplate.useMutation();
+  const { mutateAsync: createImage } = api.kudos.createKudoImage.useMutation();
 
   const [line, setLine] = useState<Shapes[]>([]);
 
@@ -164,10 +165,8 @@ const KonvaCanvas = ({
   const saveTemplate = useCallback(async () => {
     setFunction(EditorFunctions.None);
     selectShape(null);
-    const image = await createImage.mutateAsync({
-      dataUrl: stageRef.current.toDataURL(),
-    });
-    await createTemplate.mutateAsync({
+    const image = await createImage({ dataUrl: stageRef.current.toDataURL() });
+    await createTemplate({
       name: v4(),
       color: template.color,
       image: image.id,

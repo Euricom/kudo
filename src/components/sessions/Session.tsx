@@ -4,6 +4,7 @@ import { api } from "~/utils/api";
 import Image from "next/image";
 import avatar from "~/../public/images/AnonymousPicture.jpg";
 import { useEffect, useState } from "react";
+import { toast } from "react-toastify";
 
 const SessionCard = ({ session }: SessionProps) => {
   const speaker: User | undefined = api.users.getUserById.useQuery({
@@ -16,7 +17,7 @@ const SessionCard = ({ session }: SessionProps) => {
       fetch("/api/images/" + speaker.id)
         .then((res) => res.json())
         .then((json: ImageData) => setImgUrl(json.dataUrl))
-        .catch((e) => console.log(e));
+        .catch((e: Error) => toast.error(e.message));
     }
   }, [speaker]);
 

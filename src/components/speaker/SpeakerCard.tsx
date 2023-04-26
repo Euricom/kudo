@@ -3,6 +3,7 @@ import { type ImageData, type UserWCount } from "~/types";
 import Image from "next/image";
 import avatar from "~/../public/images/AnonymousPicture.jpg";
 import { useEffect, useState } from "react";
+import { toast } from "react-toastify";
 
 const SpeakerCard = ({ user }: { user: UserWCount }) => {
   const [imgUrl, setImgUrl] = useState<string>(avatar.src);
@@ -11,7 +12,7 @@ const SpeakerCard = ({ user }: { user: UserWCount }) => {
     fetch("/api/images/" + user.user.id)
       .then((res) => res.json())
       .then((json: ImageData) => setImgUrl(json.dataUrl))
-      .catch((e) => console.log(e));
+      .catch((e: Error) => toast.error(e.message));
   }, [user]);
 
   return (

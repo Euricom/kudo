@@ -10,6 +10,7 @@ import ThemeButton from "~/components/input/ThemeButton";
 import { api } from "~/utils/api";
 import Logo from "~/../public/images/euricomLogo.png";
 import Image from "next/image";
+import Link from "next/link";
 
 function useVisibleEndNavbarActions() {
   const router = useRouter();
@@ -80,7 +81,7 @@ const NavBar = () => {
             <x.Component key={x.key} />
           ))}
           <div className="hidden items-center lg:inline-flex">
-            <div className="dropdown dropdown-end">
+            <div className="dropdown-end dropdown">
               <label
                 tabIndex={0}
                 className="btn-ghost btn-circle btn m-1"
@@ -114,7 +115,6 @@ const NavBar = () => {
 };
 
 function NotificationIcon() {
-  const router = useRouter();
   const user = useSession().data?.user;
   const amount =
     api.notifications.getAmountOfNotificationsById.useQuery({
@@ -122,22 +122,20 @@ function NotificationIcon() {
     }).data ?? 0;
   return (
     <>
-      <button
+      <Link
         className="btn-ghost btn-circle btn"
         data-cy="notificationButton"
-        onClick={() => void router.push("/notifications")}
+        href="/notifications"
       >
         <div className="indicator">
           <FiBell size={20} />
-          {amount > 0 ? (
+          {amount > 0 && (
             <span className="badge-error badge badge-sm indicator-item border-collapse border border-neutral">
               {amount}
             </span>
-          ) : (
-            <></>
           )}
         </div>
-      </button>
+      </Link>
     </>
   );
 }

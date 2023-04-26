@@ -6,9 +6,11 @@ import avatar from "~/../public/images/AnonymousPicture.jpg";
 import { useEffect, useState } from "react";
 import { type ImageData } from "~/types";
 import Image from "next/image";
+import { toast } from "react-toastify";
 
 const NotificationCard = ({ notification }: { notification: Notification }) => {
-  const readNotification = api.notifications.readNotification.useMutation();
+  const { mutateAsync: readNotification } =
+    api.notifications.readNotification.useMutation();
   const [imgUrl, setImgUrl] = useState<string>(avatar.src);
 
   const getTimeAgo = () => {
@@ -39,13 +41,13 @@ const NotificationCard = ({ notification }: { notification: Notification }) => {
       fetch("/api/images/" + notification.photo)
         .then((res) => res.json())
         .then((json: ImageData) => setImgUrl(json.dataUrl))
-        .catch((e) => console.log(e));
+        .catch((e: Error) => toast.error(e.message));
     }
   }, [notification, notification.photo]);
 
   async function handleRead() {
     if (!notification.read) {
-      await readNotification.mutateAsync({ id: notification.id });
+      await readNotification({ id: notification.id });
     }
   }
   return (
@@ -55,13 +57,7 @@ const NotificationCard = ({ notification }: { notification: Notification }) => {
         onClick={() => void handleRead()}
         className="card h-fit w-full bg-base-100 hover:bg-base-200"
         data-cy="Notification"
-        href={
-          notification.sessionId
-            ? "/session/" + notification.sessionId.toString()
-            : notification.kudoId
-            ? "/kudo/" + notification.kudoId.toString()
-            : "/"
-        }
+        href={notification.link}
       >
         <div className="card-body py-8 px-0 align-middle md:px-2">
           <div className="flex w-full gap-3">

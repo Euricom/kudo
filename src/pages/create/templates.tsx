@@ -50,7 +50,7 @@ const Templates: NextPage<{
     toast.clearWaitingQueue();
     if (!sessionQuery.isLoading && !session) {
       toast.error("Session is incorrect", { delay: 500 });
-      router.replace("/create").catch(console.error);
+      router.replace("/create").catch((e: Error) => toast.error(e.message));
     }
   }, [router, session, sessionQuery]);
 

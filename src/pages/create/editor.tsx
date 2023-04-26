@@ -28,6 +28,8 @@ import { type ColorResult, HuePicker } from "react-color";
 import { EditorFunctions, type EmojiObject, Fonts, UserRole } from "~/types";
 import data from "@emoji-mart/data";
 import Picker from "@emoji-mart/react";
+import { toast } from "react-toastify";
+import { type TRPCError } from "@trpc/server";
 
 export function getServerSideProps(context: { query: { template: string } }) {
   return {
@@ -47,15 +49,10 @@ const Editor: NextPage<{ id: string }> = ({ id }) => {
   const router = useRouter();
   const user = useSession().data?.user;
   //API
-  const createKudo = api.kudos.createKudo.useMutation();
-  const createImage = api.kudos.createKudoImage.useMutation();
-  const sendNotification = api.notifications.sendnotification.useMutation();
+  const { mutateAsync: createKudo } = api.kudos.createKudo.useMutation();
+  const { mutateAsync: createImage } = api.kudos.createKudoImage.useMutation();
   const templateQuery = api.templates.getTemplateById.useQuery({ id: id });
   const template = templateQuery.data;
-  const sessionQuery = api.sessions.getSessionById.useQuery({
-    id: session ?? "error",
-  });
-  const sessionTitle = sessionQuery.data?.title;
   //UseStates
   const [selectedButton, setSelectedButton] = useState<EditorFunctions>();
   const [stage, setStage] = useState<Konva.Stage>();
@@ -65,14 +62,7 @@ const Editor: NextPage<{ id: string }> = ({ id }) => {
   const [thickness, setThickness] = useState<number>(5);
   const [selectedEmoji, setSelectedEmoji] = useState<EmojiObject>();
 
-  if (
-    templateQuery.isLoading ||
-    sessionQuery.isLoading ||
-    !user ||
-    !session ||
-    !speaker ||
-    !template
-  ) {
+  if (templateQuery.isLoading || !user || !session || !speaker || !template) {
     return <LoadingBar />;
   }
 
@@ -95,29 +85,18 @@ const Editor: NextPage<{ id: string }> = ({ id }) => {
     if (!stage) {
       return;
     }
-    if (user && user.id && user.name && session && speaker && sessionTitle)
+    if (user && user.id)
       try {
-        const image = await createImage.mutateAsync({
-          dataUrl: stage.toDataURL(),
-        });
-        const kudo = await createKudo.mutateAsync({
+        const image = await createImage({ dataUrl: stage.toDataURL() });
+        await createKudo({
           image: image.id,
           sessionId: session,
           userId: user.id,
           anonymous: anonymous,
         });
-        await sendNotification.mutateAsync({
-          message:
-            user.name.toString() +
-            " sent you a kudo for your session about " +
-            sessionTitle.toString(),
-          userId: speaker,
-          kudoId: kudo.id,
-          photo: user.id,
-        });
         await router.replace("/out");
       } catch (e) {
-        console.log(e);
+        toast.error((e as TRPCError).message);
       }
   };
 

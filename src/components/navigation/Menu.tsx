@@ -4,6 +4,7 @@ import { type ImageData, type MenuProps } from "~/types";
 import { signOut, useSession } from "next-auth/react";
 import ThemeButton from "~/components/input/ThemeButton";
 import avatar from "~/../public/images/AnonymousPicture.jpg";
+import { toast } from "react-toastify";
 
 const Menu = ({ children }: MenuProps) => {
   const userId: string = useSession().data?.user.id ?? "";
@@ -13,7 +14,7 @@ const Menu = ({ children }: MenuProps) => {
     fetch("/api/images/" + userId)
       .then((res) => res.json())
       .then((json: ImageData) => setImgUrl(json.dataUrl))
-      .catch((e) => console.log(e));
+      .catch((e: Error) => toast.error(e.message));
   }, [userId]);
 
   const user = useSession().data?.user;

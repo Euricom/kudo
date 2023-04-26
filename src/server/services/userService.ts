@@ -1,84 +1,113 @@
-
 import { env } from "~/env.mjs";
 import * as msal from "@azure/msal-node";
-import { type UserWCount, type AADResponseUsers, type User, type SessionArray } from "~/types";
+import {
+  type UserWCount,
+  type AADResponseUsers,
+  type User,
+  type SessionArray,
+} from "~/types";
 import { type PrismaClient } from "@prisma/client";
+import { TRPCError } from "@trpc/server";
 
 const msalConfig = {
-    auth: {
-        clientId: env.AZURE_AD_CLIENT_ID,
-        authority: `https://login.microsoftonline.com/${env.AZURE_AD_TENANT_ID}/`,
-        clientSecret: env.AZURE_AD_CLIENT_SECRET,
-    },
+  auth: {
+    clientId: env.AZURE_AD_CLIENT_ID,
+    authority: `https://login.microsoftonline.com/${env.AZURE_AD_TENANT_ID}/`,
+    clientSecret: env.AZURE_AD_CLIENT_SECRET,
+  },
 };
 const tokenRequest = {
-    scopes: ['https://graph.microsoft.com/.default']
+  scopes: ["https://graph.microsoft.com/.default"],
 };
 
 const getToken = async () => {
-    const authenticationResult: msal.AuthenticationResult | null = await new msal.ConfidentialClientApplication(
-        msalConfig
+  const authenticationResult: msal.AuthenticationResult | null =
+    await new msal.ConfidentialClientApplication(
+      msalConfig
     ).acquireTokenByClientCredential(tokenRequest);
 
-    const accessToken = authenticationResult?.accessToken
+  const accessToken = authenticationResult?.accessToken;
 
-    if (!accessToken) {
-        throw new Error()
-    }
-    const options = {
-        headers: {
-            Authorization: `Bearer ${accessToken}`
-        },
-    };
-    return options
-}
-
+  if (!accessToken) {
+    throw new TRPCError({
+      code: "INTERNAL_SERVER_ERROR",
+      message: "An unexpected error occurred, please try again later.",
+    });
+  }
+  const options = {
+    headers: {
+      Authorization: `Bearer ${accessToken}`,
+    },
+  };
+  return options;
+};
 
 export const findAllUsers = async (): Promise<User[]> => {
-    const options = await getToken()
-    let users: User[] = []
-    let url = 'https://graph.microsoft.com/v1.0/users'
-    while (url != undefined) {
-        const result: AADResponseUsers = await fetch(url, options).then(r => r.json()) as AADResponseUsers
-        users = users.concat(result.value)
-        url = result['@odata.nextLink'];
-    }
-    return users
+  const options = await getToken();
+  let users: User[] = [];
+  let url = "https://graph.microsoft.com/v1.0/users";
+  while (url != undefined) {
+    const result: AADResponseUsers = (await fetch(url, options).then((r) =>
+      r.json()
+    )) as AADResponseUsers;
+    users = users.concat(result.value);
+    url = result["@odata.nextLink"];
+  }
+  return users;
 };
 
 export const findUserById = async (id: string): Promise<User> => {
-    const options = await getToken()
-    const user: User = await fetch('https://graph.microsoft.com/v1.0/users/' + id, options).then(r => r.json()) as User
-    return user
+  const options = await getToken();
+  const user: User = (await fetch(
+    "https://graph.microsoft.com/v1.0/users/" + id,
+    options
+  ).then((r) => r.json())) as User;
+  return user;
 };
 
 export const findUserByName = async (id: string): Promise<User | undefined> => {
-    const users = await findAllUsers()
-    return users.find(user => user.displayName === id)
+  const users = await findAllUsers();
+  return users.find((user) => user.displayName === id);
 };
 
-export const findRelevantUsers = async (ctx: { prisma: PrismaClient }): Promise<UserWCount[]> => {
-    const users = await findAllUsers()
-    const kudos = await ctx.prisma.kudo.findMany({})
-    const sessions = await fetch(`${env.SESSION_URL}`).then(result => result.json()) as SessionArray
+export const findRelevantUsers = async (ctx: {
+  prisma: PrismaClient;
+}): Promise<UserWCount[]> => {
+  const users = await findAllUsers();
+  const kudos = await ctx.prisma.kudo.findMany({});
+  const sessions = (await fetch(`${env.SESSION_URL}`).then((result) =>
+    result.json()
+  )) as SessionArray;
 
-    const usersWcount = users.map((user) => {
-        return {
-            user: user,
-            sessionCount: sessions.sessions?.filter(session => session.speakerId === user.id).length ?? 0,
-            sendKudoCount: kudos?.filter(kudo => kudo.userId === user.id).length ?? 0,
-            receiveKudoCount: kudos?.filter(kudo => kudo.userId === user.id).length ?? 0,
-        }
-    })
+  const usersWcount = users.map((user) => {
+    return {
+      user: user,
+      sessionCount:
+        sessions.sessions?.filter((session) => session.speakerId === user.id)
+          .length ?? 0,
+      sendKudoCount:
+        kudos?.filter((kudo) => kudo.userId === user.id).length ?? 0,
+      receiveKudoCount:
+        kudos?.filter((kudo) => kudo.userId === user.id).length ?? 0,
+    };
+  });
 
-    return usersWcount.filter(user => user.sessionCount > 0 || user.sendKudoCount > 0 || user.receiveKudoCount > 0)
+  return usersWcount.filter(
+    (user) =>
+      user.sessionCount > 0 ||
+      user.sendKudoCount > 0 ||
+      user.receiveKudoCount > 0
+  );
 };
 
 export const getImageById = async (id: string) => {
-    if (!id) {
-        return
-    }
-    const options = await getToken()
-    const imageRes = await fetch('https://graph.microsoft.com/v1.0/users/' + id.toString() + '/photo/$value', options);
-    return imageRes
+  if (!id) {
+    return;
+  }
+  const options = await getToken();
+  const imageRes = await fetch(
+    "https://graph.microsoft.com/v1.0/users/" + id.toString() + "/photo/$value",
+    options
+  );
+  return imageRes;
 };

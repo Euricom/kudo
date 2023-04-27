@@ -5,6 +5,7 @@ import { env } from "~/env.mjs";
 
 const inputSendMessage = object({
   text: string(),
+  channel: string(),
 });
 
 interface SlackResponse {
@@ -24,7 +25,7 @@ export const slackRouter = createTRPCRouter({
       const response = await axios.post(
         url,
         {
-          channel: "#random",
+          channel: input.channel,
           text: input.text,
         },
         {

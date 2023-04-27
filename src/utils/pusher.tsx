@@ -7,6 +7,7 @@ import Pusher from 'pusher-js'
 import { create } from 'zustand'
 import { type Session } from '~/types'
 import { type Kudo } from '@prisma/client'
+import { useSession } from 'next-auth/react'
 
 interface PusherZustandStore {
   pusherClient: Pusher
@@ -16,18 +17,17 @@ interface PusherZustandStore {
   sessions: Session[]
 }
 
-const createPusherStore = (slug: string) => {
+const createPusherStore = (slug: string, user: string) => {
   let pusherClient: Pusher
   if (Pusher.instances.length) {
     pusherClient = Pusher.instances[0] as Pusher
     pusherClient.connect()
   } else {
-    const randomUserId = `random-user-id:${Math.random().toFixed(7)}`
-    pusherClient = new Pusher(process.env.PUSHER_KEY!, {
+    pusherClient = new Pusher("b5ffe55105cad490a279", {
       cluster: process.env.PUSHER_CLUSTER??"eu",
       authEndpoint: '/api/pusher/auth-channel',
       auth: {
-        headers: { user_id: randomUserId },
+        headers: { user_id: user },
       },
     })
   }
@@ -69,9 +69,10 @@ export const PusherProvider = ({
 }: PropsWithChildren<{ slug: string }>) => {
   const storeRef = useRef<StoreApi<PusherZustandStore>>()
   const [store, setStore] = useState<StoreApi<PusherZustandStore>>()
+  const user = useSession().data?.user
 
   useEffect(() => {
-    const newStore = createPusherStore(slug)
+    const newStore = createPusherStore(slug, user?.id??"")
     storeRef.current = newStore
     setStore(newStore)
     return () => {
@@ -84,9 +85,9 @@ export const PusherProvider = ({
       const unsubscribe = newStore.subscribe(() => void 0)
       unsubscribe()
     }
-  }, [slug])
+  }, [slug, user])
 
-  if (!store) return null
+  if (!store) return <>{children}</>
 
   return (
     <PusherZustandStoreContext.Provider value={store}>

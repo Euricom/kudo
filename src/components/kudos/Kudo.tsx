@@ -8,10 +8,12 @@ import { AiOutlineHeart, AiFillHeart } from 'react-icons/ai'
 
 
 const KudoCard = ({ kudo, isPresentation }: KudoProps) => {
-  const image = api.kudos.getImageById.useQuery({ id: kudo.image }).data?.dataUrl
-  const user = api.users.getUserById.useQuery({ id: kudo.userId }).data?.displayName
+  const imagesQuery = api.kudos.getImageById.useQuery({ id: kudo.image })
+  const image = imagesQuery.data?.dataUrl
+  const userQuery = api.users.getUserById.useQuery({ id: kudo.userId })
+  const user = userQuery.data?.displayName
 
-  if (!image || !user) {
+  if (imagesQuery.isLoading || userQuery.isLoading || !image || !user) {
     return <></>
   }
   return (

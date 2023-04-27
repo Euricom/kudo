@@ -43,17 +43,11 @@ export const kudoRouter = createTRPCRouter({
     getAllKudos: protectedProcedure.query(async ({ ctx }) => {
         const kudo = ctx.prisma.kudo.findMany({})
         
-        // await pusherServerClient.trigger(
-        //     `kudos`,
-        //     'new-question',
-        //     {}
-        // )
-        
         return kudo
     }),
 
     getKudosByUserId: protectedProcedure.input(inputGetById).query(({ input, ctx }) => {
-        return ctx.prisma.kudo.findMany({
+        const kudos = ctx.prisma.kudo.findMany({
             where: {
                 userId: input.id,
             },
@@ -61,6 +55,7 @@ export const kudoRouter = createTRPCRouter({
                 id: 'desc'
             }
         });
+        return kudos
     }),
 
     getKudosBySessionId: protectedProcedure.input(inputGetById).query(({ input, ctx }) => {
@@ -149,6 +144,13 @@ export const kudoRouter = createTRPCRouter({
                 anonymous: input.anonymous,
             },
         }));
+
+        await pusherServerClient.trigger(
+            `session-${input.sessionId}`,
+            'new-kudo',
+            {}
+        )
+
         return kudo;
     }),
 
@@ -171,6 +173,7 @@ export const kudoRouter = createTRPCRouter({
                 liked: input.liked,
             }
         });
+
 
         if (kudo == undefined) {
             throw new Error()

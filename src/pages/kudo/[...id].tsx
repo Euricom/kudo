@@ -180,8 +180,11 @@ const KudoDetail: NextPage<{ id: string }> = ({ id }) => {
   return (
     <>
       <Head>
-        <title>eKudo</title>
-        <meta name="description" content="eKudo app" />
+        <title>eKudo - Kudo</title>
+        <meta
+          name="description"
+          content="Page where you can see a Kudo in detail."
+        />
       </Head>
       <NavigationBarContent>
         <h1>Kudo {session?.title ?? "no title"}</h1>

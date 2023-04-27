@@ -97,8 +97,11 @@ const Presentation: NextPage<{ id: string }> = ({ id }) => {
   return (
     <>
       <Head>
-        <title>eKudo</title>
-        <meta name="description" content="eKudo app" />
+        <title>eKudo - Presentation</title>
+        <meta
+          name="description"
+          content="Page where you can present all Kudo's from a Session."
+        />
       </Head>
       <NavigationBarContent>
         <h1>Session: {session?.title}</h1>

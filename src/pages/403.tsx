@@ -10,8 +10,11 @@ const Unauthorised: NextPage = () => {
   return (
     <>
       <Head>
-        <title>eKudo</title>
-        <meta name="description" content="eKudo app" />
+        <title>eKudo - 403</title>
+        <meta
+          name="description"
+          content="You are not authorised to access previous page."
+        />
       </Head>
       <NavigationBarContent>Unauthorised</NavigationBarContent>
       <UtilButtonsContent>

@@ -43,8 +43,11 @@ const Speaker: NextPage<{ id: string }> = ({ id }) => {
   return (
     <>
       <Head>
-        <title>eKudo</title>
-        <meta name="description" content="eKudo app" />
+        <title>eKudo - Speaker</title>
+        <meta
+          name="description"
+          content="See all sessions of a certain speaker."
+        />
       </Head>
       <NavigationBarContent>
         Sessions: {speaker?.displayName}

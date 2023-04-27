@@ -103,8 +103,8 @@ const Editor: NextPage<{ id: string }> = ({ id }) => {
   return (
     <>
       <Head>
-        <title>eKudo</title>
-        <meta name="description" content="eKudo app" />
+        <title>eKudo - Editor</title>
+        <meta name="description" content="Editor to make a Kudo." />
       </Head>
       <NavigationBarContent>
         <h1>Editor</h1>

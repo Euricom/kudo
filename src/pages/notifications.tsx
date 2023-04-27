@@ -58,8 +58,11 @@ const Notifications: NextPage = () => {
         <></>
       </UtilButtonsContent>
       <Head>
-        <title>eKudo</title>
-        <meta name="description" content="eKudo app" />
+        <title>eKudo - Notifications</title>
+        <meta
+          name="description"
+          content="Page where you can view your notifications."
+        />
       </Head>
       <main className="flex h-full flex-col items-center justify-start align-middle">
         {sortedNotifications()?.length === 0 ? (

@@ -46,8 +46,11 @@ const Home: NextPage<{ filter: string; sort: SortPosibillities }> = ({
   return (
     <>
       <Head>
-        <title>eKudo</title>
-        <meta name="description" content="eKudo app" />
+        <title>eKudo - In</title>
+        <meta
+          name="description"
+          content="Page where you can see your sessions."
+        />
       </Head>
       <NavigationBarContent>
         <NavButtons />

@@ -62,8 +62,8 @@ const Users: NextPage<{
   return (
     <>
       <Head>
-        <title>eKudo</title>
-        <meta name="description" content="eKudo app" />
+        <title>eKudo - All</title>
+        <meta name="description" content="Admin page to view all users." />
       </Head>
       <NavigationBarContent>
         <NavButtons />

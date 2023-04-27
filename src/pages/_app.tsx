@@ -24,6 +24,8 @@ const MyApp: AppType<{ session: Session | null }> = ({
   return (
     <>
       <Head>
+        <title>eKudo</title>
+        <meta name="description" content="eKudo app" />
         <link rel="shortcut icon" href={(Logo as StaticImageData).src} />
       </Head>
       <SessionProvider session={session}>

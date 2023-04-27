@@ -182,7 +182,6 @@ const KudoDetail: NextPage<{ id: string }> = ({ id }) => {
       <Head>
         <title>eKudo</title>
         <meta name="description" content="eKudo app" />
-        <link rel="icon" href="/favicon.ico" />
       </Head>
       <NavigationBarContent>
         <h1>Kudo {session?.title ?? "no title"}</h1>

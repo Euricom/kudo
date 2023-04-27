@@ -71,7 +71,6 @@ const Templates: NextPage<{
       <Head>
         <title>eKudo</title>
         <meta name="description" content="eKudo app" />
-        <link rel="icon" href="/favicon.ico" />
       </Head>
       <NavigationBarContent>
         <h1>Templates</h1>

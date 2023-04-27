@@ -71,7 +71,6 @@ const Out: NextPage<{ filterIn: string; sortIn: SortPosibillities }> = ({
       <Head>
         <title>eKudo</title>
         <meta name="description" content="eKudo app" />
-        <link rel="icon" href="/favicon.ico" />
       </Head>
       <NavigationBarContent>
         <NavButtons />

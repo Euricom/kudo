@@ -1,5 +1,6 @@
-import { type PrismaClient, type Kudo } from "@prisma/client";
+import { type Kudo } from "@prisma/client";
 import { type Session, SortPosibillities, type User } from "~/types";
+import { prisma } from "../db";
 
 export const FindAllKudosSortedByUserId = (sort: SortPosibillities, kudos?: Kudo[], sessions?: Session[], users?: User[],): Kudo[] => {
     if (!kudos || !users) {
@@ -22,8 +23,8 @@ export const FindAllKudosSortedByUserId = (sort: SortPosibillities, kudos?: Kudo
     }
 };
 
-export function getKudosBySessionId(sessionId: string, ctx: { prisma: PrismaClient }) {
-    return ctx.prisma.kudo.findMany({
+export function getKudosBySessionId(sessionId: string) {
+    return prisma.kudo.findMany({
     where: {
         sessionId: sessionId,
     },

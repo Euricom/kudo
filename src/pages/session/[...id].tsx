@@ -16,19 +16,22 @@ import { UserRole } from "~/types";
 import { useEffect } from "react";
 import { pusherClient } from "~/pusher/pusher.client";
 import { type Kudo } from "@prisma/client";
+import { getKudosBySessionId } from "~/server/services/kudoService";
 
-export function getServerSideProps(context: { query: { id: string } }) {
+export async function getServerSideProps(context: { query: { id: string } }) {
+  const kudos = await getKudosBySessionId(context.query.id[0]??'')
   return {
     props: {
       id: context.query.id[0],
+      initialKudos: kudos
     },
   };
 }
 
-const Session: NextPage<{ id: string }> = ({ id }) => {
+const Session: NextPage<{ id: string, initialKudos: Kudo[] }> = ({ id, initialKudos }) => {
   const router = useRouter()
   const user = useSession().data?.user
-  const [kudos, setKudos] = useState<Kudo[]>([]);
+  const [kudos, setKudos] = useState<Kudo[]>(initialKudos);
 
   const sessionQuery = api.sessions.getSessionById.useQuery({ id: id });
   const session = sessionQuery.data;
@@ -38,9 +41,12 @@ const Session: NextPage<{ id: string }> = ({ id }) => {
   
   useEffect(() => {
     const channel = pusherClient.subscribe(`session-${id}`);
-    channel.bind('kudo-created', (data: {kudos:Kudo[]}) => {
+    channel.bind('kudo-created', (data: {kudos: Kudo[]}) => {
       setKudos(data.kudos)
     })
+    channel.bind('pusher:subscription_succeeded', function() {
+      console.log('successfully subscribed!');
+    });
     return () =>  channel.unsubscribe();
   }, [id]);
 

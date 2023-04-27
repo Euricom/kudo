@@ -59,8 +59,8 @@ export const kudoRouter = createTRPCRouter({
         return kudos
     }),
 
-    getKudosBySessionId: protectedProcedure.input(inputGetById).query(async ({ input, ctx }) => {
-        const kudos = await getKudosBySessionId(input.id, ctx)
+    getKudosBySessionId: protectedProcedure.input(inputGetById).query(async ({ input }) => {
+        const kudos = await getKudosBySessionId(input.id)
         return kudos
     }),
 
@@ -110,7 +110,7 @@ export const kudoRouter = createTRPCRouter({
             }
         });
 
-        await updatePusherKudos(kudo.sessionId, ctx)
+        await updatePusherKudos(kudo.sessionId)
 
         if (kudo == undefined) {
             throw new Error()
@@ -131,8 +131,6 @@ export const kudoRouter = createTRPCRouter({
 
     // Create
     createKudo: protectedProcedure.input(createKudoInput).mutation(async ({ input, ctx }): Promise<Kudo> => {
-        console.log("createKudo", input);
-        
         const kudo = (await ctx.prisma.kudo.create({
             data: {
                 image: input.image,
@@ -142,7 +140,7 @@ export const kudoRouter = createTRPCRouter({
             },
         }));
 
-        await updatePusherKudos(input.sessionId, ctx)
+        await updatePusherKudos(input.sessionId)
 
         return kudo;
     }),

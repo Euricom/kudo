@@ -26,7 +26,6 @@ const server = z.object({
   PUSHER_APP_ID: z.string(),
   PUSHER_KEY: z.string(),
   PUSHER_SECRET: z.string(),
-  PUSHER_CLUSTER: z.string(),
 });
 
 /**
@@ -59,8 +58,7 @@ const processEnv = {
   PUSHER_APP_ID: process.env.PUSHER_APP_ID,
   PUSHER_KEY: process.env.PUSHER_KEY,
   PUSHER_SECRET: process.env.PUSHER_SECRET,
-  PUSHER_CLUSTER: process.env.PUSHER_CLUSTER,
-  NEXT_PUBLIC_PUSHER_APP_ID: process.env.PUSHER_APP_ID,
+  NEXT_PUBLIC_PUSHER_APP_ID: process.env.NEXT_PUBLIC_PUSHER_APP_ID,
   // NEXT_PUBLIC_CLIENTVAR: process.env.NEXT_PUBLIC_CLIENTVAR,
 };
 

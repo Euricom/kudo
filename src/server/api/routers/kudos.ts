@@ -4,7 +4,8 @@ import {
 } from "~/server/api/trpc";
 import { boolean, object, string } from "zod";
 import { type Kudo, type Image } from "@prisma/client";
-import { pusherServerClient } from "~/server/pusher";
+import { getKudosBySessionId } from "~/server/services/kudoService";
+import { updatePusherKudos } from "~/server/services/pusherService";
 
 const createKudoInput = object({
     image: string(),
@@ -58,15 +59,9 @@ export const kudoRouter = createTRPCRouter({
         return kudos
     }),
 
-    getKudosBySessionId: protectedProcedure.input(inputGetById).query(({ input, ctx }) => {
-        return ctx.prisma.kudo.findMany({
-            where: {
-                sessionId: input.id,
-            },
-            orderBy: {
-                id: 'desc'
-            }
-        });
+    getKudosBySessionId: protectedProcedure.input(inputGetById).query(async ({ input, ctx }) => {
+        const kudos = await getKudosBySessionId(input.id, ctx)
+        return kudos
     }),
 
     getImageById: protectedProcedure.input(inputGetById).query(({ input, ctx }) => {
@@ -115,13 +110,14 @@ export const kudoRouter = createTRPCRouter({
             }
         });
 
+        await updatePusherKudos(kudo.sessionId, ctx)
+
         if (kudo == undefined) {
             throw new Error()
         }
     }),
 
     deleteImageById: protectedProcedure.input(inputGetById).mutation(async ({ input, ctx }) => {
-
         const image = await ctx.prisma.image.delete({
             where: {
                 id: input.id,
@@ -135,7 +131,8 @@ export const kudoRouter = createTRPCRouter({
 
     // Create
     createKudo: protectedProcedure.input(createKudoInput).mutation(async ({ input, ctx }): Promise<Kudo> => {
-
+        console.log("createKudo", input);
+        
         const kudo = (await ctx.prisma.kudo.create({
             data: {
                 image: input.image,
@@ -145,11 +142,7 @@ export const kudoRouter = createTRPCRouter({
             },
         }));
 
-        await pusherServerClient.trigger(
-            `session-${input.sessionId}`,
-            'new-kudo',
-            {}
-        )
+        await updatePusherKudos(input.sessionId, ctx)
 
         return kudo;
     }),

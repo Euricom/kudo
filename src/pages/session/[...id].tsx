@@ -1,4 +1,5 @@
 import JSZip from "jszip";
+import { useState } from "react";
 import { type NextPage } from "next";
 import Head from "next/head";
 import { UtilButtonsContent } from "~/hooks/useUtilButtons";
@@ -13,7 +14,8 @@ import { useRouter } from "next/router";
 import { useSession } from "next-auth/react";
 import { UserRole } from "~/types";
 import { useEffect } from "react";
-import { PusherProvider } from "~/utils/pusher";
+import { pusherClient } from "~/pusher/pusher.client";
+import { type Kudo } from "@prisma/client";
 
 export function getServerSideProps(context: { query: { id: string } }) {
   return {
@@ -26,16 +28,21 @@ export function getServerSideProps(context: { query: { id: string } }) {
 const Session: NextPage<{ id: string }> = ({ id }) => {
   const router = useRouter()
   const user = useSession().data?.user
+  const [kudos, setKudos] = useState<Kudo[]>([]);
 
   const sessionQuery = api.sessions.getSessionById.useQuery({ id: id });
   const session = sessionQuery.data;
-  const kudosQuery = api.kudos.getKudosBySessionId.useQuery({
-    id: session?.id ?? "",
-  });
-  const kudos = kudosQuery.data;
   const ids = kudos?.map((kudo) => kudo.image) ?? [];
   const imagesQuery = api.kudos.getImagesByIds.useQuery({ ids: ids });
   const images = imagesQuery.data;
+  
+  useEffect(() => {
+    const channel = pusherClient.subscribe(`session-${id}`);
+    channel.bind('kudo-created', (data: {kudos:Kudo[]}) => {
+      setKudos(data.kudos)
+    })
+    return () =>  channel.unsubscribe();
+  }, [id]);
 
   useEffect(() => {
     if(sessionQuery.isLoading) return
@@ -43,7 +50,7 @@ const Session: NextPage<{ id: string }> = ({ id }) => {
       router.replace("/403").catch(console.error)
   }, [user, router, session?.speakerId, sessionQuery.isLoading])
 
-  if (sessionQuery.isLoading || kudosQuery.isLoading || imagesQuery.isLoading) {
+  if (sessionQuery.isLoading || imagesQuery.isLoading) {
     return <LoadingBar />;
   }
 
@@ -101,7 +108,6 @@ const Session: NextPage<{ id: string }> = ({ id }) => {
           <FiMonitor size={20} />
         </Link>
       </UtilButtonsContent>
-      <PusherProvider slug={`session-${session.id}`}>
         <main
           className="flex flex-col items-center justify-center"
           data-cy="Session"
@@ -114,7 +120,6 @@ const Session: NextPage<{ id: string }> = ({ id }) => {
             )}
           </div>
         </main>
-      </PusherProvider>
     </>
   );
 };

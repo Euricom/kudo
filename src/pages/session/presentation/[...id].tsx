@@ -12,7 +12,6 @@ import { type PresentationKudo } from "~/types";
 import { useTransition, animated } from '@react-spring/web';
 import { QRCode } from 'react-qrcode-logo';
 import icon from '~/../public/favicon.ico';
-import { PusherProvider } from "~/utils/pusher";
 
 export function getServerSideProps(context: { query: { id: string } }) {
   return {
@@ -103,7 +102,6 @@ const Presentation: NextPage<{ id: string }> = ({ id }) => {
           <FiMonitor size={20} />
         </button>
       </UtilButtonsContent>
-      <PusherProvider slug={`session-${session.id}`}>
         <main
           className="flex flex-col items-center justify-center h-full"
           data-cy="Session"
@@ -136,7 +134,6 @@ const Presentation: NextPage<{ id: string }> = ({ id }) => {
             </div>
           </div>
         </main>
-      </PusherProvider>
     </>
   );
 };

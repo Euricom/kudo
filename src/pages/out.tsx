@@ -69,9 +69,11 @@ const Out: NextPage<{ filterIn: string; sortIn: SortPosibillities }> = ({
   return (
     <>
       <Head>
-        <title>eKudo</title>
-        <meta name="description" content="eKudo app" />
-        <link rel="icon" href="/favicon.ico" />
+        <title>eKudo - Out</title>
+        <meta
+          name="description"
+          content="Page where you can see the Kudo's you've send."
+        />
       </Head>
       <NavigationBarContent>
         <NavButtons />

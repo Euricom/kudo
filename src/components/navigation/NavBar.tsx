@@ -8,8 +8,8 @@ import { useUtilButtons } from "~/hooks/useUtilButtons";
 import { useTitle } from "./NavBarTitle";
 import ThemeButton from "~/components/input/ThemeButton";
 import { api } from "~/utils/api";
-import Logo from "~/../public/images/euricomLogo.png";
-import Image from "next/image";
+import Logo from "~/../public/images/KudoAppIcon.svg";
+import Image, { type StaticImageData } from "next/image";
 import Link from "next/link";
 
 function useVisibleEndNavbarActions() {
@@ -157,7 +157,7 @@ function logo() {
   return (
     <>
       <label className="relative aspect-square h-full" data-cy="logo">
-        <Image src={Logo} alt="Logo" fill />
+        <Image src={(Logo as StaticImageData).src} alt="Logo" fill />
       </label>
     </>
   );

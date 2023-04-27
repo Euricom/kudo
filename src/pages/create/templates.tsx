@@ -69,9 +69,11 @@ const Templates: NextPage<{
   return (
     <>
       <Head>
-        <title>eKudo</title>
-        <meta name="description" content="eKudo app" />
-        <link rel="icon" href="/favicon.ico" />
+        <title>eKudo - Templates</title>
+        <meta
+          name="description"
+          content="Page with all editor templates you can choose from."
+        />
       </Head>
       <NavigationBarContent>
         <h1>Templates</h1>

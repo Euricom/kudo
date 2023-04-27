@@ -77,9 +77,11 @@ const Flagged: NextPage<{ searchtext: string; sortIn: SortPosibillities }> = ({
   return (
     <>
       <Head>
-        <title>eKudo</title>
-        <meta name="description" content="eKudo app" />
-        <link rel="icon" href="/favicon.ico" />
+        <title>eKudo - All</title>
+        <meta
+          name="description"
+          content="Admin page to view all flagged Kudo's."
+        />
       </Head>
       <NavigationBarContent>
         <NavButtons />

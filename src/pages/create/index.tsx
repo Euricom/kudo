@@ -69,9 +69,11 @@ const New: NextPage<{ sess: string }> = ({ sess }) => {
   return (
     <>
       <Head>
-        <title>eKudo</title>
-        <meta name="description" content="eKudo app" />
-        <link rel="icon" href="/favicon.ico" />
+        <title>eKudo - New Kudo</title>
+        <meta
+          name="description"
+          content="Page where you can select a session to send a Kudo to."
+        />
       </Head>
       <NavigationBarContent>
         <h1>New</h1>

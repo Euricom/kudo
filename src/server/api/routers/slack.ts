@@ -1,6 +1,5 @@
 import { createTRPCRouter, protectedProcedure } from "~/server/api/trpc";
 import { object, string } from "zod";
-import axios from "axios";
 import { env } from "~/env.mjs";
 
 const inputSendMessage = object({
@@ -22,20 +21,24 @@ export const slackRouter = createTRPCRouter({
     .input(inputSendMessage)
     .mutation(async ({ input }) => {
       const url = "https://slack.com/api/chat.postMessage";
-      const response = await axios.post(
-        url,
-        {
-          channel: input.channel,
-          text: input.text,
+      const token = env.SLACK_APP_TOKEN;
+
+      const body = new URLSearchParams({
+        channel: input.channel,
+        text: input.text,
+      });
+
+      const response = (await fetch(url, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/x-www-form-urlencoded",
+          Authorization: `Bearer ${token}`,
         },
-        {
-          headers: {
-            "Content-Type": "application/x-www-form-urlencoded",
-            Authorization: `Bearer ${env.SLACK_APP_TOKEN}`,
-          },
-        }
-      );
-      return response.data as SlackResponse;
+        body: body,
+      }).then((res) => res.json())) as SlackResponse;
+      console.log(response);
+
+      return response;
     }),
 
   sendMessageToSlackViaHook: protectedProcedure

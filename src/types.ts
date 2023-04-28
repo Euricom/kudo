@@ -268,3 +268,7 @@ export type EmojiObject = {
   shortcodes: string;
   emoticons: string[];
 };
+
+export type EditorButtonProps = {
+  children?: React.ReactNode;
+};

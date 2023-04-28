@@ -277,9 +277,30 @@ const KonvaCanvas = ({
       return;
     }
     const templateShapes = (template.content as unknown as Shapes[]) ?? [];
+    if (!anonymous) {
+      templateShapes.push({
+        id: "Sender",
+        type: CanvasShapes.Text,
+        x: 0,
+        y: 460,
+        text: `Send by ${user?.name ?? ""}`,
+        fill: color,
+        fontFamily: fontFamily,
+        fontSize: (stageDimensions?.height ?? 0) * 0.05,
+        draggable: true,
+      });
+    }
     history.unshift(...templateShapes);
     setShapes(templateShapes);
-  }, [template, stageDimensions, history]);
+  }, [
+    template,
+    stageDimensions,
+    history,
+    anonymous,
+    user?.name,
+    color,
+    fontFamily,
+  ]);
 
   return (
     <>
@@ -451,49 +472,6 @@ const KonvaCanvas = ({
                 }
               />
             ))}
-            {!anonymous && (
-              <CanvasText
-                container={containerRef.current ?? undefined}
-                key="Sender"
-                shapeProps={{
-                  id: "Sender",
-                  type: CanvasShapes.Text,
-                  x: 0,
-                  y: 460,
-                  text: `Send by ${user?.name ?? ""}`,
-                  fill: color,
-                  fontFamily: fontFamily,
-                  fontSize: (stageDimensions?.height ?? 0) * 0.05,
-                  draggable: true,
-                }}
-                scale={stageDimensions.scale?.x ?? 1}
-                isSelected={"Sender" === selectedId}
-                onSelect={() => {
-                  selectShape("Sender");
-                }}
-                onChange={(newAttrs) => {
-                  const newShapes = shapes.slice();
-                  const i = newShapes.findIndex((s) => s.id === "Sender");
-                  newShapes[i] = newAttrs;
-                  setShapes(newShapes);
-                }}
-                onChangeEnd={(newAttrs) => {
-                  history.unshift(newAttrs);
-                }}
-                areaPosition={{
-                  x:
-                    (stageRef.current?.container().offsetLeft ?? 0) +
-                    (stageRef.current?.width() ?? 0) / 2 +
-                    0 * (stageDimensions?.scale?.x ?? 1),
-                  y:
-                    (stageRef.current?.container().offsetTop ?? 0) +
-                    (stageRef.current?.height() ?? 0) / 2 +
-                    400 * (stageDimensions?.scale?.y ?? 1),
-                }}
-                onDelete={onDelete}
-                editorFunction={editorFunction ?? EditorFunctions.None}
-              />
-            )}
           </Layer>
         </Stage>
       </div>

@@ -12,15 +12,14 @@ import { useEffect, useState } from "react";
 import SortAndFilter from "~/components/input/SortAndFilter";
 import { api } from "~/utils/api";
 import LoadingBar from "~/components/LoadingBar";
-import { type Kudo } from "@prisma/client";
 
 export function getServerSideProps(context: {
   query: { searchtext: string; sort: SortPosibillities };
 }) {
   return {
     props: {
-      filterIn: context.query.searchtext ?? "",
-      sortIn: context.query.sort ?? "",
+      filterIn: context.query.searchtext ?? null,
+      sortIn: context.query.sort ?? null,
     },
   };
 }
@@ -30,9 +29,11 @@ const Out: NextPage<{ filterIn: string; sortIn: SortPosibillities }> = ({
   sortIn,
 }) => {
   const [sort, setSort] = useState<SortPosibillities>(
-    sortIn ?? SortPosibillities.DateD
+    sortIn === null ? SortPosibillities.DateD : sortIn
   );
-  const [filter, setFilter] = useState<string>(filterIn ?? "");
+  const [filter, setFilter] = useState<string>(
+    filterIn === null ? "" : filterIn
+  );
 
   const sessionsQuery = api.sessions.getAll.useQuery();
   const sessions = sessionsQuery.data;
@@ -49,19 +50,16 @@ const Out: NextPage<{ filterIn: string; sortIn: SortPosibillities }> = ({
   });
   const { data: kudos, refetch: refetchKudos } = kudosQuery;
 
-  const [sortedKudos, setKudos] = useState<Kudo[]>();
-
   useEffect(() => {
     refetchKudos().catch(console.error);
-    setKudos(kudos);
-  }, [kudos, refetchKudos, sort]);
+  }, [refetchKudos, sort]);
 
   if (
-    !kudosQuery.isLoading ||
-    !sessionsQuery.isLoading ||
-    !usersQuery.isLoading ||
-    !kudos ||
+    kudosQuery.isLoading ||
+    sessionsQuery.isLoading ||
+    usersQuery.isLoading ||
     !sessions ||
+    !kudos ||
     !users
   ) {
     return <LoadingBar />;
@@ -89,10 +87,10 @@ const Out: NextPage<{ filterIn: string; sortIn: SortPosibillities }> = ({
           setFilter={setFilter}
         />
         <div className="mb-8 flex flex-wrap justify-center gap-5 px-5 md:mb-28">
-          {sortedKudos == undefined || sortedKudos.length == 0 ? (
+          {kudos.length == 0 ? (
             <h1>No Kudos Sent Yet</h1>
           ) : (
-            sortedKudos
+            kudos
               .filter(
                 (k) =>
                   sessions

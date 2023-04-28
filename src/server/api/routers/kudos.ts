@@ -125,6 +125,8 @@ export const kudoRouter = createTRPCRouter({
         },
       });
 
+      await updatePusherKudos(kudo.sessionId);
+
       if (kudo == undefined) {
         throw new TRPCError({
           code: "INTERNAL_SERVER_ERROR",
@@ -165,6 +167,7 @@ export const kudoRouter = createTRPCRouter({
         },
       });
       if (kudo) {
+        await updatePusherKudos(kudo.sessionId);
         const sender = await findUserById(input.userId);
         const session = await getSessionById(input.sessionId);
         const speaker = await findUserById(session.speakerId);

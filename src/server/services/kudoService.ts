@@ -19,6 +19,7 @@ export const findAllKudosSortedByUserId = async (
   const sessions = await getAllSessions();
   const users = await findAllUsers();
   if (!kudos || !users) {
+    console.log("No kudos or users found");
     return [];
   }
 

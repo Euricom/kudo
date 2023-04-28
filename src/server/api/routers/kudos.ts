@@ -2,10 +2,11 @@ import {
     createTRPCRouter,
     protectedProcedure,
 } from "~/server/api/trpc";
-import { boolean, object, string } from "zod";
+import { boolean, nativeEnum, object, string } from "zod";
 import { type Kudo, type Image } from "@prisma/client";
-import { getKudosBySessionId } from "~/server/services/kudoService";
+import { findAllKudosSortedByUserId, getKudosBySessionId } from "~/server/services/kudoService";
 import { updatePusherKudos } from "~/server/services/pusherService";
+import { SortPosibillities } from "~/types";
 
 const createKudoInput = object({
     image: string(),
@@ -19,6 +20,11 @@ const createImageInput = object({
 
 const inputGetById = object({
     id: string(),
+})
+
+const inputGetByIdSorted = object({
+    id: string(),
+    sort: nativeEnum(SortPosibillities),
 })
 
 const inputLike = object({
@@ -47,15 +53,8 @@ export const kudoRouter = createTRPCRouter({
         return kudo
     }),
 
-    getKudosByUserId: protectedProcedure.input(inputGetById).query(({ input, ctx }) => {
-        const kudos = ctx.prisma.kudo.findMany({
-            where: {
-                userId: input.id,
-            },
-            orderBy: {
-                id: 'desc'
-            }
-        });
+    getKudosByUserId: protectedProcedure.input(inputGetByIdSorted).query(async ({ input }) => {
+        const kudos = await findAllKudosSortedByUserId(input.id, input.sort)
         return kudos
     }),
 

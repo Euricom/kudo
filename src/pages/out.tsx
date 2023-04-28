@@ -7,7 +7,6 @@ import { UtilButtonsContent } from "~/hooks/useUtilButtons";
 import { NavigationBarContent } from "~/components/navigation/NavBarTitle";
 import NavButtons from "~/components/navigation/NavButtons";
 import { useSession } from "next-auth/react";
-import { FindAllKudosSortedByUserId } from "~/server/services/kudoService";
 import { SortPosibillities } from "~/types";
 import { useEffect, useState } from "react"
 import SortAndFilter from "~/components/input/SortAndFilter";
@@ -26,26 +25,29 @@ export function getServerSideProps(context: { query: { searchtext: string, sort:
 }
 
 const Out: NextPage<{ filterIn: string, sortIn: SortPosibillities }> = ({ filterIn, sortIn }) => {
-
-  const sessions = api.sessions.getAll.useQuery().data
-  const users = api.users.getAllUsers.useQuery().data
-
   const [sort, setSort] = useState<SortPosibillities>(sortIn ?? SortPosibillities.DateD)
   const [filter, setFilter] = useState<string>(filterIn ?? "")
 
-  const userId = useSession().data?.user.id
+  const sessionsQuery = api.sessions.getAll.useQuery()
+  const sessions = sessionsQuery.data
+  const usersQuery = api.users.getAllUsers.useQuery()
+  const users = usersQuery.data
+  const user = useSession().data?.user
 
-  if (!userId) {
+  if (!user?.id) {
     throw new Error("No user signed in")
   }
-  const kudos = api.kudos.getKudosByUserId.useQuery({ id: userId }).data
+  const kudosQuery = api.kudos.getKudosByUserId.useQuery({ id: user.id, sort: sort })
+  const {data: kudos, refetch: refetchKudos} = kudosQuery
 
-  const [sortedKudos, setKudos] = useState<Kudo[]>(FindAllKudosSortedByUserId(sort, kudos, sessions, users))
+  const [sortedKudos, setKudos] = useState<Kudo[]>()
+  
   useEffect(() => {
-    setKudos(FindAllKudosSortedByUserId(sort, kudos, sessions, users))
-  }, [userId, sort, kudos, sessions, users])
+    refetchKudos().catch(console.error)
+    setKudos(kudos)
+  }, [kudos, refetchKudos, sort])
 
-  if (!kudos || !sessions || !users) {
+  if (!kudosQuery.isLoading || !sessionsQuery.isLoading || !usersQuery.isLoading || !kudos || !sessions || !users) {
     return <LoadingBar />
   }
 

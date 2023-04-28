@@ -1,21 +1,27 @@
-import React, { useRef, type MutableRefObject, useEffect } from 'react';
-import { Transformer, Image } from 'react-konva';
-import type Konva from 'konva';
-import { EditorFunctions, type CanvasImageProps } from '~/types';
+import React, { useRef, type MutableRefObject, useEffect } from "react";
+import { Transformer, Image } from "react-konva";
+import type Konva from "konva";
+import { EditorFunctions, type CanvasImageProps } from "~/types";
 
-
-const CanvasImage = ({ shapeProps, isSelected, editorFunction, onSelect, onChange, onDelete }: CanvasImageProps) => {
+const CanvasImage = ({
+  shapeProps,
+  isSelected,
+  editorFunction,
+  onSelect,
+  onChange,
+  onDelete,
+}: CanvasImageProps) => {
   const shapeRef = useRef<Konva.Image>() as MutableRefObject<Konva.Image>;
-  const trRef = useRef<Konva.Transformer>() as MutableRefObject<Konva.Transformer>;
+  const trRef =
+    useRef<Konva.Transformer>() as MutableRefObject<Konva.Transformer>;
 
   const image = new window.Image();
-  image.src = shapeProps.image??"";
-
+  image.src = shapeProps.image ?? "";
 
   useEffect(() => {
     if (isSelected) {
       if (editorFunction === EditorFunctions.Clear) {
-        onDelete(shapeProps.id)
+        onDelete(shapeProps.id);
       }
 
       // we need to attach transformer manually
@@ -33,7 +39,7 @@ const CanvasImage = ({ shapeProps, isSelected, editorFunction, onSelect, onChang
         {...shapeProps}
         image={image}
         alt={shapeProps.image}
-        draggable={(!shapeProps.draggable) ? false : isSelected}
+        draggable={!shapeProps.draggable ? false : isSelected}
         onDragEnd={(e) => {
           onChange({
             ...shapeProps,

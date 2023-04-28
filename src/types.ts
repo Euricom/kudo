@@ -182,6 +182,7 @@ export type Shapes = {
   draggable?: boolean;
   rotation?: number;
   radius?: number;
+  fontFamily?: string;
 };
 
 export enum EditorFunctions {

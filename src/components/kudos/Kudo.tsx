@@ -30,11 +30,6 @@ const KudoCard = ({ kudo, isPresentation }: KudoProps) => {
             height={208}
             alt="Kudo"
           />
-          {kudo.anonymous ? (
-            <></>
-          ) : (
-            <h1 className="relative">Sent by {user}</h1>
-          )}
         </Link>
         {isPresentation ? (
           ""

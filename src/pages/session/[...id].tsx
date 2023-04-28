@@ -45,13 +45,21 @@ const Session: NextPage<{ id: string; initialKudos: Kudo[] }> = ({
 
   useEffect(() => {
     const channel = pusherClient.subscribe(`session-${id}`);
-    channel.bind("kudo-created", (data: { kudos: Kudo[] }) => {
-      setKudos(data.kudos);
-    });
     channel.bind("pusher:subscription_succeeded", function () {
       console.log("successfully subscribed!");
     });
-    return () => channel.unsubscribe();
+    channel.bind("kudo-created", (data: { kudo: Kudo }) => {
+      setKudos((k) => [...k, data.kudo]);
+    });
+    channel.bind("kudo-deleted", (data: { kudo: Kudo }) => {
+      setKudos((k) => [...k.filter((kudo) => kudo.id !== data.kudo.id)]);
+    });
+    return () => {
+      channel.unbind("pusher:subscription_succeeded");
+      channel.unbind("kudo-created");
+      channel.unbind("kudo-deleted");
+      channel.unsubscribe();
+    };
   }, [id]);
 
   useEffect(() => {

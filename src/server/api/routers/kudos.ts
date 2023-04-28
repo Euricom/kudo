@@ -1,11 +1,14 @@
 import { createTRPCRouter, protectedProcedure } from "~/server/api/trpc";
-import { boolean, nativeEnum, object, string } from "zod";
+import { boolean, nativeEnum, object, optional, string } from "zod";
 import { type Kudo, type Image } from "@prisma/client";
 import {
   findAllKudosSortedByUserId,
   getKudosBySessionId,
 } from "~/server/services/kudoService";
-import { updatePusherKudos } from "~/server/services/pusherService";
+import {
+  createPusherKudo,
+  deletePusherKudo,
+} from "~/server/services/pusherService";
 import { SortPosibillities } from "~/types";
 import { TRPCError } from "@trpc/server";
 import {
@@ -31,7 +34,7 @@ const inputGetById = object({
 
 const inputGetByIdSorted = object({
   id: string(),
-  sort: nativeEnum(SortPosibillities),
+  sort: optional(nativeEnum(SortPosibillities)),
 });
 
 const inputLike = object({
@@ -125,7 +128,7 @@ export const kudoRouter = createTRPCRouter({
         },
       });
 
-      await updatePusherKudos(kudo.sessionId);
+      await deletePusherKudo(kudo);
 
       if (kudo == undefined) {
         throw new TRPCError({
@@ -167,7 +170,7 @@ export const kudoRouter = createTRPCRouter({
         },
       });
       if (kudo) {
-        await updatePusherKudos(kudo.sessionId);
+        await createPusherKudo(kudo);
         const sender = await findUserById(input.userId);
         const session = await getSessionById(input.sessionId);
         const speaker = await findUserById(session.speakerId);

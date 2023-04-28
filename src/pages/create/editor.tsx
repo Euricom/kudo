@@ -30,6 +30,7 @@ import data from "@emoji-mart/data";
 import Picker from "@emoji-mart/react";
 import { toast } from "react-toastify";
 import { type TRPCError } from "@trpc/server";
+import { type Kudo } from "@prisma/client";
 
 export function getServerSideProps(context: { query: { template: string } }) {
   return {
@@ -49,7 +50,33 @@ const Editor: NextPage<{ id: string }> = ({ id }) => {
   const router = useRouter();
   const user = useSession().data?.user;
   //API
-  const { mutateAsync: createKudo } = api.kudos.createKudo.useMutation();
+  const trpcContext = api.useContext();
+
+  const { mutateAsync: createKudo } = api.kudos.createKudo.useMutation({
+    //Nog nakijken of dit effectief iets doet
+    onMutate: async (newEntry) => {
+      await trpcContext.kudos.getKudosByUserId.cancel();
+
+      trpcContext.kudos.getKudosByUserId.setData(
+        { id: user?.id ?? "" },
+        (prevEntries?: Kudo[]) => {
+          const entry = {
+            ...newEntry,
+            id: "000000",
+            liked: false,
+            comment: "",
+            flagged: false,
+          };
+          prevEntries?.push(entry);
+          return prevEntries ?? [entry];
+        }
+      );
+    },
+    // Always refetch after error or success, so we have an up to date list
+    onSettled: async () => {
+      await trpcContext.kudos.getKudosByUserId.invalidate();
+    },
+  });
   const { mutateAsync: createImage } = api.kudos.createKudoImage.useMutation();
   const templateQuery = api.templates.getTemplateById.useQuery({ id: id });
   const template = templateQuery.data;

@@ -6,7 +6,7 @@ import { getAllSessions } from "./sessionService";
 
 export const findAllKudosSortedByUserId = async (
   userid: string,
-  sort: SortPosibillities
+  sort?: SortPosibillities
 ): Promise<Kudo[]> => {
   const kudos = await prisma.kudo.findMany({
     where: {

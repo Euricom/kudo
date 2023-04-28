@@ -1,10 +1,14 @@
-import { pusherServer } from "~/pusher/pusher.server"
-import { getKudosBySessionId } from "./kudoService"
+import { type Kudo } from "@prisma/client";
+import { pusherServer } from "~/pusher/pusher.server";
 
+export async function createPusherKudo(kudo: Kudo) {
+  await pusherServer.trigger(`session-${kudo.sessionId}`, "kudo-created", {
+    kudo: kudo,
+  });
+}
 
-export async function updatePusherKudos(sessionid: string) {
-    const kudos = await getKudosBySessionId(sessionid)
-    await pusherServer.trigger(`session-${sessionid}`, "kudo-created", {
-        kudos: kudos
-    })
+export async function deletePusherKudo(kudo: Kudo) {
+  await pusherServer.trigger(`session-${kudo.sessionId}`, "kudo-deleted", {
+    kudo: kudo,
+  });
 }

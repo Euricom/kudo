@@ -6,46 +6,62 @@ import { FaTrashAlt } from "react-icons/fa";
 import { UtilButtonsContent } from "~/hooks/useUtilButtons";
 import Link from "next/link";
 import { api } from "~/utils/api";
-import { AiOutlineHeart, AiFillHeart, AiFillWarning, AiOutlineWarning, AiOutlineSend } from 'react-icons/ai'
+import {
+  AiOutlineHeart,
+  AiFillHeart,
+  AiFillWarning,
+  AiOutlineWarning,
+  AiOutlineSend,
+} from "react-icons/ai";
 import { useEffect, useState } from "react";
-import ConfirmationModal from '~/components/input/ConfirmationModal';
+import ConfirmationModal from "~/components/input/ConfirmationModal";
 import { useSession } from "next-auth/react";
 import { type ImageData, UserRole } from "~/types";
 import { useRouter } from "next/router";
 import LoadingBar from "~/components/LoadingBar";
-import avatar from '../../contents/images/AnonymousPicture.jpg';
+import avatar from "~/../public/images/AnonymousPicture.jpg";
+import { toast } from "react-toastify";
+import { type TRPCError } from "@trpc/server";
 
-
-export function getServerSideProps(context: { query: { id: string }; }) {
+export function getServerSideProps(context: { query: { id: string } }) {
   return {
     props: {
-      id: context.query.id[0]
-    }
-  }
+      id: context.query.id[0],
+    },
+  };
 }
 
 const KudoDetail: NextPage<{ id: string }> = ({ id }) => {
-  const router = useRouter()
+  const router = useRouter();
   const trpcContext = api.useContext();
-  const user = useSession().data?.user
+  const user = useSession().data?.user;
 
-  const kudoQuery = api.kudos.getKudoById.useQuery({ id: id })
-  const { data: kudo, refetch: refetchKudo } = kudoQuery
-  const sender = api.users.getUserById.useQuery({ id: kudo?.userId ?? "" }).data
-  const imageQuery = api.kudos.getImageById.useQuery({ id: kudo?.image ?? "error" })
-  const image = imageQuery.data?.dataUrl
-  const sessionQuery = api.sessions.getSessionById.useQuery({ id: kudo?.sessionId ?? "error" })
-  const session = sessionQuery.data
+  const kudoQuery = api.kudos.getKudoById.useQuery({ id: id });
+  const { data: kudo, refetch: refetchKudo } = kudoQuery;
+  const sender = api.users.getUserById.useQuery({
+    id: kudo?.userId ?? "",
+  }).data;
+  const imageQuery = api.kudos.getImageById.useQuery({
+    id: kudo?.image ?? "error",
+  });
+  const image = imageQuery.data?.dataUrl;
+  const sessionQuery = api.sessions.getSessionById.useQuery({
+    id: kudo?.sessionId ?? "error",
+  });
+  const session = sessionQuery.data;
+  const speaker = api.users.getUserById.useQuery({
+    id: session?.speakerId ?? "error",
+  }).data;
 
-  const deleteKudo = api.kudos.deleteKudoById.useMutation()
-  const deleteImage = api.kudos.deleteImageById.useMutation()
-  const likeKudoById = api.kudos.likeKudoById.useMutation()
-  const commentKudoById = api.kudos.commentKudoById.useMutation()
-  const flagKudoById = api.kudos.flagKudoById.useMutation({
+  const { mutate: deleteKudo } = api.kudos.deleteKudoById.useMutation();
+  const { mutate: deleteImage } = api.kudos.deleteImageById.useMutation();
+  const { mutateAsync: likeKudoById } = api.kudos.likeKudoById.useMutation();
+  const { mutateAsync: commentKudoById } =
+    api.kudos.commentKudoById.useMutation();
+  const { mutateAsync: flagKudoById } = api.kudos.flagKudoById.useMutation({
     onMutate: async (newEntry) => {
       await trpcContext.kudos.getKudoById.cancel();
       trpcContext.kudos.getKudoById.setData({ id: id }, (prevEntry) => {
-
         if (prevEntry) {
           prevEntry.flagged = newEntry.flagged;
         }
@@ -55,109 +71,150 @@ const KudoDetail: NextPage<{ id: string }> = ({ id }) => {
     onSettled: async () => {
       await trpcContext.kudos.getKudoById.invalidate();
     },
-  })
-  const sendNotification = api.notifications.sendnotification.useMutation()
-  const sendNotificationsToAdmins = api.notifications.sendnotificationsToAdmins.useMutation()
-
-
-  const [comment, setComment] = useState<string>("")
-  const [sendReady, setSendReady] = useState<boolean>(false)
+  });
+  const [comment, setComment] = useState<string>("");
+  const [sendReady, setSendReady] = useState<boolean>(false);
   const [imgUrl, setImgUrl] = useState<string>(avatar.src);
 
   useEffect(() => {
     if (kudo?.userId)
-      fetch('/api/images/' + kudo?.userId)
+      fetch("/api/images/" + (speaker?.id ?? "").toString())
         .then((res) => res.json())
         .then((json: ImageData) => setImgUrl(json.dataUrl))
-        .catch(e => console.log(e));
-  }, [kudo?.userId]);
+        .catch((e: Error) => toast.error(e.message));
+  }, [kudo?.userId, speaker?.id]);
 
   async function handleclick() {
-    if (user?.id === session?.speakerId && kudo && kudo.id && session && session.title && user && user.name && sender && sender.id && user.id) {
+    if (user?.id === session?.speakerId && kudo && kudo.id) {
       try {
-        await likeKudoById.mutateAsync({ id: kudo.id, liked: !kudo.liked })
-        if (kudo.liked)
-          await sendNotification.mutateAsync({ message: (user.name).toString() + " liked the kudo you send for the session about " + (session.title).toString(), userId: sender.id, kudoId: kudo.id, photo: user.id })
-        await refetchKudo()
-      }
-      catch (e) {
-        console.log(e);
+        if (kudo.liked) {
+          await likeKudoById({
+            id: kudo.id,
+            liked: !kudo.liked,
+          });
+        } else {
+          await likeKudoById({ id: kudo.id, liked: !kudo.liked });
+        }
+
+        await refetchKudo();
+      } catch (e) {
+        toast.error((e as TRPCError).message);
       }
     }
   }
 
   async function handleSubmit() {
-    if (user?.id === session?.speakerId && kudo && kudo.id && session && session.title && user && user.name && sender && sender.id && user.id) {
+    if (user?.id === session?.speakerId && kudo && kudo.id) {
       try {
-        await commentKudoById.mutateAsync({ id: kudo.id, comment: comment })
-        await sendNotification.mutateAsync({ message: (user.name).toString() + " commented on the kudo you send for the session about " + (session.title).toString() + ": " + comment, userId: sender.id, kudoId: kudo.id, photo: user.id })
-        setSendReady(false)
-        setComment("")
-        await refetchKudo()
-      }
-      catch (e) {
-        console.log(e);
+        await commentKudoById({
+          id: kudo.id,
+          comment: comment,
+        });
+        setSendReady(false);
+        setComment("");
+        await refetchKudo();
+      } catch (e) {
+        toast.error((e as TRPCError).message);
       }
     }
   }
   useEffect(() => {
-    if (!user || sessionQuery.isLoading || kudoQuery.isLoading) return
-    if (user?.role !== UserRole.ADMIN && user?.id !== kudo?.userId && user?.id !== session?.speakerId)
-      router.replace("/403").catch(console.error)
-  }, [user, router, kudo?.userId, session?.speakerId, sessionQuery.isLoading, kudoQuery.isLoading])
+    if (!user || sessionQuery.isLoading || kudoQuery.isLoading) return;
+    if (
+      user?.role !== UserRole.ADMIN &&
+      user?.id !== kudo?.userId &&
+      user?.id !== session?.speakerId
+    )
+      router.replace("/403").catch(toast.error);
+  }, [
+    user,
+    router,
+    kudo?.userId,
+    session?.speakerId,
+    sessionQuery.isLoading,
+    kudoQuery.isLoading,
+  ]);
 
-  if (!image || !kudo || !session || imageQuery.isLoading || sessionQuery.isLoading || kudoQuery.isLoading) {
-    return <LoadingBar />
+  if (
+    !image ||
+    !kudo ||
+    !session ||
+    imageQuery.isLoading ||
+    sessionQuery.isLoading ||
+    kudoQuery.isLoading
+  ) {
+    return <LoadingBar />;
   }
 
   function del() {
-    deleteKudo.mutate({ id: kudo?.id ?? "error" })
-    deleteImage.mutate({ id: kudo?.image ?? "error" })
+    deleteKudo({ id: kudo?.id ?? "error" });
+    deleteImage({ id: kudo?.image ?? "error" });
   }
 
   async function flag() {
+    toast.error("er is geflagd");
+    console.log("test1");
     if (user?.id === session?.speakerId && kudo?.flagged === false) {
       try {
-        await flagKudoById.mutateAsync({ id: kudo?.id ?? "error", flagged: !kudo?.flagged })
-        await sendNotificationsToAdmins.mutateAsync({ message: "Kudo send by " + (sender?.displayName ?? "name not found").toString() + " is reported by " + (user?.name ?? "name not found").toString(), kudoId: kudo.id, photo: sender?.id })
-
+        await flagKudoById({
+          id: kudo?.id ?? "error",
+          flagged: !kudo?.flagged,
+        });
+      } catch (e) {
+        toast.error((e as TRPCError).message);
+        console.log("test2");
       }
-      catch (e) {
-        console.log(e);
-      }
-    }
-    else if (user?.role === UserRole.ADMIN && kudo?.flagged === true) {
+    } else if (/*user?.role === UserRole.ADMIN && */ kudo?.flagged === true) {
       try {
-        await flagKudoById.mutateAsync({ id: kudo?.id ?? "error", flagged: !kudo?.flagged })
-        await refetchKudo()
+        await flagKudoById({
+          id: kudo?.id ?? "error",
+          flagged: !kudo?.flagged,
+        });
+      } catch (e) {
+        toast.error((e as TRPCError).message);
       }
-      catch (e) {
-        console.log(e);
-      }
+      await refetchKudo();
     }
   }
 
   return (
     <>
       <Head>
-        <title>eKudo</title>
-        <meta name="description" content="eKudo app" />
-        <link rel="icon" href="/favicon.ico" />
+        <title>eKudo - Kudo</title>
+        <meta
+          name="description"
+          content="Page where you can see a Kudo in detail."
+        />
       </Head>
       <NavigationBarContent>
         <h1>Kudo {session?.title ?? "no title"}</h1>
       </NavigationBarContent>
       <UtilButtonsContent>
-        {((user?.id === kudo?.userId || user?.role === UserRole.ADMIN) && user?.id !== session?.speakerId) &&
-          <Link className="btn btn-ghost btn-circle" onClick={del} href="/out" data-cy="deleteButton">
-            <FaTrashAlt size={20} />
-          </Link>
-        }
-        {((user?.id === session?.speakerId || user?.role === UserRole.ADMIN) && user?.id !== kudo?.userId) &&
-          <button className="btn btn-ghost btn-circle" onClick={() => void flag()} data-cy="flagButton">
-            {kudo.flagged ? <AiFillWarning size={20} /> : <AiOutlineWarning size={20} />}
-          </button>
-        }
+        {(user?.id === kudo?.userId || user?.role === UserRole.ADMIN) &&
+          user?.id !== session?.speakerId && (
+            <Link
+              className="btn-ghost btn-circle btn"
+              onClick={del}
+              href="/out"
+              data-cy="deleteButton"
+            >
+              <FaTrashAlt size={20} />
+            </Link>
+          )}
+        {(user?.id === session?.speakerId || user?.role === UserRole.ADMIN) &&
+          user?.id !== kudo?.userId && (
+            <button
+              className="btn-ghost btn-circle btn"
+              onClick={() => void flag()}
+              data-cy="flagButton"
+            >
+              {kudo.flagged ? (
+                <AiFillWarning size={20} />
+              ) : (
+                <AiOutlineWarning size={20} />
+              )}
+            </button>
+          )}
       </UtilButtonsContent>
       {/* <div className="flex justify-center ">
         <div className="card bg-white text-gray-800 aspect-[3/2] rounded-none w-[320px] h-[208px] mt-20">
@@ -165,60 +222,93 @@ const KudoDetail: NextPage<{ id: string }> = ({ id }) => {
         </div>
       </div> */}
 
-      <div className="flex flex-col items-center justify-center h-full w-full">
-        <div className="aspect-[3/2] w-full max-h-full max-w-2xl">
-          <div className="aspect-[3/2] w-full max-h-full max-w-2xl bg-white relative">
-            <Image className="shadow-2xl" src={image} fill alt="Kudo" data-id={kudo.id} />
+      <div className="flex h-full w-full flex-col items-center justify-center">
+        <div className="aspect-[3/2] max-h-full w-full max-w-2xl">
+          <div className="relative aspect-[3/2] max-h-full w-full max-w-2xl overflow-hidden rounded-3xl bg-white">
+            <Image
+              className="shadow-2xl"
+              src={image}
+              fill
+              alt="Kudo"
+              data-id={kudo.id}
+            />
           </div>
-          <div className="flex flex-row m-2 gap-2">
-            <div className={`btn btn-circle btn-ghost ${user?.id === session?.speakerId ? "" : "pointer-events-none"}`} data-cy="like" onClick={() => void handleclick()}>
-              {kudo.liked ? <AiFillHeart size={25} data-cy="liked" /> : <AiOutlineHeart size={25} data-cy="notLiked" />}
+          <div className="m-2 flex flex-row gap-2">
+            <div
+              className={`btn-ghost btn-circle btn ${
+                user?.id === session?.speakerId ? "" : "pointer-events-none"
+              }`}
+              data-cy="like"
+              onClick={() => void handleclick()}
+            >
+              {kudo.liked ? (
+                <AiFillHeart size={25} data-cy="liked" />
+              ) : (
+                <AiOutlineHeart size={25} data-cy="notLiked" />
+              )}
             </div>
-            {!kudo.comment && user?.id === session?.speakerId ?
-              <div className="relative flex flex-row item justify-start w-full">
-                <input value={comment} onChange={(e) => setComment(e.target.value)} type="text" placeholder="place your comment here" className="input input-bordered w-full" data-cy="commentInput" />
-                <div className="absolute btn btn-circle btn-ghost right-0" data-cy="sendComment" onClick={() => setSendReady(true)}>
+            {!kudo.comment && user?.id === session?.speakerId ? (
+              <div className="item relative flex w-full flex-row justify-start">
+                <input
+                  value={comment}
+                  onChange={(e) => setComment(e.target.value)}
+                  type="text"
+                  placeholder="place your comment here"
+                  className="input-bordered input w-full"
+                  data-cy="commentInput"
+                />
+                <div
+                  className="btn-ghost btn-circle btn absolute right-0"
+                  data-cy="sendComment"
+                  onClick={() => setSendReady(true)}
+                >
                   <AiOutlineSend size={20} />
                 </div>
               </div>
-              :
+            ) : (
               <>
-                {!kudo.comment ? <></> : <div className="chat chat-end w-full">
-                  <div className="chat-header">
-                    {session.speaker?.displayName}
-                  </div>
-                  <h1 className="chat-bubble chat-bubble-primary" data-cy="comment" >{kudo.comment}</h1>
-                  <div className="chat-image avatar">
-                    <div className="w-10 rounded-full relative">
-                      <Image
-                        className="rounded-full"
-                        src={imgUrl}
-                        alt="Profile picture"
-                        fill
-                      />
+                {!kudo.comment ? (
+                  <></>
+                ) : (
+                  <div className="chat chat-end w-full">
+                    <div className="chat-header">{speaker?.displayName}</div>
+                    <h1
+                      className="chat-bubble chat-bubble-primary"
+                      data-cy="comment"
+                    >
+                      {kudo.comment}
+                    </h1>
+                    <div className="chat-image avatar">
+                      <div className="relative w-10 rounded-full">
+                        <Image
+                          className="rounded-full"
+                          src={imgUrl}
+                          alt="Profile picture"
+                          fill
+                        />
+                      </div>
                     </div>
                   </div>
-                </div>}
+                )}
               </>
-            }
+            )}
           </div>
         </div>
       </div>
 
-      {
-        sendReady ?
-          <ConfirmationModal
-            prompt={"Is your comment ready to be sent?"}
-            onCancel={() => setSendReady(false)}
-            cancelLabel={"No"}
-            onSubmit={() => void handleSubmit()}
-            submitLabel={"Yes"}
-          /> : <></>
-      }
-
+      {sendReady ? (
+        <ConfirmationModal
+          prompt={"Is your comment ready to be sent?"}
+          onCancel={() => setSendReady(false)}
+          cancelLabel={"No"}
+          onSubmit={() => void handleSubmit()}
+          submitLabel={"Yes"}
+        />
+      ) : (
+        <></>
+      )}
     </>
   );
 };
 
 export default KudoDetail;
-

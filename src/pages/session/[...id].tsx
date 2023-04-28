@@ -17,20 +17,24 @@ import { useEffect } from "react";
 import { pusherClient } from "~/pusher/pusher.client";
 import { type Kudo } from "@prisma/client";
 import { getKudosBySessionId } from "~/server/services/kudoService";
+import { toast } from "react-toastify";
 
 export async function getServerSideProps(context: { query: { id: string } }) {
-  const kudos = await getKudosBySessionId(context.query.id[0]??'')
+  const kudos = await getKudosBySessionId(context.query.id[0] ?? "");
   return {
     props: {
       id: context.query.id[0],
-      initialKudos: kudos
+      initialKudos: kudos,
     },
   };
 }
 
-const Session: NextPage<{ id: string, initialKudos: Kudo[] }> = ({ id, initialKudos }) => {
-  const router = useRouter()
-  const user = useSession().data?.user
+const Session: NextPage<{ id: string; initialKudos: Kudo[] }> = ({
+  id,
+  initialKudos,
+}) => {
+  const router = useRouter();
+  const user = useSession().data?.user;
   const [kudos, setKudos] = useState<Kudo[]>(initialKudos);
 
   const sessionQuery = api.sessions.getSessionById.useQuery({ id: id });
@@ -38,23 +42,23 @@ const Session: NextPage<{ id: string, initialKudos: Kudo[] }> = ({ id, initialKu
   const ids = kudos?.map((kudo) => kudo.image) ?? [];
   const imagesQuery = api.kudos.getImagesByIds.useQuery({ ids: ids });
   const images = imagesQuery.data;
-  
+
   useEffect(() => {
     const channel = pusherClient.subscribe(`session-${id}`);
-    channel.bind('kudo-created', (data: {kudos: Kudo[]}) => {
-      setKudos(data.kudos)
-    })
-    channel.bind('pusher:subscription_succeeded', function() {
-      console.log('successfully subscribed!');
+    channel.bind("kudo-created", (data: { kudos: Kudo[] }) => {
+      setKudos(data.kudos);
     });
-    return () =>  channel.unsubscribe();
+    channel.bind("pusher:subscription_succeeded", function () {
+      console.log("successfully subscribed!");
+    });
+    return () => channel.unsubscribe();
   }, [id]);
 
   useEffect(() => {
-    if(sessionQuery.isLoading) return
-    if(user?.role !== UserRole.ADMIN && user?.id !== session?.speakerId) 
-      router.replace("/403").catch(console.error)
-  }, [user, router, session?.speakerId, sessionQuery.isLoading])
+    if (sessionQuery.isLoading) return;
+    if (user?.role !== UserRole.ADMIN && user?.id !== session?.speakerId)
+      router.replace("/403").catch((e) => toast.error((e as Error).message));
+  }, [user, router, session?.speakerId, sessionQuery.isLoading]);
 
   if (sessionQuery.isLoading || imagesQuery.isLoading) {
     return <LoadingBar />;
@@ -91,41 +95,43 @@ const Session: NextPage<{ id: string, initialKudos: Kudo[] }> = ({ id, initialKu
   return (
     <>
       <Head>
-        <title>eKudo</title>
-        <meta name="description" content="eKudo app" />
-        <link rel="icon" href="/favicon.ico" />
+        <title>eKudo - Session</title>
+        <meta
+          name="description"
+          content="Page where you can see all Kudo's from a Session."
+        />
       </Head>
       <NavigationBarContent>
         <h1>Session: {session?.title}</h1>
       </NavigationBarContent>
       <UtilButtonsContent>
         <button
-          className="btn btn-ghost btn-circle "
+          className="btn-ghost btn-circle btn "
           onClick={() => void downloadZip()}
-          data-cy='DownloadButton'
+          data-cy="DownloadButton"
         >
           <FiDownload size={20} />
         </button>
         <Link
           href={`/session/presentation/${id}`}
-          className="btn btn-ghost btn-circle hidden lg:flex"
-          data-cy='PresentationButton'
+          className="btn-ghost btn-circle btn hidden lg:flex"
+          data-cy="PresentationButton"
         >
           <FiMonitor size={20} />
         </Link>
       </UtilButtonsContent>
-        <main
-          className="flex flex-col items-center justify-center"
-          data-cy="Session"
-        >
-          <div className="flex h-full flex-wrap justify-center gap-5 p-5">
-            {kudos == undefined || kudos.length == 0 ? (
-              <h1>No Kudos received Yet</h1>
-            ) : (
-              kudos.map((kudo) => <KudoCard key={kudo.id} kudo={kudo} />)
-            )}
-          </div>
-        </main>
+      <main
+        className="flex flex-col items-center justify-center"
+        data-cy="Session"
+      >
+        <div className="flex h-full flex-wrap justify-center gap-5 p-5">
+          {kudos == undefined || kudos.length == 0 ? (
+            <h1>No Kudos received Yet</h1>
+          ) : (
+            kudos.map((kudo) => <KudoCard key={kudo.id} kudo={kudo} />)
+          )}
+        </div>
+      </main>
     </>
   );
 };

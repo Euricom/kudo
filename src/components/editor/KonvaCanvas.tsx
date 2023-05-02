@@ -39,9 +39,13 @@ const KonvaCanvas = ({
   const stageRef = useRef<Konva.Stage>() as MutableRefObject<Konva.Stage>;
   const layerRef = useRef<Konva.Layer>() as MutableRefObject<Konva.Layer>;
   const staticLayerRef = useRef<Konva.Layer>() as MutableRefObject<Konva.Layer>;
-  const [shapes, setShapes] = useState<Shapes[]>([]);
+  const [shapes, setShapes] = useState<Shapes[]>(
+    ([...template.content] as unknown as Shapes[]) ?? []
+  );
   const [selectedId, selectShape] = useState<string | null>(null);
-  const [history] = useState<Shapes[]>([]);
+  const { current: history } = useRef<Shapes[]>(
+    ([...template.content] as unknown as Shapes[]).reverse() ?? []
+  );
 
   const { mutateAsync: createTemplate } =
     api.templates.createTemplate.useMutation();
@@ -67,8 +71,7 @@ const KonvaCanvas = ({
     const shape = shapes.find((s) => s.id === lastShape?.id);
     if (!shape) {
       if (lastShape) {
-        shapes.push(lastShape);
-        setShapes(shapes);
+        setShapes((s) => [...s, lastShape]);
       }
       setFunction(EditorFunctions.None);
       return;
@@ -80,7 +83,7 @@ const KonvaCanvas = ({
       if (lastShape?.id === "header") {
         history.unshift(lastShape);
       } else {
-        shapes.splice(index, 1);
+        setShapes((s) => s.splice(index, 1));
       }
     }
     setShapes(shapes);
@@ -93,8 +96,7 @@ const KonvaCanvas = ({
     if (!shape) {
       return;
     }
-    const index = shapes.indexOf(shape);
-    shapes.splice(index, 1);
+    setShapes((s) => s.filter((s) => s.id !== id));
 
     history.unshift(shape);
     selectShape(null);
@@ -112,6 +114,8 @@ const KonvaCanvas = ({
         break;
       case EditorFunctions.Sticker:
         addSticker();
+        console.log("sticker");
+
         break;
     }
   };
@@ -121,7 +125,7 @@ const KonvaCanvas = ({
 
     const text = makeText(pos);
     history.unshift(text);
-    shapes.push(text);
+    setShapes((s) => [...s, text]);
     selectShape(text.id);
     setFunction(EditorFunctions.None);
   };
@@ -142,6 +146,7 @@ const KonvaCanvas = ({
   };
 
   const addSticker = () => {
+    debugger;
     if (!emoji) {
       toast.error("No emoji selected");
       return;
@@ -157,7 +162,7 @@ const KonvaCanvas = ({
       fontSize: (stageDimensions?.height ?? 0) / 5,
     };
     history.unshift(sticker);
-    shapes.push(sticker);
+    setShapes((s) => [...s, sticker]);
     selectShape(sticker.id);
     setFunction(EditorFunctions.None);
   };
@@ -241,7 +246,7 @@ const KonvaCanvas = ({
       const newShape = line.pop();
       if (newShape) {
         history.unshift(newShape);
-        shapes.push(newShape);
+        setShapes((s) => [...s, newShape]);
       }
       setLine([]);
     }
@@ -269,13 +274,9 @@ const KonvaCanvas = ({
   }, [editorFunction, undo, saveTemplate]);
 
   useEffect(() => {
-    if (!template || !stageDimensions.height) {
-      return;
-    }
-    const templateShapes = (template.content as unknown as Shapes[]) ?? [];
-    history.unshift(...templateShapes);
-    setShapes(templateShapes);
-  }, [template, stageDimensions, history]);
+    console.log("shapes", shapes);
+    console.log("history", history);
+  }, [shapes, history]);
 
   return (
     <>

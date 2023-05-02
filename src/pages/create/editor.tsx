@@ -98,8 +98,12 @@ const Editor: NextPage<{ id: string }> = ({ id }) => {
   };
 
   const handleEmoji = () => {
-    setEmojiDropdownState(!emojiDropdownState);
-    setSelectedButton(EditorFunctions.Sticker);
+    try {
+      setEmojiDropdownState(!emojiDropdownState);
+      setSelectedButton(EditorFunctions.Sticker);
+    } catch (e) {
+      toast.error((e as Error).message);
+    }
   };
 
   function onClickEmoji(emoji: EmojiObject) {

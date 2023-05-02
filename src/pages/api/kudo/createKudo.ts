@@ -1,15 +1,15 @@
 import { type NextApiRequest, type NextApiResponse } from "next";
 
 interface body {
-  message: string;
+  text: string;
 }
 
 export default function handler(req: NextApiRequest, res: NextApiResponse) {
-  const message: string = (req.body as body).message;
+  const text: string = (req.body as body).text;
 
   res.send({
     response_type: "in_channel",
-    text: message,
+    text: text,
   });
   res.end();
 }

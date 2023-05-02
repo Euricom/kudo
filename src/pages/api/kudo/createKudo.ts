@@ -13,6 +13,7 @@ export default async function handler(
   const image = await getFirstImageById().then((i) => i?.dataUrl);
   res.send({
     response_type: "in_channel",
+    text: text,
     image_url: image,
   });
   res.end();

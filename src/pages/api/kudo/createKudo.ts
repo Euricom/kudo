@@ -6,7 +6,7 @@ export default function handler(req: NextApiRequest, res: NextApiResponse) {
   res.send({});
   res.send({
     response_type: "in_channel",
-    text: "...",
+    text: "test slash Command",
   });
   res.end();
 }

@@ -53,6 +53,10 @@ const Editor: NextPage<{ id: string }> = ({ id }) => {
   const { mutateAsync: createImage } = api.kudos.createKudoImage.useMutation();
   const templateQuery = api.templates.getTemplateById.useQuery({ id: id });
   const template = templateQuery.data;
+  const volledigeSpeaker = api.users.getUserById.useQuery({
+    id: speaker ?? "18d332af-2d5b-49e5-8c42-9168b3910f97",
+  }).data;
+  const slackMessage = api.slack.sendMessageToSlack.useMutation();
   //UseStates
   const [selectedButton, setSelectedButton] = useState<EditorFunctions>();
   const [stage, setStage] = useState<Konva.Stage>();
@@ -85,7 +89,7 @@ const Editor: NextPage<{ id: string }> = ({ id }) => {
     if (!stage) {
       return;
     }
-    if (user && user.id)
+    if (user && user.id && user.name && volledigeSpeaker)
       try {
         const image = await createImage({ dataUrl: stage.toDataURL() });
         await createKudo({
@@ -94,6 +98,23 @@ const Editor: NextPage<{ id: string }> = ({ id }) => {
           userId: user.id,
           anonymous: anonymous,
         });
+        console.log(
+          "@" +
+            volledigeSpeaker?.givenName +
+            "." +
+            volledigeSpeaker.surname.toLowerCase().replace(" ", "")
+        );
+
+        await slackMessage
+          .mutateAsync({
+            text: user.name.toString() + " heeft je een kudo gestuurd!",
+            channel:
+              "@" +
+              volledigeSpeaker?.givenName +
+              "." +
+              volledigeSpeaker.surname.toLowerCase().replace(" ", ""),
+          })
+          .catch((e) => console.log(e));
         await router.replace("/out");
       } catch (e) {
         toast.error((e as TRPCError).message);

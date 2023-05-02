@@ -30,8 +30,6 @@ const Out: NextPage<{ filterIn: string; sortIn: SortPosibillities }> = ({
   filterIn,
   sortIn,
 }) => {
-  const slackMessage = api.slack.sendMessageToSlack.useMutation();
-
   const sessionQuery = api.sessions.getAll.useQuery();
   const sessions = sessionQuery.data;
   const userQuery = api.users.getAllUsers.useQuery();
@@ -81,17 +79,7 @@ const Out: NextPage<{ filterIn: string; sortIn: SortPosibillities }> = ({
       <UtilButtonsContent>
         <></>
       </UtilButtonsContent>
-      <main
-        className="flex flex-col items-center justify-start"
-        onClick={() =>
-          void slackMessage
-            .mutateAsync({
-              text: "testPersoonlijk",
-              channel: "@kobe.dehandschutter",
-            })
-            .catch((e) => console.log(e))
-        }
-      >
+      <main className="flex flex-col items-center justify-start">
         <SortAndFilter
           setSort={setSort}
           filter={filter}

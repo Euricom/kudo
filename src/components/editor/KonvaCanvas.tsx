@@ -24,6 +24,8 @@ import { toast } from "react-toastify";
 import CanvasSticker from "./canvasShapes/CanvasSticker";
 import CanvasCircle from "./canvasShapes/CanvasCircle";
 import { api } from "~/utils/api";
+import { useSessionSpeaker } from "../sessions/SelectedSessionAndSpeaker";
+import { useSession } from "next-auth/react";
 
 const KonvaCanvas = ({
   editorFunction,
@@ -42,6 +44,8 @@ const KonvaCanvas = ({
   const [shapes, setShapes] = useState<Shapes[]>([]);
   const [selectedId, selectShape] = useState<string | null>(null);
   const [history] = useState<Shapes[]>([]);
+  const { anonymous } = useSessionSpeaker().data;
+  const user = useSession().data?.user;
 
   const { mutateAsync: createTemplate } =
     api.templates.createTemplate.useMutation();
@@ -273,9 +277,30 @@ const KonvaCanvas = ({
       return;
     }
     const templateShapes = (template.content as unknown as Shapes[]) ?? [];
+    if (!anonymous) {
+      templateShapes.push({
+        id: "Sender",
+        type: CanvasShapes.Text,
+        x: 0,
+        y: 460,
+        text: `Send by ${user?.name ?? ""}`,
+        fill: color,
+        fontFamily: fontFamily,
+        fontSize: (stageDimensions?.height ?? 0) * 0.05,
+        draggable: true,
+      });
+    }
     history.unshift(...templateShapes);
     setShapes(templateShapes);
-  }, [template, stageDimensions, history]);
+  }, [
+    template,
+    stageDimensions,
+    history,
+    anonymous,
+    user?.name,
+    color,
+    fontFamily,
+  ]);
 
   return (
     <>
@@ -302,15 +327,22 @@ const KonvaCanvas = ({
           onClick={clickListener}
           onTap={clickListener}
         >
-          <Layer ref={staticLayerRef}>
-            <Rect
-              width={stageDimensions?.width}
-              height={stageDimensions?.height}
-              fill={template.color}
-            />
-          </Layer>
-
           <Layer ref={layerRef}>
+            <Rectangle
+              key="Background"
+              shapeProps={{
+                type: CanvasShapes.Rect,
+                id: "Background",
+                width: stageDimensions?.width,
+                height: stageDimensions?.height,
+                fill: template.color,
+              }}
+              isSelected={false}
+              editorFunction={EditorFunctions.None}
+              onSelect={() => void 0}
+              onChange={() => void 0}
+              onDelete={() => void 0}
+            />
             {shapes.map((s, i) => {
               switch (s.type) {
                 case CanvasShapes.Line:

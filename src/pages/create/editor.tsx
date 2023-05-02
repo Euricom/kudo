@@ -87,7 +87,9 @@ const Editor: NextPage<{ id: string }> = ({ id }) => {
     }
     if (user && user.id)
       try {
-        const image = await createImage({ dataUrl: stage.toDataURL() });
+        const image = await createImage({
+          dataUrl: stage.toDataURL({ pixelRatio: 1 / stage.scaleX() }),
+        });
         await createKudo({
           image: image.id,
           sessionId: session,

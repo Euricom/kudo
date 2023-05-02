@@ -14,7 +14,9 @@ export default async function handler(
   res.send({
     response_type: "in_channel",
     text: text,
-    image_url: image,
+    attachments: {
+      image_url: image,
+    },
   });
   res.end();
 }

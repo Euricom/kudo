@@ -3,63 +3,31 @@ import { getFirstImageById } from "~/server/services/kudoService";
 
 interface body {
   text: string;
+  channel_id: string;
+  channel_name: string;
+  user_id: string;
+  user_name: string;
 }
 
 export default async function handler(
   req: NextApiRequest,
   res: NextApiResponse
 ) {
-  const text: string = (req.body as body).text;
-  console.log(req.body);
-
+  const body: body = req.body as body;
+  const text =
+    "channelId=" +
+    body.channel_id +
+    ", chanelName=" +
+    body.channel_name +
+    ", userId=" +
+    body.user_id +
+    ", userName=" +
+    body.user_name;
   const image = await getFirstImageById().then((i) => i?.dataUrl);
 
   res.send({
     response_type: "in_channel",
-    blocks: [
-      {
-        type: "header",
-        text: {
-          type: "plain_text",
-          text: "New request",
-        },
-      },
-      {
-        type: "section",
-        fields: [
-          {
-            type: "mrkdwn",
-            text: "*Type:*\nPaid Time Off",
-          },
-          {
-            type: "mrkdwn",
-            text: "*Created by:*\n<example.com|Fred Enriquez>",
-          },
-        ],
-      },
-      {
-        type: "section",
-        fields: [
-          {
-            type: "mrkdwn",
-            text: "*When:*\nAug 10 - Aug 13",
-          },
-        ],
-        accessory: {
-          type: "image",
-          image_url:
-            "https://is5-ssl.mzstatic.com/image/thumb/Purple3/v4/d3/72/5c/d3725c8f-c642-5d69-1904-aa36e4297885/source/256x256bb.jpg",
-          alt_text: "Haunted hotel image",
-        },
-      },
-      {
-        type: "section",
-        text: {
-          type: "mrkdwn",
-          text: "<https://example.com|View request>",
-        },
-      },
-    ],
+    text: text,
   });
   res.end();
 }

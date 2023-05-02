@@ -13,10 +13,19 @@ export default async function handler(
   const image = await getFirstImageById().then((i) => i?.dataUrl);
   res.send({
     response_type: "in_channel",
-    attachments: [
+    blocks: [
       {
-        text: text,
-        image_url: image,
+        type: "section",
+        block_id: "section567",
+        text: {
+          type: "mrkdwn",
+          text: text,
+        },
+        accessory: {
+          type: "image",
+          image_url: image,
+          alt_text: "Kudo",
+        },
       },
     ],
   });

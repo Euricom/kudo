@@ -89,5 +89,9 @@ export function getKudosBySessionId(sessionId: string) {
 }
 
 export function getFirstImageById() {
-  return prisma.image.findFirst();
+  return prisma.image.findFirst({
+    where: {
+      id: "clgw23or80004n0imq1wzj9ec",
+    },
+  });
 }

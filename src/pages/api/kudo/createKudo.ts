@@ -4,9 +4,9 @@ export default function handler(req: NextApiRequest, res: NextApiResponse) {
   console.log("erin");
 
   res.send({});
-  // res.send({
-  //   response_type: "in_channel",
-  //   text: "...",
-  // });
+  res.send({
+    response_type: "in_channel",
+    text: "...",
+  });
   res.end();
 }

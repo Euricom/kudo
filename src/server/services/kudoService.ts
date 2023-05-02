@@ -87,3 +87,7 @@ export function getKudosBySessionId(sessionId: string) {
     },
   });
 }
+
+export function getFirstImageById() {
+  return prisma.image.findFirst();
+}

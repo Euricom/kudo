@@ -11,10 +11,7 @@ import {
 } from "~/server/services/pusherService";
 import { SortPosibillities } from "~/types";
 import { TRPCError } from "@trpc/server";
-import {
-  sendnotification,
-  sendnotificationsToAdmins,
-} from "~/server/services/notificationService";
+import { sendnotification } from "~/server/services/notificationService";
 import { findUserById } from "~/server/services/userService";
 import { getSessionById } from "~/server/services/sessionService";
 

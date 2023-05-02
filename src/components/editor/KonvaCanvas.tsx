@@ -287,7 +287,7 @@ const KonvaCanvas = ({
         type: CanvasShapes.Text,
         x: 0,
         y: 460,
-        text: `Send by ${user?.name ?? ""}`,
+        text: `Sent by ${user?.name ?? ""}`,
         fill: color,
         fontFamily: fontFamily,
         fontSize: (stageDimensions?.height ?? 0) * 0.05,

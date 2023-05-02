@@ -23,6 +23,9 @@ const server = z.object({
   AZURE_AD_CLIENT_SECRET: z.string(),
   AZURE_AD_TENANT_ID: z.string(),
   SESSION_URL: z.string(),
+  PUSHER_APP_ID: z.string(),
+  PUSHER_KEY: z.string(),
+  PUSHER_SECRET: z.string(),
   SLACK_APP_TOKEN: z.string(),
 });
 
@@ -30,9 +33,13 @@ const server = z.object({
  * Specify your client-side environment variables schema here. This way you can ensure the app isn't
  * built with invalid env vars. To expose them to the client, prefix them with `NEXT_PUBLIC_`.
  */
-const client = z.object({
-  // NEXT_PUBLIC_CLIENTVAR: z.string().min(1),
-});
+const client = z.object(
+  /** @satisfies {Record<`NEXT_PUBLIC_${string}`, import('zod').ZodType>} */ (
+    {
+      NEXT_PUBLIC_PUSHER_KEY: z.string(),
+    }
+  ),
+);
 
 /**
  * You can't destruct `process.env` as a regular object in the Next.js edge runtimes (e.g.
@@ -49,6 +56,10 @@ const processEnv = {
   AZURE_AD_CLIENT_SECRET: process.env.AZURE_AD_CLIENT_SECRET,
   AZURE_AD_TENANT_ID: process.env.AZURE_AD_TENANT_ID,
   SESSION_URL: process.env.SESSION_URL,
+  PUSHER_APP_ID: process.env.PUSHER_APP_ID,
+  PUSHER_KEY: process.env.PUSHER_KEY,
+  PUSHER_SECRET: process.env.PUSHER_SECRET,
+  NEXT_PUBLIC_PUSHER_KEY: process.env.NEXT_PUBLIC_PUSHER_KEY,
   SLACK_APP_TOKEN: process.env.SLACK_APP_TOKEN,
   // NEXT_PUBLIC_CLIENTVAR: process.env.NEXT_PUBLIC_CLIENTVAR,
 };

@@ -7,40 +7,57 @@ import { api } from "~/utils/api";
 import LoadingBar from "~/components/LoadingBar";
 import { FiMonitor } from "react-icons/fi";
 import { useRouter } from "next/router";
-import { useRef, useState, useEffect } from "react";
+import { useRef, useState, useEffect, useCallback } from "react";
 import { type PresentationKudo } from "~/types";
 import { useTransition, animated } from "@react-spring/web";
 import { QRCode } from "react-qrcode-logo";
 import icon from "~/../public/favicon.ico";
+import { pusherClient } from "~/pusher/pusher.client";
+import { type Kudo } from "@prisma/client";
+import { getKudosBySessionId } from "~/server/services/kudoService";
 
-export function getServerSideProps(context: { query: { id: string } }) {
+export async function getServerSideProps(context: { query: { id: string } }) {
+  const kudos = await getKudosBySessionId(context.query.id[0] ?? "");
   return {
     props: {
       id: context.query.id[0],
+      initialKudos: kudos,
     },
   };
 }
 
-const Presentation: NextPage<{ id: string }> = ({ id }) => {
+const Presentation: NextPage<{ id: string; initialKudos: Kudo[] }> = ({
+  id,
+  initialKudos,
+}) => {
   const dropzoneRef = useRef<HTMLDivElement>(null);
   const router = useRouter();
+
+  const makePresentationKudo = useCallback((kudo: Kudo) => {
+    const { rX, rY, rot } = getRandomPosition();
+    const newKudo = {
+      id: kudo.id,
+      x: rX,
+      y: rY,
+      rot: rot,
+      kudo: kudo,
+    };
+    return newKudo;
+  }, []);
+
   const [kudos, setKudos] = useState<PresentationKudo[]>([]);
 
   const sessionQuery = api.sessions.getSessionById.useQuery({ id: id });
   const session = sessionQuery.data;
-  const { data: allKudos, isLoading: kudoLoading } =
-    api.kudos.getKudosBySessionId.useQuery({
-      id: session?.id ?? "",
-    });
 
   const DURATION_SECONDEN = 4;
 
   const transitions = useTransition(kudos, {
     from: { x: 0, y: 0, opacity: 0, scale: 3, rotate: 0 },
-    enter: (kudo, index) => async (next) => (
+    enter: (kudo) => async (next) => (
       await next({
         opacity: 1,
-        delay: index * (DURATION_SECONDEN * 1000 + 1000),
+        delay: DURATION_SECONDEN * 1000 + 1000,
       }),
       await next({
         x: kudo.x,
@@ -55,32 +72,6 @@ const Presentation: NextPage<{ id: string }> = ({ id }) => {
     ),
   });
 
-  useEffect(() => {
-    const newKudos =
-      allKudos?.map((kudo) => {
-        const { rX, rY, rot } = getRandomPosition();
-        return {
-          id: kudo.id,
-          x: rX,
-          y: rY,
-          rot: rot,
-          kudo: kudo,
-        };
-      }) ?? [];
-    setKudos((k) => [
-      ...k,
-      ...newKudos.filter((kudo) => !k.find((item) => item.id === kudo.id)),
-    ]);
-  }, [allKudos]);
-
-  if (sessionQuery.isLoading || kudoLoading) {
-    return <LoadingBar />;
-  }
-
-  if (!session) {
-    return <>404</>;
-  }
-
   function getRandomPosition() {
     const width = dropzoneRef.current?.offsetWidth ?? 1;
     const height = dropzoneRef.current?.offsetHeight ?? 1;
@@ -92,6 +83,37 @@ const Presentation: NextPage<{ id: string }> = ({ id }) => {
     const rot = Math.floor(Math.random() * 90) - 45;
 
     return { rX, rY, rot };
+  }
+
+  useEffect(() => {
+    const channel = pusherClient.subscribe(`session-${id}`);
+    channel.bind("pusher:subscription_succeeded", function () {
+      console.log("successfully subscribed!");
+    });
+    channel.bind("kudo-created", (data: { kudo: Kudo }) => {
+      setKudos((k) => [...k, makePresentationKudo(data.kudo)]);
+    });
+    channel.bind("kudo-deleted", (data: { kudo: Kudo }) => {
+      setKudos((k) => [...k.filter((kudo) => kudo.id !== data.kudo.id)]);
+    });
+    return () => {
+      channel.unbind("pusher:subscription_succeeded");
+      channel.unbind("kudo-created");
+      channel.unbind("kudo-deleted");
+      channel.unsubscribe();
+    };
+  }, [id, makePresentationKudo]);
+
+  useEffect(() => {
+    setKudos(initialKudos.map((k) => makePresentationKudo(k)));
+  }, [initialKudos, makePresentationKudo]);
+
+  if (sessionQuery.isLoading) {
+    return <LoadingBar />;
+  }
+
+  if (!session) {
+    return <>404</>;
   }
 
   return (

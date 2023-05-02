@@ -1,7 +1,16 @@
 import { createTRPCRouter, protectedProcedure } from "~/server/api/trpc";
-import { TRPCError } from "@trpc/server";
-import { boolean, object, string } from "zod";
+import { boolean, nativeEnum, object, optional, string } from "zod";
 import { type Kudo, type Image } from "@prisma/client";
+import {
+  findAllKudosSortedByUserId,
+  getKudosBySessionId,
+} from "~/server/services/kudoService";
+import {
+  createPusherKudo,
+  deletePusherKudo,
+} from "~/server/services/pusherService";
+import { SortPosibillities } from "~/types";
+import { TRPCError } from "@trpc/server";
 import {
   sendnotification,
   sendnotificationsToAdmins,
@@ -21,6 +30,11 @@ const createImageInput = object({
 
 const inputGetById = object({
   id: string(),
+});
+
+const inputGetByIdSorted = object({
+  id: string(),
+  sort: optional(nativeEnum(SortPosibillities)),
 });
 
 const inputLike = object({
@@ -47,29 +61,17 @@ export const kudoRouter = createTRPCRouter({
   }),
 
   getKudosByUserId: protectedProcedure
-    .input(inputGetById)
-    .query(({ input, ctx }) => {
-      return ctx.prisma.kudo.findMany({
-        where: {
-          userId: input.id,
-        },
-        orderBy: {
-          id: "desc",
-        },
-      });
+    .input(inputGetByIdSorted)
+    .query(async ({ input }) => {
+      const kudos = await findAllKudosSortedByUserId(input.id, input.sort);
+      return kudos;
     }),
 
   getKudosBySessionId: protectedProcedure
     .input(inputGetById)
-    .query(({ input, ctx }) => {
-      return ctx.prisma.kudo.findMany({
-        where: {
-          sessionId: input.id,
-        },
-        orderBy: {
-          id: "desc",
-        },
-      });
+    .query(async ({ input }) => {
+      const kudos = await getKudosBySessionId(input.id);
+      return kudos;
     }),
 
   getImageById: protectedProcedure
@@ -126,6 +128,8 @@ export const kudoRouter = createTRPCRouter({
         },
       });
 
+      await deletePusherKudo(kudo);
+
       if (kudo == undefined) {
         throw new TRPCError({
           code: "INTERNAL_SERVER_ERROR",
@@ -166,6 +170,7 @@ export const kudoRouter = createTRPCRouter({
         },
       });
       if (kudo) {
+        await createPusherKudo(kudo);
         const sender = await findUserById(input.userId);
         const session = await getSessionById(input.sessionId);
         const speaker = await findUserById(session.speakerId);
@@ -228,6 +233,7 @@ export const kudoRouter = createTRPCRouter({
         });
       }
     }),
+
   commentKudoById: protectedProcedure
     .input(inputComment)
     .mutation(async ({ input, ctx }) => {

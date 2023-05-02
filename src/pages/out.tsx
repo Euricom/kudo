@@ -7,21 +7,19 @@ import { UtilButtonsContent } from "~/hooks/useUtilButtons";
 import { NavigationBarContent } from "~/components/navigation/NavBarTitle";
 import NavButtons from "~/components/navigation/NavButtons";
 import { useSession } from "next-auth/react";
-import { FindAllKudosSortedByUserId } from "~/server/services/kudoService";
 import { SortPosibillities } from "~/types";
 import { useEffect, useState } from "react";
 import SortAndFilter from "~/components/input/SortAndFilter";
 import { api } from "~/utils/api";
 import LoadingBar from "~/components/LoadingBar";
-import { type Kudo } from "@prisma/client";
 
 export function getServerSideProps(context: {
   query: { searchtext: string; sort: SortPosibillities };
 }) {
   return {
     props: {
-      filterIn: context.query.searchtext ?? "",
-      sortIn: context.query.sort ?? "",
+      filterIn: context.query.searchtext ?? null,
+      sortIn: context.query.sort ?? null,
     },
   };
 }
@@ -30,37 +28,38 @@ const Out: NextPage<{ filterIn: string; sortIn: SortPosibillities }> = ({
   filterIn,
   sortIn,
 }) => {
-  const sessionQuery = api.sessions.getAll.useQuery();
-  const sessions = sessionQuery.data;
-  const userQuery = api.users.getAllUsers.useQuery();
-  const users = userQuery.data;
-
   const [sort, setSort] = useState<SortPosibillities>(
-    sortIn ?? SortPosibillities.DateD
+    sortIn === null ? SortPosibillities.DateD : sortIn
   );
-  const [filter, setFilter] = useState<string>(filterIn ?? "");
+  const [filter, setFilter] = useState<string>(
+    filterIn === null ? "" : filterIn
+  );
 
-  const userId = useSession().data?.user.id;
+  const sessionsQuery = api.sessions.getAll.useQuery();
+  const sessions = sessionsQuery.data;
+  const usersQuery = api.users.getAllUsers.useQuery();
+  const users = usersQuery.data;
+  const user = useSession().data?.user;
 
-  if (!userId) {
+  if (!user?.id) {
     throw new Error("No user signed in");
   }
-  const kudoQuery = api.kudos.getKudosByUserId.useQuery({ id: userId });
-  const kudos = kudoQuery.data;
+  const kudosQuery = api.kudos.getKudosByUserId.useQuery({
+    id: user.id,
+    sort: sort,
+  });
+  const { data: kudos, refetch: refetchKudos } = kudosQuery;
 
-  const [sortedKudos, setKudos] = useState<Kudo[]>(
-    FindAllKudosSortedByUserId(sort, kudos, sessions, users)
-  );
   useEffect(() => {
-    setKudos(FindAllKudosSortedByUserId(sort, kudos, sessions, users));
-  }, [userId, sort, kudos, sessions, users]);
+    refetchKudos().catch(console.error);
+  }, [refetchKudos, sort]);
 
   if (
-    kudoQuery.isLoading ||
-    sessionQuery.isLoading ||
-    userQuery.isLoading ||
-    !kudos ||
+    kudosQuery.isLoading ||
+    sessionsQuery.isLoading ||
+    usersQuery.isLoading ||
     !sessions ||
+    !kudos ||
     !users
   ) {
     return <LoadingBar />;
@@ -88,10 +87,10 @@ const Out: NextPage<{ filterIn: string; sortIn: SortPosibillities }> = ({
           setFilter={setFilter}
         />
         <div className="mb-8 flex flex-wrap justify-center gap-5 px-5 md:mb-28">
-          {sortedKudos == undefined || sortedKudos.length == 0 ? (
+          {kudos.length == 0 ? (
             <h1>No Kudos Sent Yet</h1>
           ) : (
-            sortedKudos
+            kudos
               .filter(
                 (k) =>
                   sessions

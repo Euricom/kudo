@@ -13,8 +13,6 @@ import { useSession } from "next-auth/react";
 import { useEffect, useState } from "react";
 import SortAndFilter from "~/components/input/SortAndFilter";
 import KudoCard from "~/components/kudos/Kudo";
-import { FindAllKudosSortedByUserId } from "~/server/services/kudoService";
-import { type Kudo } from "@prisma/client";
 import { toast } from "react-toastify";
 export function getServerSideProps(context: {
   query: { searchtext: string; sort: SortPosibillities };
@@ -46,8 +44,8 @@ const Flagged: NextPage<{ searchtext: string; sortIn: SortPosibillities }> = ({
   const sessionsQuery = api.sessions.getAll.useQuery();
   const sessions = sessionsQuery.data;
 
-  const kudoQuery = api.kudos.getFlaggedKudos.useQuery();
-  const kudos = kudoQuery.data;
+  const kudosQuery = api.kudos.getFlaggedKudos.useQuery();
+  const { data: kudos, refetch: refetchKudos } = kudosQuery;
   const query = router.query;
 
   useEffect(() => {
@@ -55,13 +53,9 @@ const Flagged: NextPage<{ searchtext: string; sortIn: SortPosibillities }> = ({
       router.replace("/403").catch((e) => toast.error((e as Error).message));
   }, [user, router]);
 
-  const [sortedKudos, setKudos] = useState<Kudo[]>(
-    FindAllKudosSortedByUserId(sort, kudos, sessions, users)
-  );
-
   useEffect(() => {
-    setKudos(FindAllKudosSortedByUserId(sort, kudos, sessions, users));
-  }, [sort, kudos, sessions, users]);
+    refetchKudos().catch(console.error);
+  }, [refetchKudos, sort]);
 
   if (
     !users ||
@@ -69,7 +63,7 @@ const Flagged: NextPage<{ searchtext: string; sortIn: SortPosibillities }> = ({
     !sessions ||
     sessionsQuery.isLoading ||
     !kudos ||
-    kudoQuery.isLoading
+    kudosQuery.isLoading
   ) {
     return <LoadingBar />;
   }
@@ -118,10 +112,10 @@ const Flagged: NextPage<{ searchtext: string; sortIn: SortPosibillities }> = ({
           setFilter={setSearch}
         />
         <div className="flex h-full w-fit flex-wrap justify-center gap-4">
-          {sortedKudos.length == 0 ? (
+          {kudos.length == 0 ? (
             <h1>No flagged Kudos yet</h1>
           ) : (
-            sortedKudos
+            kudos
               .filter(
                 (k) =>
                   sessions

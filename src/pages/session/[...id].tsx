@@ -1,4 +1,5 @@
 import JSZip from "jszip";
+import { useState } from "react";
 import { type NextPage } from "next";
 import Head from "next/head";
 import { UtilButtonsContent } from "~/hooks/useUtilButtons";
@@ -13,29 +14,53 @@ import { useRouter } from "next/router";
 import { useSession } from "next-auth/react";
 import { UserRole } from "~/types";
 import { useEffect } from "react";
+import { pusherClient } from "~/pusher/pusher.client";
+import { type Kudo } from "@prisma/client";
+import { getKudosBySessionId } from "~/server/services/kudoService";
 import { toast } from "react-toastify";
 
-export function getServerSideProps(context: { query: { id: string } }) {
+export async function getServerSideProps(context: { query: { id: string } }) {
+  const kudos = await getKudosBySessionId(context.query.id[0] ?? "");
   return {
     props: {
       id: context.query.id[0],
+      initialKudos: kudos,
     },
   };
 }
 
-const Session: NextPage<{ id: string }> = ({ id }) => {
+const Session: NextPage<{ id: string; initialKudos: Kudo[] }> = ({
+  id,
+  initialKudos,
+}) => {
   const router = useRouter();
   const user = useSession().data?.user;
+  const [kudos, setKudos] = useState<Kudo[]>(initialKudos);
 
   const sessionQuery = api.sessions.getSessionById.useQuery({ id: id });
   const session = sessionQuery.data;
-  const kudosQuery = api.kudos.getKudosBySessionId.useQuery({
-    id: session?.id ?? "",
-  });
-  const kudos = kudosQuery.data;
   const ids = kudos?.map((kudo) => kudo.image) ?? [];
   const imagesQuery = api.kudos.getImagesByIds.useQuery({ ids: ids });
   const images = imagesQuery.data;
+
+  useEffect(() => {
+    const channel = pusherClient.subscribe(`session-${id}`);
+    channel.bind("pusher:subscription_succeeded", function () {
+      console.log("successfully subscribed!");
+    });
+    channel.bind("kudo-created", (data: { kudo: Kudo }) => {
+      setKudos((k) => [...k, data.kudo]);
+    });
+    channel.bind("kudo-deleted", (data: { kudo: Kudo }) => {
+      setKudos((k) => [...k.filter((kudo) => kudo.id !== data.kudo.id)]);
+    });
+    return () => {
+      channel.unbind("pusher:subscription_succeeded");
+      channel.unbind("kudo-created");
+      channel.unbind("kudo-deleted");
+      channel.unsubscribe();
+    };
+  }, [id]);
 
   useEffect(() => {
     if (sessionQuery.isLoading) return;
@@ -43,7 +68,7 @@ const Session: NextPage<{ id: string }> = ({ id }) => {
       router.replace("/403").catch((e) => toast.error((e as Error).message));
   }, [user, router, session?.speakerId, sessionQuery.isLoading]);
 
-  if (sessionQuery.isLoading || kudosQuery.isLoading || imagesQuery.isLoading) {
+  if (sessionQuery.isLoading || imagesQuery.isLoading) {
     return <LoadingBar />;
   }
 

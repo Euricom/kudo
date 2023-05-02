@@ -77,8 +77,8 @@ const KudoDetail: NextPage<{ id: string }> = ({ id }) => {
   const [imgUrl, setImgUrl] = useState<string>(avatar.src);
 
   useEffect(() => {
-    if (kudo?.userId)
-      fetch("/api/images/" + (speaker?.id ?? "").toString())
+    if (kudo?.userId && speaker?.id)
+      fetch("/api/images/" + speaker?.id.toString())
         .then((res) => res.json())
         .then((json: ImageData) => setImgUrl(json.dataUrl))
         .catch((e: Error) => toast.error(e.message));
@@ -260,7 +260,7 @@ const KudoDetail: NextPage<{ id: string }> = ({ id }) => {
                 <div
                   className="btn-ghost btn-circle btn absolute right-0"
                   data-cy="sendComment"
-                  onClick={() => setSendReady(true)}
+                  onClick={() => void handleSubmit()}
                 >
                   <AiOutlineSend size={20} />
                 </div>
@@ -295,18 +295,6 @@ const KudoDetail: NextPage<{ id: string }> = ({ id }) => {
           </div>
         </div>
       </div>
-
-      {sendReady ? (
-        <ConfirmationModal
-          prompt={"Is your comment ready to be sent?"}
-          onCancel={() => setSendReady(false)}
-          cancelLabel={"No"}
-          onSubmit={() => void handleSubmit()}
-          submitLabel={"Yes"}
-        />
-      ) : (
-        <></>
-      )}
     </>
   );
 };

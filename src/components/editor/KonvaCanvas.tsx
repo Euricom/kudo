@@ -118,8 +118,6 @@ const KonvaCanvas = ({
         break;
       case EditorFunctions.Sticker:
         addSticker();
-        console.log("sticker");
-
         break;
     }
   };

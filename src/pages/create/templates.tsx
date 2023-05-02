@@ -76,21 +76,11 @@ const Templates: NextPage<{
         />
       </Head>
       <NavigationBarContent>
-        <h1>Templates</h1>
+        <h1>New Kudo: {session.title}</h1>
       </NavigationBarContent>
       <UtilButtonsContent>
         <></>
       </UtilButtonsContent>
-
-      <div className="sticky top-16 z-50 h-fit w-full bg-base-200 p-1 text-center">
-        <h1 data-cy="session" className="lg:inline">
-          &emsp;&emsp;&emsp;&emsp;Session: {session?.title}&emsp;&emsp;
-        </h1>
-        <h1 data-cy="speaker" className="lg:inline">
-          {" "}
-          Speaker: {speaker?.displayName}
-        </h1>
-      </div>
       <main className="flex flex-col items-center justify-center">
         <div className="mb-8 flex flex-wrap justify-center gap-5 px-5 md:mb-28">
           {templates?.map((x: Template) => (

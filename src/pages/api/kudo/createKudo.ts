@@ -44,8 +44,7 @@ export default async function handler(
         ],
         accessory: {
           type: "image",
-          image_url:
-            "https://is5-ssl.mzstatic.com/image/thumb/Purple3/v4/d3/72/5c/d3725c8f-c642-5d69-1904-aa36e4297885/source/256x256bb.jpg",
+          image_url: image,
           alt_text: "Haunted hotel image",
         },
       },

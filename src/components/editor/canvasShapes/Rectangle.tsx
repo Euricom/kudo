@@ -1,24 +1,40 @@
-import React, { useRef, type MutableRefObject, useEffect } from 'react';
-import { Transformer, Rect } from 'react-konva';
-import type Konva from 'konva';
-import { EditorFunctions, type RectangleProps } from '~/types';
+import React, { useRef, type MutableRefObject, useEffect } from "react";
+import { Transformer, Rect } from "react-konva";
+import type Konva from "konva";
+import { EditorFunctions, type RectangleProps } from "~/types";
 
-
-
-const Rectangle = ({ shapeProps, isSelected, editorFunction, onSelect, onChange, onDelete }: RectangleProps) => {
+const Rectangle = ({
+  shapeProps,
+  isSelected,
+  editorFunction,
+  onSelect,
+  onChange,
+  onDelete,
+}: RectangleProps) => {
   const shapeRef = useRef<Konva.Rect>() as MutableRefObject<Konva.Rect>;
-  const trRef = useRef<Konva.Transformer>() as MutableRefObject<Konva.Transformer>;
+  const trRef =
+    useRef<Konva.Transformer>() as MutableRefObject<Konva.Transformer>;
 
   useEffect(() => {
     if (isSelected) {
       if (editorFunction === EditorFunctions.Clear) {
-        onDelete(shapeProps.id)
+        onDelete(shapeProps.id);
       }
       // we need to attach transformer manually
       trRef.current?.nodes([shapeRef.current]);
       trRef.current?.getLayer()?.batchDraw();
     }
   }, [isSelected, editorFunction, onDelete, shapeProps.id]);
+
+  useEffect(() => {
+    if (shapeRef.current) {
+      const shapeWidth = shapeRef.current.width();
+      const shapeHeight = shapeRef.current.height();
+      const xOffset = shapeWidth / 2;
+      const yOffset = shapeHeight / 2;
+      shapeRef.current.offset({ x: xOffset, y: yOffset });
+    }
+  });
 
   return (
     <React.Fragment>

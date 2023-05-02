@@ -1,18 +1,26 @@
-import React, { useRef, type MutableRefObject, useEffect } from 'react';
-import { Transformer, Text } from 'react-konva';
-import type Konva from 'konva';
-import { EditorFunctions, type CanvasStickerProps } from '~/types';
+import React, { useRef, type MutableRefObject, useEffect } from "react";
+import { Transformer, Text } from "react-konva";
+import type Konva from "konva";
+import { EditorFunctions, type CanvasStickerProps } from "~/types";
 
-
-const CanvasSticker = ({ shapeProps, isSelected, editorFunction, onSelect, onChange, onDelete, onChangeEnd }: CanvasStickerProps) => {
+const CanvasSticker = ({
+  shapeProps,
+  isSelected,
+  editorFunction,
+  onSelect,
+  onChange,
+  onDelete,
+  onChangeEnd,
+}: CanvasStickerProps) => {
   const shapeRef = useRef<Konva.Text>() as MutableRefObject<Konva.Text>;
-  const trRef = useRef<Konva.Transformer>() as MutableRefObject<Konva.Transformer>;
+  const trRef =
+    useRef<Konva.Transformer>() as MutableRefObject<Konva.Transformer>;
   // const [isEditing, setIsEditing] = useState(false)
 
   useEffect(() => {
     if (isSelected) {
       if (editorFunction === EditorFunctions.Clear) {
-        onDelete(shapeProps.id)
+        onDelete(shapeProps.id);
       }
 
       // we need to attach transformer manually
@@ -29,7 +37,7 @@ const CanvasSticker = ({ shapeProps, isSelected, editorFunction, onSelect, onCha
       const yOffset = shapeHeight / 2;
       shapeRef.current.offset({ x: xOffset, y: yOffset });
     }
-  }, [shapeProps.text]);
+  });
 
   return (
     <React.Fragment>
@@ -38,7 +46,7 @@ const CanvasSticker = ({ shapeProps, isSelected, editorFunction, onSelect, onCha
         onTap={onSelect}
         ref={shapeRef}
         {...shapeProps}
-        draggable={(!shapeProps.draggable) ? false : isSelected}
+        draggable={!shapeProps.draggable ? false : isSelected}
         onDragEnd={(e) => {
           onChange({
             ...shapeProps,
@@ -49,7 +57,7 @@ const CanvasSticker = ({ shapeProps, isSelected, editorFunction, onSelect, onCha
             ...shapeProps,
             x: e.target.x(),
             y: e.target.y(),
-          })
+          });
         }}
         onTransform={() => {
           // transformer is changing scale of the node
@@ -65,7 +73,7 @@ const CanvasSticker = ({ shapeProps, isSelected, editorFunction, onSelect, onCha
           });
         }}
         onTransformEnd={() => {
-          onChangeEnd(shapeProps)
+          onChangeEnd(shapeProps);
         }}
       />
       {isSelected && (
@@ -73,7 +81,20 @@ const CanvasSticker = ({ shapeProps, isSelected, editorFunction, onSelect, onCha
           ref={trRef}
           anchorX={0.5}
           anchorY={0.5}
-          enabledAnchors={shapeProps.draggable ? ['top-left', 'top-center', 'top-right', 'middle-right', 'middle-left', 'bottom-left', 'bottom-center', 'bottom-right'] : []}
+          enabledAnchors={
+            shapeProps.draggable
+              ? [
+                  "top-left",
+                  "top-center",
+                  "top-right",
+                  "middle-right",
+                  "middle-left",
+                  "bottom-left",
+                  "bottom-center",
+                  "bottom-right",
+                ]
+              : []
+          }
           boundBoxFunc={(oldBox, newBox) => {
             newBox.width = Math.max(10, newBox.width);
             return newBox;

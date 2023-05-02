@@ -182,6 +182,7 @@ export type Shapes = {
   draggable?: boolean;
   rotation?: number;
   radius?: number;
+  fontFamily?: string;
 };
 
 export enum EditorFunctions {
@@ -266,4 +267,8 @@ export type EmojiObject = {
   keywords: string[];
   shortcodes: string;
   emoticons: string[];
+};
+
+export type EditorButtonProps = {
+  children?: React.ReactNode;
 };

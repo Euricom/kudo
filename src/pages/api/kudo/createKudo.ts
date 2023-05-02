@@ -10,6 +10,8 @@ export default async function handler(
   res: NextApiResponse
 ) {
   const text: string = (req.body as body).text;
+  console.log(req.body);
+
   const image = await getFirstImageById().then((i) => i?.dataUrl);
 
   res.send({

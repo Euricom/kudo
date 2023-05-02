@@ -5,6 +5,7 @@ import { kudoRouter } from "./routers/kudos";
 import { userRouter } from "./routers/users";
 import { notificationRouter } from "./routers/notifications";
 import { templateRouter } from "./routers/template";
+import { slackRouter } from "./routers/slack";
 
 /**
  * This is the primary router for your server.
@@ -18,6 +19,7 @@ export const appRouter = createTRPCRouter({
   users: userRouter,
   notifications: notificationRouter,
   templates: templateRouter,
+  slack: slackRouter,
 });
 
 // export type definition of API

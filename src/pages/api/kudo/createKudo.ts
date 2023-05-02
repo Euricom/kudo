@@ -16,7 +16,6 @@ export default async function handler(
     blocks: [
       {
         type: "section",
-        block_id: "section567",
         text: {
           type: "mrkdwn",
           text: text,

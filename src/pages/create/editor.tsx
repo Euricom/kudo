@@ -100,13 +100,6 @@ const Editor: NextPage<{ id: string }> = ({ id }) => {
           userId: user.id,
           anonymous: anonymous,
         });
-        console.log(
-          "@" +
-            volledigeSpeaker?.givenName +
-            "." +
-            volledigeSpeaker.surname.toLowerCase().replace(" ", "")
-        );
-
         await slackMessage
           .mutateAsync({
             text: user.name.toString() + " heeft je een kudo gestuurd!",

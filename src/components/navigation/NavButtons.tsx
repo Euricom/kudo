@@ -44,7 +44,7 @@ const NavButtons = () => {
             className="dropdown-content menu rounded-box mx-auto w-full max-w-lg justify-center gap-1 bg-base-200 p-2 shadow"
           >
             {sessions?.length !== 0 ? (
-              <li className="border-b-2">
+              <li className={`border-b-2 ${path === "/" ? "text-accent" : ""}`}>
                 <Link href="/" data-cy="In" onClick={() => setState(false)}>
                   My Kudos
                 </Link>
@@ -52,13 +52,17 @@ const NavButtons = () => {
             ) : (
               ""
             )}
-            <li>
+            <li className={path === "/out" ? "text-accent" : ""}>
               <Link href="/out" data-cy="Out" onClick={() => setState(false)}>
                 Sent Kudos
               </Link>
             </li>
             {user?.role === UserRole.ADMIN ? (
-              <li className="border-t-2">
+              <li
+                className={`border-t-2 ${
+                  path.includes("/all") ? "text-accent" : ""
+                }`}
+              >
                 <Link href="/all" data-cy="All" onClick={() => setState(false)}>
                   All Kudos
                 </Link>

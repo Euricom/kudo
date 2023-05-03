@@ -5,7 +5,6 @@ import { GrAdd } from "react-icons/gr";
 import KudoCard from "~/components/kudos/Kudo";
 import { UtilButtonsContent } from "~/hooks/useUtilButtons";
 import { NavigationBarContent } from "~/components/navigation/NavBarTitle";
-import NavButtons from "~/components/navigation/NavButtons";
 import { useSession } from "next-auth/react";
 import { SortPosibillities } from "~/types";
 import { useEffect, useState } from "react";
@@ -75,7 +74,7 @@ const Out: NextPage<{ filterIn: string; sortIn: SortPosibillities }> = ({
         />
       </Head>
       <NavigationBarContent>
-        <NavButtons />
+        <></>
       </NavigationBarContent>
       <UtilButtonsContent>
         <></>

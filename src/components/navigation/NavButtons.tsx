@@ -41,7 +41,7 @@ const NavButtons = () => {
         {state && !(sessions?.length === 0 && user?.role !== UserRole.ADMIN) ? (
           <ul
             tabIndex={0}
-            className="dropdown-content menu rounded-box mx-auto w-full justify-center gap-1 bg-base-200 p-2 shadow"
+            className="dropdown-content menu rounded-box mx-auto w-full max-w-lg justify-center gap-1 bg-base-200 p-2 shadow"
           >
             {sessions?.length !== 0 ? (
               <li className="border-b-2">

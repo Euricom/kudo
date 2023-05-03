@@ -11,6 +11,7 @@ import { api } from "~/utils/api";
 import Logo from "~/../public/images/KudoAppIcon.svg";
 import Image, { type StaticImageData } from "next/image";
 import Link from "next/link";
+import NavButtons from "./NavButtons";
 
 function useVisibleEndNavbarActions() {
   const router = useRouter();
@@ -48,6 +49,11 @@ function useVisibleStartNavbarActions() {
       key: "logo",
       routes: ["/", "/out", "/all"],
     },
+    {
+      Component: () => <NavButtons />,
+      key: "NavButtons",
+      routes: ["/", "/out", "/all"],
+    },
   ].filter((item) => item.routes.includes(router.pathname));
 }
 
@@ -68,7 +74,7 @@ const NavBar = () => {
             <x.Component key={x.key} />
           ))}
           <div
-            className="overflow- z-10 w-full text-lg sm:navbar-center sm:text-2xl"
+            className="z-10 w-fit overflow-hidden text-lg sm:navbar-center sm:text-2xl"
             data-cy="NavbarTitle"
           >
             <>{title}</>

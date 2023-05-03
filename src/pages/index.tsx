@@ -3,7 +3,6 @@ import Head from "next/head";
 import FAB from "~/components/navigation/FAB";
 import { GrAdd } from "react-icons/gr";
 import { NavigationBarContent } from "~/components/navigation/NavBarTitle";
-import NavButtons from "~/components/navigation/NavButtons";
 import SessionList from "~/components/sessions/SessionList";
 import { api } from "~/utils/api";
 import { type SortPosibillities } from "~/types";
@@ -53,7 +52,7 @@ const Home: NextPage<{ filter: string; sort: SortPosibillities }> = ({
         />
       </Head>
       <NavigationBarContent>
-        <NavButtons />
+        <></>
       </NavigationBarContent>
       <UtilButtonsContent>
         <></>

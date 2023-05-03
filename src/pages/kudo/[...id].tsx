@@ -187,7 +187,7 @@ const KudoDetail: NextPage<{ id: string }> = ({ id }) => {
         />
       </Head>
       <NavigationBarContent>
-        <h1>Kudo {session?.title ?? "no title"}</h1>
+        Kudo for: {session?.title ?? "No title"}
       </NavigationBarContent>
       <UtilButtonsContent>
         {(user?.id === kudo?.userId || user?.role === UserRole.ADMIN) &&

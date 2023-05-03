@@ -83,8 +83,9 @@ const Out: NextPage<{ filterIn: string; sortIn: SortPosibillities }> = ({
       <main className="flex flex-col items-center justify-start">
         <SortAndFilter
           setSort={setSort}
-          filter={filter}
           setFilter={setFilter}
+          filter={filter}
+          sort={sort}
         />
         <div className="mb-8 flex flex-wrap justify-center gap-5 px-5 md:mb-28">
           {kudos.length == 0 ? (

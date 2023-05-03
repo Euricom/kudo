@@ -99,8 +99,9 @@ const Users: NextPage<{
         </div>
         <SortAndFilter
           setSort={setSort}
-          filter={search}
           setFilter={setSearch}
+          filter={search}
+          sort={sort}
         />
         <div className="flex h-full w-fit flex-wrap justify-center gap-4">
           {sortedUsers()

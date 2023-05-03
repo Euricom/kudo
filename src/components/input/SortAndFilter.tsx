@@ -9,7 +9,7 @@ function useVisibleSort() {
 
   return [
     {
-      sort: SortPosibillities.DateA,
+      sort: SortPosibillities.DateD,
       routes: [
         "/",
         "/out",
@@ -19,7 +19,7 @@ function useVisibleSort() {
       ],
     },
     {
-      sort: SortPosibillities.DateD,
+      sort: SortPosibillities.DateA,
       routes: [
         "/",
         "/out",
@@ -59,7 +59,12 @@ function useVisibleSort() {
   ].filter((item) => item.routes.includes(router.pathname));
 }
 
-const SortAndFilter = ({ setSort, filter, setFilter }: SortAndFilterProps) => {
+const SortAndFilter = ({
+  setSort,
+  setFilter,
+  sort,
+  filter,
+}: SortAndFilterProps) => {
   const visibleSort = useVisibleSort();
   const router = useRouter();
   const query = router.query;
@@ -92,7 +97,7 @@ const SortAndFilter = ({ setSort, filter, setFilter }: SortAndFilterProps) => {
             className="input w-full rounded-full bg-transparent p-3 focus:outline-none"
           />
         </div>
-        <div className="dropdown-end dropdown">
+        <div className="dropdown dropdown-end">
           <label
             tabIndex={0}
             className="btn-primary btn-circle btn m-1"
@@ -102,14 +107,19 @@ const SortAndFilter = ({ setSort, filter, setFilter }: SortAndFilterProps) => {
           </label>
           <ul
             tabIndex={0}
-            className="dropdown-content menu rounded-box w-52 bg-base-100 p-2 shadow"
+            className="dropdown-content menu rounded-box w-52 justify-center bg-base-100 p-2 shadow"
           >
             {visibleSort.map((x) => {
               return (
                 <>
                   <li
                     key={x.sort}
-                    className="btn-ghost btn normal-case"
+                    className={`btn-ghost btn normal-case ${
+                      x.sort === sort ||
+                      (x.sort === visibleSort[0]?.sort && !sort)
+                        ? "text-accent"
+                        : ""
+                    }`}
                     onClick={() => changeSort(x.sort)}
                   >
                     {x.sort}

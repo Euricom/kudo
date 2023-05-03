@@ -1,8 +1,9 @@
-import { type Kudo } from "@prisma/client";
-import { SortPosibillities } from "~/types";
+import { Template, type Kudo } from "@prisma/client";
+import { Shapes, SortPosibillities } from "~/types";
 import { prisma } from "../db";
 import { findAllUsers } from "./userService";
 import { getAllSessions } from "./sessionService";
+import { TRPCError } from "@trpc/server";
 
 export const findAllKudosSortedByUserId = async (
   userid: string,
@@ -89,9 +90,49 @@ export function getKudosBySessionId(sessionId: string) {
 }
 
 export function getFirstImageById() {
-  return prisma.image.findFirst({
+  return prisma.image.findUnique({
     where: {
       id: "clgw23or80004n0imq1wzj9ec",
     },
   });
 }
+
+export async function makeSlackKudo(message: string) {
+  const template = await prisma.template
+    .findMany({
+      where: {
+        id: {
+          not: "clh7cwbgx0006o6k8hk6dwphn",
+        },
+      },
+    })
+    .then((t) => shuffle(t)[0]);
+  if (!template) {
+    throw new TRPCError({
+      code: "INTERNAL_SERVER_ERROR",
+      message: "No template was found.",
+    });
+  }
+  const shapes: Shapes[] = ([...template.content] as unknown as Shapes[]) ?? [];
+  const text =
+    shapes.find((s) => s.id === "bodyText") ??
+    shapes.find((s) => s.id === "headerText") ??
+    shapes.find((s) => s.type === 0);
+  if (text) {
+    text.text = message;
+  }
+}
+
+const shuffle = (array: Template[]) => {
+  for (let i = array.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    const temp1 = array[i];
+    const temp2 = array[i];
+    if (!temp2 || !temp1) {
+      return array;
+    }
+    array[i] = temp2;
+    array[j] = temp1;
+  }
+  return array;
+};

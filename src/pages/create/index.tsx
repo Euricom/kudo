@@ -76,7 +76,7 @@ const New: NextPage<{ sess: string }> = ({ sess }) => {
         />
       </Head>
       <NavigationBarContent>
-        <h1>New</h1>
+        <h1>New Kudo</h1>
       </NavigationBarContent>
       <UtilButtonsContent>
         <></>

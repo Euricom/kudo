@@ -154,7 +154,7 @@ const Editor: NextPage<{ id: string }> = ({ id }) => {
         <meta name="description" content="Editor to make a Kudo." />
       </Head>
       <NavigationBarContent>
-        <h1>Editor</h1>
+        <h1>Editor: {session}</h1>
       </NavigationBarContent>
       <UtilButtonsContent>
         {user?.role === UserRole.ADMIN && (

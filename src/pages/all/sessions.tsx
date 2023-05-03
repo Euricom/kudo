@@ -4,7 +4,6 @@ import FAB from "~/components/navigation/FAB";
 import { GrAdd } from "react-icons/gr";
 import { UtilButtonsContent } from "~/hooks/useUtilButtons";
 import { NavigationBarContent } from "~/components/navigation/NavBarTitle";
-import NavButtons from "~/components/navigation/NavButtons";
 import SessionList from "~/components/sessions/SessionList";
 import { api } from "~/utils/api";
 import LoadingBar from "~/components/LoadingBar";
@@ -50,7 +49,7 @@ const Sessions: NextPage<{ searchtext: string; sortIn: SortPosibillities }> = ({
         <meta name="description" content="Admin page to view all sessions." />
       </Head>
       <NavigationBarContent>
-        <NavButtons />
+        <></>
       </NavigationBarContent>
       <UtilButtonsContent>
         <></>

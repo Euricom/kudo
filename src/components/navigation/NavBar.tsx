@@ -19,7 +19,7 @@ function useVisibleEndNavbarActions() {
     {
       Component: NotificationIcon,
       key: "notifButton",
-      routes: ["/", "/out", "/all"],
+      routes: ["/", "/out", "/all", "/all/sessions", "/all/flagged"],
     },
   ].filter((item) => item.routes.includes(router.pathname));
 }
@@ -46,7 +46,7 @@ function useVisibleStartNavbarActions() {
     {
       Component: logo,
       key: "logo",
-      routes: ["/", "/out", "/all"],
+      routes: ["/", "/out", "/all", "/all/sessions", "/all/flagged"],
     },
   ].filter((item) => item.routes.includes(router.pathname));
 }
@@ -81,7 +81,7 @@ const NavBar = () => {
             <x.Component key={x.key} />
           ))}
           <div className="hidden items-center lg:inline-flex">
-            <div className="dropdown-end dropdown">
+            <div className="dropdown dropdown-end">
               <label
                 tabIndex={0}
                 className="btn-ghost btn-circle btn m-1"

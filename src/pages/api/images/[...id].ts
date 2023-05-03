@@ -1,5 +1,6 @@
 import { type NextApiRequest, type NextApiResponse } from "next";
 import { getImageById } from "~/server/services/userService";
+import { Readable, pipeline } from "stream";
 
 export default async function handler(
   req: NextApiRequest,
@@ -10,11 +11,24 @@ export default async function handler(
   if (!image) {
     return;
   }
-
-  res.send({
-    dataUrl:
-      `data:${image?.headers.get("content-type") ?? ""};base64,` +
-      Buffer.from(await image.arrayBuffer()).toString("base64"),
-  });
-  res.end();
+  await pipeImageToResponse(res, image);
 }
+
+const pipeImageToResponse = async (
+  res: NextApiResponse,
+  imageResponse: Response
+) => {
+  const content = imageResponse.headers.get("Content-Type");
+  if (!content) {
+    return;
+  }
+  res.setHeader("content-type", content);
+
+  pipeline(
+    Readable.from(new Buffer(await imageResponse.arrayBuffer())),
+    res,
+    (error) => {
+      if (error) console.error(error);
+    }
+  );
+};

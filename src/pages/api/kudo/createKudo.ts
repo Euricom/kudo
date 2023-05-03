@@ -1,5 +1,6 @@
 import { type NextApiRequest, type NextApiResponse } from "next";
 import { getFirstImageById } from "~/server/services/kudoService";
+import { getChannelById } from "~/server/services/slackService";
 
 interface body {
   text: string;
@@ -14,7 +15,15 @@ export default async function handler(
   res: NextApiResponse
 ) {
   const body: body = req.body as body;
+  const channel = await getChannelById(body.channel_id);
+
   const text =
+    "is het im? " +
+    channel.is_im.toString() +
+    ", Name: " +
+    channel.name +
+    ", user=" +
+    channel.user +
     "channelId=" +
     body.channel_id +
     ", chanelName=" +

@@ -36,8 +36,6 @@ export const slackRouter = createTRPCRouter({
         },
         body: body,
       }).then((res) => res.json())) as SlackResponse;
-      console.log(response);
-
       return response;
     }),
 

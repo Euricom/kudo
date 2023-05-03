@@ -20,7 +20,7 @@ function useVisibleEndNavbarActions() {
     {
       Component: NotificationIcon,
       key: "notifButton",
-      routes: ["/", "/out", "/all"],
+      routes: ["/", "/out", "/all", "/all/sessions", "/all/flagged"],
     },
   ].filter((item) => item.routes.includes(router.pathname));
 }
@@ -47,7 +47,7 @@ function useVisibleStartNavbarActions() {
     {
       Component: logo,
       key: "logo",
-      routes: ["/", "/out", "/all"],
+      routes: ["/", "/out", "/all", "/all/sessions", "/all/flagged"],
     },
     {
       Component: () => <NavButtons />,

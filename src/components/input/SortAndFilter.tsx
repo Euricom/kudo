@@ -107,14 +107,14 @@ const SortAndFilter = ({
           </label>
           <ul
             tabIndex={0}
-            className="dropdown-content menu rounded-box w-52 justify-center bg-base-100 p-2 shadow"
+            className="dropdown-content menu rounded-box w-40 justify-center bg-base-100 p-2 shadow"
           >
             {visibleSort.map((x) => {
               return (
                 <>
                   <li
                     key={x.sort}
-                    className={`btn-ghost btn normal-case ${
+                    className={`p-2 normal-case ${
                       x.sort === sort ||
                       (x.sort === visibleSort[0]?.sort && !sort)
                         ? "text-accent"

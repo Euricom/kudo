@@ -1,6 +1,6 @@
 import { type NextApiRequest, type NextApiResponse } from "next";
 import { getFirstImageById } from "~/server/services/kudoService";
-import { getChannelById } from "~/server/services/slackService";
+import { getChannelById, openModal } from "~/server/services/slackService";
 
 interface body {
   text: string;
@@ -9,11 +9,19 @@ interface body {
   user_id: string;
   user_name: string;
   challenge: string;
+  trigger_id: string;
 }
 
-export default function handler(req: NextApiRequest, res: NextApiResponse) {
+export default async function handler(
+  req: NextApiRequest,
+  res: NextApiResponse
+) {
   const body: body = req.body as body;
   // const channel = await getChannelById(body.channel_id);
+  const response = await openModal(body.trigger_id).catch((e) =>
+    console.log(e)
+  );
+  console.log(response);
 
   // const text =
   //   "is het im? " +

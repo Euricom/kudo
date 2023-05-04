@@ -1,21 +1,10 @@
 import Image from "next/image";
-import React, { useEffect, useState } from "react";
-import { type ImageData, type MenuProps } from "~/types";
+import { type MenuProps } from "~/types";
 import { signOut, useSession } from "next-auth/react";
 import ThemeButton from "~/components/input/ThemeButton";
-import avatar from "~/../public/images/AnonymousPicture.jpg";
-import { toast } from "react-toastify";
 
 const Menu = ({ children }: MenuProps) => {
   const userId: string = useSession().data?.user.id ?? "";
-  const [imgUrl, setImgUrl] = useState<string>(avatar.src);
-
-  useEffect(() => {
-    fetch("/api/images/" + userId)
-      .then((res) => res.json())
-      .then((json: ImageData) => setImgUrl(json.dataUrl))
-      .catch((e: Error) => toast.error(e.message));
-  }, [userId]);
 
   const user = useSession().data?.user;
 
@@ -41,7 +30,11 @@ const Menu = ({ children }: MenuProps) => {
             <div className="flex w-fit flex-col">
               <div className="avatar ">
                 <div className="relative w-24 rounded-xl">
-                  <Image src={imgUrl} alt="Profile picture" fill />
+                  <Image
+                    src={"/api/images/" + userId}
+                    alt="Profile picture"
+                    fill
+                  />
                 </div>
               </div>
               <a>{user?.name}</a>

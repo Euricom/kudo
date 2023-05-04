@@ -1,25 +1,13 @@
 import Link from "next/link";
-import { type User, type SessionProps, type ImageData } from "~/types";
+import { type User, type SessionProps } from "~/types";
 import { api } from "~/utils/api";
 import Image from "next/image";
 import avatar from "~/../public/images/AnonymousPicture.jpg";
-import { useEffect, useState } from "react";
-import { toast } from "react-toastify";
 
 const SessionCard = ({ session }: SessionProps) => {
   const speaker: User | undefined = api.users.getUserById.useQuery({
     id: session.speakerId,
   }).data;
-  const [imgUrl, setImgUrl] = useState<string>(avatar.src);
-
-  useEffect(() => {
-    if (speaker && speaker.id) {
-      fetch("/api/images/" + speaker.id)
-        .then((res) => res.json())
-        .then((json: ImageData) => setImgUrl(json.dataUrl))
-        .catch((e: Error) => toast.error(e.message));
-    }
-  }, [speaker]);
 
   if (!session || !speaker) {
     return <></>;
@@ -42,7 +30,7 @@ const SessionCard = ({ session }: SessionProps) => {
             <div className="avatar relative aspect-square w-12">
               <Image
                 className="rounded-full"
-                src={imgUrl ?? avatar}
+                src={"/api/images/" + speaker.id ?? avatar}
                 alt="Profile picture"
                 fill
               />

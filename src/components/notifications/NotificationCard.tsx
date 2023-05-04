@@ -3,15 +3,11 @@ import { type Notification } from "@prisma/client";
 import { BsFillCircleFill } from "react-icons/bs";
 import { api } from "~/utils/api";
 import avatar from "~/../public/images/AnonymousPicture.jpg";
-import { useEffect, useState } from "react";
-import { type ImageData } from "~/types";
 import Image from "next/image";
-import { toast } from "react-toastify";
 
 const NotificationCard = ({ notification }: { notification: Notification }) => {
   const { mutateAsync: readNotification } =
     api.notifications.readNotification.useMutation();
-  const [imgUrl, setImgUrl] = useState<string>(avatar.src);
 
   const getTimeAgo = () => {
     const milliseconds = Date.now().valueOf() - notification.time.valueOf();
@@ -36,15 +32,6 @@ const NotificationCard = ({ notification }: { notification: Notification }) => {
     return "less than 1 minute ago";
   };
 
-  useEffect(() => {
-    if (notification && notification.photo) {
-      fetch("/api/images/" + notification.photo)
-        .then((res) => res.json())
-        .then((json: ImageData) => setImgUrl(json.dataUrl))
-        .catch((e: Error) => toast.error(e.message));
-    }
-  }, [notification, notification.photo]);
-
   async function handleRead() {
     if (!notification.read) {
       await readNotification({ id: notification.id });
@@ -62,12 +49,14 @@ const NotificationCard = ({ notification }: { notification: Notification }) => {
         <div className="card-body py-8 px-0 align-middle md:px-2">
           <div className="flex w-full gap-3">
             <div className="avatar relative aspect-square h-1/6 w-1/6">
-              <Image
-                className="rounded-full"
-                src={imgUrl ?? avatar}
-                alt="Profile picture"
-                fill
-              />
+              {notification.photo !== null && (
+                <Image
+                  className="rounded-full"
+                  src={"/api/images/" + notification.photo ?? avatar}
+                  alt="Profile picture"
+                  fill
+                />
+              )}
             </div>
             <div className="flex w-full flex-col gap-1">
               <h2 className=" pr-4" data-cy="SessionTitle">

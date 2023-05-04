@@ -11,32 +11,29 @@ interface body {
   challenge: string;
 }
 
-export default async function handler(
-  req: NextApiRequest,
-  res: NextApiResponse
-) {
+export default function handler(req: NextApiRequest, res: NextApiResponse) {
   const body: body = req.body as body;
-  const channel = await getChannelById(body.channel_id);
+  // const channel = await getChannelById(body.channel_id);
 
-  const text =
-    "is het im? " +
-    channel.is_im.toString() +
-    ", Name: " +
-    channel.name +
-    ", user=" +
-    channel.user +
-    "channelId=" +
-    body.channel_id +
-    ", chanelName=" +
-    body.channel_name +
-    ", userId=" +
-    body.user_id +
-    ", userName=" +
-    body.user_name;
-  const image = await getFirstImageById().then((i) => i?.dataUrl);
+  // const text =
+  //   "is het im? " +
+  //   channel.is_im.toString() +
+  //   ", Name: " +
+  //   channel.name +
+  //   ", user=" +
+  //   channel.user +
+  //   "channelId=" +
+  //   body.channel_id +
+  //   ", chanelName=" +
+  //   body.channel_name +
+  //   ", userId=" +
+  //   body.user_id +
+  //   ", userName=" +
+  //   body.user_name;
+  // const image = await getFirstImageById().then((i) => i?.dataUrl);
 
   res.send({
-    channel: channel,
+    challenge: body.challenge,
   });
   res.end();
 }

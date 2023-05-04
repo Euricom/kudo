@@ -1,24 +1,26 @@
 import { type NextApiRequest, type NextApiResponse } from "next";
 
 export default function handler(req: NextApiRequest, res: NextApiResponse) {
+  const now = new Date();
+
   res.status(200).json({
     sessions: [
       {
         id: "1",
         title: "Designing with Figma",
-        date: new Date(),
+        date: new Date(2023, now.getMonth(), now.getDay(), 5, 0),
         speakerId: "cdb23f58-65db-4b6b-b132-cf2d13d08e76",
       },
       {
         id: "2",
         title: "React hooks",
-        date: new Date(),
+        date: new Date(2023, now.getMonth(), now.getDay(), 5, 0),
         speakerId: "5e1378cf-21d2-425d-97f2-f5cf91d9c0c2",
       },
       {
         id: "3",
         title: "UX/UI",
-        date: new Date(),
+        date: new Date(2023, now.getMonth(), now.getDay(), 5, 0),
         speakerId: "18d332af-2d5b-49e5-8c42-9168b3910f97",
       },
       {

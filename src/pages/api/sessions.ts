@@ -31,7 +31,8 @@ export default function handler(req: NextApiRequest, res: NextApiResponse) {
       },
       {
         id: "5",
-        title: "Everything you need to know about React",
+        title:
+          "Everything you need to know about React Everything you need to know about React",
         date: new Date("01/16/2023"),
         speakerId: "5e1378cf-21d2-425d-97f2-f5cf91d9c0c2",
       },

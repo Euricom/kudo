@@ -21,7 +21,6 @@ import dynamic from "next/dynamic";
 import { useSession } from "next-auth/react";
 import { useSessionSpeaker } from "~/components/sessions/SelectedSessionAndSpeaker";
 import type Konva from "konva";
-import ConfirmationModal from "~/components/input/ConfirmationModal";
 import LoadingBar from "~/components/LoadingBar";
 import { BsFillCircleFill } from "react-icons/bs";
 import { type ColorResult, HuePicker } from "react-color";
@@ -116,7 +115,12 @@ const Editor: NextPage<{ id: string }> = ({ id }) => {
   }
 
   const submit = async () => {
-    setSelectedButton(EditorFunctions.None);
+    if (EditorFunctions.Submit === selectedButton) {
+      toast.warning("Kudo is being created, please wait.");
+      return;
+    }
+    setSelectedButton(EditorFunctions.Submit);
+    await new Promise((res) => setTimeout(res, 1000));
     if (!stage) {
       return;
     }
@@ -144,6 +148,7 @@ const Editor: NextPage<{ id: string }> = ({ id }) => {
         await router.replace("/out");
       } catch (e) {
         toast.error((e as TRPCError).message);
+        setSelectedButton(EditorFunctions.None);
       }
   };
 
@@ -171,15 +176,6 @@ const Editor: NextPage<{ id: string }> = ({ id }) => {
         <h1 data-cy="session" className="lg:inline">&emsp;&emsp;&emsp;&emsp;Session: {sessionId}&emsp;&emsp;</h1><h1 data-cy="speaker" className="lg:inline"> Speaker: {speaker}</h1>
       </div> */}
 
-      {selectedButton === EditorFunctions.Submit && (
-        <ConfirmationModal
-          prompt={"Is your Kudo ready to be sent?"}
-          onCancel={() => setSelectedButton(EditorFunctions.None)}
-          cancelLabel={"No"}
-          onSubmit={() => void submit()}
-          submitLabel={"Yes"}
-        />
-      )}
       {/* Main */}
       <main className="relative z-50 flex h-full flex-col items-center justify-center overflow-x-hidden">
         <div className="z-40 mx-auto flex w-full justify-center gap-2 p-5 lg:w-1/2">
@@ -364,11 +360,7 @@ const Editor: NextPage<{ id: string }> = ({ id }) => {
           emoji={selectedEmoji}
         />
       </main>
-      <FAB
-        text={"Send"}
-        icon={<FiSend />}
-        onClick={() => setSelectedButton(EditorFunctions.Submit)}
-      />
+      <FAB text={"Send"} icon={<FiSend />} onClick={() => void submit()} />
     </>
   );
 };

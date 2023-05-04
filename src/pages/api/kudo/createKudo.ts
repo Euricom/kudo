@@ -8,6 +8,7 @@ interface body {
   channel_name: string;
   user_id: string;
   user_name: string;
+  challenge: string;
 }
 
 export default async function handler(
@@ -35,8 +36,7 @@ export default async function handler(
   const image = await getFirstImageById().then((i) => i?.dataUrl);
 
   res.send({
-    response_type: "in_channel",
-    text: text,
+    channel: channel,
   });
   res.end();
 }

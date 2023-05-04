@@ -153,9 +153,9 @@ export enum CanvasShapes {
 export type KonvaCanvasProps = {
   editorFunction: EditorFunctions | undefined;
   template: Template;
-  thickness: number;
+  thickness?: number;
   color: string;
-  fontFamily: string;
+  fontFamily?: string;
   emoji?: EmojiObject;
   setFunction: (type: EditorFunctions) => void;
   setStage: (stage: Konva.Stage) => void;

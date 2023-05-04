@@ -1,9 +1,12 @@
 import { Template, type Kudo } from "@prisma/client";
-import { Shapes, SortPosibillities } from "~/types";
+import { EditorFunctions, Shapes, SortPosibillities } from "~/types";
 import { prisma } from "../db";
 import { findAllUsers } from "./userService";
 import { getAllSessions } from "./sessionService";
 import { TRPCError } from "@trpc/server";
+import KonvaCanvas from "~/components/editor/KonvaCanvas";
+import Konva from "konva";
+import { Stage } from "konva/lib/Stage";
 
 export const findAllKudosSortedByUserId = async (
   userid: string,
@@ -97,31 +100,43 @@ export function getFirstImageById() {
   });
 }
 
-export async function makeSlackKudo(message: string) {
-  const template = await prisma.template
-    .findMany({
-      where: {
-        id: {
-          not: "clh7cwbgx0006o6k8hk6dwphn",
-        },
-      },
-    })
-    .then((t) => shuffle(t)[0]);
-  if (!template) {
-    throw new TRPCError({
-      code: "INTERNAL_SERVER_ERROR",
-      message: "No template was found.",
-    });
-  }
-  const shapes: Shapes[] = ([...template.content] as unknown as Shapes[]) ?? [];
-  const text =
-    shapes.find((s) => s.id === "bodyText") ??
-    shapes.find((s) => s.id === "headerText") ??
-    shapes.find((s) => s.type === 0);
-  if (text) {
-    text.text = message;
-  }
-}
+// export async function makeSlackKudo(message: string) {
+//   let editorFunction = EditorFunctions.None;
+//   const setFunction = (func: EditorFunctions) => {
+//     editorFunction = func;
+//   };
+//   let staged: Stage = Stage;
+//   const setStage = (stage: Stage) => {
+//     staged = stage;
+//   };
+//   const template = await prisma.template
+//     .findMany({
+//       where: {
+//         id: {
+//           not: "clh7cwbgx0006o6k8hk6dwphn",
+//         },
+//       },
+//     })
+//     .then((t) => shuffle(t)[0]);
+//   if (!template) {
+//     throw new TRPCError({
+//       code: "INTERNAL_SERVER_ERROR",
+//       message: "No template was found.",
+//     });
+//   }
+//   const shapes: Shapes[] = ([...template.content] as unknown as Shapes[]) ?? [];
+
+//   shapes.map((s) => (s.id === "bodyText" ? (s.text = message) : ""));
+//   // template.content = shapes
+
+//   const konva = KonvaCanvas({
+//     editorFunction: editorFunction,
+//     template: template,
+//     color: template.color,
+//     setFunction: setFunction,
+//     setStage
+//   });
+// }
 
 const shuffle = (array: Template[]) => {
   for (let i = array.length - 1; i > 0; i--) {

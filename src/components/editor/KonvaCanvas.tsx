@@ -135,7 +135,7 @@ const KonvaCanvas = ({
       type: CanvasShapes.Text,
       text: "Text",
       fill: color,
-      fontFamily: fontFamily,
+      fontFamily: fontFamily ?? "Arial",
       x: pos.x,
       y: pos.y,
       fontSize: (stageDimensions?.height ?? 0) / 15,
@@ -205,7 +205,7 @@ const KonvaCanvas = ({
               ? "destination-out"
               : "source-over",
           points: [pos.x, pos.y],
-          thickness: thickness,
+          thickness: thickness ?? 5,
           color: color,
         },
       ]);
@@ -227,7 +227,7 @@ const KonvaCanvas = ({
         id: "1",
         tool: "source-over",
         points: [0, 0],
-        thickness: thickness,
+        thickness: thickness ?? 5,
         color: color,
       };
       // add point
@@ -291,7 +291,7 @@ const KonvaCanvas = ({
         y: 460,
         text: `Sent by ${user?.name ?? ""}`,
         fill: color,
-        fontFamily: fontFamily,
+        fontFamily: fontFamily ?? "Arial",
         fontSize: (stageDimensions?.height ?? 0) * 0.05,
         draggable: true,
       };

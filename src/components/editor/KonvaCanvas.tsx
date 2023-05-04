@@ -6,7 +6,7 @@ import React, {
   type MutableRefObject,
   useCallback,
 } from "react";
-import { Stage, Layer, Rect, Line } from "react-konva";
+import { Stage, Layer, Line } from "react-konva";
 import type Konva from "konva";
 import { type KonvaEventObject } from "konva/lib/Node";
 import useDimensions from "~/hooks/useDimensions";

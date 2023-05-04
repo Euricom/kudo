@@ -182,12 +182,9 @@ const Editor: NextPage<{ id: string }> = ({ id }) => {
         />
       )} */}
       {/* Main */}
-      <main
-        className="relative z-50 flex h-full flex-col items-center justify-center overflow-x-hidden"
-        onClick={() => setSelectedButton(EditorFunctions.Deselect)}
-      >
+      <main className="relative z-50 flex h-full flex-col items-center justify-center overflow-x-hidden">
         <div className="z-40 mx-auto flex w-full justify-center gap-2 p-5 lg:w-1/2">
-          <div className="dropdown-start dropdown ">
+          <div className="dropdown-start dropdown">
             <label tabIndex={0} className="">
               <button
                 onClick={() => setSelectedButton(EditorFunctions.Text)}

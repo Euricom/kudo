@@ -273,8 +273,11 @@ const KonvaCanvas = ({
       case EditorFunctions.PostSticker:
         addSticker();
         break;
+      case EditorFunctions.Clear:
+        setFunction(EditorFunctions.None);
+        break;
     }
-  }, [editorFunction, undo, saveTemplate, addSticker]);
+  }, [editorFunction, undo, saveTemplate, addSticker, setFunction]);
 
   useEffect(() => {
     if (!template || !stageDimensions.height) {

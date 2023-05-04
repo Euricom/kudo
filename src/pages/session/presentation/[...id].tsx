@@ -125,9 +125,7 @@ const Presentation: NextPage<{ id: string; initialKudos: Kudo[] }> = ({
           content="Page where you can present all Kudo's from a Session."
         />
       </Head>
-      <NavigationBarContent>
-        <h1>Session: {session?.title}</h1>
-      </NavigationBarContent>
+      <NavigationBarContent>Session: {session?.title}</NavigationBarContent>
       <UtilButtonsContent>
         <button
           onClick={() => router.back()}

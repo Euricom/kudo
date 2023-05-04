@@ -19,21 +19,21 @@ const NavButtons = () => {
   return (
     <>
       <div
-        className="dropdown-bottom dropdown mx-auto bg-base-100"
+        className="dropdown dropdown-bottom mx-auto w-full"
         data-cy="NavButtons"
       >
         <label
           data-cy="NavButtonsLabel"
           onClick={() => setState(true)}
           tabIndex={0}
-          className="btn-ghost btn  m-1 w-full text-3xl"
+          className="flex w-full items-center text-2xl"
         >
           {path.includes("/all")
-            ? "all"
+            ? "All Kudos"
             : path === "/out"
-            ? "out"
+            ? "Sent Kudos"
             : path === "/"
-            ? "in"
+            ? "My Kudos"
             : "eKudo"}
           &nbsp;
           <MdArrowDropDown size={25} />
@@ -41,41 +41,30 @@ const NavButtons = () => {
         {state && !(sessions?.length === 0 && user?.role !== UserRole.ADMIN) ? (
           <ul
             tabIndex={0}
-            className="dropdown-content menu rounded-box mx-auto w-full justify-center gap-1 bg-base-100 p-2 shadow"
+            className="dropdown-content menu rounded-box mx-auto w-full max-w-lg justify-center gap-1 bg-base-200 p-2 shadow"
           >
             {sessions?.length !== 0 ? (
-              <li>
-                <Link
-                  className="btn-outline btn"
-                  href="/"
-                  data-cy="In"
-                  onClick={() => setState(false)}
-                >
-                  In
+              <li className={`border-b-2 ${path === "/" ? "text-accent" : ""}`}>
+                <Link href="/" data-cy="In" onClick={() => setState(false)}>
+                  My Kudos
                 </Link>
               </li>
             ) : (
               ""
             )}
-            <li>
-              <Link
-                className="btn-outline btn "
-                href="/out"
-                data-cy="Out"
-                onClick={() => setState(false)}
-              >
-                Out
+            <li className={path === "/out" ? "text-accent" : ""}>
+              <Link href="/out" data-cy="Out" onClick={() => setState(false)}>
+                Sent Kudos
               </Link>
             </li>
             {user?.role === UserRole.ADMIN ? (
-              <li>
-                <Link
-                  className="btn-outline btn"
-                  href="/all"
-                  data-cy="All"
-                  onClick={() => setState(false)}
-                >
-                  All
+              <li
+                className={`border-t-2 ${
+                  path.includes("/all") ? "text-accent" : ""
+                }`}
+              >
+                <Link href="/all" data-cy="All" onClick={() => setState(false)}>
+                  All Kudos
                 </Link>
               </li>
             ) : (

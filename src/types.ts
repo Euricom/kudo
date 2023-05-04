@@ -116,18 +116,19 @@ export type NewSessionSpeaker = {
 };
 
 export enum SortPosibillities {
-  DateA = "Date ↓",
-  DateD = "Date ↑",
-  SpeakerA = "Speaker ↓",
-  SpeakerD = "Speaker ↑",
-  TitleA = "Title ↓",
-  TitleD = "Title ↑",
+  DateD = "Date (New-Old)",
+  DateA = "Date (Old-New)",
+  SpeakerA = "Speaker (A-Z)",
+  SpeakerD = "Speaker (Z-A)",
+  TitleA = "Title (A-Z)",
+  TitleD = "Title (Z-A)",
 }
 
 export type SortAndFilterProps = {
   setSort: React.Dispatch<React.SetStateAction<SortPosibillities>>;
-  filter?: string;
   setFilter: React.Dispatch<React.SetStateAction<string>>;
+  filter?: string;
+  sort?: string;
 };
 
 export type PresentationKudo = {
@@ -189,12 +190,13 @@ export enum EditorFunctions {
   Text = "text",
   Draw = "draw",
   Erase = "erase",
-  Sticker = "sticker",
+  PreSticker = "preSticker",
+  PostSticker = "postSticker",
   Color = "color",
   Clear = "clear",
   Undo = "undo",
-  Submit = "submit",
   Save = "save",
+  Deselect = "deselect",
   None = "none",
 }
 

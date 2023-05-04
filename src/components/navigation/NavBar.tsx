@@ -11,6 +11,7 @@ import { api } from "~/utils/api";
 import Logo from "~/../public/images/KudoAppIcon.svg";
 import Image, { type StaticImageData } from "next/image";
 import Link from "next/link";
+import NavButtons from "./NavButtons";
 
 function useVisibleEndNavbarActions() {
   const router = useRouter();
@@ -19,7 +20,7 @@ function useVisibleEndNavbarActions() {
     {
       Component: NotificationIcon,
       key: "notifButton",
-      routes: ["/", "/out", "/all"],
+      routes: ["/", "/out", "/all", "/all/sessions", "/all/flagged"],
     },
   ].filter((item) => item.routes.includes(router.pathname));
 }
@@ -46,7 +47,12 @@ function useVisibleStartNavbarActions() {
     {
       Component: logo,
       key: "logo",
-      routes: ["/", "/out", "/all"],
+      routes: ["/", "/out", "/all", "/all/sessions", "/all/flagged"],
+    },
+    {
+      Component: () => <NavButtons />,
+      key: "NavButtons",
+      routes: ["/", "/out", "/all", "/all/sessions", "/all/flagged"],
     },
   ].filter((item) => item.routes.includes(router.pathname));
 }
@@ -60,15 +66,15 @@ const NavBar = () => {
   return (
     <>
       <div
-        className="navbar sticky top-0 left-0 z-50 bg-base-100 shadow "
+        className="navbar sticky top-0 left-0 z-50 h-16 bg-base-100 shadow"
         data-cy="Navbar"
       >
-        <div className="navbar-start h-full w-full pl-2 sm:pl-8">
+        <div className="navbar-start h-full w-full gap-2 pl-2 sm:pl-8 ">
           {visibleStartNavbarActions.map((x) => (
             <x.Component key={x.key} />
           ))}
           <div
-            className="z-10 w-fit text-lg sm:navbar-center sm:text-2xl"
+            className="z-10 w-fit overflow-hidden text-lg md:text-2xl"
             data-cy="NavbarTitle"
           >
             <>{title}</>

@@ -104,7 +104,7 @@ const Editor: NextPage<{ id: string }> = ({ id }) => {
   const handleEmoji = () => {
     try {
       setEmojiDropdownState(!emojiDropdownState);
-      setSelectedButton(EditorFunctions.Sticker);
+      setSelectedButton(EditorFunctions.PreSticker);
     } catch (e) {
       toast.error((e as Error).message);
     }
@@ -112,6 +112,7 @@ const Editor: NextPage<{ id: string }> = ({ id }) => {
 
   function onClickEmoji(emoji: EmojiObject) {
     setSelectedEmoji(emoji);
+    setSelectedButton(EditorFunctions.PostSticker);
     setEmojiDropdownState(false);
   }
 
@@ -154,7 +155,7 @@ const Editor: NextPage<{ id: string }> = ({ id }) => {
         <meta name="description" content="Editor to make a Kudo." />
       </Head>
       <NavigationBarContent>
-        <h1>Editor</h1>
+        <h1>Editor: {session}</h1>
       </NavigationBarContent>
       <UtilButtonsContent>
         {user?.role === UserRole.ADMIN && (
@@ -170,8 +171,8 @@ const Editor: NextPage<{ id: string }> = ({ id }) => {
       {/* <div className="w-full h-fit bg-secondary text-white p-5 text-center">
         <h1 data-cy="session" className="lg:inline">&emsp;&emsp;&emsp;&emsp;Session: {sessionId}&emsp;&emsp;</h1><h1 data-cy="speaker" className="lg:inline"> Speaker: {speaker}</h1>
       </div> */}
-
-      {selectedButton === EditorFunctions.Submit && (
+      {/* 
+      {selectedButton === EditorFunctions.Deselect && (
         <ConfirmationModal
           prompt={"Is your Kudo ready to be sent?"}
           onCancel={() => setSelectedButton(EditorFunctions.None)}
@@ -179,11 +180,11 @@ const Editor: NextPage<{ id: string }> = ({ id }) => {
           onSubmit={() => void submit()}
           submitLabel={"Yes"}
         />
-      )}
+      )} */}
       {/* Main */}
       <main className="relative z-50 flex h-full flex-col items-center justify-center overflow-x-hidden">
         <div className="z-40 mx-auto flex w-full justify-center gap-2 p-5 lg:w-1/2">
-          <div className="dropdown-start dropdown ">
+          <div className="dropdown-start dropdown">
             <label tabIndex={0} className="">
               <button
                 onClick={() => setSelectedButton(EditorFunctions.Text)}
@@ -289,16 +290,12 @@ const Editor: NextPage<{ id: string }> = ({ id }) => {
                 onClick={handleEmoji}
                 className={
                   "btn-secondary btn-circle btn " +
-                  (selectedButton == EditorFunctions.Sticker
+                  (selectedButton == EditorFunctions.PreSticker
                     ? "btn-accent"
                     : "")
                 }
               >
-                {selectedEmoji ? (
-                  <>{selectedEmoji.native}</>
-                ) : (
-                  <GrEmoji size={20} />
-                )}
+                <GrEmoji size={20} />
               </button>
             </label>
             {emojiDropdownState && (
@@ -367,7 +364,7 @@ const Editor: NextPage<{ id: string }> = ({ id }) => {
       <FAB
         text={"Send"}
         icon={<FiSend />}
-        onClick={() => setSelectedButton(EditorFunctions.Submit)}
+        onClick={() => setSelectedButton(EditorFunctions.Deselect)}
       />
     </>
   );

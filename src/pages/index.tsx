@@ -3,7 +3,6 @@ import Head from "next/head";
 import FAB from "~/components/navigation/FAB";
 import { GrAdd } from "react-icons/gr";
 import { NavigationBarContent } from "~/components/navigation/NavBarTitle";
-import NavButtons from "~/components/navigation/NavButtons";
 import SessionList from "~/components/sessions/SessionList";
 import { api } from "~/utils/api";
 import { type SortPosibillities } from "~/types";
@@ -53,12 +52,12 @@ const Home: NextPage<{ filter: string; sort: SortPosibillities }> = ({
         />
       </Head>
       <NavigationBarContent>
-        <NavButtons />
+        <></>
       </NavigationBarContent>
       <UtilButtonsContent>
         <></>
       </UtilButtonsContent>
-      <main className="flex h-full flex-col items-center justify-center">
+      <main className="flex h-full w-full flex-col items-center justify-center">
         <SessionList sessions={sessions} filterIn={filter} sortIn={sort} />
       </main>
       <FAB text={"Create Kudo"} icon={<GrAdd />} url="/create" />

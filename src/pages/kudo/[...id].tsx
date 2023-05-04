@@ -14,7 +14,6 @@ import {
   AiOutlineSend,
 } from "react-icons/ai";
 import { useEffect, useState } from "react";
-import ConfirmationModal from "~/components/input/ConfirmationModal";
 import { useSession } from "next-auth/react";
 import { type ImageData, UserRole } from "~/types";
 import { useRouter } from "next/router";
@@ -38,9 +37,10 @@ const KudoDetail: NextPage<{ id: string }> = ({ id }) => {
 
   const kudoQuery = api.kudos.getKudoById.useQuery({ id: id });
   const { data: kudo, refetch: refetchKudo } = kudoQuery;
-  const sender = api.users.getUserById.useQuery({
+  const senderQuery = api.users.getUserById.useQuery({
     id: kudo?.userId ?? "",
-  }).data;
+  });
+  const sender = senderQuery.data;
   const imageQuery = api.kudos.getImageById.useQuery({
     id: kudo?.image ?? "error",
   });
@@ -73,16 +73,6 @@ const KudoDetail: NextPage<{ id: string }> = ({ id }) => {
     },
   });
   const [comment, setComment] = useState<string>("");
-  const [sendReady, setSendReady] = useState<boolean>(false);
-  const [imgUrl, setImgUrl] = useState<string>(avatar.src);
-
-  useEffect(() => {
-    if (kudo?.userId && speaker?.id)
-      fetch("/api/images/" + speaker?.id.toString())
-        .then((res) => res.json())
-        .then((json: ImageData) => setImgUrl(json.dataUrl))
-        .catch((e: Error) => toast.error(e.message));
-  }, [kudo?.userId, speaker?.id]);
 
   async function handleclick() {
     if (user?.id === session?.speakerId && kudo && kudo.id) {
@@ -110,7 +100,6 @@ const KudoDetail: NextPage<{ id: string }> = ({ id }) => {
           id: kudo.id,
           comment: comment,
         });
-        setSendReady(false);
         setComment("");
         await refetchKudo();
       } catch (e) {
@@ -139,9 +128,11 @@ const KudoDetail: NextPage<{ id: string }> = ({ id }) => {
     !image ||
     !kudo ||
     !session ||
+    !sender ||
     imageQuery.isLoading ||
     sessionQuery.isLoading ||
-    kudoQuery.isLoading
+    kudoQuery.isLoading ||
+    senderQuery.isLoading
   ) {
     return <LoadingBar />;
   }
@@ -187,7 +178,7 @@ const KudoDetail: NextPage<{ id: string }> = ({ id }) => {
         />
       </Head>
       <NavigationBarContent>
-        <h1>Kudo {session?.title ?? "no title"}</h1>
+        Kudo for: {session?.title ?? "No title"}
       </NavigationBarContent>
       <UtilButtonsContent>
         {(user?.id === kudo?.userId || user?.role === UserRole.ADMIN) &&
@@ -282,7 +273,7 @@ const KudoDetail: NextPage<{ id: string }> = ({ id }) => {
                       <div className="relative w-10 rounded-full">
                         <Image
                           className="rounded-full"
-                          src={imgUrl}
+                          src={"/api/images/" + sender.id ?? avatar}
                           alt="Profile picture"
                           fill
                         />

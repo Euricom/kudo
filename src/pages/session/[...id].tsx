@@ -109,9 +109,7 @@ const Session: NextPage<{ id: string; initialKudos: Kudo[] }> = ({
           content="Page where you can see all Kudo's from a Session."
         />
       </Head>
-      <NavigationBarContent>
-        <h1>Session: {session?.title}</h1>
-      </NavigationBarContent>
+      <NavigationBarContent>Session: {session?.title}</NavigationBarContent>
       <UtilButtonsContent>
         <button
           className="btn-ghost btn-circle btn "

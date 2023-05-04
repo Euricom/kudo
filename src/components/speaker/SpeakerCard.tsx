@@ -1,20 +1,9 @@
 import Link from "next/link";
-import { type ImageData, type UserWCount } from "~/types";
+import { type UserWCount } from "~/types";
 import Image from "next/image";
 import avatar from "~/../public/images/AnonymousPicture.jpg";
-import { useEffect, useState } from "react";
-import { toast } from "react-toastify";
 
 const SpeakerCard = ({ user }: { user: UserWCount }) => {
-  const [imgUrl, setImgUrl] = useState<string>(avatar.src);
-
-  useEffect(() => {
-    fetch("/api/images/" + user.user.id)
-      .then((res) => res.json())
-      .then((json: ImageData) => setImgUrl(json.dataUrl))
-      .catch((e: Error) => toast.error(e.message));
-  }, [user]);
-
   return (
     <>
       <Link
@@ -25,11 +14,11 @@ const SpeakerCard = ({ user }: { user: UserWCount }) => {
       >
         <div className="card-body">
           <div className="flex w-full gap-3">
-            <div className="avatar aspect-square h-1/6 w-1/4">
+            <div className="max-h-1/6 max-w-1/4 avatar aspect-square">
               <div className="relative">
                 <Image
                   className="rounded-full"
-                  src={imgUrl ?? avatar}
+                  src={"/api/images/" + user.user.id ?? avatar}
                   alt="Profile picture"
                   fill
                 />
@@ -46,9 +35,9 @@ const SpeakerCard = ({ user }: { user: UserWCount }) => {
                 <h3 className="badge-primary badge">
                   Send: {user.sendKudoCount}
                 </h3>
-                <h3 className="badge-primary badge">
+                {/* <h3 className="badge-primary badge">
                   Received: {user.receiveKudoCount}
-                </h3>
+                </h3> */}
               </div>
             </div>
           </div>

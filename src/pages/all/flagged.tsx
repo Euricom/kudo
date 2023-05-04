@@ -4,7 +4,6 @@ import FAB from "~/components/navigation/FAB";
 import { GrAdd } from "react-icons/gr";
 import { UtilButtonsContent } from "~/hooks/useUtilButtons";
 import { NavigationBarContent } from "~/components/navigation/NavBarTitle";
-import NavButtons from "~/components/navigation/NavButtons";
 import { api } from "~/utils/api";
 import LoadingBar from "~/components/LoadingBar";
 import { SortPosibillities, UserRole } from "~/types";
@@ -78,7 +77,7 @@ const Flagged: NextPage<{ searchtext: string; sortIn: SortPosibillities }> = ({
         />
       </Head>
       <NavigationBarContent>
-        <NavButtons />
+        <></>
       </NavigationBarContent>
       <UtilButtonsContent>
         <></>

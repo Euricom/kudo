@@ -52,7 +52,7 @@ function useVisibleStartNavbarActions() {
     {
       Component: () => <NavButtons />,
       key: "NavButtons",
-      routes: ["/", "/out", "/all"],
+      routes: ["/", "/out", "/all", "/all/sessions", "/all/flagged"],
     },
   ].filter((item) => item.routes.includes(router.pathname));
 }
@@ -87,7 +87,7 @@ const NavBar = () => {
             <x.Component key={x.key} />
           ))}
           <div className="hidden items-center lg:inline-flex">
-            <div className="dropdown dropdown-end">
+            <div className="dropdown-end dropdown">
               <label
                 tabIndex={0}
                 className="btn-ghost btn-circle btn m-1"

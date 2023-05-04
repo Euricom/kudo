@@ -4,6 +4,8 @@ import {
   makeSlackKudo,
 } from "~/server/services/kudoService";
 import { getChannelById, openModal } from "~/server/services/slackService";
+import image from "~/../../imageForSlack.jpg";
+import fs from "fs";
 
 interface body {
   text: string;
@@ -21,7 +23,9 @@ export default async function handler(
 ) {
   const text: string = (req.body as body).text;
   // const image = await getFirstImageById().then((i) => i?.dataUrl);
-  const image = await makeSlackKudo(text);
+  const base64 = await makeSlackKudo(text);
+
+  fs.writeFileSync("./image.jpg", base64, "base64");
 
   res.send({
     response_type: "in_channel",
@@ -37,7 +41,7 @@ export default async function handler(
         type: "section",
         accessory: {
           type: "image",
-          image_url: image,
+          image_url: fs.createReadStream("./image.jpg"),
           alt_text: "Kudo",
         },
       },

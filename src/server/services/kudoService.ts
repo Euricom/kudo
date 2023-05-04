@@ -106,7 +106,7 @@ export async function makeSlackKudo(message: string) {
   const template = await prisma.template
     .findMany({
       where: {
-        id: "clh8xfi310008nmke4kneo834",
+        id: "clh8viadu0008ungk87l4npq4",
         // id: {
         //   not: "clh8viadu0006ungku0w7hvs9",
         // },
@@ -180,8 +180,10 @@ export async function makeSlackKudo(message: string) {
   });
 
   const buffer = canvas.toBuffer("image/jpeg");
-  // fs.writeFileSync("./image.jpg", buffer);
-  return buffer;
+  // fs.writeFileSync("./image.jpg", buffer, 'base64');
+  const base64String = btoa(String.fromCharCode(...new Uint8Array(buffer)));
+
+  return base64String;
 }
 
 const shuffle = (array: Template[]) => {

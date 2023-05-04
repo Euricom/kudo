@@ -116,9 +116,6 @@ const KonvaCanvas = ({
       case EditorFunctions.Text:
         addText();
         break;
-      case EditorFunctions.Sticker:
-        addSticker();
-        break;
     }
   };
 
@@ -147,13 +144,12 @@ const KonvaCanvas = ({
     return text;
   };
 
-  const addSticker = () => {
-    debugger;
+  const addSticker = useCallback(() => {
     if (!emoji) {
       toast.error("No emoji selected");
       return;
     }
-    const pos = layerRef.current.getRelativePointerPosition() ?? { x: 0, y: 0 };
+    const pos = { x: 0, y: 0 };
     const sticker = {
       id: v4(),
       type: CanvasShapes.Sticker,
@@ -167,7 +163,7 @@ const KonvaCanvas = ({
     setShapes((s) => [...s, sticker]);
     selectShape(sticker.id);
     setFunction(EditorFunctions.None);
-  };
+  }, [emoji, stageDimensions, setFunction, history]);
 
   const saveTemplate = useCallback(async () => {
     setFunction(EditorFunctions.None);
@@ -264,16 +260,24 @@ const KonvaCanvas = ({
   }, [setStage, stageDimensions]);
 
   useEffect(() => {
-    if (editorFunction === EditorFunctions.Submit) {
-      selectShape(null);
+    switch (editorFunction) {
+      case EditorFunctions.Deselect:
+        selectShape(null);
+        break;
+      case EditorFunctions.Undo:
+        undo();
+        break;
+      case EditorFunctions.Save:
+        saveTemplate().catch(console.error);
+        break;
+      case EditorFunctions.PostSticker:
+        addSticker();
+        break;
+      case EditorFunctions.Clear:
+        setFunction(EditorFunctions.None);
+        break;
     }
-    if (editorFunction === EditorFunctions.Undo) {
-      undo();
-    }
-    if (editorFunction === EditorFunctions.Save) {
-      saveTemplate().catch(console.error);
-    }
-  }, [editorFunction, undo, saveTemplate]);
+  }, [editorFunction, undo, saveTemplate, addSticker, setFunction]);
 
   useEffect(() => {
     if (!template || !stageDimensions.height) {
@@ -341,7 +345,7 @@ const KonvaCanvas = ({
               }}
               isSelected={false}
               editorFunction={EditorFunctions.None}
-              onSelect={() => void 0}
+              onSelect={() => selectShape(null)}
               onChange={() => void 0}
               onDelete={() => void 0}
             />

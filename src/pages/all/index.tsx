@@ -102,7 +102,7 @@ const Users: NextPage<{
           filter={search}
           sort={sort}
         />
-        <div className="flex h-full w-fit flex-wrap justify-center gap-4">
+        <div className="flex h-full w-full flex-wrap justify-start gap-8 p-5">
           {sortedUsers()
             .filter((user) =>
               user.user.displayName

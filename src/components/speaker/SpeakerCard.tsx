@@ -14,7 +14,7 @@ const SpeakerCard = ({ user }: { user: UserWCount }) => {
       >
         <div className="card-body">
           <div className="flex w-full gap-3">
-            <div className="avatar aspect-square h-1/6 w-1/4">
+            <div className="max-h-1/6 max-w-1/4 avatar aspect-square">
               <div className="relative">
                 <Image
                   className="rounded-full"
@@ -35,9 +35,9 @@ const SpeakerCard = ({ user }: { user: UserWCount }) => {
                 <h3 className="badge-primary badge">
                   Send: {user.sendKudoCount}
                 </h3>
-                <h3 className="badge-primary badge">
+                {/* <h3 className="badge-primary badge">
                   Received: {user.receiveKudoCount}
-                </h3>
+                </h3> */}
               </div>
             </div>
           </div>

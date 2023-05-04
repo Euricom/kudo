@@ -101,7 +101,7 @@ const SessionList = ({ sessions, filterIn, sortIn }: SessionListProps) => {
                       ? "Today"
                       : sessionDate.toDateString()}
                   </h2>
-                  <div className="flex flex-wrap gap-4">
+                  <div className="flex w-full flex-wrap gap-4">
                     {d.sessions.map((s) => {
                       return <SessionCard key={s.id} session={s} />;
                     })}
@@ -121,7 +121,7 @@ const SessionList = ({ sessions, filterIn, sortIn }: SessionListProps) => {
         filter={filter}
         sort={sort}
       />
-      <div className="flex h-full flex-col justify-start gap-8 p-5">
+      <div className="flex h-full w-full flex-col justify-start gap-8 p-5">
         {sortSessions()}
       </div>
     </>

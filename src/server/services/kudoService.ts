@@ -4,9 +4,11 @@ import { prisma } from "../db";
 import { findAllUsers } from "./userService";
 import { getAllSessions } from "./sessionService";
 import { TRPCError } from "@trpc/server";
-import KonvaCanvas from "~/components/editor/KonvaCanvas";
 import Konva from "konva";
 import { Stage } from "konva/lib/Stage";
+
+import { createCanvas } from "canvas";
+import fs from "fs";
 
 export const findAllKudosSortedByUserId = async (
   userid: string,
@@ -100,43 +102,87 @@ export function getFirstImageById() {
   });
 }
 
-// export async function makeSlackKudo(message: string) {
-//   let editorFunction = EditorFunctions.None;
-//   const setFunction = (func: EditorFunctions) => {
-//     editorFunction = func;
-//   };
-//   let staged: Stage = Stage;
-//   const setStage = (stage: Stage) => {
-//     staged = stage;
-//   };
-//   const template = await prisma.template
-//     .findMany({
-//       where: {
-//         id: {
-//           not: "clh7cwbgx0006o6k8hk6dwphn",
-//         },
-//       },
-//     })
-//     .then((t) => shuffle(t)[0]);
-//   if (!template) {
-//     throw new TRPCError({
-//       code: "INTERNAL_SERVER_ERROR",
-//       message: "No template was found.",
-//     });
-//   }
-//   const shapes: Shapes[] = ([...template.content] as unknown as Shapes[]) ?? [];
+export async function makeSlackKudo(message: string) {
+  const template = await prisma.template
+    .findMany({
+      where: {
+        id: "clh8viadu0008ungk87l4npq4",
+        // id: {
+        //   not: "clh8viadu0006ungku0w7hvs9",
+        // },
+      },
+    })
+    .then((t) => shuffle(t)[0]);
+  if (!template) {
+    throw new TRPCError({
+      code: "INTERNAL_SERVER_ERROR",
+      message: "No template was found.",
+    });
+  }
+  const shapes: Shapes[] = ([...template.content] as unknown as Shapes[]) ?? [];
 
-//   shapes.map((s) => (s.id === "bodyText" ? (s.text = message) : ""));
-//   // template.content = shapes
+  const width = 1500;
+  const height = 1000;
 
-//   const konva = KonvaCanvas({
-//     editorFunction: editorFunction,
-//     template: template,
-//     color: template.color,
-//     setFunction: setFunction,
-//     setStage
-//   });
-// }
+  const canvas = createCanvas(width, height);
+  const context = canvas.getContext("2d");
+  context.fillStyle = template.color;
+  context.fillRect(0, 0, width, height);
+  context.fillStyle;
+  console.log(shapes);
+
+  shapes.forEach((s) => {
+    if (s.type === 5) {
+      console.log(s);
+      s.fill ? (context.fillStyle = s.fill) : "";
+      context.beginPath();
+      context.arc(
+        (s.x ?? 0) + 750,
+        (s.y ?? 0) + 500,
+        s.radius ?? 390,
+        0,
+        2 * Math.PI
+      );
+      context.fill();
+    } else if (s.type === 2) {
+      console.log(s);
+      context.beginPath();
+      context.lineWidth = s.thickness ?? 5;
+      if (s.points) {
+        for (let i = 0; i < s.points?.length ?? 0; i = i + 2) {
+          context.lineTo(
+            (s.points[i] ?? 0) + 750,
+            (s.points[i + 1] ?? 0) + 500
+          );
+        }
+      }
+      context.stroke();
+    } else {
+      console.log(s);
+
+      let text = s.text;
+      if (s.id === "bodyText") {
+        text = message;
+      }
+
+      s.fill ? (context.fillStyle = s.fill) : "";
+      context.font =
+        ((s.fontSize ?? 90) * ((s.scale?.y ?? 2) - 1)).toString() +
+        "px " +
+        (s.fontFamily ?? "Arial").toString();
+      const textWidth = context.measureText(text ?? "fout").width;
+      context.fillText(
+        text ?? "fout",
+        (s.x ?? 0) + 750 - textWidth / 2,
+        (s.y ?? 0) + 500 + (s.fontSize ?? 0) / 3
+      );
+    }
+  });
+
+  const buffer = canvas.toBuffer("image/jpeg");
+  // fs.writeFileSync("./image.jpg", buffer);
+  return buffer;
+}
 
 const shuffle = (array: Template[]) => {
   for (let i = array.length - 1; i > 0; i--) {

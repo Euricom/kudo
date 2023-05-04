@@ -106,7 +106,7 @@ export async function makeSlackKudo(message: string) {
   const template = await prisma.template
     .findMany({
       where: {
-        id: "clh8viadu0008ungk87l4npq4",
+        id: "clh8xfi310008nmke4kneo834",
         // id: {
         //   not: "clh8viadu0006ungku0w7hvs9",
         // },

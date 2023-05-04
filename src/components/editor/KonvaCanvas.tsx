@@ -125,14 +125,6 @@ const KonvaCanvas = ({
   const addText = () => {
     const pos = layerRef.current.getRelativePointerPosition() ?? { x: 0, y: 0 };
 
-    const text = makeText(pos);
-    history.unshift(text);
-    setShapes((s) => [...s, text]);
-    selectShape(text.id);
-    setFunction(EditorFunctions.None);
-  };
-
-  const makeText = (pos: Vector2d) => {
     const text = {
       id: v4(),
       type: CanvasShapes.Text,
@@ -144,7 +136,11 @@ const KonvaCanvas = ({
       fontSize: (stageDimensions?.height ?? 0) / 15,
       draggable: true,
     };
-    return text;
+
+    history.unshift(text);
+    setShapes((s) => [...s, text]);
+    selectShape(text.id);
+    setFunction(EditorFunctions.None);
   };
 
   const addSticker = () => {
@@ -276,10 +272,11 @@ const KonvaCanvas = ({
   }, [editorFunction, undo, saveTemplate]);
 
   useEffect(() => {
-    if (!template || !stageDimensions.height) {
+    if (!template || !stageDimensions.height || anonymous) {
       return;
     }
-    if (!anonymous) {
+    const shape = shapes.find((s) => s.id === "Sender");
+    if (!shape) {
       const senderNode = {
         id: "Sender",
         type: CanvasShapes.Text,
@@ -302,6 +299,7 @@ const KonvaCanvas = ({
     color,
     fontFamily,
     history,
+    shapes,
   ]);
 
   return (

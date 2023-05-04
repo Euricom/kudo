@@ -190,12 +190,13 @@ export enum EditorFunctions {
   Text = "text",
   Draw = "draw",
   Erase = "erase",
-  Sticker = "sticker",
+  PreSticker = "preSticker",
+  PostSticker = "postSticker",
   Color = "color",
   Clear = "clear",
   Undo = "undo",
-  Submit = "submit",
   Save = "save",
+  Deselect = "deselect",
   None = "none",
 }
 

@@ -81,8 +81,8 @@ const Templates: NextPage<{
       <UtilButtonsContent>
         <></>
       </UtilButtonsContent>
-      <main className="flex flex-col items-center justify-center">
-        <div className="mb-8 flex flex-wrap justify-center gap-5 px-5 md:mb-28">
+      <main className="flex flex-col items-center justify-center p-5">
+        <div className="flex flex-wrap justify-center gap-5 ">
           {templates?.map((x: Template) => (
             <Link
               className="card aspect-[3/2] h-52 w-80 overflow-hidden rounded-xl bg-white text-gray-800 shadow-xl"

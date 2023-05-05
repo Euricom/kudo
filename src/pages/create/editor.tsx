@@ -104,7 +104,7 @@ const Editor: NextPage<{ id: string }> = ({ id }) => {
   const handleEmoji = () => {
     try {
       setEmojiDropdownState(!emojiDropdownState);
-      setSelectedButton(EditorFunctions.Sticker);
+      setSelectedButton(EditorFunctions.PreSticker);
     } catch (e) {
       toast.error((e as Error).message);
     }
@@ -112,6 +112,7 @@ const Editor: NextPage<{ id: string }> = ({ id }) => {
 
   function onClickEmoji(emoji: EmojiObject) {
     setSelectedEmoji(emoji);
+    setSelectedButton(EditorFunctions.PostSticker);
     setEmojiDropdownState(false);
   }
 
@@ -258,10 +259,12 @@ const Editor: NextPage<{ id: string }> = ({ id }) => {
             </div>
           </EditorButton>
           <EditorButton
-            type={EditorFunctions.Sticker}
+            type={EditorFunctions.PreSticker}
             icon={<GrEmoji size={20} />}
             onClick={handleEmoji}
-            bgColor={selectedButton == EditorFunctions.Sticker ? "#00ff00" : ""}
+            bgColor={
+              selectedButton == EditorFunctions.PreSticker ? "#00ff00" : ""
+            }
           >
             <Picker data={data} onEmojiSelect={onClickEmoji} />
           </EditorButton>

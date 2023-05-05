@@ -77,7 +77,7 @@ const SessionList = ({ sessions, filterIn, sortIn }: SessionListProps) => {
           const speaker = users?.find((u) => u.id === s.speakerId);
           return (
             <>
-              <div key={s.speakerId} className="">
+              <div key={s.speakerId} className="w-full md:w-fit ">
                 <h2 className="w-full">{speaker?.displayName}</h2>
                 <div className="flex flex-wrap gap-4">
                   {s.sessions.map((s) => {
@@ -94,14 +94,14 @@ const SessionList = ({ sessions, filterIn, sortIn }: SessionListProps) => {
             const sessionDate = new Date(d.date);
             return (
               <>
-                <div key={d.date} className="">
+                <div key={d.date} className="w-full md:w-fit">
                   <h2 className="w-full">
                     {sessionDate.toLocaleDateString() ==
                     new Date().toLocaleDateString()
                       ? "Today"
                       : sessionDate.toDateString()}
                   </h2>
-                  <div className="flex flex-wrap gap-4">
+                  <div className="flex w-full flex-wrap gap-4">
                     {d.sessions.map((s) => {
                       return <SessionCard key={s.id} session={s} />;
                     })}
@@ -121,7 +121,7 @@ const SessionList = ({ sessions, filterIn, sortIn }: SessionListProps) => {
         filter={filter}
         sort={sort}
       />
-      <div className="flex h-full flex-col justify-start gap-8 p-5">
+      <div className="flex h-full w-full flex-col items-center justify-start gap-8 p-5">
         {sortSessions()}
       </div>
     </>

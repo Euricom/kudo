@@ -74,7 +74,7 @@ const NavBar = () => {
             <x.Component key={x.key} />
           ))}
           <div
-            className="z-10 w-fit overflow-hidden text-lg sm:navbar-center sm:text-2xl"
+            className="z-10 w-fit overflow-hidden text-lg md:text-2xl"
             data-cy="NavbarTitle"
           >
             <>{title}</>

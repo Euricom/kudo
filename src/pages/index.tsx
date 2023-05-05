@@ -57,7 +57,7 @@ const Home: NextPage<{ filter: string; sort: SortPosibillities }> = ({
       <UtilButtonsContent>
         <></>
       </UtilButtonsContent>
-      <main className="flex h-full flex-col items-center justify-center">
+      <main className="flex h-full w-full flex-col items-center justify-center">
         <SessionList sessions={sessions} filterIn={filter} sortIn={sort} />
       </main>
       <FAB text={"Create Kudo"} icon={<GrAdd />} url="/create" />

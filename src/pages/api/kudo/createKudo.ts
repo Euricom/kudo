@@ -41,7 +41,7 @@ export default async function handler(
         type: "section",
         accessory: {
           type: "image",
-          image_url: text,
+          image_url: "test" /*fs.createReadStream("./image.jpg")*/,
           alt_text: "Kudo",
         },
       },

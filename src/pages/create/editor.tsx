@@ -21,7 +21,6 @@ import dynamic from "next/dynamic";
 import { useSession } from "next-auth/react";
 import { useSessionSpeaker } from "~/components/sessions/SelectedSessionAndSpeaker";
 import type Konva from "konva";
-import ConfirmationModal from "~/components/input/ConfirmationModal";
 import LoadingBar from "~/components/LoadingBar";
 import { BsFillCircleFill } from "react-icons/bs";
 import { type ColorResult, HuePicker } from "react-color";
@@ -31,6 +30,9 @@ import Picker from "@emoji-mart/react";
 import { toast } from "react-toastify";
 import { type TRPCError } from "@trpc/server";
 import { type Kudo } from "@prisma/client";
+import EditorButton from "~/components/editor/buttons/EditorButton";
+import useDimensions from "~/hooks/useDimensions";
+import useWindowDimensions from "~/hooks/useWindowDimensions";
 
 export function getServerSideProps(context: { query: { template: string } }) {
   return {
@@ -48,6 +50,7 @@ const KonvaCanvas = dynamic(
 const Editor: NextPage<{ id: string }> = ({ id }) => {
   const { session, speaker, anonymous } = useSessionSpeaker().data;
   const router = useRouter();
+  const width = useWindowDimensions()?.width;
   const user = useSession().data?.user;
   //API
   const trpcContext = api.useContext();
@@ -111,13 +114,21 @@ const Editor: NextPage<{ id: string }> = ({ id }) => {
   };
 
   function onClickEmoji(emoji: EmojiObject) {
+    if (width < 1024) {
+      document.getElementById("Modal-" + EditorFunctions.PreSticker)?.click();
+    }
     setSelectedEmoji(emoji);
     setSelectedButton(EditorFunctions.PostSticker);
     setEmojiDropdownState(false);
   }
 
   const submit = async () => {
-    setSelectedButton(EditorFunctions.None);
+    if (EditorFunctions.Submit === selectedButton) {
+      toast.warning("Kudo is being created, please wait.");
+      return;
+    }
+    setSelectedButton(EditorFunctions.Submit);
+    await new Promise((res) => setTimeout(res, 1000));
     if (!stage) {
       return;
     }
@@ -145,6 +156,7 @@ const Editor: NextPage<{ id: string }> = ({ id }) => {
         await router.replace("/out");
       } catch (e) {
         toast.error((e as TRPCError).message);
+        setSelectedButton(EditorFunctions.None);
       }
   };
 
@@ -171,183 +183,127 @@ const Editor: NextPage<{ id: string }> = ({ id }) => {
       {/* <div className="w-full h-fit bg-secondary text-white p-5 text-center">
         <h1 data-cy="session" className="lg:inline">&emsp;&emsp;&emsp;&emsp;Session: {sessionId}&emsp;&emsp;</h1><h1 data-cy="speaker" className="lg:inline"> Speaker: {speaker}</h1>
       </div> */}
-      {/* 
-      {selectedButton === EditorFunctions.Deselect && (
-        <ConfirmationModal
-          prompt={"Is your Kudo ready to be sent?"}
-          onCancel={() => setSelectedButton(EditorFunctions.None)}
-          cancelLabel={"No"}
-          onSubmit={() => void submit()}
-          submitLabel={"Yes"}
-        />
-      )} */}
+
       {/* Main */}
       <main className="relative z-50 flex h-full flex-col items-center justify-center overflow-x-hidden">
         <div className="z-40 mx-auto flex w-full justify-center gap-2 p-5 lg:w-1/2">
-          <div className="dropdown-start dropdown">
-            <label tabIndex={0} className="">
-              <button
-                onClick={() => setSelectedButton(EditorFunctions.Text)}
-                className={"btn-secondary btn-circle btn "}
-                style={{
-                  backgroundColor:
-                    selectedButton === EditorFunctions.Text ? color : "",
-                }}
-              >
-                <BiText size={20} />{" "}
-              </button>
-            </label>
-            <ul
-              tabIndex={0}
-              className=" dropdown-content menu rounded-box w-52 bg-base-100 p-2 shadow"
+          <EditorButton
+            type={EditorFunctions.Text}
+            icon={<BiText size={20} />}
+            onClick={() => setSelectedButton(EditorFunctions.Text)}
+            bgColor={selectedButton === EditorFunctions.Text ? color : ""}
+          >
+            <label className="label text-xs">Font</label>
+            <select
+              className="select-bordered select w-full min-w-min max-w-xs"
+              value={font}
+              onChange={(e) => setFont(e.target.value)}
             >
-              <label className="label text-xs">Font</label>
-              <select
-                className="select-bordered select w-full max-w-xs"
-                value={font}
-                onChange={(e) => setFont(e.target.value)}
-              >
-                {Fonts.sort((a, b) => (b < a ? 1 : -1)).map((f) => (
-                  <option style={{ fontFamily: f }} key={f}>
-                    {f}
-                  </option>
-                ))}
-              </select>
-            </ul>
-          </div>
-          <div className="dropdown-start dropdown">
-            <label tabIndex={0} className="">
-              <button
-                onClick={() =>
-                  setSelectedButton(
-                    selectedButton == EditorFunctions.Erase
-                      ? EditorFunctions.Erase
-                      : EditorFunctions.Draw
-                  )
-                }
-                className={
-                  "btn-secondary btn-circle btn " +
-                  (selectedButton === EditorFunctions.Erase ? "btn-accent" : "")
-                }
-                style={{
-                  backgroundColor:
-                    selectedButton === EditorFunctions.Draw ? color : "",
-                }}
-              >
-                {selectedButton === EditorFunctions.Erase ? (
-                  <BiEraser size={20} />
-                ) : (
-                  <BiPencil size={20} />
-                )}
-              </button>
-            </label>
-            <ul
-              tabIndex={0}
-              className="dropdown-content menu rounded-box w-52 bg-base-100 p-2 shadow"
-            >
-              <div className="flex w-full items-center">
-                <div>
-                  <li>
-                    <BiPencil
-                      size={50}
-                      onClick={() => setSelectedButton(EditorFunctions.Draw)}
-                    />
-                  </li>
-                  <li>
-                    <BiEraser
-                      size={50}
-                      onClick={() => setSelectedButton(EditorFunctions.Erase)}
-                    />
-                  </li>
-                </div>
-                <li className="pointer-events-none h-full w-full flex-auto items-center">
-                  {selectedButton == EditorFunctions.Erase ? (
-                    <BiCircle size={40 + thickness} />
-                  ) : (
-                    <BsFillCircleFill size={33 + thickness} color={color} />
-                  )}
-                </li>
-              </div>
-              <li>
-                <div className="text-xs">
-                  Thickness
-                  <input
-                    type="range"
-                    min="1"
-                    height={thickness}
-                    max="50"
-                    value={thickness}
-                    className="range"
-                    onChange={(e) => setThickness(parseInt(e.target.value))}
-                  />
-                </div>
-              </li>
-            </ul>
-          </div>
-          <div className="dropdown-start dropdown">
-            <label tabIndex={0} className="">
-              <button
-                onClick={handleEmoji}
-                className={
-                  "btn-secondary btn-circle btn " +
-                  (selectedButton == EditorFunctions.PreSticker
-                    ? "btn-accent"
-                    : "")
-                }
-              >
-                <GrEmoji size={20} />
-              </button>
-            </label>
-            {emojiDropdownState && (
-              <ul tabIndex={0} className="dropdown-content ">
-                <Picker data={data} onEmojiSelect={onClickEmoji} />
-              </ul>
-            )}
-          </div>
-          <div className="dropdown-start dropdown ">
-            <label tabIndex={0} className="">
-              <button
-                onClick={() => setSelectedButton(EditorFunctions.Color)}
-                className={"btn-secondary btn-circle btn "}
-                style={{
-                  backgroundColor: color,
-                }}
-              >
-                <BiPalette size={20} />
-              </button>
-            </label>
-            <ul
-              tabIndex={0}
-              className=" dropdown-content ml-5 w-80 -translate-x-2/3 rounded-full bg-secondary p-2 lg:w-fit lg:translate-x-0"
-            >
-              <li className="flex gap-4 align-middle">
-                <BsFillCircleFill
-                  size={16}
-                  onClick={() => setColor("#121212")}
-                  color={"#121212"}
+              {Fonts.sort((a, b) => (b < a ? 1 : -1)).map((f) => (
+                <option style={{ fontFamily: f }} key={f}>
+                  {f}
+                </option>
+              ))}
+            </select>
+          </EditorButton>
+          <EditorButton
+            type={EditorFunctions.Draw}
+            icon={
+              selectedButton === EditorFunctions.Erase ? (
+                <BiEraser size={20} />
+              ) : (
+                <BiPencil size={20} />
+              )
+            }
+            onClick={() =>
+              setSelectedButton(
+                selectedButton == EditorFunctions.Erase
+                  ? EditorFunctions.Erase
+                  : EditorFunctions.Draw
+              )
+            }
+            bgColor={
+              selectedButton === EditorFunctions.Draw
+                ? color
+                : selectedButton === EditorFunctions.Erase
+                ? "#00ff00"
+                : ""
+            }
+          >
+            <li>
+              <div className="w-40 text-xs">
+                Thickness
+                <input
+                  type="range"
+                  min="1"
+                  height={thickness}
+                  max="200"
+                  value={thickness}
+                  className="range"
+                  onChange={(e) => setThickness(parseInt(e.target.value))}
                 />
-                <HuePicker color={color} onChange={handleColorChange} />
+              </div>
+            </li>
+            <div className="mt-3 flex align-middle">
+              <div className="flex flex-col justify-around">
+                <BiPencil
+                  size={30}
+                  onClick={() => setSelectedButton(EditorFunctions.Draw)}
+                />
+                <BiEraser
+                  size={30}
+                  onClick={() => setSelectedButton(EditorFunctions.Erase)}
+                />
+              </div>
+              <li className="pointer-events-none flex h-full flex-grow items-center justify-center p-2">
+                {selectedButton == EditorFunctions.Erase ? (
+                  <BiCircle size={5 + thickness * (stage?.scaleX() ?? 1)} />
+                ) : (
+                  <BsFillCircleFill
+                    size={(1 + thickness) * (stage?.scaleX() ?? 1)}
+                    color={color}
+                  />
+                )}
               </li>
-            </ul>
-          </div>
-          <button
+            </div>
+          </EditorButton>
+          <EditorButton
+            type={EditorFunctions.PreSticker}
+            icon={<GrEmoji size={20} />}
+            onClick={handleEmoji}
+            bgColor={
+              selectedButton == EditorFunctions.PreSticker ? "#00ff00" : ""
+            }
+          >
+            <Picker data={data} onEmojiSelect={onClickEmoji} />
+          </EditorButton>
+          <EditorButton
+            type={EditorFunctions.Color}
+            icon={<BiPalette size={20} />}
+            onClick={() => setSelectedButton(EditorFunctions.Color)}
+            bgColor={color}
+          >
+            <li className="flex gap-4 align-middle">
+              <BsFillCircleFill
+                size={16}
+                onClick={() => setColor("#121212")}
+                color={"#121212"}
+              />
+              <HuePicker color={color} onChange={handleColorChange} />
+            </li>
+          </EditorButton>
+          <EditorButton
+            type={EditorFunctions.Undo}
+            icon={<BiUndo size={20} />}
             onClick={() => setSelectedButton(EditorFunctions.Undo)}
-            className={
-              "btn-secondary btn-circle btn" +
-              (selectedButton == EditorFunctions.Undo ? "btn-accent" : "")
-            }
-          >
-            <BiUndo size={20} />
-          </button>
-          <button
+            bgColor={selectedButton == EditorFunctions.Undo ? "#00ff00" : ""}
+          />
+          <EditorButton
+            type={EditorFunctions.Clear}
+            icon={<BiTrash size={20} />}
             onClick={() => setSelectedButton(EditorFunctions.Clear)}
-            className={
-              "btn-secondary btn-circle btn " +
-              (selectedButton == EditorFunctions.Clear ? "btn-accent" : "")
-            }
-          >
-            <BiTrash size={20} />
-          </button>
+            bgColor={selectedButton == EditorFunctions.Clear ? "#00ff00" : ""}
+          />
         </div>
         <div data-cy={template.id}></div>
         <KonvaCanvas

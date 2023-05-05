@@ -111,6 +111,7 @@ const Editor: NextPage<{ id: string }> = ({ id }) => {
   };
 
   function onClickEmoji(emoji: EmojiObject) {
+    document.getElementById("Modal-" + EditorFunctions.PreSticker)?.click();
     setSelectedEmoji(emoji);
     setSelectedButton(EditorFunctions.PostSticker);
     setEmojiDropdownState(false);

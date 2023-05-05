@@ -31,6 +31,8 @@ import { toast } from "react-toastify";
 import { type TRPCError } from "@trpc/server";
 import { type Kudo } from "@prisma/client";
 import EditorButton from "~/components/editor/buttons/EditorButton";
+import useDimensions from "~/hooks/useDimensions";
+import useWindowDimensions from "~/hooks/useWindowDimensions";
 
 export function getServerSideProps(context: { query: { template: string } }) {
   return {
@@ -48,6 +50,7 @@ const KonvaCanvas = dynamic(
 const Editor: NextPage<{ id: string }> = ({ id }) => {
   const { session, speaker, anonymous } = useSessionSpeaker().data;
   const router = useRouter();
+  const width = useWindowDimensions()?.width;
   const user = useSession().data?.user;
   //API
   const trpcContext = api.useContext();
@@ -111,7 +114,9 @@ const Editor: NextPage<{ id: string }> = ({ id }) => {
   };
 
   function onClickEmoji(emoji: EmojiObject) {
-    document.getElementById("Modal-" + EditorFunctions.PreSticker)?.click();
+    if (width < 1024) {
+      document.getElementById("Modal-" + EditorFunctions.PreSticker)?.click();
+    }
     setSelectedEmoji(emoji);
     setSelectedButton(EditorFunctions.PostSticker);
     setEmojiDropdownState(false);
@@ -232,7 +237,7 @@ const Editor: NextPage<{ id: string }> = ({ id }) => {
                   type="range"
                   min="1"
                   height={thickness}
-                  max="50"
+                  max="200"
                   value={thickness}
                   className="range"
                   onChange={(e) => setThickness(parseInt(e.target.value))}
@@ -252,9 +257,12 @@ const Editor: NextPage<{ id: string }> = ({ id }) => {
               </div>
               <li className="pointer-events-none flex h-full flex-grow items-center justify-center p-2">
                 {selectedButton == EditorFunctions.Erase ? (
-                  <BiCircle size={40 + thickness} />
+                  <BiCircle size={5 + thickness * (stage?.scaleX() ?? 1)} />
                 ) : (
-                  <BsFillCircleFill size={33 + thickness} color={color} />
+                  <BsFillCircleFill
+                    size={(1 + thickness) * (stage?.scaleX() ?? 1)}
+                    color={color}
+                  />
                 )}
               </li>
             </div>

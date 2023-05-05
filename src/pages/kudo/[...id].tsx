@@ -6,19 +6,12 @@ import { FaTrashAlt } from "react-icons/fa";
 import { UtilButtonsContent } from "~/hooks/useUtilButtons";
 import Link from "next/link";
 import { api } from "~/utils/api";
-import {
-  AiOutlineHeart,
-  AiFillHeart,
-  AiFillWarning,
-  AiOutlineWarning,
-  AiOutlineSend,
-} from "react-icons/ai";
+import { AiOutlineHeart, AiFillHeart, AiOutlineSend } from "react-icons/ai";
 import { useEffect, useState } from "react";
 import { useSession } from "next-auth/react";
-import { type ImageData, UserRole } from "~/types";
+import { UserRole } from "~/types";
 import { useRouter } from "next/router";
 import LoadingBar from "~/components/LoadingBar";
-import avatar from "~/../public/images/AnonymousPicture.jpg";
 import { toast } from "react-toastify";
 import { type TRPCError } from "@trpc/server";
 
@@ -53,11 +46,62 @@ const KudoDetail: NextPage<{ id: string }> = ({ id }) => {
     id: session?.speakerId ?? "error",
   }).data;
 
-  const { mutate: deleteKudo } = api.kudos.deleteKudoById.useMutation();
+  const { mutate: deleteKudo } = api.kudos.deleteKudoById
+    .useMutation
+    //   {
+    //   onMutate: async (newEntry) => {
+    //     await trpcContext.kudos.getKudosByUserId.cancel();
+    //     trpcContext.kudos.getKudosByUserId.setData(
+    //       { id: kudo?.userId },
+    //       (prevEntries) => {
+    //         const entry = prevEntries?.find((entry) => entry.id === newEntry.id);
+    //         console.log(prevEntries);
+    //         console.log(entry);
+    //         console.log(kudo?.userId);
+    //         console.log(newEntry.id);
+    //         if (entry) {
+    //           return prevEntries?.filter((e) => e !== entry);
+    //         }
+
+    //         return prevEntries;
+    //       }
+    //     );
+    //   },
+    //   onSettled: async () => {
+    //     await trpcContext.kudos.getKudoById.invalidate();
+    //   },
+    // }
+    ();
   const { mutate: deleteImage } = api.kudos.deleteImageById.useMutation();
-  const { mutateAsync: likeKudoById } = api.kudos.likeKudoById.useMutation();
+  const { mutateAsync: likeKudoById } = api.kudos.likeKudoById.useMutation({
+    onMutate: async (newEntry) => {
+      await trpcContext.kudos.getKudoById.cancel();
+      trpcContext.kudos.getKudoById.setData({ id: id }, (prevEntry) => {
+        if (prevEntry) {
+          prevEntry.liked = newEntry.liked;
+        }
+        return prevEntry;
+      });
+    },
+    onSettled: async () => {
+      await trpcContext.kudos.getKudoById.invalidate();
+    },
+  });
   const { mutateAsync: commentKudoById } =
-    api.kudos.commentKudoById.useMutation();
+    api.kudos.commentKudoById.useMutation({
+      onMutate: async (newEntry) => {
+        await trpcContext.kudos.getKudoById.cancel();
+        trpcContext.kudos.getKudoById.setData({ id: id }, (prevEntry) => {
+          if (prevEntry) {
+            prevEntry.comment = newEntry.comment;
+          }
+          return prevEntry;
+        });
+      },
+      onSettled: async () => {
+        await trpcContext.kudos.getKudoById.invalidate();
+      },
+    });
   const { mutateAsync: flagKudoById } = api.kudos.flagKudoById.useMutation({
     onMutate: async (newEntry) => {
       await trpcContext.kudos.getKudoById.cancel();
@@ -192,20 +236,6 @@ const KudoDetail: NextPage<{ id: string }> = ({ id }) => {
               <FaTrashAlt size={20} />
             </Link>
           )}
-        {(user?.id === session?.speakerId || user?.role === UserRole.ADMIN) &&
-          user?.id !== kudo?.userId && (
-            <button
-              className="btn-ghost btn-circle btn"
-              onClick={() => void flag()}
-              data-cy="flagButton"
-            >
-              {kudo.flagged ? (
-                <AiFillWarning size={20} />
-              ) : (
-                <AiOutlineWarning size={20} />
-              )}
-            </button>
-          )}
       </UtilButtonsContent>
       {/* <div className="flex justify-center ">
         <div className="card bg-white text-gray-800 aspect-[3/2] rounded-none w-[320px] h-[208px] mt-20">
@@ -213,8 +243,28 @@ const KudoDetail: NextPage<{ id: string }> = ({ id }) => {
         </div>
       </div> */}
 
-      <div className="flex h-full w-full flex-col items-center justify-center">
-        <div className="aspect-[3/2] max-h-full w-full max-w-2xl">
+      <div className=" flex h-full w-full flex-col items-center justify-center">
+        <div className="max-h-full w-full max-w-2xl">
+          <div className="flex justify-end">
+            {(user?.id === session?.speakerId ||
+              user?.role === UserRole.ADMIN) &&
+              user?.id !== kudo?.userId && (
+                <button
+                  className="border-red relative m-2 mr-5"
+                  onClick={() => void flag()}
+                  data-cy="flagButton"
+                >
+                  {kudo.flagged ? (
+                    <p className="text-error hover:underline">Reported!</p>
+                  ) : (
+                    <p className="text-warning hover:underline">
+                      Report this Kudo
+                    </p>
+                  )}
+                </button>
+              )}
+          </div>
+
           <div className="relative aspect-[3/2] max-h-full w-full max-w-2xl overflow-hidden rounded-3xl bg-white">
             <Image
               className="shadow-2xl"
@@ -224,7 +274,8 @@ const KudoDetail: NextPage<{ id: string }> = ({ id }) => {
               data-id={kudo.id}
             />
           </div>
-          <div className="m-2 flex flex-row gap-2">
+
+          <div className="m-2 flex max-h-full w-full max-w-2xl flex-row gap-2 px-3">
             <div
               className={`btn-ghost btn-circle btn ${
                 user?.id === session?.speakerId ? "" : "pointer-events-none"
@@ -233,9 +284,17 @@ const KudoDetail: NextPage<{ id: string }> = ({ id }) => {
               onClick={() => void handleclick()}
             >
               {kudo.liked ? (
-                <AiFillHeart size={25} data-cy="liked" />
+                <AiFillHeart
+                  size={25}
+                  className="fill-red-600"
+                  data-cy="liked"
+                />
               ) : (
-                <AiOutlineHeart size={25} data-cy="notLiked" />
+                <AiOutlineHeart
+                  size={25}
+                  className="fill-red-600"
+                  data-cy="notLiked"
+                />
               )}
             </div>
             {!kudo.comment && user?.id === session?.speakerId ? (
@@ -244,7 +303,7 @@ const KudoDetail: NextPage<{ id: string }> = ({ id }) => {
                   value={comment}
                   onChange={(e) => setComment(e.target.value)}
                   type="text"
-                  placeholder="place your comment here"
+                  placeholder="Type a comment"
                   className="input-bordered input w-full"
                   data-cy="commentInput"
                 />
@@ -273,7 +332,7 @@ const KudoDetail: NextPage<{ id: string }> = ({ id }) => {
                       <div className="relative w-10 rounded-full">
                         <Image
                           className="rounded-full"
-                          src={"/api/images/" + sender.id ?? avatar}
+                          src={"/api/images/" + (user?.id ?? "fout").toString()}
                           alt="Profile picture"
                           fill
                         />

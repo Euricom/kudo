@@ -23,21 +23,34 @@ const KudoCard = ({ kudo, isPresentation }: KudoProps) => {
           href={"/kudo/" + kudo.id}
           id={kudo.sessionId}
         >
+          {isPresentation ? (
+            ""
+          ) : (
+            <div className="absolute left-1 top-1 z-40 rounded-full border border-neutral bg-white  p-1 shadow-sm">
+              {kudo.liked ? (
+                <AiFillHeart
+                  size={25}
+                  className="fill-red-600"
+                  data-cy={kudo.id + "liked"}
+                />
+              ) : (
+                <AiOutlineHeart
+                  size={25}
+                  className="fill-red-600"
+                  data-cy={kudo.id + "notLiked"}
+                />
+              )}
+            </div>
+          )}
+
           <Image
-            className="absolute h-full"
+            className="absolute z-30 h-full"
             src={image}
             width={320}
             height={208}
             alt="Kudo"
           />
         </Link>
-        {isPresentation ? (
-          ""
-        ) : kudo.liked ? (
-          <AiFillHeart size={25} data-cy={kudo.id + "liked"} />
-        ) : (
-          <AiOutlineHeart size={25} data-cy={kudo.id + "notLiked"} />
-        )}
       </div>
     </>
   );

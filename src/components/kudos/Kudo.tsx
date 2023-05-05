@@ -25,23 +25,24 @@ const KudoCard = ({ kudo, isPresentation }: KudoProps) => {
         >
           {isPresentation ? (
             ""
-          ) : kudo.liked ? (
-            <div className="absolute left-1 top-1 z-40 rounded-full bg-white  p-1 drop-shadow-sm">
-              <AiFillHeart
-                size={25}
-                className="fill-red-600"
-                data-cy={kudo.id + "liked"}
-              />
-            </div>
           ) : (
-            <div className="absolute left-1 top-1 z-40 rounded-full bg-white p-1 drop-shadow-sm">
-              <AiOutlineHeart
-                size={25}
-                className="fill-red-600"
-                data-cy={kudo.id + "notLiked"}
-              />
+            <div className="absolute left-1 top-1 z-40 rounded-full border border-neutral bg-white  p-1 shadow-sm">
+              {kudo.liked ? (
+                <AiFillHeart
+                  size={25}
+                  className="fill-red-600"
+                  data-cy={kudo.id + "liked"}
+                />
+              ) : (
+                <AiOutlineHeart
+                  size={25}
+                  className="fill-red-600"
+                  data-cy={kudo.id + "notLiked"}
+                />
+              )}
             </div>
           )}
+
           <Image
             className="absolute z-30 h-full"
             src={image}

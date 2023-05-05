@@ -197,6 +197,7 @@ export enum EditorFunctions {
   Undo = "undo",
   Save = "save",
   Deselect = "deselect",
+  Submit = "submit",
   None = "none",
 }
 
@@ -273,4 +274,8 @@ export type EmojiObject = {
 
 export type EditorButtonProps = {
   children?: React.ReactNode;
+  type: string;
+  icon: React.ReactNode;
+  onClick: () => void;
+  bgColor?: string;
 };

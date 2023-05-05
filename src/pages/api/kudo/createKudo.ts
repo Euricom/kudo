@@ -22,10 +22,10 @@ export default async function handler(
   res: NextApiResponse
 ) {
   const text: string = (req.body as body).text;
-  // const image = await getFirstImageById().then((i) => i?.dataUrl);
-  const base64 = await makeSlackKudo(text);
+  const image = await getFirstImageById().then((i) => i?.dataUrl);
+  // const base64 = await makeSlackKudo(text);
 
-  fs.writeFileSync("./image.jpg", base64, "base64");
+  // fs.writeFileSync("./image.jpg", base64, "base64");
 
   res.send({
     response_type: "in_channel",
@@ -41,7 +41,7 @@ export default async function handler(
         type: "section",
         accessory: {
           type: "image",
-          image_url: fs.createReadStream("./image.jpg"),
+          image_url: text,
           alt_text: "Kudo",
         },
       },

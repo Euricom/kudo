@@ -361,11 +361,7 @@ const Editor: NextPage<{ id: string }> = ({ id }) => {
           emoji={selectedEmoji}
         />
       </main>
-      <FAB
-        text={"Send"}
-        icon={<FiSend />}
-        onClick={() => setSelectedButton(EditorFunctions.Deselect)}
-      />
+      <FAB text={"Send"} icon={<FiSend />} onClick={() => void submit()} />
     </>
   );
 };

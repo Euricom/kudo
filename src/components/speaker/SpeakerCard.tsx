@@ -1,7 +1,6 @@
 import Link from "next/link";
 import { type UserWCount } from "~/types";
 import Image from "next/image";
-import avatar from "~/../public/images/AnonymousPicture.jpg";
 
 const SpeakerCard = ({ user }: { user: UserWCount }) => {
   return (
@@ -14,11 +13,11 @@ const SpeakerCard = ({ user }: { user: UserWCount }) => {
       >
         <div className="card-body">
           <div className="flex w-full gap-3">
-            <div className="max-h-1/6 max-w-1/4 avatar aspect-square">
+            <div className="max-h-1/6 max-w-1/4 avatar aspect-square h-1/6 w-1/4">
               <div className="relative">
                 <Image
                   className="rounded-full"
-                  src={"/api/images/" + user.user.id ?? avatar}
+                  src={"/api/images/" + user.user.id}
                   alt="Profile picture"
                   fill
                 />

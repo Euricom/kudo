@@ -55,9 +55,35 @@ const KudoDetail: NextPage<{ id: string }> = ({ id }) => {
 
   const { mutate: deleteKudo } = api.kudos.deleteKudoById.useMutation();
   const { mutate: deleteImage } = api.kudos.deleteImageById.useMutation();
-  const { mutateAsync: likeKudoById } = api.kudos.likeKudoById.useMutation();
+  const { mutateAsync: likeKudoById } = api.kudos.likeKudoById.useMutation({
+    onMutate: async (newEntry) => {
+      await trpcContext.kudos.getKudoById.cancel();
+      trpcContext.kudos.getKudoById.setData({ id: id }, (prevEntry) => {
+        if (prevEntry) {
+          prevEntry.liked = newEntry.liked;
+        }
+        return prevEntry;
+      });
+    },
+    onSettled: async () => {
+      await trpcContext.kudos.getKudoById.invalidate();
+    },
+  });
   const { mutateAsync: commentKudoById } =
-    api.kudos.commentKudoById.useMutation();
+    api.kudos.commentKudoById.useMutation({
+      onMutate: async (newEntry) => {
+        await trpcContext.kudos.getKudoById.cancel();
+        trpcContext.kudos.getKudoById.setData({ id: id }, (prevEntry) => {
+          if (prevEntry) {
+            prevEntry.comment = newEntry.comment;
+          }
+          return prevEntry;
+        });
+      },
+      onSettled: async () => {
+        await trpcContext.kudos.getKudoById.invalidate();
+      },
+    });
   const { mutateAsync: flagKudoById } = api.kudos.flagKudoById.useMutation({
     onMutate: async (newEntry) => {
       await trpcContext.kudos.getKudoById.cancel();
@@ -192,20 +218,6 @@ const KudoDetail: NextPage<{ id: string }> = ({ id }) => {
               <FaTrashAlt size={20} />
             </Link>
           )}
-        {(user?.id === session?.speakerId || user?.role === UserRole.ADMIN) &&
-          user?.id !== kudo?.userId && (
-            <button
-              className="btn-ghost btn-circle btn"
-              onClick={() => void flag()}
-              data-cy="flagButton"
-            >
-              {kudo.flagged ? (
-                <AiFillWarning size={20} />
-              ) : (
-                <AiOutlineWarning size={20} />
-              )}
-            </button>
-          )}
       </UtilButtonsContent>
       {/* <div className="flex justify-center ">
         <div className="card bg-white text-gray-800 aspect-[3/2] rounded-none w-[320px] h-[208px] mt-20">
@@ -213,7 +225,23 @@ const KudoDetail: NextPage<{ id: string }> = ({ id }) => {
         </div>
       </div> */}
 
-      <div className="flex h-full w-full flex-col items-center justify-center">
+      <div className=" flex h-full w-full flex-col items-center justify-center">
+        <div className="items-end">
+          {(user?.id === session?.speakerId || user?.role === UserRole.ADMIN) &&
+            user?.id !== kudo?.userId && (
+              <button
+                className="btn-ghost btn-circle btn relative w-fit"
+                onClick={() => void flag()}
+                data-cy="flagButton"
+              >
+                {kudo.flagged ? (
+                  <p className="text-red-600">Reported!</p>
+                ) : (
+                  <p>Report this Kudo</p>
+                )}
+              </button>
+            )}
+        </div>
         <div className="aspect-[3/2] max-h-full w-full max-w-2xl">
           <div className="relative aspect-[3/2] max-h-full w-full max-w-2xl overflow-hidden rounded-3xl bg-white">
             <Image
@@ -224,66 +252,70 @@ const KudoDetail: NextPage<{ id: string }> = ({ id }) => {
               data-id={kudo.id}
             />
           </div>
-          <div className="m-2 flex flex-row gap-2">
-            <div
-              className={`btn-ghost btn-circle btn ${
-                user?.id === session?.speakerId ? "" : "pointer-events-none"
-              }`}
-              data-cy="like"
-              onClick={() => void handleclick()}
-            >
-              {kudo.liked ? (
-                <AiFillHeart size={25} data-cy="liked" />
-              ) : (
-                <AiOutlineHeart size={25} data-cy="notLiked" />
-              )}
-            </div>
-            {!kudo.comment && user?.id === session?.speakerId ? (
-              <div className="item relative flex w-full flex-row justify-start">
-                <input
-                  value={comment}
-                  onChange={(e) => setComment(e.target.value)}
-                  type="text"
-                  placeholder="place your comment here"
-                  className="input-bordered input w-full"
-                  data-cy="commentInput"
-                />
-                <div
-                  className="btn-ghost btn-circle btn absolute right-0"
-                  data-cy="sendComment"
-                  onClick={() => void handleSubmit()}
-                >
-                  <AiOutlineSend size={20} />
-                </div>
-              </div>
+        </div>
+        <div className="m-2 flex max-h-full w-full max-w-2xl flex-row gap-2 px-3">
+          <div
+            className={`btn-ghost btn-circle btn ${
+              user?.id === session?.speakerId ? "" : "pointer-events-none"
+            }`}
+            data-cy="like"
+            onClick={() => void handleclick()}
+          >
+            {kudo.liked ? (
+              <AiFillHeart size={25} className="fill-red-600" data-cy="liked" />
             ) : (
-              <>
-                {!kudo.comment ? (
-                  <></>
-                ) : (
-                  <div className="chat chat-end w-full">
-                    <div className="chat-header">{speaker?.displayName}</div>
-                    <h1
-                      className="chat-bubble chat-bubble-primary"
-                      data-cy="comment"
-                    >
-                      {kudo.comment}
-                    </h1>
-                    <div className="chat-image avatar">
-                      <div className="relative w-10 rounded-full">
-                        <Image
-                          className="rounded-full"
-                          src={"/api/images/" + sender.id ?? avatar}
-                          alt="Profile picture"
-                          fill
-                        />
-                      </div>
-                    </div>
-                  </div>
-                )}
-              </>
+              <AiOutlineHeart
+                size={25}
+                className="fill-red-600"
+                data-cy="notLiked"
+              />
             )}
           </div>
+          {!kudo.comment && user?.id === session?.speakerId ? (
+            <div className="item relative flex w-full flex-row justify-start">
+              <input
+                value={comment}
+                onChange={(e) => setComment(e.target.value)}
+                type="text"
+                placeholder="Type a comment"
+                className="input-bordered input w-full"
+                data-cy="commentInput"
+              />
+              <div
+                className="btn-ghost btn-circle btn absolute right-0"
+                data-cy="sendComment"
+                onClick={() => void handleSubmit()}
+              >
+                <AiOutlineSend size={20} />
+              </div>
+            </div>
+          ) : (
+            <>
+              {!kudo.comment ? (
+                <></>
+              ) : (
+                <div className="chat chat-end w-full">
+                  <div className="chat-header">{speaker?.displayName}</div>
+                  <h1
+                    className="chat-bubble chat-bubble-primary"
+                    data-cy="comment"
+                  >
+                    {kudo.comment}
+                  </h1>
+                  <div className="chat-image avatar">
+                    <div className="relative w-10 rounded-full">
+                      <Image
+                        className="rounded-full"
+                        src={"/api/images/" + (user?.id ?? "fout").toString()}
+                        alt="Profile picture"
+                        fill
+                      />
+                    </div>
+                  </div>
+                </div>
+              )}
+            </>
+          )}
         </div>
       </div>
     </>

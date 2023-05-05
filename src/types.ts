@@ -272,6 +272,7 @@ export type EmojiObject = {
 
 export type EditorButtonProps = {
   children?: React.ReactNode;
+  type: string;
   icon: React.ReactNode;
   onClick: () => void;
   bgColor?: string;

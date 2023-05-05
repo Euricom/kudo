@@ -1,9 +1,15 @@
 import { type EditorButtonProps } from "~/types";
 
-function EditorButton({ children, icon, bgColor, onClick }: EditorButtonProps) {
+function EditorButton({
+  type,
+  children,
+  icon,
+  bgColor,
+  onClick,
+}: EditorButtonProps) {
   return (
     <>
-      <div className="md:dropdown">
+      <div className="dropdown hidden lg:block">
         <label tabIndex={0} className="">
           <button
             onClick={onClick}
@@ -26,6 +32,29 @@ function EditorButton({ children, icon, bgColor, onClick }: EditorButtonProps) {
           </>
         )}
       </div>
+      <label
+        htmlFor={`Modal-${type}`}
+        className={"btn-secondary btn-circle btn lg:hidden"}
+        style={{
+          backgroundColor: bgColor ?? "transparent",
+        }}
+        onClick={onClick}
+      >
+        {icon}
+      </label>
+      <input type="checkbox" id={`Modal-${type}`} className="modal-toggle" />
+      {children && (
+        <>
+          <label htmlFor={`Modal-${type}`} className="modal cursor-pointer">
+            <label
+              className="relative w-fit rounded-xl bg-base-100 p-5"
+              htmlFor=" "
+            >
+              {children}
+            </label>
+          </label>
+        </>
+      )}
     </>
   );
 }

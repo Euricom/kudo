@@ -181,6 +181,7 @@ const Editor: NextPage<{ id: string }> = ({ id }) => {
       <main className="relative z-50 flex h-full flex-col items-center justify-center overflow-x-hidden">
         <div className="z-40 mx-auto flex w-full justify-center gap-2 p-5 lg:w-1/2">
           <EditorButton
+            type={EditorFunctions.Text}
             icon={<BiText size={20} />}
             onClick={() => setSelectedButton(EditorFunctions.Text)}
             bgColor={selectedButton === EditorFunctions.Text ? color : ""}
@@ -199,6 +200,7 @@ const Editor: NextPage<{ id: string }> = ({ id }) => {
             </select>
           </EditorButton>
           <EditorButton
+            type={EditorFunctions.Draw}
             icon={
               selectedButton === EditorFunctions.Erase ? (
                 <BiEraser size={20} />
@@ -256,6 +258,7 @@ const Editor: NextPage<{ id: string }> = ({ id }) => {
             </div>
           </EditorButton>
           <EditorButton
+            type={EditorFunctions.Sticker}
             icon={<GrEmoji size={20} />}
             onClick={handleEmoji}
             bgColor={selectedButton == EditorFunctions.Sticker ? "#00ff00" : ""}
@@ -263,6 +266,7 @@ const Editor: NextPage<{ id: string }> = ({ id }) => {
             <Picker data={data} onEmojiSelect={onClickEmoji} />
           </EditorButton>
           <EditorButton
+            type={EditorFunctions.Color}
             icon={<BiPalette size={20} />}
             onClick={() => setSelectedButton(EditorFunctions.Color)}
             bgColor={color}
@@ -277,11 +281,13 @@ const Editor: NextPage<{ id: string }> = ({ id }) => {
             </li>
           </EditorButton>
           <EditorButton
+            type={EditorFunctions.Undo}
             icon={<BiUndo size={20} />}
             onClick={() => setSelectedButton(EditorFunctions.Undo)}
             bgColor={selectedButton == EditorFunctions.Undo ? "#00ff00" : ""}
           />
           <EditorButton
+            type={EditorFunctions.Clear}
             icon={<BiTrash size={20} />}
             onClick={() => setSelectedButton(EditorFunctions.Clear)}
             bgColor={selectedButton == EditorFunctions.Clear ? "#00ff00" : ""}

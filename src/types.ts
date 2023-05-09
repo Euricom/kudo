@@ -203,11 +203,9 @@ export enum EditorFunctions {
 }
 
 export type CanvasTextProps = {
-  container?: HTMLDivElement;
   shapeProps: Shapes;
   scale: number;
   isSelected: boolean;
-  areaPosition: Vector2d;
   editorFunction: EditorFunctions;
   dialog?: HTMLDialogElement;
   onSelect: () => void;

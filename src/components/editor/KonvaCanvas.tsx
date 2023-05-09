@@ -373,23 +373,12 @@ const KonvaCanvas = ({
                 case CanvasShapes.Text:
                   return (
                     <CanvasText
-                      container={containerRef.current ?? undefined}
                       key={i}
                       shapeProps={s}
                       scale={stageDimensions.scale?.x ?? 1}
                       isSelected={s.id === selectedId}
                       editorFunction={editorFunction ?? EditorFunctions.None}
                       dialog={dialogRef.current ?? undefined}
-                      areaPosition={{
-                        x:
-                          (stageRef.current?.container().offsetLeft ?? 0) +
-                          (stageRef.current?.width() ?? 0) / 2 +
-                          (s.x ?? 1) * (stageDimensions?.scale?.x ?? 1),
-                        y:
-                          (stageRef.current?.container().offsetTop ?? 0) +
-                          (stageRef.current?.height() ?? 0) / 2 +
-                          (s.y ?? 1) * (stageDimensions?.scale?.y ?? 1),
-                      }}
                       onSelect={() => {
                         selectShape(s.id);
                       }}

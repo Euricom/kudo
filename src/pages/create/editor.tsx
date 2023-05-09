@@ -329,6 +329,7 @@ const Editor: NextPage<{
           setFunction={setSelectedButton}
           setStage={setStage}
           emoji={selectedEmoji}
+          anonymous={anonymous === "true" ? true : false}
         />
       </main>
       <FAB text={"Send"} icon={<FiSend />} onClick={() => void submit()} />

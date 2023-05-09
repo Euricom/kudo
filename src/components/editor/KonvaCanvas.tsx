@@ -12,7 +12,6 @@ import { type KonvaEventObject } from "konva/lib/Node";
 import useDimensions from "~/hooks/useDimensions";
 import CanvasText from "./canvasShapes/CanvasText";
 import Rectangle from "./canvasShapes/Rectangle";
-import { type Vector2d } from "konva/lib/types";
 import { v4 } from "uuid";
 import {
   CanvasShapes,
@@ -24,7 +23,6 @@ import { toast } from "react-toastify";
 import CanvasSticker from "./canvasShapes/CanvasSticker";
 import CanvasCircle from "./canvasShapes/CanvasCircle";
 import { api } from "~/utils/api";
-import { useSessionSpeaker } from "../sessions/SelectedSessionAndSpeaker";
 import { useSession } from "next-auth/react";
 
 const KonvaCanvas = ({
@@ -34,6 +32,7 @@ const KonvaCanvas = ({
   color,
   fontFamily,
   emoji,
+  anonymous,
   setFunction,
   setStage,
 }: KonvaCanvasProps) => {
@@ -48,7 +47,6 @@ const KonvaCanvas = ({
   const { current: history } = useRef<Shapes[]>(
     ([...template.content] as unknown as Shapes[]).reverse() ?? []
   );
-  const { anonymous } = useSessionSpeaker().data;
   const user = useSession().data?.user;
 
   const { mutateAsync: createTemplate } =

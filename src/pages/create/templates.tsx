@@ -3,7 +3,6 @@ import Head from "next/head";
 import { NavigationBarContent } from "~/components/navigation/NavBarTitle";
 import { type Template } from "@prisma/client";
 import Link from "next/link";
-import { useSessionSpeaker } from "~/components/sessions/SelectedSessionAndSpeaker";
 import FAB from "~/components/navigation/FAB";
 import { useEffect } from "react";
 import { GrNext } from "react-icons/gr";
@@ -85,7 +84,7 @@ const Templates: NextPage<{
               href={{
                 pathname: "/create/editor",
                 query: {
-                  template: templates[0]?.id.toString() ?? "",
+                  template: x.id,
                   session: session?.id,
                   anonymous: anonymous,
                 },

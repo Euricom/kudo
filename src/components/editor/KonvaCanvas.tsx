@@ -308,7 +308,7 @@ const KonvaCanvas = ({
     <>
       <dialog
         ref={dialogRef}
-        className="bg-transparent backdrop:bg-black backdrop:bg-opacity-50"
+        className="bg-transparent backdrop:bg-black backdrop:bg-opacity-60"
       ></dialog>
       <div
         ref={containerRef}
@@ -398,6 +398,7 @@ const KonvaCanvas = ({
                       }}
                       onChangeEnd={(newAttrs) => {
                         history.unshift(newAttrs);
+                        selectShape(s.id);
                       }}
                       onDelete={onDelete}
                     />
@@ -418,6 +419,7 @@ const KonvaCanvas = ({
                       }}
                       onChangeEnd={(newAttrs) => {
                         history.unshift(newAttrs);
+                        selectShape(s.id);
                       }}
                       onDelete={onDelete}
                       editorFunction={editorFunction ?? EditorFunctions.None}
@@ -438,6 +440,7 @@ const KonvaCanvas = ({
                         newShapes[i] = newAttrs;
                         setShapes(newShapes);
                         history.unshift(newAttrs);
+                        selectShape(s.id);
                       }}
                       onDelete={onDelete}
                     />
@@ -457,6 +460,7 @@ const KonvaCanvas = ({
                         newShapes[i] = newAttrs;
                         setShapes(newShapes);
                         history.unshift(newAttrs);
+                        selectShape(s.id);
                       }}
                       onDelete={onDelete}
                     />

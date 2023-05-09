@@ -1,10 +1,9 @@
 import React, { useRef, type MutableRefObject, useEffect } from "react";
 import { Transformer, Text } from "react-konva";
 import type Konva from "konva";
-import editText from "../editText";
+import { editText, editText2 } from "../editText";
 import { EditorFunctions, type CanvasTextProps } from "~/types";
 import useWindowDimensions from "~/hooks/useWindowDimensions";
-import editText2 from "../editText2";
 
 const CanvasText = ({
   container,
@@ -49,7 +48,7 @@ const CanvasText = ({
   const onEditText = () => {
     shapeRef.current.hide();
     trRef.current?.hide();
-    // editText(
+    // editText2(
     //   areaPosition,
     //   shapeRef.current,
     //   trRef.current,
@@ -57,7 +56,8 @@ const CanvasText = ({
     //   onTextChange,
     //   container
     // );
-    editText2(shapeRef.current, trRef.current, scale, onTextChange, dialog);
+    dialog?.showModal();
+    editText(shapeRef.current, trRef.current, scale, onTextChange, dialog);
   };
 
   const handleClick = () => {

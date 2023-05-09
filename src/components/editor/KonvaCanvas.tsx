@@ -44,7 +44,6 @@ const KonvaCanvas = ({
     ([...template.content] as unknown as Shapes[]) ?? []
   );
   const [selectedId, selectShape] = useState<string | null>(null);
-  const [text, setText] = useState<string>();
   const { current: history } = useRef<Shapes[]>(
     ([...template.content] as unknown as Shapes[]).reverse() ?? []
   );
@@ -307,9 +306,10 @@ const KonvaCanvas = ({
 
   return (
     <>
-      <dialog ref={dialogRef} className="">
-        <span contentEditable>{text}</span>
-      </dialog>
+      <dialog
+        ref={dialogRef}
+        className="bg-transparent backdrop:bg-black backdrop:bg-opacity-50"
+      ></dialog>
       <div
         ref={containerRef}
         id="kudo"

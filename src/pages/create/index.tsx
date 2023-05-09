@@ -128,7 +128,6 @@ const New: NextPage<{ sess: string }> = ({ sess }) => {
           pathname: "/create/templates",
           query: {
             session: session?.id,
-            speaker: speaker?.id,
             anonymous: anonymous.toString(),
           },
           auth: null,

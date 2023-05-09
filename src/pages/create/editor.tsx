@@ -19,7 +19,6 @@ import { useRouter } from "next/router";
 import { api } from "~/utils/api";
 import dynamic from "next/dynamic";
 import { useSession } from "next-auth/react";
-import { useSessionSpeaker } from "~/components/sessions/SelectedSessionAndSpeaker";
 import type Konva from "konva";
 import LoadingBar from "~/components/LoadingBar";
 import { BsFillCircleFill } from "react-icons/bs";
@@ -31,13 +30,16 @@ import { toast } from "react-toastify";
 import { type TRPCError } from "@trpc/server";
 import { type Kudo } from "@prisma/client";
 import EditorButton from "~/components/editor/buttons/EditorButton";
-import useDimensions from "~/hooks/useDimensions";
 import useWindowDimensions from "~/hooks/useWindowDimensions";
 
-export function getServerSideProps(context: { query: { template: string } }) {
+export function getServerSideProps(context: {
+  query: { template: string; session: string; anonymous: string };
+}) {
   return {
     props: {
       id: context.query.template,
+      sessionId: context.query.session,
+      anonymous: context.query.anonymous,
     },
   };
 }
@@ -47,8 +49,11 @@ const KonvaCanvas = dynamic(
   { ssr: false }
 );
 
-const Editor: NextPage<{ id: string }> = ({ id }) => {
-  const { session, speaker, anonymous } = useSessionSpeaker().data;
+const Editor: NextPage<{
+  id: string;
+  sessionId: string;
+  anonymous: string;
+}> = ({ id, sessionId, anonymous }) => {
   const router = useRouter();
   const width = useWindowDimensions()?.width;
   const user = useSession().data?.user;
@@ -83,8 +88,10 @@ const Editor: NextPage<{ id: string }> = ({ id }) => {
   const { mutateAsync: createImage } = api.kudos.createKudoImage.useMutation();
   const templateQuery = api.templates.getTemplateById.useQuery({ id: id });
   const template = templateQuery.data;
+  const sessionQuery = api.sessions.getSessionById.useQuery({ id: sessionId });
+  const session = sessionQuery.data;
   const volledigeSpeaker = api.users.getUserById.useQuery({
-    id: speaker ?? "18d332af-2d5b-49e5-8c42-9168b3910f97",
+    id: session?.speaker?.id ?? "18d332af-2d5b-49e5-8c42-9168b3910f97",
   }).data;
   const slackMessage = api.slack.sendMessageToSlack.useMutation();
   //UseStates
@@ -96,7 +103,14 @@ const Editor: NextPage<{ id: string }> = ({ id }) => {
   const [thickness, setThickness] = useState<number>(5);
   const [selectedEmoji, setSelectedEmoji] = useState<EmojiObject>();
 
-  if (templateQuery.isLoading || !user || !session || !speaker || !template) {
+  if (
+    templateQuery.isLoading ||
+    sessionQuery.isLoading ||
+    !user ||
+    !session ||
+    !volledigeSpeaker ||
+    !template
+  ) {
     return <LoadingBar />;
   }
 
@@ -139,9 +153,9 @@ const Editor: NextPage<{ id: string }> = ({ id }) => {
         });
         await createKudo({
           image: image.id,
-          sessionId: session,
+          sessionId: sessionId,
           userId: user.id,
-          anonymous: anonymous,
+          anonymous: anonymous === "true" ? true : false,
         });
         await slackMessage
           .mutateAsync({
@@ -167,7 +181,7 @@ const Editor: NextPage<{ id: string }> = ({ id }) => {
         <meta name="description" content="Editor to make a Kudo." />
       </Head>
       <NavigationBarContent>
-        <h1>Editor: {session}</h1>
+        <h1>Editor: {session.title}</h1>
       </NavigationBarContent>
       <UtilButtonsContent>
         {user?.role === UserRole.ADMIN && (

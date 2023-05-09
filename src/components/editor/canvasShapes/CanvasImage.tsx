@@ -39,7 +39,6 @@ const CanvasImage = ({
         {...shapeProps}
         image={image}
         alt={shapeProps.image}
-        draggable={!shapeProps.draggable ? false : isSelected}
         onDragEnd={(e) => {
           onChange({
             ...shapeProps,

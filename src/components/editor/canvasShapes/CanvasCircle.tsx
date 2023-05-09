@@ -1,18 +1,24 @@
-import React, { useRef, type MutableRefObject, useEffect } from 'react';
-import { Transformer, Circle } from 'react-konva';
-import type Konva from 'konva';
-import { EditorFunctions, type RectangleProps } from '~/types';
+import React, { useRef, type MutableRefObject, useEffect } from "react";
+import { Transformer, Circle } from "react-konva";
+import type Konva from "konva";
+import { EditorFunctions, type RectangleProps } from "~/types";
 
-
-
-const CanvasCircle = ({ shapeProps, isSelected, editorFunction, onSelect, onChange, onDelete }: RectangleProps) => {
+const CanvasCircle = ({
+  shapeProps,
+  isSelected,
+  editorFunction,
+  onSelect,
+  onChange,
+  onDelete,
+}: RectangleProps) => {
   const shapeRef = useRef<Konva.Circle>() as MutableRefObject<Konva.Circle>;
-  const trRef = useRef<Konva.Transformer>() as MutableRefObject<Konva.Transformer>;
+  const trRef =
+    useRef<Konva.Transformer>() as MutableRefObject<Konva.Transformer>;
 
   useEffect(() => {
     if (isSelected) {
       if (editorFunction === EditorFunctions.Clear) {
-        onDelete(shapeProps.id)
+        onDelete(shapeProps.id);
       }
       // we need to attach transformer manually
       trRef.current?.nodes([shapeRef.current]);
@@ -27,7 +33,6 @@ const CanvasCircle = ({ shapeProps, isSelected, editorFunction, onSelect, onChan
         onTap={onSelect}
         ref={shapeRef}
         {...shapeProps}
-        draggable={isSelected}
         onDragEnd={(e) => {
           onChange({
             ...shapeProps,

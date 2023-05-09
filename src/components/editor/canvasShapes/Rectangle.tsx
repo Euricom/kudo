@@ -43,7 +43,6 @@ const Rectangle = ({
         onTap={onSelect}
         ref={shapeRef}
         {...shapeProps}
-        draggable={isSelected}
         onDragEnd={(e) => {
           onChange({
             ...shapeProps,

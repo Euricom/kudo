@@ -76,7 +76,6 @@ const CanvasText = ({
         onDblTap={onDoubleClick}
         ref={shapeRef}
         {...shapeProps}
-        draggable={!shapeProps.draggable ? false : isSelected}
         onDragEnd={(e) => {
           onChange({
             ...shapeProps,

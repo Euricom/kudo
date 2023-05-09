@@ -106,7 +106,9 @@ const KonvaCanvas = ({
   };
 
   const clickListener = (e: KonvaEventObject<Event>) => {
-    const clickedOnEmpty = e.target?.getLayer() === null;
+    const clickedOnEmpty =
+      e.target.getLayer() === null || e.target.getClassName() === "Line";
+
     if (clickedOnEmpty) {
       selectShape(null);
     }

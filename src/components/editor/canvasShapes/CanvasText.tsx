@@ -4,17 +4,19 @@ import type Konva from "konva";
 import editText from "../editText";
 import { EditorFunctions, type CanvasTextProps } from "~/types";
 import useWindowDimensions from "~/hooks/useWindowDimensions";
+import editText2 from "../editText2";
 
 const CanvasText = ({
   container,
   shapeProps,
   scale,
   isSelected,
+  areaPosition,
+  editorFunction,
+  dialog,
   onSelect,
   onChange,
-  areaPosition,
   onDelete,
-  editorFunction,
   onChangeEnd,
 }: CanvasTextProps) => {
   const shapeRef = useRef<Konva.Text>() as MutableRefObject<Konva.Text>;
@@ -47,14 +49,15 @@ const CanvasText = ({
   const onEditText = () => {
     shapeRef.current.hide();
     trRef.current?.hide();
-    editText(
-      areaPosition,
-      shapeRef.current,
-      trRef.current,
-      scale,
-      onTextChange,
-      container
-    );
+    // editText(
+    //   areaPosition,
+    //   shapeRef.current,
+    //   trRef.current,
+    //   scale,
+    //   onTextChange,
+    //   container
+    // );
+    editText2(shapeRef.current, trRef.current, scale, onTextChange, dialog);
   };
 
   const handleClick = () => {

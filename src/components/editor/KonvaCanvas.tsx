@@ -44,6 +44,7 @@ const KonvaCanvas = ({
     ([...template.content] as unknown as Shapes[]) ?? []
   );
   const [selectedId, selectShape] = useState<string | null>(null);
+  const [text, setText] = useState<string>();
   const { current: history } = useRef<Shapes[]>(
     ([...template.content] as unknown as Shapes[]).reverse() ?? []
   );
@@ -306,7 +307,9 @@ const KonvaCanvas = ({
 
   return (
     <>
-      <dialog ref={dialogRef}></dialog>
+      <dialog ref={dialogRef} className="">
+        <span contentEditable>{text}</span>
+      </dialog>
       <div
         ref={containerRef}
         id="kudo"
@@ -373,6 +376,18 @@ const KonvaCanvas = ({
                       shapeProps={s}
                       scale={stageDimensions.scale?.x ?? 1}
                       isSelected={s.id === selectedId}
+                      editorFunction={editorFunction ?? EditorFunctions.None}
+                      dialog={dialogRef.current ?? undefined}
+                      areaPosition={{
+                        x:
+                          (stageRef.current?.container().offsetLeft ?? 0) +
+                          (stageRef.current?.width() ?? 0) / 2 +
+                          (s.x ?? 1) * (stageDimensions?.scale?.x ?? 1),
+                        y:
+                          (stageRef.current?.container().offsetTop ?? 0) +
+                          (stageRef.current?.height() ?? 0) / 2 +
+                          (s.y ?? 1) * (stageDimensions?.scale?.y ?? 1),
+                      }}
                       onSelect={() => {
                         selectShape(s.id);
                       }}
@@ -384,18 +399,7 @@ const KonvaCanvas = ({
                       onChangeEnd={(newAttrs) => {
                         history.unshift(newAttrs);
                       }}
-                      areaPosition={{
-                        x:
-                          (stageRef.current?.container().offsetLeft ?? 0) +
-                          (stageRef.current?.width() ?? 0) / 2 +
-                          (s.x ?? 1) * (stageDimensions?.scale?.x ?? 1),
-                        y:
-                          (stageRef.current?.container().offsetTop ?? 0) +
-                          (stageRef.current?.height() ?? 0) / 2 +
-                          (s.y ?? 1) * (stageDimensions?.scale?.y ?? 1),
-                      }}
                       onDelete={onDelete}
-                      editorFunction={editorFunction ?? EditorFunctions.None}
                     />
                   );
                 case CanvasShapes.Sticker:

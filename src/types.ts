@@ -207,12 +207,13 @@ export type CanvasTextProps = {
   shapeProps: Shapes;
   scale: number;
   isSelected: boolean;
+  areaPosition: Vector2d;
+  editorFunction: EditorFunctions;
+  dialog?: HTMLDialogElement;
   onSelect: () => void;
   onChange: (shapeProps: Shapes) => void;
-  areaPosition: Vector2d;
   onDelete: (id: string) => void;
   onChangeEnd: (shapeProps: Shapes) => void;
-  editorFunction: EditorFunctions;
 };
 
 export type CanvasStickerProps = {

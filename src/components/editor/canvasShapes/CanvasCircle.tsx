@@ -2,6 +2,7 @@ import React, { useRef, type MutableRefObject, useEffect } from "react";
 import { Transformer, Circle } from "react-konva";
 import type Konva from "konva";
 import { EditorFunctions, type RectangleProps } from "~/types";
+import useWindowDimensions from "~/hooks/useWindowDimensions";
 
 const CanvasCircle = ({
   shapeProps,
@@ -14,6 +15,8 @@ const CanvasCircle = ({
   const shapeRef = useRef<Konva.Circle>() as MutableRefObject<Konva.Circle>;
   const trRef =
     useRef<Konva.Transformer>() as MutableRefObject<Konva.Transformer>;
+
+  const viewport = useWindowDimensions().width;
 
   useEffect(() => {
     if (isSelected) {
@@ -62,7 +65,7 @@ const CanvasCircle = ({
           });
         }}
       />
-      {isSelected && (
+      {isSelected && viewport > 1024 && (
         <Transformer
           ref={trRef}
           boundBoxFunc={(oldBox, newBox) => {

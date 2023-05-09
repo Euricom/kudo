@@ -39,7 +39,7 @@ const KonvaCanvas = ({
   const containerRef = useRef<HTMLDivElement>(null);
   const stageRef = useRef<Konva.Stage>() as MutableRefObject<Konva.Stage>;
   const layerRef = useRef<Konva.Layer>() as MutableRefObject<Konva.Layer>;
-  const staticLayerRef = useRef<Konva.Layer>() as MutableRefObject<Konva.Layer>;
+  const dialogRef = useRef<HTMLDialogElement>(null);
   const [shapes, setShapes] = useState<Shapes[]>(
     ([...template.content] as unknown as Shapes[]) ?? []
   );
@@ -106,7 +106,7 @@ const KonvaCanvas = ({
   };
 
   const clickListener = (e: KonvaEventObject<Event>) => {
-    const clickedOnEmpty = e.target?.getLayer() === staticLayerRef.current;
+    const clickedOnEmpty = e.target?.getLayer() === null;
     if (clickedOnEmpty) {
       selectShape(null);
     }
@@ -306,6 +306,7 @@ const KonvaCanvas = ({
 
   return (
     <>
+      <dialog ref={dialogRef}></dialog>
       <div
         ref={containerRef}
         id="kudo"

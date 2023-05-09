@@ -2,6 +2,7 @@ import React, { useRef, type MutableRefObject, useEffect } from "react";
 import { Transformer, Image } from "react-konva";
 import type Konva from "konva";
 import { EditorFunctions, type CanvasImageProps } from "~/types";
+import useWindowDimensions from "~/hooks/useWindowDimensions";
 
 const CanvasImage = ({
   shapeProps,
@@ -14,6 +15,8 @@ const CanvasImage = ({
   const shapeRef = useRef<Konva.Image>() as MutableRefObject<Konva.Image>;
   const trRef =
     useRef<Konva.Transformer>() as MutableRefObject<Konva.Transformer>;
+
+  const viewport = useWindowDimensions().width;
 
   const image = new window.Image();
   image.src = shapeProps.image ?? "";
@@ -69,7 +72,7 @@ const CanvasImage = ({
           });
         }}
       />
-      {isSelected && (
+      {isSelected && viewport > 1024 && (
         <Transformer
           ref={trRef}
           boundBoxFunc={(oldBox, newBox) => {

@@ -2,6 +2,7 @@ import React, { useRef, type MutableRefObject, useEffect } from "react";
 import { Transformer, Text } from "react-konva";
 import type Konva from "konva";
 import { EditorFunctions, type CanvasStickerProps } from "~/types";
+import useWindowDimensions from "~/hooks/useWindowDimensions";
 
 const CanvasSticker = ({
   shapeProps,
@@ -15,7 +16,8 @@ const CanvasSticker = ({
   const shapeRef = useRef<Konva.Text>() as MutableRefObject<Konva.Text>;
   const trRef =
     useRef<Konva.Transformer>() as MutableRefObject<Konva.Transformer>;
-  // const [isEditing, setIsEditing] = useState(false)
+
+  const viewport = useWindowDimensions().width;
 
   useEffect(() => {
     if (isSelected) {
@@ -75,7 +77,7 @@ const CanvasSticker = ({
           onChangeEnd(shapeProps);
         }}
       />
-      {isSelected && (
+      {isSelected && viewport > 1024 && (
         <Transformer
           ref={trRef}
           anchorX={0.5}

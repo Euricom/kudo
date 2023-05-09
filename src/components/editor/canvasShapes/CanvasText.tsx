@@ -3,6 +3,8 @@ import { Transformer, Text } from "react-konva";
 import type Konva from "konva";
 import editText from "../editText";
 import { EditorFunctions, type CanvasTextProps } from "~/types";
+import useWindowDimensions from "~/hooks/useWindowDimensions";
+import { on } from "events";
 
 const CanvasText = ({
   container,
@@ -19,7 +21,7 @@ const CanvasText = ({
   const shapeRef = useRef<Konva.Text>() as MutableRefObject<Konva.Text>;
   const trRef =
     useRef<Konva.Transformer>() as MutableRefObject<Konva.Transformer>;
-  // const [isEditing, setIsEditing] = useState(false)
+  const viewport = useWindowDimensions().width;
 
   useEffect(() => {
     if (isSelected) {
@@ -43,7 +45,7 @@ const CanvasText = ({
     }
   });
 
-  const onDoubleClick = () => {
+  const onEditText = () => {
     shapeRef.current.hide();
     trRef.current?.hide();
     editText(
@@ -54,6 +56,13 @@ const CanvasText = ({
       onTextChange,
       container
     );
+  };
+
+  const handleClick = () => {
+    onSelect();
+    if (viewport > 1024) {
+      if (isSelected) onEditText();
+    } else onEditText();
   };
 
   const onTextChange = (text: string) => {
@@ -70,10 +79,8 @@ const CanvasText = ({
   return (
     <React.Fragment>
       <Text
-        onClick={onSelect}
-        onTap={onSelect}
-        onDblClick={onDoubleClick}
-        onDblTap={onDoubleClick}
+        onClick={handleClick}
+        onTap={handleClick}
         ref={shapeRef}
         {...shapeProps}
         onDragEnd={(e) => {
@@ -105,7 +112,7 @@ const CanvasText = ({
           onChangeEnd(shapeProps);
         }}
       />
-      {isSelected && (
+      {isSelected && viewport > 1024 && (
         <Transformer
           ref={trRef}
           anchorX={0.5}

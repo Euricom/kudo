@@ -45,6 +45,11 @@ const Rectangle = ({
         onTap={onSelect}
         ref={shapeRef}
         {...shapeProps}
+        draggable={
+          shapeProps.draggable &&
+          EditorFunctions.Draw !== editorFunction &&
+          EditorFunctions.Erase !== editorFunction
+        }
         onDragEnd={(e) => {
           onChange({
             ...shapeProps,

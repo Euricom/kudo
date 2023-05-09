@@ -42,6 +42,11 @@ const CanvasImage = ({
         {...shapeProps}
         image={image}
         alt={shapeProps.image}
+        draggable={
+          shapeProps.draggable &&
+          EditorFunctions.Draw !== editorFunction &&
+          EditorFunctions.Erase !== editorFunction
+        }
         onDragEnd={(e) => {
           onChange({
             ...shapeProps,

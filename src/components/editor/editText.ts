@@ -116,6 +116,7 @@ const createTextArea = (
   ) {
     textarea.parentNode?.removeChild(textarea);
     window.removeEventListener("click", handleOutsideClick);
+    window.removeEventListener("touchstart", handleOutsideClick);
     textNode.show();
 
     tr?.show();
@@ -123,6 +124,7 @@ const createTextArea = (
 
   setTimeout(() => {
     window.addEventListener("click", handleOutsideClick);
+    window.addEventListener("touchstart", handleOutsideClick);
   });
 
   return textarea;

@@ -4,7 +4,6 @@ import type Konva from "konva";
 import editText from "../editText";
 import { EditorFunctions, type CanvasTextProps } from "~/types";
 import useWindowDimensions from "~/hooks/useWindowDimensions";
-import { on } from "events";
 
 const CanvasText = ({
   container,
@@ -60,6 +59,12 @@ const CanvasText = ({
 
   const handleClick = () => {
     onSelect();
+    if (
+      EditorFunctions.Draw === editorFunction ||
+      EditorFunctions.Erase === editorFunction
+    ) {
+      return;
+    }
     if (viewport > 1024) {
       if (isSelected) onEditText();
     } else onEditText();
@@ -83,6 +88,11 @@ const CanvasText = ({
         onTap={handleClick}
         ref={shapeRef}
         {...shapeProps}
+        draggable={
+          shapeProps.draggable &&
+          EditorFunctions.Draw !== editorFunction &&
+          EditorFunctions.Erase !== editorFunction
+        }
         onDragEnd={(e) => {
           onChange({
             ...shapeProps,

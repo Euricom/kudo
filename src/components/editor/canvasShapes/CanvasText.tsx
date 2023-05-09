@@ -58,13 +58,13 @@ const CanvasText = ({
   };
 
   const handleClick = () => {
-    onSelect();
     if (
       EditorFunctions.Draw === editorFunction ||
       EditorFunctions.Erase === editorFunction
     ) {
       return;
     }
+    onSelect();
     if (viewport > 1024) {
       if (isSelected) onEditText();
     } else onEditText();

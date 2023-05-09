@@ -1,18 +1,27 @@
-import React, { useRef, type MutableRefObject, useEffect } from 'react';
-import { Transformer, Circle } from 'react-konva';
-import type Konva from 'konva';
-import { EditorFunctions, type RectangleProps } from '~/types';
+import React, { useRef, type MutableRefObject, useEffect } from "react";
+import { Transformer, Circle } from "react-konva";
+import type Konva from "konva";
+import { EditorFunctions, type RectangleProps } from "~/types";
+import useWindowDimensions from "~/hooks/useWindowDimensions";
 
-
-
-const CanvasCircle = ({ shapeProps, isSelected, editorFunction, onSelect, onChange, onDelete }: RectangleProps) => {
+const CanvasCircle = ({
+  shapeProps,
+  isSelected,
+  editorFunction,
+  onSelect,
+  onChange,
+  onDelete,
+}: RectangleProps) => {
   const shapeRef = useRef<Konva.Circle>() as MutableRefObject<Konva.Circle>;
-  const trRef = useRef<Konva.Transformer>() as MutableRefObject<Konva.Transformer>;
+  const trRef =
+    useRef<Konva.Transformer>() as MutableRefObject<Konva.Transformer>;
+
+  const viewport = useWindowDimensions().width;
 
   useEffect(() => {
     if (isSelected) {
       if (editorFunction === EditorFunctions.Clear) {
-        onDelete(shapeProps.id)
+        onDelete(shapeProps.id);
       }
       // we need to attach transformer manually
       trRef.current?.nodes([shapeRef.current]);
@@ -27,7 +36,11 @@ const CanvasCircle = ({ shapeProps, isSelected, editorFunction, onSelect, onChan
         onTap={onSelect}
         ref={shapeRef}
         {...shapeProps}
-        draggable={isSelected}
+        draggable={
+          shapeProps.draggable &&
+          EditorFunctions.Draw !== editorFunction &&
+          EditorFunctions.Erase !== editorFunction
+        }
         onDragEnd={(e) => {
           onChange({
             ...shapeProps,
@@ -57,7 +70,7 @@ const CanvasCircle = ({ shapeProps, isSelected, editorFunction, onSelect, onChan
           });
         }}
       />
-      {isSelected && (
+      {isSelected && viewport > 1024 && (
         <Transformer
           ref={trRef}
           boundBoxFunc={(oldBox, newBox) => {

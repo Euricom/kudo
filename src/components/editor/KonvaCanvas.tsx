@@ -12,7 +12,6 @@ import { type KonvaEventObject } from "konva/lib/Node";
 import useDimensions from "~/hooks/useDimensions";
 import CanvasText from "./canvasShapes/CanvasText";
 import Rectangle from "./canvasShapes/Rectangle";
-import { type Vector2d } from "konva/lib/types";
 import { v4 } from "uuid";
 import {
   CanvasShapes,
@@ -24,7 +23,6 @@ import { toast } from "react-toastify";
 import CanvasSticker from "./canvasShapes/CanvasSticker";
 import CanvasCircle from "./canvasShapes/CanvasCircle";
 import { api } from "~/utils/api";
-import { useSessionSpeaker } from "../sessions/SelectedSessionAndSpeaker";
 import { useSession } from "next-auth/react";
 
 const KonvaCanvas = ({
@@ -34,13 +32,14 @@ const KonvaCanvas = ({
   color,
   fontFamily,
   emoji,
+  anonymous,
   setFunction,
   setStage,
 }: KonvaCanvasProps) => {
   const containerRef = useRef<HTMLDivElement>(null);
   const stageRef = useRef<Konva.Stage>() as MutableRefObject<Konva.Stage>;
   const layerRef = useRef<Konva.Layer>() as MutableRefObject<Konva.Layer>;
-  const staticLayerRef = useRef<Konva.Layer>() as MutableRefObject<Konva.Layer>;
+  const dialogRef = useRef<HTMLDialogElement>(null);
   const [shapes, setShapes] = useState<Shapes[]>(
     ([...template.content] as unknown as Shapes[]) ?? []
   );
@@ -48,7 +47,6 @@ const KonvaCanvas = ({
   const { current: history } = useRef<Shapes[]>(
     ([...template.content] as unknown as Shapes[]).reverse() ?? []
   );
-  const { anonymous } = useSessionSpeaker().data;
   const user = useSession().data?.user;
 
   const { mutateAsync: createTemplate } =
@@ -108,7 +106,7 @@ const KonvaCanvas = ({
   };
 
   const clickListener = (e: KonvaEventObject<Event>) => {
-    const clickedOnEmpty = e.target?.getLayer() === staticLayerRef.current;
+    const clickedOnEmpty = e.target?.getLayer() === null;
     if (clickedOnEmpty) {
       selectShape(null);
     }
@@ -308,6 +306,7 @@ const KonvaCanvas = ({
 
   return (
     <>
+      <dialog ref={dialogRef}></dialog>
       <div
         ref={containerRef}
         id="kudo"

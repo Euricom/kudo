@@ -158,6 +158,7 @@ export type KonvaCanvasProps = {
   color: string;
   fontFamily?: string;
   emoji?: EmojiObject;
+  anonymous?: boolean;
   setFunction: (type: EditorFunctions) => void;
   setStage: (stage: Konva.Stage) => void;
 };

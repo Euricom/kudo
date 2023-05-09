@@ -2,6 +2,7 @@ import React, { useRef, type MutableRefObject, useEffect } from "react";
 import { Transformer, Rect } from "react-konva";
 import type Konva from "konva";
 import { EditorFunctions, type RectangleProps } from "~/types";
+import useWindowDimensions from "~/hooks/useWindowDimensions";
 
 const Rectangle = ({
   shapeProps,
@@ -14,6 +15,7 @@ const Rectangle = ({
   const shapeRef = useRef<Konva.Rect>() as MutableRefObject<Konva.Rect>;
   const trRef =
     useRef<Konva.Transformer>() as MutableRefObject<Konva.Transformer>;
+  const viewport = useWindowDimensions().width;
 
   useEffect(() => {
     if (isSelected) {
@@ -43,7 +45,11 @@ const Rectangle = ({
         onTap={onSelect}
         ref={shapeRef}
         {...shapeProps}
-        draggable={isSelected}
+        draggable={
+          shapeProps.draggable &&
+          EditorFunctions.Draw !== editorFunction &&
+          EditorFunctions.Erase !== editorFunction
+        }
         onDragEnd={(e) => {
           onChange({
             ...shapeProps,
@@ -73,7 +79,7 @@ const Rectangle = ({
           });
         }}
       />
-      {isSelected && (
+      {isSelected && viewport > 1024 && (
         <Transformer
           ref={trRef}
           boundBoxFunc={(oldBox, newBox) => {

@@ -5,7 +5,7 @@ import {
 } from "~/server/services/kudoService";
 import { getChannelById, openModal } from "~/server/services/slackService";
 import image from "~/../../imageForSlack.jpg";
-import fs from "fs";
+import fs, { ReadStream } from "fs";
 import { TRPCError } from "@trpc/server";
 
 interface body {
@@ -33,7 +33,15 @@ export default async function handler(
       message: "No template was found.",
     });
   }
-
+  let stream;
+  try {
+    stream = fs.createReadStream("./image.jpg");
+  } catch (e) {
+    throw new TRPCError({
+      code: "CONFLICT",
+      message: "No template was found.",
+    });
+  }
   res.send({
     response_type: "in_channel",
     blocks: [
@@ -48,7 +56,7 @@ export default async function handler(
         type: "section",
         accessory: {
           type: "image",
-          image_url: fs.createReadStream("./image.jpg"),
+          image_url: stream ?? "test",
           alt_text: "Kudo",
         },
       },

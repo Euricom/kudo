@@ -6,7 +6,12 @@ import { FaTrashAlt } from "react-icons/fa";
 import { UtilButtonsContent } from "~/hooks/useUtilButtons";
 import Link from "next/link";
 import { api } from "~/utils/api";
-import { AiOutlineHeart, AiFillHeart, AiOutlineSend } from "react-icons/ai";
+import {
+  AiOutlineHeart,
+  AiFillHeart,
+  AiOutlineSend,
+  AiOutlineEdit,
+} from "react-icons/ai";
 import { useEffect, useState } from "react";
 import { useSession } from "next-auth/react";
 import { UserRole } from "~/types";
@@ -28,7 +33,12 @@ const KudoDetail: NextPage<{ id: string }> = ({ id }) => {
   const trpcContext = api.useContext();
   const user = useSession().data?.user;
 
-  const kudoQuery = api.kudos.getKudoById.useQuery({ id: id });
+  const [comment, setComment] = useState<string>("");
+  const [editing, setEdit] = useState<boolean>(false);
+  const kudoQuery = api.kudos.getKudoById.useQuery(
+    { id: id },
+    { onSuccess: (kudo) => setComment(kudo?.comment ?? "") }
+  );
   const { data: kudo, refetch: refetchKudo } = kudoQuery;
   const senderQuery = api.users.getUserById.useQuery({
     id: kudo?.userId ?? "",
@@ -48,46 +58,47 @@ const KudoDetail: NextPage<{ id: string }> = ({ id }) => {
 
   const { mutate: deleteKudo } = api.kudos.deleteKudoById
     .useMutation
-    //   {
-    //   onMutate: async (newEntry) => {
-    //     await trpcContext.kudos.getKudosByUserId.cancel();
-    //     trpcContext.kudos.getKudosByUserId.setData(
-    //       { id: kudo?.userId },
-    //       (prevEntries) => {
-    //         const entry = prevEntries?.find((entry) => entry.id === newEntry.id);
-    //         console.log(prevEntries);
-    //         console.log(entry);
-    //         console.log(kudo?.userId);
-    //         console.log(newEntry.id);
-    //         if (entry) {
-    //           return prevEntries?.filter((e) => e !== entry);
-    //         }
-
-    //         return prevEntries;
+    // {
+    // onMutate: async (newEntry) => {
+    //   await trpcContext.kudos.getKudosByUserId.cancel();
+    //   trpcContext.kudos.getKudosByUserId.setData(
+    //     { id: kudo?.userId },
+    //     (prevEntries) => {
+    //       const entry = prevEntries?.find((entry) => entry.id === newEntry.id);
+    //       console.log(prevEntries);
+    //       console.log(entry);
+    //       console.log(kudo?.userId);
+    //       console.log(newEntry.id);
+    //       if (entry) {
+    //         return prevEntries?.filter((e) => e !== entry);
     //       }
-    //     );
-    //   },
-    //   onSettled: async () => {
-    //     await trpcContext.kudos.getKudoById.invalidate();
-    //   },
+
+    //       return prevEntries;
+    //     }
+    //   );
+    // },
+    // onSettled: async () => {
+    //   await trpcContext.kudos.getKudoById.invalidate();
+    // },
     // }
     ();
   const { mutate: deleteImage } = api.kudos.deleteImageById.useMutation();
-  const { mutateAsync: likeKudoById } = api.kudos.likeKudoById.useMutation({
-    onMutate: async (newEntry) => {
-      await trpcContext.kudos.getKudoById.cancel();
-      trpcContext.kudos.getKudoById.setData({ id: id }, (prevEntry) => {
-        if (prevEntry) {
-          prevEntry.liked = newEntry.liked;
-        }
-        return prevEntry;
-      });
-    },
-    onSettled: async () => {
-      await trpcContext.kudos.getKudoById.invalidate();
-    },
-  });
-  const { mutateAsync: commentKudoById } =
+  const { mutateAsync: likeKudoById, isLoading: loadingLike } =
+    api.kudos.likeKudoById.useMutation({
+      onMutate: async (newEntry) => {
+        await trpcContext.kudos.getKudoById.cancel();
+        trpcContext.kudos.getKudoById.setData({ id: id }, (prevEntry) => {
+          if (prevEntry) {
+            prevEntry.liked = newEntry.liked;
+          }
+          return prevEntry;
+        });
+      },
+      onSettled: async () => {
+        await trpcContext.kudos.getKudoById.invalidate();
+      },
+    });
+  const { mutateAsync: commentKudoById, isLoading: loadingComment } =
     api.kudos.commentKudoById.useMutation({
       onMutate: async (newEntry) => {
         await trpcContext.kudos.getKudoById.cancel();
@@ -102,21 +113,21 @@ const KudoDetail: NextPage<{ id: string }> = ({ id }) => {
         await trpcContext.kudos.getKudoById.invalidate();
       },
     });
-  const { mutateAsync: flagKudoById } = api.kudos.flagKudoById.useMutation({
-    onMutate: async (newEntry) => {
-      await trpcContext.kudos.getKudoById.cancel();
-      trpcContext.kudos.getKudoById.setData({ id: id }, (prevEntry) => {
-        if (prevEntry) {
-          prevEntry.flagged = newEntry.flagged;
-        }
-        return prevEntry;
-      });
-    },
-    onSettled: async () => {
-      await trpcContext.kudos.getKudoById.invalidate();
-    },
-  });
-  const [comment, setComment] = useState<string>("");
+  const { mutateAsync: flagKudoById, isLoading: loadingFlag } =
+    api.kudos.flagKudoById.useMutation({
+      onMutate: async (newEntry) => {
+        await trpcContext.kudos.getKudoById.cancel();
+        trpcContext.kudos.getKudoById.setData({ id: id }, (prevEntry) => {
+          if (prevEntry) {
+            prevEntry.flagged = newEntry.flagged;
+          }
+          return prevEntry;
+        });
+      },
+      onSettled: async () => {
+        await trpcContext.kudos.getKudoById.invalidate();
+      },
+    });
 
   async function handleclick() {
     if (user?.id === session?.speakerId && kudo && kudo.id) {
@@ -140,11 +151,11 @@ const KudoDetail: NextPage<{ id: string }> = ({ id }) => {
   async function handleSubmit() {
     if (user?.id === session?.speakerId && kudo && kudo.id) {
       try {
+        setEdit(false);
         await commentKudoById({
           id: kudo.id,
           comment: comment,
         });
-        setComment("");
         await refetchKudo();
       } catch (e) {
         toast.error((e as TRPCError).message);
@@ -253,6 +264,7 @@ const KudoDetail: NextPage<{ id: string }> = ({ id }) => {
                   className="border-red relative m-2 mr-5"
                   onClick={() => void flag()}
                   data-cy="flagButton"
+                  disabled={loadingFlag}
                 >
                   {kudo.flagged ? (
                     <p className="text-error hover:underline">Reported!</p>
@@ -275,13 +287,14 @@ const KudoDetail: NextPage<{ id: string }> = ({ id }) => {
             />
           </div>
 
-          <div className="m-2 flex max-h-full w-full max-w-2xl flex-row gap-2 px-3">
-            <div
+          <div className="m-2 flex max-h-full w-full max-w-2xl items-center gap-2 px-3">
+            <button
               className={`btn-ghost btn-circle btn ${
                 user?.id === session?.speakerId ? "" : "pointer-events-none"
               }`}
               data-cy="like"
               onClick={() => void handleclick()}
+              disabled={loadingLike}
             >
               {kudo.liked ? (
                 <AiFillHeart
@@ -296,8 +309,8 @@ const KudoDetail: NextPage<{ id: string }> = ({ id }) => {
                   data-cy="notLiked"
                 />
               )}
-            </div>
-            {!kudo.comment && user?.id === session?.speakerId ? (
+            </button>
+            {(!kudo.comment || editing) && user?.id === session?.speakerId ? (
               <div className="item relative flex w-full flex-row justify-start">
                 <input
                   value={comment}
@@ -307,38 +320,47 @@ const KudoDetail: NextPage<{ id: string }> = ({ id }) => {
                   className="input-bordered input w-full"
                   data-cy="commentInput"
                 />
-                <div
+                <button
                   className="btn-ghost btn-circle btn absolute right-0"
                   data-cy="sendComment"
                   onClick={() => void handleSubmit()}
+                  disabled={loadingComment}
                 >
                   <AiOutlineSend size={20} />
-                </div>
+                </button>
               </div>
             ) : (
               <>
-                {!kudo.comment ? (
-                  <></>
-                ) : (
-                  <div className="chat chat-end w-full">
-                    <div className="chat-header">{speaker?.displayName}</div>
-                    <h1
-                      className="chat-bubble chat-bubble-primary"
-                      data-cy="comment"
-                    >
-                      {kudo.comment}
-                    </h1>
-                    <div className="chat-image avatar">
-                      <div className="relative w-10 rounded-full">
-                        <Image
-                          className="rounded-full"
-                          src={"/api/images/" + (user?.id ?? "fout").toString()}
-                          alt="Profile picture"
-                          fill
-                        />
+                {kudo.comment && !editing && (
+                  <>
+                    <div className="chat chat-end w-full">
+                      <div className="chat-header">{speaker?.displayName}</div>
+                      <h1
+                        className="chat-bubble chat-bubble-primary flex gap-2"
+                        data-cy="comment"
+                      >
+                        {comment}
+                        <button
+                          className="self-center"
+                          onClick={() => setEdit(true)}
+                        >
+                          <AiOutlineEdit size={15} />
+                        </button>
+                      </h1>
+                      <div className="chat-image avatar">
+                        <div className="relative w-10 rounded-full">
+                          <Image
+                            className="rounded-full"
+                            src={
+                              "/api/images/" + (user?.id ?? "fout").toString()
+                            }
+                            alt="Profile picture"
+                            fill
+                          />
+                        </div>
                       </div>
                     </div>
-                  </div>
+                  </>
                 )}
               </>
             )}

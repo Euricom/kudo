@@ -1,32 +1,11 @@
 import type Konva from "konva";
-import { type Vector2d } from "konva/lib/types";
 
 const editText = (
-  areaPosition: Vector2d,
   textNode: Konva.Text,
   tr: Konva.Transformer,
   scale: number,
   onChange: (text: string) => void,
-  container?: HTMLDivElement
-) => {
-  const textarea = createTextArea(
-    textNode,
-    areaPosition,
-    tr,
-    scale,
-    onChange,
-    container
-  );
-  textarea.focus();
-};
-
-const createTextArea = (
-  textNode: Konva.Text,
-  areaPosition: Vector2d,
-  tr: Konva.Transformer,
-  scale: number,
-  onChange: (text: string) => void,
-  container?: HTMLDivElement
+  container?: HTMLDialogElement
 ) => {
   const textarea = document.createElement("span");
   if (container) {
@@ -40,38 +19,20 @@ const createTextArea = (
   // and sometimes it is hard to make it 100% the same. But we will try...
   textarea.contentEditable = "true";
   textarea.innerText = textNode.text();
-  textarea.style.position = "absolute";
-  textarea.style.top = areaPosition.y.toString() + "px";
-  textarea.style.left = areaPosition.x.toString() + "px";
   textarea.style.width = "auto";
   textarea.style.height =
     ((textNode.height() - textNode.padding() * 2 + 5) * scale).toString() +
     "px";
 
-  textarea.style.fontSize =
-    (textNode.fontSize() * scale * textNode.scaleX()).toString() + "px";
-  textarea.style.border = "none";
-  textarea.style.padding = "0px";
-  textarea.style.margin = "0px";
+  textarea.style.fontSize = "2.0rem";
+  // (textNode.fontSize() * scale * textNode.scaleX()).toString() + "px";
   textarea.style.overflow = "visible";
-  textarea.style.background = "none";
   textarea.style.outline = "none";
-  textarea.style.resize = "none";
   textarea.style.lineHeight = textNode.lineHeight().toString();
   textarea.style.fontFamily = textNode.fontFamily();
   textarea.style.transformOrigin = "center";
   textarea.style.textAlign = textNode.align();
   textarea.style.color = textNode.fill();
-
-  const rotation = textNode.rotation();
-  let transform = "";
-  if (rotation) {
-    transform += "rotateZ(" + rotation.toString() + "deg)";
-  }
-
-  transform += "translate(-50%, -50%)";
-
-  textarea.style.transform = transform;
 
   // reset height
   textarea.style.height = "auto";
@@ -117,8 +78,9 @@ const createTextArea = (
     textarea.parentNode?.removeChild(textarea);
     window.removeEventListener("click", handleOutsideClick);
     window.removeEventListener("touchstart", handleOutsideClick);
-    textNode.show();
 
+    container?.close();
+    textNode.show();
     tr?.show();
   }
 
@@ -126,8 +88,7 @@ const createTextArea = (
     window.addEventListener("click", handleOutsideClick);
     window.addEventListener("touchstart", handleOutsideClick);
   });
-
-  return textarea;
+  textarea.focus();
 };
 
-export default editText;
+export { editText };

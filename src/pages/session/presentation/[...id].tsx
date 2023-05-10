@@ -144,7 +144,12 @@ const Presentation: NextPage<{ id: string; initialKudos: Kudo[] }> = ({
           className="relative flex h-full w-full items-center justify-center overflow-hidden"
         >
           <QRCode
-            value={window.location.hostname + "/create?session=" + session?.id}
+            value={
+              "https://" +
+              window.location.hostname +
+              "/create?session=" +
+              session?.id
+            }
             logoImage={icon.src}
             size={256}
             removeQrCodeBehindLogo={true}
@@ -168,7 +173,10 @@ const Presentation: NextPage<{ id: string; initialKudos: Kudo[] }> = ({
           <div className="absolute bottom-0 left-0 z-50">
             <QRCode
               value={
-                window.location.hostname + "/create?session=" + session?.id
+                "https://" +
+                window.location.hostname +
+                "/create?session=" +
+                session?.id
               }
               logoImage={icon.src}
               size={128}

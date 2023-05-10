@@ -3,7 +3,7 @@ import { type Session } from "next-auth";
 import { SessionProvider } from "next-auth/react";
 
 import { api } from "~/utils/api";
-
+import { SSRProvider, Provider, defaultTheme } from "@adobe/react-spectrum";
 import "~/styles/globals.css";
 import { Auth } from "../components/auth/Auth";
 import NavBar from "~/components/navigation/NavBar";
@@ -23,41 +23,45 @@ const MyApp: AppType<{ session: Session | null }> = ({
 }) => {
   return (
     <>
-      <Head>
-        <title>eKudo</title>
-        <meta name="description" content="eKudo app" />
-        <link rel="shortcut icon" href={(Logo as StaticImageData).src} />
-      </Head>
-      <SessionProvider session={session}>
-        <Auth>
-          <TitleProvider>
-            <UtilButtonsProvider>
-              <div className="h-screen w-full bg-base-200 dark:bg-base-300">
-                <Menu>
-                  <NavBar />
-                  <div className="flex-auto flex-shrink-0">
-                    <Component {...pageProps} />
-                    <ToastContainer
-                      position="top-right"
-                      autoClose={3000}
-                      hideProgressBar={false}
-                      newestOnTop={false}
-                      closeOnClick
-                      rtl={false}
-                      limit={5}
-                      pauseOnFocusLoss
-                      draggable
-                      pauseOnHover
-                      className=" mt-14"
-                    />
+      <SSRProvider>
+        <Provider theme={defaultTheme} locale={"en-US"}>
+          <Head>
+            <title>eKudo</title>
+            <meta name="description" content="eKudo app" />
+            <link rel="shortcut icon" href={(Logo as StaticImageData).src} />
+          </Head>
+          <SessionProvider session={session}>
+            <Auth>
+              <TitleProvider>
+                <UtilButtonsProvider>
+                  <div className="h-screen w-full bg-base-200 dark:bg-base-300">
+                    <Menu>
+                      <NavBar />
+                      <div className="flex-auto flex-shrink-0">
+                        <Component {...pageProps} />
+                        <ToastContainer
+                          position="top-right"
+                          autoClose={3000}
+                          hideProgressBar={false}
+                          newestOnTop={false}
+                          closeOnClick
+                          rtl={false}
+                          limit={5}
+                          pauseOnFocusLoss
+                          draggable
+                          pauseOnHover
+                          className=" mt-14"
+                        />
+                      </div>
+                      <Footer />
+                    </Menu>
                   </div>
-                  <Footer />
-                </Menu>
-              </div>
-            </UtilButtonsProvider>
-          </TitleProvider>
-        </Auth>
-      </SessionProvider>
+                </UtilButtonsProvider>
+              </TitleProvider>
+            </Auth>
+          </SessionProvider>
+        </Provider>
+      </SSRProvider>
     </>
   );
 };

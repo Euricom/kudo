@@ -21,8 +21,9 @@ import dynamic from "next/dynamic";
 import { useSession } from "next-auth/react";
 import type Konva from "konva";
 import LoadingBar from "~/components/LoadingBar";
-import { BsFillCircleFill } from "react-icons/bs";
-import { type ColorResult, HuePicker } from "react-color";
+import { BsCircle, BsFillCircleFill } from "react-icons/bs";
+import { HuePicker, ChromePicker, ColorResult } from "react-color";
+import { ColorSlider, SpectrumColorSliderProps } from "@react-spectrum/color";
 import { EditorFunctions, type EmojiObject, Fonts, UserRole } from "~/types";
 import data from "@emoji-mart/data";
 import Picker from "@emoji-mart/react";
@@ -31,6 +32,7 @@ import { type TRPCError } from "@trpc/server";
 import { type Kudo } from "@prisma/client";
 import EditorButton from "~/components/editor/buttons/EditorButton";
 import useWindowDimensions from "~/hooks/useWindowDimensions";
+import { parseColor } from "@react-stately/color";
 
 export function getServerSideProps(context: {
   query: { template: string; session: string; anonymous: string };
@@ -57,6 +59,16 @@ const Editor: NextPage<{
   const router = useRouter();
   const width = useWindowDimensions()?.width;
   const user = useSession().data?.user;
+  //UseStates
+  const [selectedButton, setSelectedButton] = useState<EditorFunctions>();
+  const [stage, setStage] = useState<Konva.Stage>();
+  const [emojiDropdownState, setEmojiDropdownState] = useState<boolean>(false);
+  const [color, setColor] = useState<string>(
+    "#" + parseColor("hsl(0, 100%, 50%)").toHexInt().toString()
+  );
+  const [font, setFont] = useState<string>("Arial");
+  const [thickness, setThickness] = useState<number>(5);
+  const [selectedEmoji, setSelectedEmoji] = useState<EmojiObject>();
   //API
   const trpcContext = api.useContext();
 
@@ -90,18 +102,12 @@ const Editor: NextPage<{
   const template = templateQuery.data;
   const sessionQuery = api.sessions.getSessionById.useQuery({ id: sessionId });
   const session = sessionQuery.data;
+  console.log(session);
+
   const volledigeSpeaker = api.users.getUserById.useQuery({
-    id: session?.speaker?.id ?? "18d332af-2d5b-49e5-8c42-9168b3910f97",
+    id: /*session?.speakerId ?? */ "18d332af-2d5b-49e5-8c42-9168b3910f97",
   }).data;
   const slackMessage = api.slack.sendMessageToSlack.useMutation();
-  //UseStates
-  const [selectedButton, setSelectedButton] = useState<EditorFunctions>();
-  const [stage, setStage] = useState<Konva.Stage>();
-  const [emojiDropdownState, setEmojiDropdownState] = useState<boolean>(false);
-  const [color, setColor] = useState<string>("#121212");
-  const [font, setFont] = useState<string>("Arial");
-  const [thickness, setThickness] = useState<number>(5);
-  const [selectedEmoji, setSelectedEmoji] = useState<EmojiObject>();
 
   if (
     templateQuery.isLoading ||
@@ -115,6 +121,8 @@ const Editor: NextPage<{
   }
 
   const handleColorChange = (color: ColorResult) => {
+    console.log(color.hex);
+
     setColor(color.hex);
   };
 
@@ -297,13 +305,45 @@ const Editor: NextPage<{
             onClick={() => setSelectedButton(EditorFunctions.Color)}
             bgColor={color}
           >
-            <li className="flex gap-4 align-middle">
-              <BsFillCircleFill
-                size={16}
-                onClick={() => setColor("#121212")}
-                color={"#121212"}
-              />
-              <HuePicker color={color} onChange={handleColorChange} />
+            <li className="flex flex-col gap-4 text-center align-middle">
+              <div className="flex h-fit gap-4 align-middle">
+                {/* <Slider-Color-Picker /> */}
+                <ChromePicker
+                  color={color}
+                  disableAlpha={true}
+                  onChange={handleColorChange}
+                  className="mt-2 h-full"
+                />
+                {/* <ColorSlider defaultValue={color} channel="red" />
+                <ColorSlider
+                  channel={"hue"}
+                  value={color}
+                  onChange={(v) =>
+                    void handleColorChange("#" + v.toHexInt().toString())
+                  }
+                />
+                <ColorSlider
+                  channel={"saturation"}
+                  value={color}
+                  onChange={(v) =>
+                    void handleColorChange("#" + v.toHexInt().toString())
+                  }
+                />
+                <ColorSlider
+                  channel={"lightness"}
+                  value={color}
+                  onChange={(v) =>
+                    void handleColorChange("#" + v.toHexInt().toString())
+                  }
+                />
+                <ColorSlider
+                  channel="alpha"
+                  value={color}
+                  onChange={(v) =>
+                    void handleColorChange("#" + v.toHexInt().toString())
+                  }
+                /> */}
+              </div>
             </li>
           </EditorButton>
           <EditorButton

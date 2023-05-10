@@ -39,6 +39,7 @@ const KonvaCanvas = ({
   const containerRef = useRef<HTMLDivElement>(null);
   const stageRef = useRef<Konva.Stage>() as MutableRefObject<Konva.Stage>;
   const layerRef = useRef<Konva.Layer>() as MutableRefObject<Konva.Layer>;
+  const backgroundRef = useRef<Konva.Layer>() as MutableRefObject<Konva.Layer>;
   const dialogRef = useRef<HTMLDialogElement>(null);
   const [shapes, setShapes] = useState<Shapes[]>(
     ([...template.content] as unknown as Shapes[]) ?? []
@@ -68,6 +69,7 @@ const KonvaCanvas = ({
   );
 
   const undo = useCallback(() => {
+    console.log(history);
     const lastShape = history.shift();
     const shapeToBe = history.find((s) => s.id === lastShape?.id);
     const shape = shapes.find((s) => s.id === lastShape?.id);
@@ -177,7 +179,6 @@ const KonvaCanvas = ({
     setFunction,
     createImage,
   ]);
-
   const handleMouseDown = () => {
     if (
       editorFunction === EditorFunctions.Draw ||
@@ -248,6 +249,10 @@ const KonvaCanvas = ({
   useEffect(() => {
     setStage(stageRef.current);
     layerRef.current.offset({
+      x: -(stageDimensions?.width ?? 0) / 2,
+      y: -(stageDimensions?.height ?? 0) / 2,
+    });
+    backgroundRef.current.offset({
       x: -(stageDimensions?.width ?? 0) / 2,
       y: -(stageDimensions?.height ?? 0) / 2,
     });
@@ -330,6 +335,23 @@ const KonvaCanvas = ({
           onClick={clickListener}
           onTap={clickListener}
         >
+          <Layer ref={backgroundRef}>
+            <Rectangle
+              key="Background"
+              shapeProps={{
+                type: CanvasShapes.Rect,
+                id: "Background",
+                width: stageDimensions?.width,
+                height: stageDimensions?.height,
+                fill: template.color,
+              }}
+              isSelected={false}
+              editorFunction={EditorFunctions.None}
+              onSelect={() => selectShape(null)}
+              onChange={() => void 0}
+              onDelete={() => void 0}
+            />
+          </Layer>
           <Layer ref={layerRef}>
             <Rectangle
               key="Background"

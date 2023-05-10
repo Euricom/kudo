@@ -149,6 +149,7 @@ export enum CanvasShapes {
   Image,
   Rect,
   Circle,
+  BackgroundColor,
 }
 
 export type KonvaCanvasProps = {

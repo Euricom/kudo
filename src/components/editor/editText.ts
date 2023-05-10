@@ -24,7 +24,7 @@ const editText = (
     ((textNode.height() - textNode.padding() * 2 + 5) * scale).toString() +
     "px";
 
-  textarea.style.fontSize = "1.5rem";
+  textarea.style.fontSize = "2.0rem";
   // (textNode.fontSize() * scale * textNode.scaleX()).toString() + "px";
   textarea.style.overflow = "visible";
   textarea.style.outline = "none";

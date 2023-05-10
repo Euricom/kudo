@@ -33,7 +33,12 @@ const KudoDetail: NextPage<{ id: string }> = ({ id }) => {
   const trpcContext = api.useContext();
   const user = useSession().data?.user;
 
-  const kudoQuery = api.kudos.getKudoById.useQuery({ id: id });
+  const [comment, setComment] = useState<string>("");
+  const [editing, setEdit] = useState<boolean>(false);
+  const kudoQuery = api.kudos.getKudoById.useQuery(
+    { id: id },
+    { onSuccess: (kudo) => setComment(kudo?.comment ?? "") }
+  );
   const { data: kudo, refetch: refetchKudo } = kudoQuery;
   const senderQuery = api.users.getUserById.useQuery({
     id: kudo?.userId ?? "",
@@ -53,28 +58,28 @@ const KudoDetail: NextPage<{ id: string }> = ({ id }) => {
 
   const { mutate: deleteKudo } = api.kudos.deleteKudoById
     .useMutation
-    //   {
-    //   onMutate: async (newEntry) => {
-    //     await trpcContext.kudos.getKudosByUserId.cancel();
-    //     trpcContext.kudos.getKudosByUserId.setData(
-    //       { id: kudo?.userId },
-    //       (prevEntries) => {
-    //         const entry = prevEntries?.find((entry) => entry.id === newEntry.id);
-    //         console.log(prevEntries);
-    //         console.log(entry);
-    //         console.log(kudo?.userId);
-    //         console.log(newEntry.id);
-    //         if (entry) {
-    //           return prevEntries?.filter((e) => e !== entry);
-    //         }
-
-    //         return prevEntries;
+    // {
+    // onMutate: async (newEntry) => {
+    //   await trpcContext.kudos.getKudosByUserId.cancel();
+    //   trpcContext.kudos.getKudosByUserId.setData(
+    //     { id: kudo?.userId },
+    //     (prevEntries) => {
+    //       const entry = prevEntries?.find((entry) => entry.id === newEntry.id);
+    //       console.log(prevEntries);
+    //       console.log(entry);
+    //       console.log(kudo?.userId);
+    //       console.log(newEntry.id);
+    //       if (entry) {
+    //         return prevEntries?.filter((e) => e !== entry);
     //       }
-    //     );
-    //   },
-    //   onSettled: async () => {
-    //     await trpcContext.kudos.getKudoById.invalidate();
-    //   },
+
+    //       return prevEntries;
+    //     }
+    //   );
+    // },
+    // onSettled: async () => {
+    //   await trpcContext.kudos.getKudoById.invalidate();
+    // },
     // }
     ();
   const { mutate: deleteImage } = api.kudos.deleteImageById.useMutation();
@@ -123,8 +128,6 @@ const KudoDetail: NextPage<{ id: string }> = ({ id }) => {
         await trpcContext.kudos.getKudoById.invalidate();
       },
     });
-  const [comment, setComment] = useState<string>(kudo?.comment ?? "");
-  const [editing, setEdit] = useState<boolean>(false);
 
   async function handleclick() {
     if (user?.id === session?.speakerId && kudo && kudo.id) {
@@ -148,11 +151,11 @@ const KudoDetail: NextPage<{ id: string }> = ({ id }) => {
   async function handleSubmit() {
     if (user?.id === session?.speakerId && kudo && kudo.id) {
       try {
+        setEdit(false);
         await commentKudoById({
           id: kudo.id,
           comment: comment,
         });
-        setEdit(false);
         await refetchKudo();
       } catch (e) {
         toast.error((e as TRPCError).message);
@@ -328,7 +331,7 @@ const KudoDetail: NextPage<{ id: string }> = ({ id }) => {
               </div>
             ) : (
               <>
-                {(kudo.comment || !editing) && (
+                {kudo.comment && !editing && (
                   <>
                     <div className="chat chat-end w-full">
                       <div className="chat-header">{speaker?.displayName}</div>
@@ -336,7 +339,7 @@ const KudoDetail: NextPage<{ id: string }> = ({ id }) => {
                         className="chat-bubble chat-bubble-primary flex gap-2"
                         data-cy="comment"
                       >
-                        {kudo.comment}
+                        {comment}
                         <button
                           className="self-center"
                           onClick={() => setEdit(true)}

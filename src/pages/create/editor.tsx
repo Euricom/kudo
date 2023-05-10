@@ -341,7 +341,7 @@ const Editor: NextPage<{
             onClick={() => setSelectedButton(EditorFunctions.Color)}
             bgColor={color}
           >
-            <div className="slider-container">
+            <div className="grid w-60 gap-2.5">
               <label className="label w-fit gap-4 text-xs">
                 <h1 className="font-bold">Hue</h1>
                 {hue}
@@ -393,9 +393,9 @@ const Editor: NextPage<{
                 max="100"
                 value={lightness}
               />
-              <div className="h-3 justify-end">
+              <div className="flex justify-end">
                 <button
-                  className="btn-ghost absolute right-8 bottom-3 rounded border-gray-400 p-2"
+                  className="mt-2 rounded border border-gray-400 p-2"
                   onClick={() => void pickColor()}
                 >
                   <BsEyedropper />

@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { type NextPage } from "next";
 import Head from "next/head";
 import { UtilButtonsContent } from "~/hooks/useUtilButtons";
@@ -21,9 +21,7 @@ import dynamic from "next/dynamic";
 import { useSession } from "next-auth/react";
 import type Konva from "konva";
 import LoadingBar from "~/components/LoadingBar";
-import { BsCircle, BsFillCircleFill } from "react-icons/bs";
-import { HuePicker, ChromePicker, ColorResult } from "react-color";
-import { ColorSlider, SpectrumColorSliderProps } from "@react-spectrum/color";
+import { BsEyedropper, BsFillCircleFill } from "react-icons/bs";
 import { EditorFunctions, type EmojiObject, Fonts, UserRole } from "~/types";
 import data from "@emoji-mart/data";
 import Picker from "@emoji-mart/react";
@@ -32,7 +30,7 @@ import { type TRPCError } from "@trpc/server";
 import { type Kudo } from "@prisma/client";
 import EditorButton from "~/components/editor/buttons/EditorButton";
 import useWindowDimensions from "~/hooks/useWindowDimensions";
-import { parseColor } from "@react-stately/color";
+import useEyeDropper from "use-eye-dropper";
 
 export function getServerSideProps(context: {
   query: { template: string; session: string; anonymous: string };
@@ -63,9 +61,24 @@ const Editor: NextPage<{
   const [selectedButton, setSelectedButton] = useState<EditorFunctions>();
   const [stage, setStage] = useState<Konva.Stage>();
   const [emojiDropdownState, setEmojiDropdownState] = useState<boolean>(false);
-  const [color, setColor] = useState<string>(
-    "#" + parseColor("hsl(0, 100%, 50%)").toHexInt().toString()
-  );
+  const [hue, setHue] = useState<number>(0);
+  const [saturation, setSaturation] = useState<number>(100);
+  const [lightness, setLightness] = useState<number>(50);
+  const [color, setColor] = useState<string>("#000000");
+  const { open } = useEyeDropper();
+  const pickColor = async () => {
+    if (width < 1024) {
+      document.getElementById("Modal-" + EditorFunctions.Color)?.click();
+    }
+    await new Promise((res) => setTimeout(res, 100));
+    open()
+      .then((color) => {
+        hexToHSL(color.sRGBHex);
+      })
+      .catch((e) => {
+        console.log(e);
+      });
+  };
   const [font, setFont] = useState<string>("Arial");
   const [thickness, setThickness] = useState<number>(5);
   const [selectedEmoji, setSelectedEmoji] = useState<EmojiObject>();
@@ -102,12 +115,22 @@ const Editor: NextPage<{
   const template = templateQuery.data;
   const sessionQuery = api.sessions.getSessionById.useQuery({ id: sessionId });
   const session = sessionQuery.data;
-  console.log(session);
 
   const volledigeSpeaker = api.users.getUserById.useQuery({
     id: /*session?.speakerId ?? */ "18d332af-2d5b-49e5-8c42-9168b3910f97",
   }).data;
   const slackMessage = api.slack.sendMessageToSlack.useMutation();
+  const body = document.querySelector("body");
+  function setHSL() {
+    body?.style.setProperty("--hue", hue.toString());
+    body?.style.setProperty("--sat", saturation.toString() + "%");
+    body?.style.setProperty("--lig", lightness.toString() + "%");
+  }
+
+  setHSL();
+  useEffect(() => {
+    setColor(hslToHex(hue, saturation, lightness));
+  }, [hue, saturation, lightness]);
 
   if (
     templateQuery.isLoading ||
@@ -119,12 +142,6 @@ const Editor: NextPage<{
   ) {
     return <LoadingBar />;
   }
-
-  const handleColorChange = (color: ColorResult) => {
-    console.log(color.hex);
-
-    setColor(color.hex);
-  };
 
   const handleEmoji = () => {
     try {
@@ -181,6 +198,27 @@ const Editor: NextPage<{
         setSelectedButton(EditorFunctions.None);
       }
   };
+  const hexToHSL = (hex: string) => {
+    const result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
+
+    const r = parseInt((result && result[1]) ?? "0", 16) / 255;
+    const g = parseInt((result && result[2]) ?? "0", 16) / 255;
+    const b = parseInt((result && result[3]) ?? "0", 16) / 255;
+    const l = Math.max(r, g, b);
+    const s = l - Math.min(r, g, b);
+    const h = s
+      ? l === r
+        ? (g - b) / s
+        : l === g
+        ? 2 + (b - r) / s
+        : 4 + (r - g) / s
+      : 0;
+    setHue(60 * h < 0 ? 60 * h + 360 : 60 * h);
+    setSaturation(
+      100 * (s ? (l <= 0.5 ? s / (2 * l - s) : s / (2 - (2 * l - s))) : 0)
+    );
+    setLightness((100 * (2 * l - s)) / 2);
+  };
 
   return (
     <>
@@ -217,7 +255,7 @@ const Editor: NextPage<{
           >
             <label className="label text-xs">Font</label>
             <select
-              className="select-bordered select w-full min-w-min max-w-xs"
+              className="select-bordered select min-w-min max-w-xs"
               value={font}
               onChange={(e) => setFont(e.target.value)}
             >
@@ -252,20 +290,18 @@ const Editor: NextPage<{
                 : ""
             }
           >
-            <li>
-              <div className="w-40 text-xs">
-                Thickness
-                <input
-                  type="range"
-                  min="1"
-                  height={thickness}
-                  max="200"
-                  value={thickness}
-                  className="range"
-                  onChange={(e) => setThickness(parseInt(e.target.value))}
-                />
-              </div>
-            </li>
+            <div className="w-40 text-xs">
+              Thickness
+              <input
+                type="range"
+                min="1"
+                height={thickness}
+                max="200"
+                value={thickness}
+                className="range"
+                onChange={(e) => setThickness(parseInt(e.target.value))}
+              />
+            </div>
             <div className="mt-3 flex align-middle">
               <div className="flex flex-col justify-around">
                 <BiPencil
@@ -305,16 +341,118 @@ const Editor: NextPage<{
             onClick={() => setSelectedButton(EditorFunctions.Color)}
             bgColor={color}
           >
-            <li className="flex flex-col gap-4 text-center align-middle">
-              <div className="flex h-fit gap-4 align-middle">
-                {/* <Slider-Color-Picker /> */}
-                <ChromePicker
+            <div className="slider-container">
+              <label className="label w-fit gap-4 text-xs">
+                <h1 className="font-bold">Hue</h1>
+                {hue}
+              </label>
+              <input
+                onChange={(h) => {
+                  void setHue(parseInt(h.target.value));
+                  void setHSL();
+                }}
+                className="slider slider-h"
+                type="range"
+                id="h"
+                name="h"
+                min="0"
+                max="360"
+                value={hue}
+              />
+              <label className="label w-fit gap-4 text-xs">
+                <h1 className="font-bold">Saturation</h1>
+                {saturation}
+              </label>
+              <input
+                onChange={(s) => {
+                  void setSaturation(parseInt(s.target.value));
+                  void setHSL();
+                }}
+                className="slider slider-s"
+                type="range"
+                id="s"
+                name="s"
+                min="0"
+                max="100"
+                value={saturation}
+              />
+              <label className="label w-fit gap-4 text-xs">
+                <h1 className="font-bold">Lightness</h1>
+                {lightness}
+              </label>
+              <input
+                onChange={(l) => {
+                  void setLightness(parseInt(l.target.value));
+                  void setHSL();
+                }}
+                className="slider slider-l"
+                type="range"
+                id="l"
+                name="l"
+                min="0"
+                max="100"
+                value={lightness}
+              />
+              <div className="h-3 justify-end">
+                <button
+                  className="btn-ghost absolute right-8 bottom-3 rounded border-gray-400 p-2"
+                  onClick={() => void pickColor()}
+                >
+                  <BsEyedropper />
+                </button>
+              </div>
+            </div>
+            {/* <div className="slider-container flex w-60 flex-col gap-4 align-middle">
+              <label className="label w-fit gap-4 text-xs">
+                <h1 className="font-bold">Color</h1>
+                {hue}
+              </label>
+              <input
+                type="range"
+                min="0"
+                id="h"
+                name="h"
+                max="360"
+                value={hue}
+                onChange={(h) => void setHue(parseInt(h.target.value))}
+                className="slider-h"
+              />
+              <label className="label w-fit gap-4 text-xs">
+                <h1 className="font-bold">Saturation</h1>
+                {saturation}
+              </label>
+              <input
+                type="range"
+                min="0"
+                max="100"
+                id="s"
+                name="s"
+                value={saturation}
+                onChange={(s) => void setSaturation(parseInt(s.target.value))}
+                className="slider-s"
+              />
+              <label className="label w-fit gap-4 text-xs">
+                <h1 className="font-bold">Brightness</h1>
+                {lightness}
+              </label>
+              <input
+                type="range"
+                min="0"
+                max="100"
+                id="l"
+                name="l"
+                value={lightness}
+                onChange={(l) => void setLightness(parseInt(l.target.value))}
+                className="slider-l"
+              /> */}
+            {/* <Slider-Color-Picker /> */}
+            {/* <ChromePicker
                   color={color}
                   disableAlpha={true}
                   onChange={handleColorChange}
                   className="mt-2 h-full"
-                />
-                {/* <ColorSlider defaultValue={color} channel="red" />
+                /> */}
+            {/* <ColorSlider defaultValue={color} channel="red" />
                 <ColorSlider
                   channel={"hue"}
                   value={color}
@@ -343,8 +481,7 @@ const Editor: NextPage<{
                     void handleColorChange("#" + v.toHexInt().toString())
                   }
                 /> */}
-              </div>
-            </li>
+            {/* </div> */}
           </EditorButton>
           <EditorButton
             type={EditorFunctions.Undo}
@@ -376,5 +513,18 @@ const Editor: NextPage<{
     </>
   );
 };
+
+function hslToHex(h: number, s: number, l: number) {
+  l /= 100;
+  const a = (s * Math.min(l, 1 - l)) / 100;
+  const f = (n: number) => {
+    const k = (n + h / 30) % 12;
+    const color = l - a * Math.max(Math.min(k - 3, 9 - k, 1), -1);
+    return Math.round(255 * color)
+      .toString(16)
+      .padStart(2, "0"); // convert to Hex and prefix "0" if needed
+  };
+  return `#${f(0)}${f(8)}${f(4)}`;
+}
 
 export default Editor;

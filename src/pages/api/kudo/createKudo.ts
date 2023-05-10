@@ -6,6 +6,7 @@ import {
 import { getChannelById, openModal } from "~/server/services/slackService";
 import image from "~/../../imageForSlack.jpg";
 import fs from "fs";
+import { TRPCError } from "@trpc/server";
 
 interface body {
   text: string;
@@ -22,10 +23,16 @@ export default async function handler(
   res: NextApiResponse
 ) {
   const text: string = (req.body as body).text;
-  const image = await getFirstImageById().then((i) => i?.dataUrl);
-  // const base64 = await makeSlackKudo(text);
-
-  // fs.writeFileSync("./image.jpg", base64, "base64");
+  // const image = await getFirstImageById().then((i) => i?.dataUrl);
+  const base64 = await makeSlackKudo(text);
+  try {
+    fs.writeFileSync("./image.jpg", base64, "base64");
+  } catch (e) {
+    throw new TRPCError({
+      code: "FORBIDDEN",
+      message: "No template was found.",
+    });
+  }
 
   res.send({
     response_type: "in_channel",
@@ -41,7 +48,7 @@ export default async function handler(
         type: "section",
         accessory: {
           type: "image",
-          image_url: "test" /*fs.createReadStream("./image.jpg")*/,
+          image_url: fs.createReadStream("./image.jpg"),
           alt_text: "Kudo",
         },
       },

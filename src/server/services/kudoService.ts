@@ -106,7 +106,10 @@ export async function makeSlackKudo(message: string) {
   const template = await prisma.template
     .findMany({
       where: {
-        id: "clh975bvr0008pakay6cj1rdp",
+        color: {
+          not: "#ffffff",
+        },
+        //lokaal = clhakn1pv0008un18bjfbwr8j online = clhheejmu0002s5fufgxruzpy
         // id: {
         //   not: "clh8viadu0006ungku0w7hvs9",
         // },
@@ -115,7 +118,7 @@ export async function makeSlackKudo(message: string) {
     .then((t) => shuffle(t)[0]);
   if (!template) {
     throw new TRPCError({
-      code: "INTERNAL_SERVER_ERROR",
+      code: "NOT_FOUND",
       message: "No template was found.",
     });
   }

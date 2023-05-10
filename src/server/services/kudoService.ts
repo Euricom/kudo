@@ -107,6 +107,7 @@ export async function makeSlackKudo(message: string) {
     .findMany({
       where: {
         id: "clh975bvr0008pakay6cj1rdp",
+        //lokaal = clhakn1pv0008un18bjfbwr8j online = clh975bvr0008pakay6cj1rdp
         // id: {
         //   not: "clh8viadu0006ungku0w7hvs9",
         // },

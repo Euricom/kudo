@@ -87,3 +87,23 @@ export async function openModal(triggerId: string) {
 
   return response;
 }
+
+export async function writeFile(base64: string, channel: string) {
+  const url = "https://slack.com/api/files.upload";
+  const token = env.SLACK_APP_TOKEN;
+
+  const body = new URLSearchParams({
+    channel: channel,
+    file: base64,
+  });
+
+  const response = (await fetch(url, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/x-www-form-urlencoded",
+      Authorization: `Bearer ${token}`,
+    },
+    body: body,
+  }).then((res) => res.json())) as SlackResponse;
+  return response;
+}

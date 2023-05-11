@@ -1,14 +1,11 @@
-import { Template, type Kudo } from "@prisma/client";
-import { EditorFunctions, Shapes, SortPosibillities } from "~/types";
+import { type Template, type Kudo } from "@prisma/client";
+import { type Shapes, SortPosibillities } from "~/types";
 import { prisma } from "../db";
 import { findAllUsers } from "./userService";
 import { getAllSessions } from "./sessionService";
 import { TRPCError } from "@trpc/server";
-import Konva from "konva";
-import { Stage } from "konva/lib/Stage";
 
 import { createCanvas } from "canvas";
-import fs from "fs";
 
 export const findAllKudosSortedByUserId = async (
   userid: string,
@@ -132,11 +129,9 @@ export async function makeSlackKudo(message: string) {
   context.fillStyle = template.color;
   context.fillRect(0, 0, width, height);
   context.fillStyle;
-  console.log(shapes);
 
   shapes.forEach((s) => {
     if (s.type === 5) {
-      console.log(s);
       s.fill ? (context.fillStyle = s.fill) : "";
       context.beginPath();
       context.arc(
@@ -148,7 +143,6 @@ export async function makeSlackKudo(message: string) {
       );
       context.fill();
     } else if (s.type === 2) {
-      console.log(s);
       context.beginPath();
       context.lineWidth = s.thickness ?? 5;
       if (s.points) {
@@ -161,13 +155,10 @@ export async function makeSlackKudo(message: string) {
       }
       context.stroke();
     } else {
-      console.log(s);
-
       let text = s.text;
       if (s.id === "bodyText") {
         text = message;
       }
-
       s.fill ? (context.fillStyle = s.fill) : "";
       context.font =
         ((s.fontSize ?? 90) * ((s.scale?.y ?? 2) - 1)).toString() +
@@ -183,7 +174,6 @@ export async function makeSlackKudo(message: string) {
   });
 
   const buffer = canvas.toBuffer("image/jpeg");
-  // fs.writeFileSync("./image.jpg", buffer, 'base64');
   const base64String = btoa(String.fromCharCode(...new Uint8Array(buffer)));
 
   return base64String;

@@ -1,41 +1,5 @@
 import axios from "axios";
-import fs from "fs";
 import { env } from "~/env.mjs";
-
-interface SlackResponse {
-  ok: boolean;
-  channel: Channel;
-}
-
-interface Channel {
-  id: string;
-  name: string;
-  is_channel: boolean;
-  is_group: boolean;
-  is_im: boolean;
-  is_private: boolean;
-  user: string;
-}
-
-export async function getChannelById(id: string) {
-  const url = "https://slack.com/api/conversations.info";
-  const token = env.SLACK_APP_TOKEN;
-
-  const body = new URLSearchParams({
-    channel: id,
-  });
-
-  const response = (await fetch(url, {
-    method: "GET",
-    headers: {
-      "Content-Type": "application/x-www-form-urlencoded",
-      Authorization: `Bearer ${token}`,
-    },
-    body: body,
-  }).then((res) => res.json())) as SlackResponse;
-
-  return response.channel;
-}
 
 export async function openModal(triggerId: string) {
   const url = "https://slack.com/api/views.open";
@@ -87,44 +51,4 @@ export async function openModal(triggerId: string) {
   // }).then((res) => res.json())) as SlackResponse;
 
   return response;
-}
-
-export async function writeFile(base64: string, channel: string) {
-  console.log(channel);
-
-  const url = "https://slack.com/api/files.upload";
-  const token = env.SLACK_APP_TOKEN;
-
-  const file = dataURLtoFile(base64, "kudo");
-
-  const body = new URLSearchParams({
-    channel: channel,
-    file: "file",
-  });
-
-  const response = (await fetch(url, {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/x-www-form-urlencoded",
-      Authorization: `Bearer ${token}`,
-    },
-    body: body,
-  }).then((res) => res.json())) as SlackResponse;
-  console.log(response);
-
-  return response;
-}
-
-function dataURLtoFile(dataurl: string, filename: string) {
-  const arr = dataurl.split(",");
-  const mime = arr[0]?.match(/:(.*?);/)?.[1];
-  const bstr = atob(arr[1] ?? "");
-  let n = bstr.length;
-  const u8arr = new Uint8Array(n);
-
-  while (n--) {
-    u8arr[n] = bstr.charCodeAt(n);
-  }
-
-  return new File([u8arr], filename, { type: mime });
 }

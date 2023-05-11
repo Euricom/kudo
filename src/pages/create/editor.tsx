@@ -65,6 +65,9 @@ const Editor: NextPage<{
   const [saturation, setSaturation] = useState<number>(100);
   const [lightness, setLightness] = useState<number>(50);
   const [color, setColor] = useState<string>("#000000");
+  const [templateName, setTemplateName] = useState<string | undefined>(
+    undefined
+  );
   const { open } = useEyeDropper();
   const pickColor = async () => {
     if (width < 1024) {
@@ -231,13 +234,50 @@ const Editor: NextPage<{
       </NavigationBarContent>
       <UtilButtonsContent>
         {user?.role === UserRole.ADMIN && (
-          <button
-            className="btn-ghost btn-circle btn "
-            onClick={() => void setSelectedButton(EditorFunctions.Save)}
-            data-cy="SaveButton"
-          >
-            <FiSave size={20} />
-          </button>
+          <>
+            <label
+              htmlFor="save-modal"
+              className="btn-ghost btn-circle btn"
+              data-cy="SaveButton"
+            >
+              <FiSave size={20} />
+            </label>
+            <input type="checkbox" id="save-modal" className="modal-toggle" />
+            <div className="modal z-50">
+              <div className="modal-box">
+                <label
+                  htmlFor="save-modal"
+                  className="btn-sm btn-circle btn absolute right-2 top-2"
+                >
+                  ✕
+                </label>
+
+                <h3 className="text-center text-lg font-bold">
+                  Wow nice template!
+                </h3>
+                <br />
+                <label>Pick a name for your template</label>
+                <br />
+                <input
+                  type="text"
+                  placeholder="Pick a name"
+                  id="NameTemplate"
+                  value={templateName}
+                  onChange={(e) => void setTemplateName(e.target.value)}
+                  className="input-bordered input-primary input"
+                />
+                <div className="modal-action">
+                  <label
+                    htmlFor="save-modal"
+                    className="btn"
+                    onClick={() => void setSelectedButton(EditorFunctions.Save)}
+                  >
+                    <FiSave size={20} />
+                  </label>
+                </div>
+              </div>
+            </div>
+          </>
         )}
       </UtilButtonsContent>
       {/* <div className="w-full h-fit bg-secondary text-white p-5 text-center">
@@ -245,8 +285,8 @@ const Editor: NextPage<{
       </div> */}
 
       {/* Main */}
-      <main className="relative z-50 flex h-full flex-col items-center justify-center overflow-x-hidden">
-        <div className="z-40 mx-auto flex w-full justify-center gap-2 p-5 lg:w-1/2">
+      <main className="relative z-40 flex h-full flex-col items-center justify-center overflow-x-hidden">
+        <div className="z-30 mx-auto flex w-full justify-center gap-2 p-5 lg:w-1/2">
           <EditorButton
             type={EditorFunctions.Text}
             icon={<BiText size={20} />}
@@ -502,6 +542,7 @@ const Editor: NextPage<{
           template={template}
           thickness={thickness}
           color={color}
+          templateName={templateName}
           fontFamily={font}
           setFunction={setSelectedButton}
           setStage={setStage}

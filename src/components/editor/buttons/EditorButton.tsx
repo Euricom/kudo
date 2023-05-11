@@ -1,16 +1,17 @@
 import { type EditorButtonProps } from "~/types";
 
-function EditorButton({
+const EditorButton = ({
   type,
   children,
+  ref,
   icon,
   bgColor,
   onClick,
-}: EditorButtonProps) {
+}: EditorButtonProps) => {
   return (
     <>
       <div className="dropdown hidden lg:block">
-        <label tabIndex={0} className="">
+        <label className="">
           <button
             onClick={onClick}
             className={"btn-secondary btn-circle btn "}
@@ -23,12 +24,12 @@ function EditorButton({
         </label>
         {children && (
           <>
-            <ul
-              tabIndex={0}
+            <dialog
+              ref={ref}
               className="dropdown-content rounded-box absolute hidden bg-base-100 p-2 shadow md:block"
             >
               {children}
-            </ul>
+            </dialog>
           </>
         )}
       </div>
@@ -57,6 +58,6 @@ function EditorButton({
       )}
     </>
   );
-}
+};
 
 export default EditorButton;

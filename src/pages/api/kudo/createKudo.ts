@@ -10,6 +10,12 @@ import {
 } from "~/server/services/slackService";
 import image from "~/../../imageForSlack.jpg";
 import { TRPCError } from "@trpc/server";
+import { env } from "~/env.mjs";
+import {
+  WebClient,
+  ChatPostMessageResponse,
+  FilesUploadResponse,
+} from "@slack/web-api";
 
 interface body {
   text: string;
@@ -28,11 +34,23 @@ export default async function handler(
   const text: string = (req.body as body).text;
   const channel: string = (req.body as body).channel_id;
   // const image = await getFirstImageById().then((i) => i?.dataUrl);
-  const buffer = await makeSlackKudo(text);
+  const base64 = await makeSlackKudo(text);
+
   // console.log(await writeFile(base64, channel));
 
-  res.setHeader("Content-Type", "image/jpeg");
-  res.send(buffer);
+  // res.setHeader("Content-Type", "image/jpeg");
+  // res.send(buffer);
+  const slackClient: WebClient = new WebClient(env.SLACK_APP_TOKEN);
+
+  const uploadResponse: FilesUploadResponse = await slackClient.files.upload({
+    channels: channel,
+    file: Buffer.from(base64, "base64"),
+    filename: "kudo.jpg",
+    title: "Mooie kudo jonge",
+    initial_comment: text,
+  });
+
+  res.status(200).json({ success: true, message: "Kudo sent successfully" });
 
   // try {
   //   fs.writeFileSync("./image.jpg", base64, "base64");

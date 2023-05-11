@@ -184,9 +184,9 @@ export async function makeSlackKudo(message: string) {
 
   const buffer = canvas.toBuffer("image/jpeg");
   // fs.writeFileSync("./image.jpg", buffer, 'base64');
-  // const base64String = btoa(String.fromCharCode(...new Uint8Array(buffer)));
+  const base64String = btoa(String.fromCharCode(...new Uint8Array(buffer)));
 
-  return buffer;
+  return base64String;
 }
 
 const shuffle = (array: Template[]) => {

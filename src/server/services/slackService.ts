@@ -89,6 +89,8 @@ export async function openModal(triggerId: string) {
 }
 
 export async function writeFile(base64: string, channel: string) {
+  console.log(channel);
+
   const url = "https://slack.com/api/files.upload";
   const token = env.SLACK_APP_TOKEN;
 

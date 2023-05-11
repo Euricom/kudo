@@ -29,8 +29,8 @@ export default async function handler(
   const channel: string = (req.body as body).channel_id;
   // const image = await getFirstImageById().then((i) => i?.dataUrl);
   const base64 = await makeSlackKudo(text);
-  console.log(base64);
-  await writeFile(base64, channel);
+  console.log(await writeFile(base64, channel));
+
   res.send("done");
 
   // try {

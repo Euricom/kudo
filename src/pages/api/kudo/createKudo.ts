@@ -42,15 +42,15 @@ export default async function handler(
   // res.send(buffer);
   const slackClient: WebClient = new WebClient(env.SLACK_APP_TOKEN);
 
-  const uploadResponse: FilesUploadResponse = await slackClient.files.upload({
-    channels: channel,
-    file: Buffer.from(base64, "base64"),
-    filename: "kudo.jpg",
-    title: "Mooie kudo jonge",
-    initial_comment: text,
-  });
+  // const uploadResponse: FilesUploadResponse = await slackClient.files.upload({
+  //   channels: channel,
+  //   file: Buffer.from(base64, "base64"),
+  //   filename: "kudo.jpg",
+  //   title: "Mooie kudo jonge",
+  //   initial_comment: text,
+  // });
 
-  res.status(200).json({ success: true, message: "Kudo sent successfully" });
+  // res.status(200).json({ success: true, message: "Kudo sent successfully" });
 
   // try {
   //   fs.writeFileSync("./image.jpg", base64, "base64");
@@ -69,74 +69,64 @@ export default async function handler(
   //     message: "No template was found.",
   //   });
   // }
-  // res.send({
-  //   response_type: "in_channel",
-  //   blocks: [
-  //     {
-  //       type: "header",
-  //       text: {
-  //         type: "plain_text",
-  //         text: "Mooie kudo jonge",
-  //       },
-  //     },
-  //     {
-  //       type: "section",
-  //       accessory: {
-  //         type: "image",
-  //         image_url: stream ?? "test",
-  //         alt_text: "Kudo",
-  //       },
-  //     },
-  //   ],
-  // }),
-  // const channel = await getChannelById(body.channel_id);
-  // const response = await openModal(body.trigger_id).catch((e) =>
-  //   console.log(e)
-  // );
-  // console.log(response);
+  res.send({
+    response_type: "in_channel",
+    blocks: [
+      {
+        type: "file",
+        external_id: "test",
+        source: Buffer.from(base64, "base64"),
+      },
+    ],
+  }),
+    // const channel = await getChannelById(body.channel_id);
+    // const response = await openModal(body.trigger_id).catch((e) =>
+    //   console.log(e)
+    // );
+    // console.log(response);
 
-  // const text =
-  //   "is het im? " +
-  //   channel.is_im.toString() +
-  //   ", Name: " +
-  //   channel.name +
-  //   ", user=" +
-  //   channel.user +
-  //   "channelId=" +
-  //   body.channel_id +
-  //   ", chanelName=" +
-  //   body.channel_name +
-  //   ", userId=" +
-  //   body.user_id +
-  //   ", userName=" +
-  //   body.user_name;
-  // const image = await getFirstImageById().then((i) => i?.dataUrl);
+    // const text =
+    //   "is het im? " +
+    //   channel.is_im.toString() +
+    //   ", Name: " +
+    //   channel.name +
+    //   ", user=" +
+    //   channel.user +
+    //   "channelId=" +
+    //   body.channel_id +
+    //   ", chanelName=" +
+    //   body.channel_name +
+    //   ", userId=" +
+    //   body.user_id +
+    //   ", userName=" +
+    //   body.user_name;
+    // const image = await getFirstImageById().then((i) => i?.dataUrl);
 
-  // res.send({
-  //   type: "modal",
-  //   callback_id: "modal-identifier",
-  //   title: {
-  //     type: "plain_text",
-  //     text: "Just a modal",
-  //   },
-  //   blocks: [
-  //     {
-  //       type: "section",
-  //       block_id: "section-identifier",
-  //       text: {
-  //         type: "mrkdwn",
-  //         text: "*Welcome* to ~my~ Block Kit _modal_!",
-  //       },
-  //       accessory: {
-  //         type: "button",
-  //         text: {
-  //           type: "plain_text",
-  //           text: "Just a button",
-  //         },
-  //         action_id: "button-identifier",
-  //       },
-  //     },
-  //   ],
-  // });
-  res.end();
+    // res.send({
+    //   type: "modal",
+    //   callback_id: "modal-identifier",
+    //   title: {
+    //     type: "plain_text",
+    //     text: "Just a modal",
+    //   },
+    //   blocks: [
+    //     {
+    //       type: "section",
+    //       block_id: "section-identifier",
+    //       text: {
+    //         type: "mrkdwn",
+    //         text: "*Welcome* to ~my~ Block Kit _modal_!",
+    //       },
+    //       accessory: {
+    //         type: "button",
+    //         text: {
+    //           type: "plain_text",
+    //           text: "Just a button",
+    //         },
+    //         action_id: "button-identifier",
+    //       },
+    //     },
+    //   ],
+    // });
+    res.end();
 }

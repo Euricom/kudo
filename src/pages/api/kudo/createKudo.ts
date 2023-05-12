@@ -3,7 +3,6 @@ import { makeSlackKudo } from "~/server/services/kudoService";
 // import { openModal } from "~/server/services/slackService";
 import { env } from "~/env.mjs";
 import { WebClient, type FilesUploadResponse } from "@slack/web-api";
-import { openModal } from "~/server/services/slackService";
 
 interface body {
   text: string;
@@ -19,6 +18,7 @@ export default async function handler(
   req: NextApiRequest,
   res: NextApiResponse
 ) {
+  res.status(200);
   const text: string = (req.body as body).text;
   const channel: string = (req.body as body).channel_id;
   const trigger_id: string = (req.body as body).trigger_id;
@@ -57,7 +57,12 @@ export default async function handler(
       );
     res.end();
   }
-
+  //Als bot geen lid is van channel, join de channel.
+  if (!channelInfoResponse?.channel?.is_member) {
+    await slackClient.conversations.join({
+      channel: channel,
+    });
+  }
   await slackClient.views.open({
     trigger_id: trigger_id,
     view: {
@@ -85,29 +90,40 @@ export default async function handler(
           },
         },
       ],
+      submit: {
+        type: "plain_text",
+        text: "Send",
+      },
     },
   });
-  // await openModal(trigger_id);
-
-  const base64 = await makeSlackKudo(text);
-
-  //Als bot geen lid is van channel, join de channel.
-  if (!channelInfoResponse?.channel?.is_member) {
-    await slackClient.conversations.join({
-      channel: channel,
-    });
-  }
-
-  try {
-    const uploadResponse: FilesUploadResponse = await slackClient.files.upload({
-      channels: channel,
-      file: Buffer.from(base64, "base64"),
-      filename: "kudo.jpg",
-      title: "Mooie kudo jonge",
-    });
-    console.log(uploadResponse);
-  } catch (e) {
-    console.log(e);
-  }
   res.end();
 }
+
+// type Payload = {
+//   view: {
+//     state: {
+//       kudotext: {
+//         value: string
+//       }
+//     },
+//     private_metadata: string,
+//   },
+// }
+
+// async function handleViewSubmission(payload: Payload) {
+//   const { view } = payload;
+//   const kudoText = view.state.kudotext.value;
+//   const channelId = view.private_metadata;
+
+//   // Generate the kudo image
+//   const base64 = await makeSlackKudo(kudoText);
+
+//   // Upload the image to Slack
+//   const slackClient = new WebClient(env.SLACK_APP_TOKEN);
+//   await slackClient.files.upload({
+//     channels: channelId,
+//     file: Buffer.from(base64, "base64"),
+//     filename: "kudo.jpg",
+//     title: "Kudo",
+//   });
+// }

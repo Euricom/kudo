@@ -57,7 +57,6 @@ const Editor: NextPage<{
   const router = useRouter();
   const width = useWindowDimensions()?.width;
   const user = useSession().data?.user;
-  const dialogRef = useRef<HTMLDialogElement>();
   //UseStates
   const [selectedButton, setSelectedButton] = useState<EditorFunctions>();
   const [stage, setStage] = useState<Konva.Stage>();
@@ -144,9 +143,7 @@ const Editor: NextPage<{
   }
 
   function changeFont(font: string) {
-    if (width < 1024) {
-      document.getElementById("Modal-" + EditorFunctions.Text)?.click();
-    }
+    document.getElementById("Modal-" + EditorFunctions.Text)?.click();
     setFont(font);
   }
 
@@ -159,9 +156,7 @@ const Editor: NextPage<{
   };
 
   function onClickEmoji(emoji: EmojiObject) {
-    if (width < 1024) {
-      document.getElementById("Modal-" + EditorFunctions.PreSticker)?.click();
-    }
+    document.getElementById("Modal-" + EditorFunctions.PreSticker)?.click();
     setSelectedEmoji(emoji);
     setSelectedButton(EditorFunctions.PostSticker);
   }
@@ -255,7 +250,6 @@ const Editor: NextPage<{
           <EditorButton
             type={EditorFunctions.Text}
             icon={<BiText size={20} />}
-            ref={dialogRef}
             onClick={() => setSelectedButton(EditorFunctions.Text)}
             bgColor={selectedButton === EditorFunctions.Text ? color : ""}
           >
@@ -281,7 +275,6 @@ const Editor: NextPage<{
                 <BiPencil size={20} />
               )
             }
-            ref={dialogRef}
             onClick={() =>
               setSelectedButton(
                 selectedButton == EditorFunctions.Erase
@@ -335,7 +328,6 @@ const Editor: NextPage<{
           <EditorButton
             type={EditorFunctions.PreSticker}
             icon={<GrEmoji size={20} />}
-            ref={dialogRef}
             onClick={handleEmoji}
             bgColor={
               selectedButton == EditorFunctions.PreSticker ? "#00ff00" : ""
@@ -346,7 +338,6 @@ const Editor: NextPage<{
           <EditorButton
             type={EditorFunctions.Color}
             icon={<BiPalette size={20} />}
-            ref={dialogRef}
             onClick={() => setSelectedButton(EditorFunctions.Color)}
             bgColor={color}
           >
@@ -415,14 +406,12 @@ const Editor: NextPage<{
           <EditorButton
             type={EditorFunctions.Undo}
             icon={<BiUndo size={20} />}
-            ref={dialogRef}
             onClick={() => setSelectedButton(EditorFunctions.Undo)}
             bgColor={selectedButton == EditorFunctions.Undo ? "#00ff00" : ""}
           />
           <EditorButton
             type={EditorFunctions.Clear}
             icon={<BiTrash size={20} />}
-            ref={dialogRef}
             onClick={() => setSelectedButton(EditorFunctions.Clear)}
             bgColor={selectedButton == EditorFunctions.Clear ? "#00ff00" : ""}
           />

@@ -278,7 +278,6 @@ export type EditorButtonProps = {
   children?: React.ReactNode;
   type: string;
   icon: React.ReactNode;
-  ref: MutableRefObject<HTMLDialogElement | undefined>;
   onClick: () => void;
   bgColor?: string;
 };

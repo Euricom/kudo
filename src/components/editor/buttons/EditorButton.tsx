@@ -3,39 +3,15 @@ import { type EditorButtonProps } from "~/types";
 const EditorButton = ({
   type,
   children,
-  ref,
   icon,
   bgColor,
   onClick,
 }: EditorButtonProps) => {
   return (
     <>
-      <div className="dropdown hidden lg:block">
-        <label className="">
-          <button
-            onClick={onClick}
-            className={"btn-secondary btn-circle btn "}
-            style={{
-              backgroundColor: bgColor ?? "transparent",
-            }}
-          >
-            {icon}
-          </button>
-        </label>
-        {children && (
-          <>
-            <dialog
-              ref={ref}
-              className="dropdown-content rounded-box absolute hidden bg-base-100 p-2 shadow md:block"
-            >
-              {children}
-            </dialog>
-          </>
-        )}
-      </div>
       <label
         htmlFor={`Modal-${type}`}
-        className={"btn-secondary btn-circle btn lg:hidden"}
+        className={"btn-secondary btn-circle btn"}
         style={{
           backgroundColor: bgColor ?? "transparent",
         }}

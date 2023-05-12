@@ -1,37 +1,56 @@
 import { WebClient } from "@slack/web-api";
 import { makeSlackKudo } from "~/server/services/kudoService";
 import { env } from "~/env.mjs";
-import { NextApiRequest, NextApiResponse } from "next";
+import { type NextApiRequest, type NextApiResponse } from "next";
 
 interface body {
-  event: {
-    view: {
-      state: {
-        values: string;
-      };
-    };
+  type: string;
+  view: {
+    id: string;
     type: string;
     private_metadata: string;
+    callback_id: string;
+    state: {
+      values: {
+        multiline: {
+          mlvalue: {
+            type: string;
+            value: string;
+          };
+        };
+        target_channel: {
+          target_select: {
+            type: string;
+            selected_conversation: string;
+          };
+        };
+      };
+    };
+    hash: string;
+    response_urls: [
+      {
+        block_id: string;
+        action_id: string;
+        channel_id: string;
+        response_url: string;
+      }
+    ];
   };
-  challenge: string;
 }
 
 export default async function handler(
   req: NextApiRequest,
   res: NextApiResponse
 ) {
+  console.log("erin");
+
   if (req.method === "POST") {
     const payload = req.body as body;
-    const eventType = payload?.event?.type;
-    const viewSubmission = payload?.event?.type === "view_submission";
+    const viewSubmission = payload?.type === "view_submission";
 
-    if (eventType === "url_verification") {
-      // Respond to the URL verification challenge during app installation
-      const challenge = payload.challenge;
-      res.status(200).send(challenge);
-    } else if (viewSubmission) {
+    if (viewSubmission) {
       // Handle the view_submission event
-      const submission = payload.event.view.state.values;
+      const submission = payload.view.state.values.multiline.mlvalue.value;
       // Extract the necessary data from the submission payload
       // and perform any required processing
       // ...
@@ -45,7 +64,9 @@ export default async function handler(
       // Send the file to the appropriate channel
       try {
         await slackClient.files.upload({
-          channels: payload.event.private_metadata,
+          channels:
+            payload.view.state.values.target_channel.target_select
+              .selected_conversation,
           file: Buffer.from(base64, "base64"),
           filename: "kudo.jpg",
           title: "Mooie kudo jonge",

@@ -60,16 +60,13 @@ const Editor: NextPage<{
   //UseStates
   const [selectedButton, setSelectedButton] = useState<EditorFunctions>();
   const [stage, setStage] = useState<Konva.Stage>();
-  const [emojiDropdownState, setEmojiDropdownState] = useState<boolean>(false);
   const [hue, setHue] = useState<number>(0);
   const [saturation, setSaturation] = useState<number>(100);
   const [lightness, setLightness] = useState<number>(50);
   const [color, setColor] = useState<string>("#000000");
   const { open } = useEyeDropper();
   const pickColor = async () => {
-    if (width < 1024) {
-      document.getElementById("Modal-" + EditorFunctions.Color)?.click();
-    }
+    document.getElementById("Modal-" + EditorFunctions.Color)?.click();
     await new Promise((res) => setTimeout(res, 100));
     open()
       .then((color) => {
@@ -143,9 +140,13 @@ const Editor: NextPage<{
     return <LoadingBar />;
   }
 
+  function changeFont(font: string) {
+    document.getElementById("Modal-" + EditorFunctions.Text)?.click();
+    setFont(font);
+  }
+
   const handleEmoji = () => {
     try {
-      setEmojiDropdownState(!emojiDropdownState);
       setSelectedButton(EditorFunctions.PreSticker);
     } catch (e) {
       toast.error((e as Error).message);
@@ -153,12 +154,9 @@ const Editor: NextPage<{
   };
 
   function onClickEmoji(emoji: EmojiObject) {
-    if (width < 1024) {
-      document.getElementById("Modal-" + EditorFunctions.PreSticker)?.click();
-    }
+    document.getElementById("Modal-" + EditorFunctions.PreSticker)?.click();
     setSelectedEmoji(emoji);
     setSelectedButton(EditorFunctions.PostSticker);
-    setEmojiDropdownState(false);
   }
 
   const submit = async () => {
@@ -257,7 +255,7 @@ const Editor: NextPage<{
             <select
               className="select-bordered select min-w-min max-w-xs"
               value={font}
-              onChange={(e) => setFont(e.target.value)}
+              onChange={(e) => changeFont(e.target.value)}
             >
               {Fonts.sort((a, b) => (b < a ? 1 : -1)).map((f) => (
                 <option style={{ fontFamily: f }} key={f}>
@@ -304,14 +302,14 @@ const Editor: NextPage<{
             </div>
             <div className="mt-3 flex align-middle">
               <div className="flex flex-col justify-around">
-                <BiPencil
-                  size={30}
-                  onClick={() => setSelectedButton(EditorFunctions.Draw)}
-                />
-                <BiEraser
-                  size={30}
+                <button onClick={() => setSelectedButton(EditorFunctions.Draw)}>
+                  <BiPencil size={30} />
+                </button>
+                <button
                   onClick={() => setSelectedButton(EditorFunctions.Erase)}
-                />
+                >
+                  <BiEraser size={30} />
+                </button>
               </div>
               <li className="pointer-events-none flex h-full flex-grow items-center justify-center p-2">
                 {selectedButton == EditorFunctions.Erase ? (
@@ -402,86 +400,6 @@ const Editor: NextPage<{
                 </button>
               </div>
             </div>
-            {/* <div className="slider-container flex w-60 flex-col gap-4 align-middle">
-              <label className="label w-fit gap-4 text-xs">
-                <h1 className="font-bold">Color</h1>
-                {hue}
-              </label>
-              <input
-                type="range"
-                min="0"
-                id="h"
-                name="h"
-                max="360"
-                value={hue}
-                onChange={(h) => void setHue(parseInt(h.target.value))}
-                className="slider-h"
-              />
-              <label className="label w-fit gap-4 text-xs">
-                <h1 className="font-bold">Saturation</h1>
-                {saturation}
-              </label>
-              <input
-                type="range"
-                min="0"
-                max="100"
-                id="s"
-                name="s"
-                value={saturation}
-                onChange={(s) => void setSaturation(parseInt(s.target.value))}
-                className="slider-s"
-              />
-              <label className="label w-fit gap-4 text-xs">
-                <h1 className="font-bold">Brightness</h1>
-                {lightness}
-              </label>
-              <input
-                type="range"
-                min="0"
-                max="100"
-                id="l"
-                name="l"
-                value={lightness}
-                onChange={(l) => void setLightness(parseInt(l.target.value))}
-                className="slider-l"
-              /> */}
-            {/* <Slider-Color-Picker /> */}
-            {/* <ChromePicker
-                  color={color}
-                  disableAlpha={true}
-                  onChange={handleColorChange}
-                  className="mt-2 h-full"
-                /> */}
-            {/* <ColorSlider defaultValue={color} channel="red" />
-                <ColorSlider
-                  channel={"hue"}
-                  value={color}
-                  onChange={(v) =>
-                    void handleColorChange("#" + v.toHexInt().toString())
-                  }
-                />
-                <ColorSlider
-                  channel={"saturation"}
-                  value={color}
-                  onChange={(v) =>
-                    void handleColorChange("#" + v.toHexInt().toString())
-                  }
-                />
-                <ColorSlider
-                  channel={"lightness"}
-                  value={color}
-                  onChange={(v) =>
-                    void handleColorChange("#" + v.toHexInt().toString())
-                  }
-                />
-                <ColorSlider
-                  channel="alpha"
-                  value={color}
-                  onChange={(v) =>
-                    void handleColorChange("#" + v.toHexInt().toString())
-                  }
-                /> */}
-            {/* </div> */}
           </EditorButton>
           <EditorButton
             type={EditorFunctions.Undo}

@@ -102,18 +102,18 @@ export default async function handler(
             options: names,
           },
         },
-        {
-          type: "section",
-          block_id: "section-identifier",
-          accessory: {
-            type: "button",
-            text: {
-              type: "plain_text",
-              text: "Next",
-            },
-            action_id: "button-identifier",
-          },
-        },
+        // {
+        //   type: "section",
+        //   block_id: "section-identifier",
+        //   accessory: {
+        //     type: "button",
+        //     text: {
+        //       type: "plain_text",
+        //       text: "Next",
+        //     },
+        //     action_id: "button-identifier",
+        //   },
+        // },
       ],
       submit: {
         type: "plain_text",
@@ -121,52 +121,52 @@ export default async function handler(
       },
     },
   });
-  await slackClient.views.update({
-    trigger_id: trigger_id,
-    view: {
-      type: "modal",
-      callback_id: "modal-identifier",
-      title: {
-        type: "plain_text",
-        text: "Make your kudo!",
-      },
-      blocks: [
-        {
-          type: "section",
-          block_id: "section678",
-          text: {
-            type: "mrkdwn",
-            text: "Pick a template",
-          },
-          accessory: {
-            action_id: "templateName",
-            type: "static_select",
-            placeholder: {
-              type: "plain_text",
-              text: "Select an item",
-            },
-            options: names,
-          },
-        },
-        {
-          type: "section",
-          block_id: "section-identifier",
-          accessory: {
-            type: "button",
-            text: {
-              type: "plain_text",
-              text: "Next",
-            },
-            action_id: "button-identifier",
-          },
-        },
-      ],
-      submit: {
-        type: "plain_text",
-        text: "Send",
-      },
-    },
-  });
+  // await slackClient.views.update({
+  //   trigger_id: trigger_id,
+  //   view: {
+  //     type: "modal",
+  //     callback_id: "modal-identifier",
+  //     title: {
+  //       type: "plain_text",
+  //       text: "Make your kudo!",
+  //     },
+  //     blocks: [
+  //       {
+  //         type: "section",
+  //         block_id: "section678",
+  //         text: {
+  //           type: "mrkdwn",
+  //           text: "Pick a template",
+  //         },
+  //         accessory: {
+  //           action_id: "templateName",
+  //           type: "static_select",
+  //           placeholder: {
+  //             type: "plain_text",
+  //             text: "Select an item",
+  //           },
+  //           options: names,
+  //         },
+  //       },
+  //       {
+  //         type: "section",
+  //         block_id: "section-identifier",
+  //         accessory: {
+  //           type: "button",
+  //           text: {
+  //             type: "plain_text",
+  //             text: "Next",
+  //           },
+  //           action_id: "button-identifier",
+  //         },
+  //       },
+  //     ],
+  //     submit: {
+  //       type: "plain_text",
+  //       text: "Send",
+  //     },
+  //   },
+  // });
   res.end();
 }
 

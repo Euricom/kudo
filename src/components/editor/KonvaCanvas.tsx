@@ -84,13 +84,13 @@ const KonvaCanvas = ({
   );
 
   const undo = useCallback(() => {
-    console.log(history);
     const lastShape = history.shift();
     const shapeToBe = history.find((s) => s.id === lastShape?.id);
     const shape = shapes.find((s) => s.id === lastShape?.id);
     if (!shape) {
       if (lastShape) {
-        setShapes((s) => [...s, lastShape]);
+        shapes.splice(lastShape.index ?? -1, 0, lastShape);
+        setShapes(shapes);
       }
       setFunction(EditorFunctions.None);
       return;
@@ -117,7 +117,7 @@ const KonvaCanvas = ({
     }
     setShapes((s) => s.filter((s) => s.id !== id));
 
-    history.unshift(shape);
+    history.unshift({ ...shape, index: shapes.indexOf(shape) });
     selectShape(null);
     setFunction(EditorFunctions.None);
   };

@@ -41,22 +41,37 @@ const KonvaCanvas = ({
   const layerRef = useRef<Konva.Layer>() as MutableRefObject<Konva.Layer>;
   const backgroundRef = useRef<Konva.Layer>() as MutableRefObject<Konva.Layer>;
   const dialogRef = useRef<HTMLDialogElement>(null);
-  const [shapes, setShapes] = useState<Shapes[]>(
-    ([...template.content] as unknown as Shapes[]) ?? []
-  );
-  const [selectedId, selectShape] = useState<string | null>(null);
-  const { current: history } = useRef<Shapes[]>(
-    ([...template.content] as unknown as Shapes[]).reverse() ?? []
-  );
+  const isDrawing = useRef(false);
   const user = useSession().data?.user;
-
   const { mutateAsync: createTemplate } =
     api.templates.createTemplate.useMutation();
   const { mutateAsync: createImage } = api.kudos.createKudoImage.useMutation();
+  const senderNode = anonymous
+    ? null
+    : {
+        id: "Sender",
+        type: CanvasShapes.Text,
+        x: 0,
+        y: 460,
+        text: `Sent by ${user?.name ?? ""}`,
+        fill: "#000",
+        fontFamily: "Arial",
+        fontSize: 50,
+        draggable: true,
+      };
+  const [shapes, setShapes] = useState<Shapes[]>(
+    ([...template.content, senderNode].filter(
+      Boolean
+    ) as unknown as Shapes[]) ?? []
+  );
+  const [selectedId, selectShape] = useState<string | null>(null);
+  const { current: history } = useRef<Shapes[]>(
+    (
+      [...template.content, senderNode].filter(Boolean) as unknown as Shapes[]
+    ).reverse() ?? []
+  );
 
   const [line, setLine] = useState<Shapes[]>([]);
-
-  const isDrawing = useRef(false);
 
   const dimensions = useDimensions(containerRef);
   const stageDimensions = useMemo(
@@ -279,37 +294,6 @@ const KonvaCanvas = ({
         break;
     }
   }, [editorFunction, undo, saveTemplate, addSticker, setFunction]);
-
-  useEffect(() => {
-    if (!template || !stageDimensions.height || anonymous) {
-      return;
-    }
-    const shape = shapes.find((s) => s.id === "Sender");
-    if (!shape) {
-      const senderNode = {
-        id: "Sender",
-        type: CanvasShapes.Text,
-        x: 0,
-        y: 460,
-        text: `Sent by ${user?.name ?? ""}`,
-        fill: color,
-        fontFamily: fontFamily ?? "Arial",
-        fontSize: (stageDimensions?.height ?? 0) * 0.05,
-        draggable: true,
-      };
-      history.unshift(senderNode);
-      setShapes((s) => [...s, senderNode]);
-    }
-  }, [
-    template,
-    stageDimensions,
-    anonymous,
-    user?.name,
-    color,
-    fontFamily,
-    history,
-    shapes,
-  ]);
 
   return (
     <>

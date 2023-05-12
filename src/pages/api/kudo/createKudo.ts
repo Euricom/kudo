@@ -1,8 +1,12 @@
 import { type NextApiRequest, type NextApiResponse } from "next";
-import { makeSlackKudo } from "~/server/services/kudoService";
+import { getAllTemplates, makeSlackKudo } from "~/server/services/kudoService";
 // import { openModal } from "~/server/services/slackService";
 import { env } from "~/env.mjs";
-import { WebClient, type FilesUploadResponse } from "@slack/web-api";
+import {
+  WebClient,
+  type FilesUploadResponse,
+  PlainTextOption,
+} from "@slack/web-api";
 
 interface body {
   text: string;
@@ -63,6 +67,14 @@ export default async function handler(
       channel: channel,
     });
   }
+  const templates = getAllTemplates();
+  const names: PlainTextOption[] = (await templates).map((t) => {
+    return {
+      text: { type: "plain_text", text: t.name },
+      value: t.name,
+    };
+  });
+
   await slackClient.views.open({
     trigger_id: trigger_id,
     view: {
@@ -70,23 +82,24 @@ export default async function handler(
       callback_id: "modal-identifier",
       title: {
         type: "plain_text",
-        text: "Just a modal",
+        text: "Make your kudo!",
       },
       blocks: [
         {
           type: "section",
-          block_id: "section-identifier",
+          block_id: "section678",
           text: {
             type: "mrkdwn",
-            text: "*Welcome* to ~my~ Block Kit _modal_!",
+            text: "Pick a template",
           },
           accessory: {
-            type: "button",
-            text: {
+            action_id: "templateName",
+            type: "multi_static_select",
+            placeholder: {
               type: "plain_text",
-              text: "Just a button",
+              text: "Select an item",
             },
-            action_id: "button-identifier",
+            options: names,
           },
         },
       ],

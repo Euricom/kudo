@@ -66,9 +66,7 @@ const Editor: NextPage<{
   const [color, setColor] = useState<string>("#000000");
   const { open } = useEyeDropper();
   const pickColor = async () => {
-    if (width < 1024) {
-      document.getElementById("Modal-" + EditorFunctions.Color)?.click();
-    }
+    document.getElementById("Modal-" + EditorFunctions.Color)?.click();
     await new Promise((res) => setTimeout(res, 100));
     open()
       .then((color) => {

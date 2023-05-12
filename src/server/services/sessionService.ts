@@ -62,7 +62,7 @@ export async function getSessionsBySpeaker(id: string) {
   return await fetch(`${env.SESSION_URL}`)
     .then((result) => result.json())
     .then((result: SessionArray) =>
-      result.sessions.filter((r: Session) => r.speakerId === id)
+      result.sessions.filter((r: Session) => r.speakerId.includes(id))
     );
 }
 

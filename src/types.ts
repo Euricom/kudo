@@ -50,8 +50,7 @@ export type Session = {
   id: string;
   title: string;
   date: string;
-  speakerId: string;
-  speaker?: User;
+  speakerId: string[];
 };
 
 export type SessionArray = {

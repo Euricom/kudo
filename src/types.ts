@@ -168,6 +168,7 @@ export type KonvaCanvasProps = {
 export type Shapes = {
   type: CanvasShapes;
   id: string;
+  index?: number;
   x?: number;
   y?: number;
   scale?: Vector2d;

@@ -28,11 +28,11 @@ export default async function handler(
   //Direct message werkt niet
 
   if (channel.startsWith("D")) {
-    res.status(200).json({
-      success: true,
-      message:
-        "Something went wrong, you can not send kudos in a private message, Sorry!",
-    });
+    res
+      .status(200)
+      .json(
+        "Something went wrong, you can not send kudos in a private message, Sorry!"
+      );
   }
 
   //info over channel opvragen
@@ -42,29 +42,26 @@ export default async function handler(
       channel: channel,
     });
   } catch (e) {
-    res.status(200).json({
-      success: true,
-      message: "Something went wrong, this channel was not found.",
-    });
+    res.status(200).json("Something went wrong, this channel was not found.");
     res.end();
   }
 
   if (!channelInfoResponse?.ok) {
-    res.status(200).json({
-      success: true,
-      message: "Something went wrong, this channel was not found.",
-    });
+    res.status(200).json("Something went wrong, this channel was not found.");
     res.end();
   } else if (!channelInfoResponse.channel?.is_channel) {
-    res.status(200).json({
-      success: true,
-      message:
-        "Something went wrong, you can not send kudos in a private message, Sorry!",
-    });
+    res
+      .status(200)
+      .json(
+        "Something went wrong, you can not send kudos in a private message, Sorry!"
+      );
     res.end();
   }
-  await openModal(trigger_id);
-  res.status(200).json({ success: true });
+
+  // await slackClient.views.open({
+
+  // })
+  // await openModal(trigger_id);
 
   const base64 = await makeSlackKudo(text);
 

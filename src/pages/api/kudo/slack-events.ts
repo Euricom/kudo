@@ -44,6 +44,8 @@ export default async function handler(
 ) {
   console.log("erin");
 
+  res.status(200);
+
   if (req.method === "POST") {
     const payload = req.body as body;
     const viewSubmission = payload?.type === "view_submission";

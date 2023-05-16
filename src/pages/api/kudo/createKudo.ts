@@ -31,6 +31,21 @@ export default async function handler(
 
   const slackClient: WebClient = new WebClient(env.SLACK_APP_TOKEN);
 
+  const base64 = await makeSlackKudo(text);
+
+  // Initialize the Slack Web Client
+
+  // Send the file to the appropriate channel
+  try {
+    await slackClient.files.upload({
+      channels: "C054FAZS2FN",
+      file: Buffer.from(base64, "base64"),
+      filename: "kudo.jpg",
+      title: "Mooie kudo jonge",
+    });
+  } catch (error) {
+    console.error("Error uploading file to Slack:", error);
+  }
   //Direct message werkt niet
   console.log(channel);
 

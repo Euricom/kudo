@@ -4,8 +4,9 @@ import { prisma } from "../db";
 import { findAllUsers } from "./userService";
 import { getAllSessions } from "./sessionService";
 import { TRPCError } from "@trpc/server";
-
+import img from "~/../public/png/1f599-1f3fe.png";
 import { createCanvas } from "canvas";
+import { Image } from "canvas";
 
 export const findAllKudosSortedByUserId = async (
   userid: string,
@@ -126,11 +127,26 @@ export async function makeSlackKudo(message: string) {
 
   const canvas = createCanvas(width, height);
   const context = canvas.getContext("2d");
+
   context.fillStyle = template.color;
   context.fillRect(0, 0, width, height);
-  context.fillStyle;
+  context.fillStyle = "#000000";
+  context.fillText("Test", 1000, 1000);
+  context.fillText("\u{1F600}", 400, 400);
+  // context.fillText("\u{&#128512}", 200, 200);
+  const img = new Image();
+  img.src =
+    "https://github.com/EmojiTwo/emojitwo/blob/master/png/1f1e6-1f1fa.png?raw=true";
+  img.onload = () => {
+    console.log(img);
 
+    context.drawImage(img, 750, 500);
+  };
+  await delay(5000);
+  console.log(img);
   shapes.forEach((s) => {
+    console.log(s);
+
     if (s.type === 5) {
       s.fill ? (context.fillStyle = s.fill) : "";
       context.beginPath();
@@ -196,3 +212,4 @@ const shuffle = (array: Template[]) => {
 export async function getAllTemplates() {
   return await prisma.template.findMany({});
 }
+const delay = (ms: number) => new Promise((res) => setTimeout(res, ms));

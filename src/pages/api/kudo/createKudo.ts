@@ -22,6 +22,8 @@ export default async function handler(
   req: NextApiRequest,
   res: NextApiResponse
 ) {
+  console.log("erin");
+
   res.status(200);
   const text: string = (req.body as body).text;
   const channel: string = (req.body as body).channel_id;
@@ -30,14 +32,15 @@ export default async function handler(
   const slackClient: WebClient = new WebClient(env.SLACK_APP_TOKEN);
 
   //Direct message werkt niet
+  console.log(channel);
 
-  if (channel.startsWith("D")) {
-    res
-      .status(200)
-      .json(
-        "Something went wrong, you can not send kudos in a private message, Sorry!"
-      );
-  }
+  // if (channel.startsWith("D")) {
+  //   res
+  //     .status(200)
+  //     .json(
+  //       "Something went wrong, you can not send kudos in a private message, Sorry!"
+  //     );
+  // }
 
   //info over channel opvragen
   let channelInfoResponse;

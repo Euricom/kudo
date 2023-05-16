@@ -26,22 +26,24 @@ const SessionCard = ({ session }: SessionProps) => {
           <h2 className="card-title text-2xl" data-cy="SessionTitle">
             {session.title}
           </h2>
-          <div className="flex w-full gap-3">
-            {speakers.map((speaker) => (
-              <>
-                <div className="avatar relative aspect-square w-12">
-                  <Image
-                    className="rounded-full"
-                    src={"/api/images/" + speaker.id ?? avatar}
-                    alt="Profile picture"
-                    fill
-                  />
-                </div>
-                <div>
-                  <h3 className="">{speaker.displayName}</h3>
-                </div>
-              </>
-            ))}
+          <div className="flex w-full items-center justify-between">
+            <div className="flex flex-col gap-2">
+              {speakers.map((speaker) => (
+                <>
+                  <div className="flex items-center gap-3">
+                    <div className="avatar relative aspect-square w-12">
+                      <Image
+                        className="rounded-full"
+                        src={"/api/images/" + speaker.id ?? avatar}
+                        alt="Profile picture"
+                        fill
+                      />
+                    </div>
+                    <h3 className="">{speaker.displayName}</h3>
+                  </div>
+                </>
+              ))}
+            </div>
             <h3 className="badge-primary badge">
               {new Date(session.date).toLocaleTimeString([], {
                 hour: "2-digit",

@@ -29,7 +29,6 @@ import { toast } from "react-toastify";
 import { type TRPCError } from "@trpc/server";
 import { type Kudo } from "@prisma/client";
 import EditorButton from "~/components/editor/buttons/EditorButton";
-import useWindowDimensions from "~/hooks/useWindowDimensions";
 import useEyeDropper from "use-eye-dropper";
 
 export function getServerSideProps(context: {
@@ -55,7 +54,6 @@ const Editor: NextPage<{
   anonymous: string;
 }> = ({ id, sessionId, anonymous }) => {
   const router = useRouter();
-  const width = useWindowDimensions()?.width;
   const user = useSession().data?.user;
   //UseStates
   const [selectedButton, setSelectedButton] = useState<EditorFunctions>();
@@ -113,10 +111,6 @@ const Editor: NextPage<{
   const sessionQuery = api.sessions.getSessionById.useQuery({ id: sessionId });
   const session = sessionQuery.data;
 
-  const volledigeSpeaker = api.users.getUserById.useQuery({
-    id: /*session?.speakerId ?? */ "18d332af-2d5b-49e5-8c42-9168b3910f97",
-  }).data;
-  const slackMessage = api.slack.sendMessageToSlack.useMutation();
   const body = document.querySelector("body");
   function setHSL() {
     body?.style.setProperty("--hue", hue.toString());
@@ -134,7 +128,6 @@ const Editor: NextPage<{
     sessionQuery.isLoading ||
     !user ||
     !session ||
-    !volledigeSpeaker ||
     !template
   ) {
     return <LoadingBar />;
@@ -169,7 +162,7 @@ const Editor: NextPage<{
     if (!stage) {
       return;
     }
-    if (user && user.id && user.name && volledigeSpeaker)
+    if (user && user.id && user.name)
       try {
         const image = await createImage({
           dataUrl: stage.toDataURL({ pixelRatio: 1 / stage.scaleX() }),
@@ -180,16 +173,6 @@ const Editor: NextPage<{
           userId: user.id,
           anonymous: anonymous === "true" ? true : false,
         });
-        await slackMessage
-          .mutateAsync({
-            text: user.name.toString() + " heeft je een kudo gestuurd!",
-            channel:
-              "@" +
-              volledigeSpeaker?.givenName +
-              "." +
-              volledigeSpeaker.surname.toLowerCase().replace(" ", ""),
-          })
-          .catch((e) => console.log(e));
         await router.replace("/out");
       } catch (e) {
         toast.error((e as TRPCError).message);

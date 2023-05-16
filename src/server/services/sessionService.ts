@@ -37,8 +37,9 @@ export function sortSpeaker({ sessions, sort }: SessionArray) {
   const sorted: NewSessionSpeaker[] = sessions.reduce(
     (previous: NewSessionSpeaker[], current: Session) => {
       const speakerIds = current.speakerId.filter(
-        (speakerId) => previous[previous.length - 1]?.speakerId !== speakerId
+        (speakerId) => !previous.find((p) => p.speakerId === speakerId)
       );
+      console.log(speakerIds);
 
       const speakers = speakerIds.map((speakerId) => ({
         speakerId: speakerId,
@@ -49,6 +50,7 @@ export function sortSpeaker({ sessions, sort }: SessionArray) {
     },
     [] as NewSessionSpeaker[]
   );
+
   if (sort === SortPosibillities.SpeakerD) {
     return sorted.reverse();
   }
@@ -70,7 +72,7 @@ export async function getSessionsBySpeaker(id: string) {
     );
 }
 
-export async function getSessionById(id: string) {
+export async function getSessionById(id: string): Promise<Session> {
   return (await fetch(`${env.SESSION_URL}`)
     .then((result) => result.json())
     .then((result: SessionArray) =>

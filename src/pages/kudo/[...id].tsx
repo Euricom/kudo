@@ -52,8 +52,8 @@ const KudoDetail: NextPage<{ id: string }> = ({ id }) => {
     id: kudo?.sessionId ?? "error",
   });
   const session = sessionQuery.data;
-  const speaker = api.users.getUserById.useQuery({
-    id: session?.speakerId ?? "error",
+  const speaker = api.users.getUserByIds.useQuery({
+    ids: session?.speakerId ?? [],
   }).data;
 
   const { mutate: deleteKudo } = api.kudos.deleteKudoById
@@ -167,7 +167,7 @@ const KudoDetail: NextPage<{ id: string }> = ({ id }) => {
     if (
       user?.role !== UserRole.ADMIN &&
       user?.id !== kudo?.userId &&
-      user?.id !== session?.speakerId
+      !session?.speakerId.includes(user?.id)
     )
       router.replace("/403").catch(toast.error);
   }, [
@@ -237,7 +237,7 @@ const KudoDetail: NextPage<{ id: string }> = ({ id }) => {
       </NavigationBarContent>
       <UtilButtonsContent>
         {(user?.id === kudo?.userId || user?.role === UserRole.ADMIN) &&
-          user?.id !== session?.speakerId && (
+          !session?.speakerId.includes(user?.id) && (
             <Link
               className="btn-ghost btn-circle btn"
               onClick={del}
@@ -257,7 +257,7 @@ const KudoDetail: NextPage<{ id: string }> = ({ id }) => {
       <div className=" flex h-full w-full flex-col items-center justify-center">
         <div className="max-h-full w-full max-w-2xl">
           <div className="flex justify-end">
-            {(user?.id === session?.speakerId ||
+            {(session?.speakerId.includes(user?.id ?? "") ||
               user?.role === UserRole.ADMIN) &&
               user?.id !== kudo?.userId && (
                 <button
@@ -290,7 +290,9 @@ const KudoDetail: NextPage<{ id: string }> = ({ id }) => {
           <div className="m-2 flex max-h-full w-full max-w-2xl items-center gap-2 px-3">
             <button
               className={`btn-ghost btn-circle btn ${
-                user?.id === session?.speakerId ? "" : "pointer-events-none"
+                session?.speakerId.includes(user?.id ?? "")
+                  ? ""
+                  : "pointer-events-none"
               }`}
               data-cy="like"
               onClick={() => void handleclick()}
@@ -310,7 +312,8 @@ const KudoDetail: NextPage<{ id: string }> = ({ id }) => {
                 />
               )}
             </button>
-            {(!kudo.comment || editing) && user?.id === session?.speakerId ? (
+            {(!kudo.comment || editing) &&
+            session?.speakerId.includes(user?.id ?? "") ? (
               <div className="item relative flex w-full flex-row justify-start">
                 <input
                   value={comment}
@@ -330,11 +333,16 @@ const KudoDetail: NextPage<{ id: string }> = ({ id }) => {
                 </button>
               </div>
             ) : (
+              //Nog uitbreiden naar meerdere speakers
               <>
                 {kudo.comment && !editing && (
                   <>
                     <div className="chat chat-end w-full">
-                      <div className="chat-header">{speaker?.displayName}</div>
+                      <div className="chat-header flex flex-col">
+                        {speaker?.map((s) => (
+                          <a key={s.id}>{s.displayName}</a>
+                        ))}
+                      </div>
                       <h1
                         className="chat-bubble chat-bubble-primary flex gap-2"
                         data-cy="comment"

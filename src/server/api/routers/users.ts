@@ -4,6 +4,7 @@ import {
   findAllUsers,
   findRelevantUsers,
   findUserById,
+  findUserByIds,
   findUserByName,
 } from "~/server/services/userService";
 import { adminList } from "~/server/auth";
@@ -40,9 +41,10 @@ export const userRouter = createTRPCRouter({
   getUserByIds: protectedProcedure
     .input(inputGetByIds)
     .query(async ({ input }) => {
-      const userPromises = input.ids.map((id) => findUserById(id));
-      const users = await Promise.all(userPromises);
-      return users;
+      // const userPromises = input.ids.map((id) => findUserById(id));
+      // const users = await Promise.all(userPromises);
+      // return users;
+      return await findUserByIds(input.ids);
     }),
 
   getUserByName: protectedProcedure

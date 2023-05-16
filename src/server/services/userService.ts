@@ -65,6 +65,12 @@ export const findUserById = async (id: string): Promise<User> => {
   return user;
 };
 
+export const findUserByIds = async (ids: string[]): Promise<User[]> => {
+  const userPromises = ids.map((id) => findUserById(id));
+  const users = await Promise.all(userPromises);
+  return users;
+};
+
 export const findUserByName = async (id: string): Promise<User | undefined> => {
   const users = await findAllUsers();
   return users.find((user) => user.displayName === id);

@@ -9,8 +9,8 @@ const LoadingBar = () => {
         <meta name="description" content="Loading the page, please wait..." />
       </Head>
       <div className="grid w-full place-items-center">
-        <div className="relative aspect-square h-1/6 w-1/6">
-          <Image src="/images/Eurilogo.gif" alt="Loading" />
+        <div className="relative aspect-square w-1/6">
+          <Image src="/images/Eurilogo.gif" alt="Loading" fill />
         </div>
       </div>
     </>

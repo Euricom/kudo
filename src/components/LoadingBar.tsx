@@ -11,7 +11,7 @@ const LoadingBar = () => {
       </Head>
       <div className="grid w-full place-items-center">
         <div className="relative aspect-square h-1/6 w-1/6">
-          <Image src={Loading} alt="Loading" />
+          <Image src={Loading.src} alt="Loading" />
         </div>
       </div>
     </>

@@ -50,7 +50,7 @@ const New: NextPage<{ sess: string }> = ({ sess }) => {
             x.title.toLowerCase().includes(session?.title.toLowerCase() ?? "")
           )
           .map((x) => x.speakerId)
-          .includes(x.id)
+          .some((s) => s.indexOf(x.id) >= 0)
       );
     if (visible.length === 1 && speaker !== visible[0]) {
       setSpeaker(visible[0]);
@@ -59,8 +59,10 @@ const New: NextPage<{ sess: string }> = ({ sess }) => {
   };
 
   const visibibleSessions = sessions
-    .filter((ses) => ses.speakerId !== me)
-    .filter((session) => (speaker ? speaker.id === session.speakerId : true));
+    .filter((ses) => !ses.speakerId.includes(me ?? ""))
+    .filter((session) =>
+      speaker ? session.speakerId.includes(speaker.id) : true
+    );
 
   function onclick() {
     setAnonymous(!anonymous);
@@ -91,7 +93,12 @@ const New: NextPage<{ sess: string }> = ({ sess }) => {
             setSession(
               sessions.find((s) => s.title === e.target.value)
                 ? sessions.find((s) => s.title === e.target.value)
-                : { id: "0", title: e.target.value, date: "0", speakerId: "no" }
+                : {
+                    id: "0",
+                    title: e.target.value,
+                    date: "0",
+                    speakerId: ["no"],
+                  }
             )
           }
           label="Session"

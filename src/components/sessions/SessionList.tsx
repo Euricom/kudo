@@ -42,7 +42,7 @@ const SessionList = ({ sessions, filterIn, sortIn }: SessionListProps) => {
           .includes(filter?.toLowerCase() ?? "") ||
         s.title.toLowerCase().includes(filter?.toLowerCase() ?? "") ||
         users
-          ?.find((u) => u.id == s.speakerId)
+          ?.find((u) => s.speakerId.includes(u.id))
           ?.displayName.toLowerCase()
           .includes(filter?.toLowerCase() ?? "")
     );
@@ -67,8 +67,9 @@ const SessionList = ({ sessions, filterIn, sortIn }: SessionListProps) => {
       case SortPosibillities.SpeakerD:
         return sortSpeaker({
           sessions: filtering(sessions).sort((a, b) =>
-            (users?.find((u) => u.id === a.speakerId)?.displayName ?? "a") >
-            (users?.find((u) => u.id === b.speakerId)?.displayName ?? "b")
+            (users?.find((u) => a.speakerId.includes(u.id))?.displayName ??
+              "a") >
+            (users?.find((u) => b.speakerId.includes(u.id))?.displayName ?? "b")
               ? 1
               : -1
           ),

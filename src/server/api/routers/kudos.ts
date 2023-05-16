@@ -12,7 +12,7 @@ import {
 import { SortPosibillities } from "~/types";
 import { TRPCError } from "@trpc/server";
 import { sendnotification } from "~/server/services/notificationService";
-import { findUserById, findUserByIds } from "~/server/services/userService";
+import { findUserById } from "~/server/services/userService";
 import { getSessionById } from "~/server/services/sessionService";
 
 const createKudoInput = object({

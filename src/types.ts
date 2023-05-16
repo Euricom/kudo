@@ -2,7 +2,6 @@ import { type Kudo, type Template } from "@prisma/client";
 import { type Url } from "url";
 import { type Vector2d } from "konva/lib/types";
 import type Konva from "konva";
-import type { MutableRefObject } from "react";
 
 export type AuthProps = {
   children?: React.ReactNode;

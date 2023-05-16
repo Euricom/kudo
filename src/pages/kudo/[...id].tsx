@@ -135,10 +135,15 @@ const KudoDetail: NextPage<{ id: string }> = ({ id }) => {
         if (kudo.liked) {
           await likeKudoById({
             id: kudo.id,
+            userId: user?.id ?? "",
             liked: !kudo.liked,
           });
         } else {
-          await likeKudoById({ id: kudo.id, liked: !kudo.liked });
+          await likeKudoById({
+            id: kudo.id,
+            userId: user?.id ?? "",
+            liked: !kudo.liked,
+          });
         }
 
         await refetchKudo();
@@ -154,6 +159,7 @@ const KudoDetail: NextPage<{ id: string }> = ({ id }) => {
         setEdit(false);
         await commentKudoById({
           id: kudo.id,
+          userId: user?.id ?? "",
           comment: comment,
         });
         await refetchKudo();

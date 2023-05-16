@@ -3,7 +3,6 @@ import { makeSlackKudo } from "~/server/services/kudoService";
 // import { openModal } from "~/server/services/slackService";
 import { env } from "~/env.mjs";
 import { WebClient, type FilesUploadResponse } from "@slack/web-api";
-import { openModal } from "~/server/services/slackService";
 
 interface body {
   text: string;

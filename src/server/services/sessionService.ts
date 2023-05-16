@@ -34,17 +34,21 @@ export function sortTitle({ sessions, sort }: SessionArray) {
   return sorted;
 }
 export function sortSpeaker({ sessions, sort }: SessionArray) {
-  const sorted = sessions.reduce((previous, current) => {
-    if (previous[previous.length - 1]?.speakerId !== current.speakerId) {
-      return [
-        ...previous,
-        {
-          speakerId: current.speakerId,
-          sessions: sessions.filter((s) => s.speakerId === current.speakerId),
-        },
-      ];
-    } else return previous;
-  }, [] as NewSessionSpeaker[]);
+  const sorted: NewSessionSpeaker[] = sessions.reduce(
+    (previous: NewSessionSpeaker[], current: Session) => {
+      const speakerIds = current.speakerId.filter(
+        (speakerId) => previous[previous.length - 1]?.speakerId !== speakerId
+      );
+
+      const speakers = speakerIds.map((speakerId) => ({
+        speakerId: speakerId,
+        sessions: sessions.filter((s) => s.speakerId.includes(speakerId)),
+      }));
+
+      return [...previous, ...speakers];
+    },
+    [] as NewSessionSpeaker[]
+  );
   if (sort === SortPosibillities.SpeakerD) {
     return sorted.reverse();
   }

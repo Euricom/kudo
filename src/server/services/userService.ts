@@ -83,8 +83,9 @@ export const findRelevantUsers = async (ctx: {
     return {
       user: user,
       sessionCount:
-        sessions.sessions?.filter((session) => session.speakerId === user.id)
-          .length ?? 0,
+        sessions.sessions?.filter((session) =>
+          session.speakerId.includes(user.id)
+        ).length ?? 0,
       sendKudoCount:
         kudos?.filter((kudo) => kudo.userId === user.id).length ?? 0,
       receiveKudoCount:

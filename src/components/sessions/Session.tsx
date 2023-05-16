@@ -5,11 +5,11 @@ import Image from "next/image";
 import avatar from "~/../public/images/AnonymousPicture.jpg";
 
 const SessionCard = ({ session }: SessionProps) => {
-  const speaker: User | undefined = api.users.getUserById.useQuery({
-    id: session.speakerId,
+  const speakers: User[] | undefined = api.users.getUserByIds.useQuery({
+    ids: session.speakerId,
   }).data;
 
-  if (!session || !speaker) {
+  if (!session || !speakers) {
     return <></>;
   }
 
@@ -27,24 +27,27 @@ const SessionCard = ({ session }: SessionProps) => {
             {session.title}
           </h2>
           <div className="flex w-full gap-3">
-            <div className="avatar relative aspect-square w-12">
-              <Image
-                className="rounded-full"
-                src={"/api/images/" + speaker.id ?? avatar}
-                alt="Profile picture"
-                fill
-              />
-            </div>
-            <div>
-              <h3 className="">{speaker.displayName}</h3>
-              {/*Eindstip nog toevoegen?*/}
-              <h3 className="badge-primary badge">
-                {new Date(session.date).toLocaleTimeString([], {
-                  hour: "2-digit",
-                  minute: "2-digit",
-                })}
-              </h3>
-            </div>
+            {speakers.map((speaker) => (
+              <>
+                <div className="avatar relative aspect-square w-12">
+                  <Image
+                    className="rounded-full"
+                    src={"/api/images/" + speaker.id ?? avatar}
+                    alt="Profile picture"
+                    fill
+                  />
+                </div>
+                <div>
+                  <h3 className="">{speaker.displayName}</h3>
+                </div>
+              </>
+            ))}
+            <h3 className="badge-primary badge">
+              {new Date(session.date).toLocaleTimeString([], {
+                hour: "2-digit",
+                minute: "2-digit",
+              })}
+            </h3>
           </div>
         </div>
       </Link>

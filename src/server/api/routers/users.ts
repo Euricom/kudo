@@ -1,5 +1,5 @@
 import { createTRPCRouter, protectedProcedure } from "~/server/api/trpc";
-import { object, string } from "zod";
+import { array, object, string } from "zod";
 import {
   findAllUsers,
   findRelevantUsers,
@@ -10,6 +10,10 @@ import { adminList } from "~/server/auth";
 
 const inputGetById = object({
   id: string(),
+});
+
+const inputGetByIds = object({
+  ids: array(string()),
 });
 
 const inputUpdate = object({
@@ -31,6 +35,14 @@ export const userRouter = createTRPCRouter({
     .input(inputGetById)
     .query(async ({ input }) => {
       return await findUserById(input.id);
+    }),
+
+  getUserByIds: protectedProcedure
+    .input(inputGetByIds)
+    .query(async ({ input }) => {
+      const userPromises = input.ids.map((id) => findUserById(id));
+      const users = await Promise.all(userPromises);
+      return users;
     }),
 
   getUserByName: protectedProcedure

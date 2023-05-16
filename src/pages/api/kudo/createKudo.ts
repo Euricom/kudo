@@ -43,133 +43,152 @@ export default async function handler(
   // }
 
   //info over channel opvragen
-  let channelInfoResponse;
-  try {
-    channelInfoResponse = await slackClient.conversations.info({
-      channel: channel,
-    });
-  } catch (e) {
-    res.status(200).json("Something went wrong, this channel was not found.");
-    res.end();
-  }
+  if (text !== "") {
+    const base64 = await makeSlackKudo(text);
 
-  if (!channelInfoResponse?.ok) {
-    res.status(200).json("Something went wrong, this channel was not found.");
-    res.end();
-  } else if (!channelInfoResponse.channel?.is_channel) {
-    res
-      .status(200)
-      .json(
-        "Something went wrong, you can not send kudos in a private message, Sorry!"
-      );
-    res.end();
-  }
-  //Als bot geen lid is van channel, join de channel.
-  if (!channelInfoResponse?.channel?.is_member) {
-    await slackClient.conversations.join({
-      channel: channel,
-    });
-  }
-  const templates = getAllTemplates();
-  const names: PlainTextOption[] = (await templates).map((t) => {
-    return {
-      text: { type: "plain_text", text: t.name },
-      value: t.name,
-    };
-  });
+    // Initialize the Slack Web Client
+    const slackClient = new WebClient(env.SLACK_APP_TOKEN);
 
-  await slackClient.views.open({
-    trigger_id: trigger_id,
-    view: {
-      type: "modal",
-      callback_id: "modal-identifier",
-      title: {
-        type: "plain_text",
-        text: "Make your kudo!",
-      },
-      blocks: [
-        {
-          type: "section",
-          block_id: "section678",
-          text: {
-            type: "mrkdwn",
-            text: "Pick a template",
-          },
-          accessory: {
-            action_id: "templateName",
-            type: "static_select",
-            placeholder: {
-              type: "plain_text",
-              text: "Select an item",
-            },
-            options: names,
-          },
+    // Send the file to the appropriate channel
+    try {
+      await slackClient.files.upload({
+        channels: channel,
+        file: Buffer.from(base64, "base64"),
+        filename: "kudo.jpg",
+        title: "Mooie kudo!",
+      });
+    } catch (error) {
+      console.error("Error uploading file to Slack:", error);
+    }
+  } else {
+    let channelInfoResponse;
+    try {
+      channelInfoResponse = await slackClient.conversations.info({
+        channel: channel,
+      });
+    } catch (e) {
+      res.status(200).json("Something went wrong, this channel was not found.");
+      res.end();
+    }
+
+    if (!channelInfoResponse?.ok) {
+      res.status(200).json("Something went wrong, this channel was not found.");
+      res.end();
+    } else if (!channelInfoResponse.channel?.is_channel) {
+      res
+        .status(200)
+        .json(
+          "Something went wrong, you can not send kudos in a private message, Sorry!"
+        );
+      res.end();
+    }
+    //Als bot geen lid is van channel, join de channel.
+    if (!channelInfoResponse?.channel?.is_member) {
+      await slackClient.conversations.join({
+        channel: channel,
+      });
+    }
+    const templates = getAllTemplates();
+    const names: PlainTextOption[] = (await templates).map((t) => {
+      return {
+        text: { type: "plain_text", text: t.name },
+        value: t.name,
+      };
+    });
+
+    await slackClient.views.open({
+      trigger_id: trigger_id,
+      view: {
+        type: "modal",
+        callback_id: "modal-identifier",
+        title: {
+          type: "plain_text",
+          text: "Make your kudo!",
         },
-        // {
-        //   type: "section",
-        //   block_id: "section-identifier",
-        //   accessory: {
-        //     type: "button",
-        //     text: {
-        //       type: "plain_text",
-        //       text: "Next",
-        //     },
-        //     action_id: "button-identifier",
-        //   },
-        // },
-      ],
-      submit: {
-        type: "plain_text",
-        text: "Send",
+        blocks: [
+          {
+            type: "section",
+            block_id: "section678",
+            text: {
+              type: "mrkdwn",
+              text: "Pick a template",
+            },
+            accessory: {
+              action_id: "templateName",
+              type: "static_select",
+              placeholder: {
+                type: "plain_text",
+                text: "Select an item",
+              },
+              options: names,
+            },
+          },
+          // {
+          //   type: "section",
+          //   block_id: "section-identifier",
+          //   accessory: {
+          //     type: "button",
+          //     text: {
+          //       type: "plain_text",
+          //       text: "Next",
+          //     },
+          //     action_id: "button-identifier",
+          //   },
+          // },
+        ],
+        submit: {
+          type: "plain_text",
+          text: "Send",
+        },
       },
-    },
-  });
-  // await slackClient.views.update({
-  //   trigger_id: trigger_id,
-  //   view: {
-  //     type: "modal",
-  //     callback_id: "modal-identifier",
-  //     title: {
-  //       type: "plain_text",
-  //       text: "Make your kudo!",
-  //     },
-  //     blocks: [
-  //       {
-  //         type: "section",
-  //         block_id: "section678",
-  //         text: {
-  //           type: "mrkdwn",
-  //           text: "Pick a template",
-  //         },
-  //         accessory: {
-  //           action_id: "templateName",
-  //           type: "static_select",
-  //           placeholder: {
-  //             type: "plain_text",
-  //             text: "Select an item",
-  //           },
-  //           options: names,
-  //         },
-  //       },
-  //       {
-  //         type: "section",
-  //         block_id: "section-identifier",
-  //         accessory: {
-  //           type: "button",
-  //           text: {
-  //             type: "plain_text",
-  //             text: "Next",
-  //           },
-  //           action_id: "button-identifier",
-  //         },
-  //       },
-  //     ],
-  //     submit: {
-  //       type: "plain_text",
-  //       text: "Send",
-  //     },
-  //   },
-  // });
+    });
+    // await slackClient.views.update({
+    //   trigger_id: trigger_id,
+    //   view: {
+    //     type: "modal",
+    //     callback_id: "modal-identifier",
+    //     title: {
+    //       type: "plain_text",
+    //       text: "Make your kudo!",
+    //     },
+    //     blocks: [
+    //       {
+    //         type: "section",
+    //         block_id: "section678",
+    //         text: {
+    //           type: "mrkdwn",
+    //           text: "Pick a template",
+    //         },
+    //         accessory: {
+    //           action_id: "templateName",
+    //           type: "static_select",
+    //           placeholder: {
+    //             type: "plain_text",
+    //             text: "Select an item",
+    //           },
+    //           options: names,
+    //         },
+    //       },
+    //       {
+    //         type: "section",
+    //         block_id: "section-identifier",
+    //         accessory: {
+    //           type: "button",
+    //           text: {
+    //             type: "plain_text",
+    //             text: "Next",
+    //           },
+    //           action_id: "button-identifier",
+    //         },
+    //       },
+    //     ],
+    //     submit: {
+    //       type: "plain_text",
+    //       text: "Send",
+    //     },
+    //   },
+    // });
+  }
   res.end();
 }
 

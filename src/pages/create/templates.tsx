@@ -13,21 +13,17 @@ import LoadingBar from "~/components/LoadingBar";
 import { toast } from "react-toastify";
 import Image from "next/image";
 
-export function getServerSideProps(context: {
-  query: { session: string; anonymous: string };
-}) {
+export function getServerSideProps(context: { query: { session: string } }) {
   return {
     props: {
       sess: context.query.session,
-      anonymous: context.query.anonymous,
     },
   };
 }
 
 const Templates: NextPage<{
   sess: string;
-  anonymous: string;
-}> = ({ sess, anonymous }) => {
+}> = ({ sess }) => {
   const sessionQuery = api.sessions.getSessionById.useQuery({ id: sess });
   const session = sessionQuery.data;
 
@@ -86,7 +82,6 @@ const Templates: NextPage<{
                 query: {
                   template: x.id,
                   session: session?.id,
-                  anonymous: anonymous,
                 },
               }}
               key={x.id}
@@ -110,7 +105,6 @@ const Templates: NextPage<{
           query: {
             template: templates[0]?.id.toString() ?? "",
             session: session?.id,
-            anonymous: anonymous,
           },
           auth: null,
           hash: null,

@@ -18,13 +18,13 @@ import {
   sortSpeaker,
   sortTitle,
 } from "~/server/services/sessionService";
+import { useRouter } from "next/router";
 
 export function getServerSideProps(context: {
-  query: { session: string; filter: string; sort: SortPosibillities };
+  query: { filter: string; sort: SortPosibillities };
 }) {
   return {
     props: {
-      sess: context.query.session ?? "",
       filterIn: context.query.filter ?? "",
       sortIn: context.query.sort ?? "",
     },
@@ -32,26 +32,21 @@ export function getServerSideProps(context: {
 }
 
 const New: NextPage<{
-  sess: string;
   filterIn: string;
   sortIn: SortPosibillities;
-}> = ({ sess, filterIn, sortIn }) => {
+}> = ({ filterIn, sortIn }) => {
   const users = api.users.getAllUsers.useQuery().data;
-  const [session, setSession] = useState<Session>();
   const me = useSession().data?.user.id;
+  const router = useRouter();
   const [sort, setSort] = useState<SortPosibillities>(
     sortIn ?? SortPosibillities.DateD
   );
   const [filter, setFilter] = useState<string>(filterIn ?? "");
 
   const sessionsQuery = api.sessions.getAll.useQuery();
-  const sessions = sessionsQuery.data;
-
-  useEffect(() => {
-    if (!sessionsQuery.isLoading && sessions) {
-      setSession(sessions?.find((s) => s.id === sess));
-    }
-  }, [sess, sessions, sessionsQuery.isLoading]);
+  const sessions = sessionsQuery.data?.filter(
+    (s) => !s.speakerId.includes(me ?? "")
+  );
 
   if (sessionsQuery.isLoading || !sessions || !users) {
     return <LoadingBar />;
@@ -84,12 +79,13 @@ const New: NextPage<{
     );
   }
   function sortSessions() {
+    if (!sessions) return;
     switch (sort) {
       case SortPosibillities.TitleA:
       case SortPosibillities.TitleD:
         return (
           <>
-            <div className="flex w-full flex-wrap gap-4">
+            <div className="w-full">
               {filtering(sortTitle({ sessions: sessions, sort: sort })).map(
                 (s) => (
                   <SessionListItem key={s.id} session={s} />
@@ -113,9 +109,11 @@ const New: NextPage<{
           const speaker = users?.find((u) => u.id === s.speakerId);
           return (
             <>
-              <div key={s.speakerId} className="w-full md:w-fit ">
-                <h2 className="w-full">{speaker?.displayName}</h2>
-                <div className="flex flex-wrap gap-4">
+              <div key={s.speakerId} className="w-full">
+                <h2 className="bg-base-300 p-2 dark:bg-secondary">
+                  {speaker?.displayName}
+                </h2>
+                <div>
                   {s.sessions.map((s) => {
                     return <SessionListItem key={s.id} session={s} />;
                   })}
@@ -130,14 +128,14 @@ const New: NextPage<{
             const sessionDate = new Date(d.date);
             return (
               <>
-                <div key={d.date} className="w-full md:w-fit">
-                  <h2 className="w-full">
+                <div key={d.date} className="w-full">
+                  <h2 className="bg-base-300 p-2 dark:bg-secondary">
                     {sessionDate.toLocaleDateString() ==
                     new Date().toLocaleDateString()
                       ? "Today"
                       : sessionDate.toDateString()}
                   </h2>
-                  <div className="flex w-full flex-wrap gap-4">
+                  <div>
                     {d.sessions.map((s) => {
                       return <SessionListItem key={s.id} session={s} />;
                     })}
@@ -164,7 +162,6 @@ const New: NextPage<{
       <UtilButtonsContent>
         <></>
       </UtilButtonsContent>
-
       <main className="flex flex-col items-center justify-center gap-4">
         <SortAndFilter
           setSort={setSort}
@@ -172,7 +169,7 @@ const New: NextPage<{
           filter={filter}
           sort={sort}
         />
-        <div className="flex h-full w-full flex-col items-center justify-start gap-8 p-5">
+        <div className="flex h-full w-full flex-col items-center justify-start gap-8 px-5 lg:w-1/2">
           {sortSessions()}
         </div>
       </main>
@@ -181,6 +178,7 @@ const New: NextPage<{
 };
 
 const SessionListItem = ({ session }: { session: Session }) => {
+  const router = useRouter();
   const speakers: User[] | undefined = api.users.getUserByIds.useQuery({
     ids: session.speakerId,
   }).data;
@@ -191,17 +189,21 @@ const SessionListItem = ({ session }: { session: Session }) => {
 
   return (
     <>
-      <li
+      <button
         key={session.id}
-        className="card h-fit w-full bg-base-100 shadow-xl md:w-96"
-        data-cy="Session"
-        data-title={session.id}
+        className="h-fit w-full border-t-2 border-secondary py-4"
+        onClick={() =>
+          void router.push({
+            pathname: "/create/templates",
+            query: { session: session.id },
+          })
+        }
       >
-        <div className="card-body">
-          <h2 className="card-title text-2xl" data-cy="SessionTitle">
+        <div className="flex flex-col gap-3">
+          <h2 className="card-title text-lg" data-cy="SessionTitle">
             {session.title}
           </h2>
-          <div className="flex w-full items-center justify-between">
+          <div className="flex w-full items-center justify-between text-sm">
             <div className="flex flex-col gap-2">
               {speakers.map((speaker) => (
                 <>
@@ -211,7 +213,7 @@ const SessionListItem = ({ session }: { session: Session }) => {
                 </>
               ))}
             </div>
-            <h3 className="badge-primary badge">
+            <h3 className="badge-primary badge text-xs">
               {new Date(session.date).toLocaleTimeString([], {
                 hour: "2-digit",
                 minute: "2-digit",
@@ -219,7 +221,7 @@ const SessionListItem = ({ session }: { session: Session }) => {
             </h3>
           </div>
         </div>
-      </li>
+      </button>
     </>
   );
 };

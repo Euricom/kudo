@@ -7,6 +7,19 @@ import { TRPCError } from "@trpc/server";
 import img from "~/../public/png/1f599-1f3fe.png";
 import { createCanvas } from "canvas";
 import { Image } from "canvas";
+import data from "@emoji-mart/data";
+import { init, getEmojiDataFromNative } from "emoji-mart";
+
+type emojiData = {
+  aliases: string[];
+  id: string;
+  keywords: string[];
+  name: string;
+  native: string;
+  shortcodes: string;
+  skin: number;
+  unified: string;
+};
 
 export const findAllKudosSortedByUserId = async (
   userid: string,
@@ -101,6 +114,7 @@ export function getFirstImageById() {
 }
 
 export async function makeSlackKudo(message: string) {
+  await init({ data });
   const template = await prisma.template
     .findMany({
       where: {
@@ -131,20 +145,8 @@ export async function makeSlackKudo(message: string) {
   context.fillStyle = template.color;
   context.fillRect(0, 0, width, height);
   context.fillStyle = "#000000";
-  context.fillText("Test", 1000, 1000);
-  context.fillText("\u{1F600}", 400, 400);
-  // context.fillText("\u{&#128512}", 200, 200);
-  const img = new Image();
-  img.src =
-    "https://github.com/EmojiTwo/emojitwo/blob/master/png/1f1e6-1f1fa.png?raw=true";
-  img.onload = () => {
-    console.log(img);
 
-    context.drawImage(img, 750, 500);
-  };
-  await delay(5000);
-  console.log(img);
-  shapes.forEach((s) => {
+  shapes.map(async (s) => {
     console.log(s);
 
     if (s.type === 5) {
@@ -170,6 +172,31 @@ export async function makeSlackKudo(message: string) {
         }
       }
       context.stroke();
+    } else if (s.type === 1) {
+      console.log(s);
+
+      const img = new Image();
+      await getEmojiDataFromNative(s.text)
+        .then((d: emojiData) => {
+          console.log(d);
+          img.src =
+            "https://github.githubassets.com/images/icons/emoji/unicode/" +
+            d.unified +
+            ".png?v8";
+        })
+
+        .catch((e) => console.log(e));
+
+      const textWidth = context.measureText(s.text ?? "fout").width;
+      img.onload = () => {
+        context.drawImage(
+          img,
+          (s.x ?? 0) + 750 - ((s.fontSize ?? 90) * ((s.scale?.x ?? 2) - 1)) / 2,
+          (s.y ?? 0) + 500 - ((s.fontSize ?? 90) * ((s.scale?.x ?? 2) - 1)) / 2,
+          (s.fontSize ?? 90) * ((s.scale?.x ?? 2) - 1),
+          (s.fontSize ?? 90) * ((s.scale?.y ?? 2) - 1)
+        );
+      };
     } else {
       let text = s.text;
       if (s.id === "bodyText") {
@@ -188,7 +215,7 @@ export async function makeSlackKudo(message: string) {
       );
     }
   });
-
+  await delay(3000);
   const buffer = canvas.toBuffer("image/jpeg");
   const base64String = btoa(String.fromCharCode(...new Uint8Array(buffer)));
 

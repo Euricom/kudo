@@ -31,6 +31,7 @@ import { type Kudo } from "@prisma/client";
 import EditorButton from "~/components/editor/buttons/EditorButton";
 import useWindowDimensions from "~/hooks/useWindowDimensions";
 import useEyeDropper from "use-eye-dropper";
+import emojis from "public/emojis";
 
 export function getServerSideProps(context: {
   query: { template: string; session: string; anonymous: string };
@@ -81,7 +82,10 @@ const Editor: NextPage<{
   const [selectedEmoji, setSelectedEmoji] = useState<EmojiObject>();
   //API
   const trpcContext = api.useContext();
-
+  const icons = emojis().map(
+    (e) =>
+      "https://github.com/EmojiTwo/emojitwo/blob/master/png/" + e + "?raw=true"
+  );
   const { mutateAsync: createKudo } = api.kudos.createKudo.useMutation({
     //Nog nakijken of dit effectief iets doet
     onMutate: async (newEntry) => {
@@ -218,6 +222,50 @@ const Editor: NextPage<{
     setLightness((100 * (2 * l - s)) / 2);
   };
 
+  const custom = [
+    {
+      id: "Custom",
+      name: "Custom",
+      emojis: [
+        {
+          id: "octocat",
+          name: "Octocat",
+          keywords: ["github"],
+          skins: [
+            {
+              src: "https://github.com/EmojiTwo/emojitwo/blob/master/png/1f1e6-1f1fa.png?raw=true",
+            },
+          ],
+        },
+        {
+          id: "shipit",
+          name: "Squirrel",
+          keywords: ["github"],
+          skins: [
+            {
+              src: "https://github.com/EmojiTwo/emojitwo/blob/master/png/1f1e6-1f1fa.png?raw=true",
+            },
+            {
+              src: "https://github.com/EmojiTwo/emojitwo/blob/master/png/1f1e6-1f1fa.png?raw=true",
+            },
+            {
+              src: "https://github.com/EmojiTwo/emojitwo/blob/master/png/1f1e6-1f1fa.png?raw=true",
+            },
+            {
+              src: "https://github.com/EmojiTwo/emojitwo/blob/master/png/1f1e6-1f1fa.png?raw=true",
+            },
+            {
+              src: "https://github.com/EmojiTwo/emojitwo/blob/master/png/1f1e6-1f1fa.png?raw=true",
+            },
+            {
+              src: "https://github.com/EmojiTwo/emojitwo/blob/master/png/1f1e6-1f1fa.png?raw=true",
+            },
+          ],
+        },
+      ],
+    },
+  ];
+
   return (
     <>
       <Head>
@@ -331,7 +379,12 @@ const Editor: NextPage<{
               selectedButton == EditorFunctions.PreSticker ? "#00ff00" : ""
             }
           >
-            <Picker data={data} onEmojiSelect={onClickEmoji} />
+            <Picker
+              data={data}
+              set={"native"}
+              custom={custom}
+              onEmojiSelect={onClickEmoji}
+            />
           </EditorButton>
           <EditorButton
             type={EditorFunctions.Color}

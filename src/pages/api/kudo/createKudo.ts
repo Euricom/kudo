@@ -354,18 +354,18 @@ const sendFirstModal = async (trigger_id: string) => {
             options: names,
           },
         },
-        // {
-        //   type: "section",
-        //   block_id: "section-identifier",
-        //   accessory: {
-        //     type: "button",
-        //     text: {
-        //       type: "plain_text",
-        //       text: "Next",
-        //     },
-        //     action_id: "button-identifier",
-        //   },
-        // },
+        {
+          type: "section",
+          block_id: "section-identifier",
+          accessory: {
+            type: "button",
+            text: {
+              type: "plain_text",
+              text: "Next",
+            },
+            action_id: "button-identifier",
+          },
+        },
       ],
     },
   });

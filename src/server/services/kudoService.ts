@@ -196,3 +196,7 @@ const shuffle = (array: Template[]) => {
   }
   return array;
 };
+
+export async function getAllTemplates() {
+  return await prisma.template.findMany({});
+}

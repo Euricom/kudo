@@ -11,7 +11,10 @@ import {
 } from "~/server/services/pusherService";
 import { SortPosibillities } from "~/types";
 import { TRPCError } from "@trpc/server";
-import { sendnotification } from "~/server/services/notificationService";
+import {
+  sendnotification,
+  sendnotificationsToAdmins,
+} from "~/server/services/notificationService";
 import { findUserById } from "~/server/services/userService";
 import { getSessionById } from "~/server/services/sessionService";
 
@@ -280,25 +283,25 @@ export const kudoRouter = createTRPCRouter({
           flagged: input.flagged,
         },
       });
-      // if (kudo) {
-      //   const sender = await findUserById(kudo.userId);
-      //   const session = await getSessionById(kudo.sessionId);
-      //   const speaker = await findUserById(session.speakerId);
+      if (kudo) {
+        const sender = await findUserById(kudo.userId);
+        const session = await getSessionById(kudo.sessionId);
+        const speaker = await findUserById(session.speakerId);
 
-      //   sendnotificationsToAdmins(
-      //     ctx.prisma,
-      //     "Kudo send by " +
-      //       sender.displayName +
-      //       " is reported by " +
-      //       speaker.displayName,
-      //     "/kudo/" + kudo.id,
-      //     sender.id
-      //   );
-      // } else {
-      throw new TRPCError({
-        code: "INTERNAL_SERVER_ERROR",
-        message: "Een probleem",
-      });
-      // }
+        sendnotificationsToAdmins(
+          ctx.prisma,
+          "Kudo send by " +
+            sender.displayName +
+            " is reported by " +
+            speaker.displayName,
+          "/kudo/" + kudo.id,
+          sender.id
+        );
+      } else {
+        throw new TRPCError({
+          code: "INTERNAL_SERVER_ERROR",
+          message: "Something went wrong",
+        });
+      }
     }),
 });

@@ -24,7 +24,7 @@ export default async function handler(
 ) {
   console.log("erin");
 
-  res.status(200).end();
+  res.status(200);
   console.log(req.body);
 
   const text: string = (req.body as body).text;
@@ -92,60 +92,8 @@ export default async function handler(
       console.error("Error uploading file to Slack:", error);
     }
   } else {
-    const templates = getAllTemplates();
-    const names: PlainTextOption[] = (await templates).map((t) => {
-      return {
-        text: { type: "plain_text", text: t.name },
-        value: t.name,
-      };
-    });
+    await sendFirstModal(trigger_id);
 
-    await slackClient.views.open({
-      trigger_id: trigger_id,
-      view: {
-        type: "modal",
-        callback_id: "modal-identifier",
-        title: {
-          type: "plain_text",
-          text: "Make your kudo!",
-        },
-        blocks: [
-          {
-            type: "section",
-            block_id: "section678",
-            text: {
-              type: "mrkdwn",
-              text: "Pick a template",
-            },
-            accessory: {
-              action_id: "templateName",
-              type: "static_select",
-              placeholder: {
-                type: "plain_text",
-                text: "Select an item",
-              },
-              options: names,
-            },
-          },
-          // {
-          //   type: "section",
-          //   block_id: "section-identifier",
-          //   accessory: {
-          //     type: "button",
-          //     text: {
-          //       type: "plain_text",
-          //       text: "Next",
-          //     },
-          //     action_id: "button-identifier",
-          //   },
-          // },
-        ],
-        submit: {
-          type: "plain_text",
-          text: "Send",
-        },
-      },
-    });
     // await slackClient.views.update({
     //   trigger_id: trigger_id,
     //   view: {
@@ -195,6 +143,65 @@ export default async function handler(
   }
   res.end();
 }
+
+const sendFirstModal = async (trigger_id: string) => {
+  const templates = getAllTemplates();
+
+  const slackClient: WebClient = new WebClient(env.SLACK_APP_TOKEN);
+  const names: PlainTextOption[] = (await templates).map((t) => {
+    return {
+      text: { type: "plain_text", text: t.name },
+      value: t.name,
+    };
+  });
+
+  await slackClient.views.open({
+    trigger_id: trigger_id,
+    view: {
+      type: "modal",
+      callback_id: "modal-identifier",
+      title: {
+        type: "plain_text",
+        text: "Make your kudo!",
+      },
+      blocks: [
+        {
+          type: "section",
+          block_id: "section678",
+          text: {
+            type: "mrkdwn",
+            text: "Pick a template",
+          },
+          accessory: {
+            action_id: "templateName",
+            type: "static_select",
+            placeholder: {
+              type: "plain_text",
+              text: "Select an item",
+            },
+            options: names,
+          },
+        },
+        // {
+        //   type: "section",
+        //   block_id: "section-identifier",
+        //   accessory: {
+        //     type: "button",
+        //     text: {
+        //       type: "plain_text",
+        //       text: "Next",
+        //     },
+        //     action_id: "button-identifier",
+        //   },
+        // },
+      ],
+      submit: {
+        type: "plain_text",
+        text: "Send",
+      },
+    },
+  });
+};
 
 // type Payload = {
 //   view: {

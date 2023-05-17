@@ -233,9 +233,11 @@ const sendSecondModal = async (payload: Payload) => {
       value: t.name,
     };
   });
-  console.log(payload.actions[0]?.selected_option.value);
-  console.log(payload.actions[0].selected_option.value);
-  const value = payload.actions[0].selected_option.value ?? "Fire";
+  console.log(payload.actions);
+  // console.log(payload.actions[0]);
+  // console.log(payload.actions[0].selected_option.value);
+  const value =
+    payload.view.state.values.section678.templateName.selected_option.value;
   console.log(value);
 
   const chosenTemplate = getChosenTemplate(value);
@@ -285,7 +287,7 @@ const sendSecondModal = async (payload: Payload) => {
             type: "static_select",
             placeholder: {
               type: "plain_text",
-              text: payload.actions[0].selected_option.value,
+              text: value,
             },
             options: names,
           },

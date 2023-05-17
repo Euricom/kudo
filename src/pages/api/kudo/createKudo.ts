@@ -106,7 +106,7 @@ export default async function handler(
   const payload = (req.body as body).payload;
   if (payload) {
     console.log(payload);
-    await sendSecondModal(req.body as Payload);
+    await sendSecondModal(req.body as body);
   }
   const text: string = (req.body as body).text;
   const channel: string = (req.body as body).channel_id;
@@ -224,8 +224,9 @@ export default async function handler(
   }
   res.end();
 }
-const sendSecondModal = async (payload: Payload) => {
+const sendSecondModal = async (body: body) => {
   console.log("Hier komt hij: ");
+  const payload = body.payload as Payload;
   console.log(payload);
 
   const templates = getAllTemplates();

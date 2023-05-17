@@ -235,4 +235,11 @@ const shuffle = (array: Template[]) => {
 export async function getAllTemplates() {
   return await prisma.template.findMany({});
 }
+export async function getChosenTemplate(name: string) {
+  return await prisma.template.findFirst({
+    where: {
+      name: name,
+    },
+  });
+}
 const delay = (ms: number) => new Promise((res) => setTimeout(res, ms));

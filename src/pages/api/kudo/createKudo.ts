@@ -1,12 +1,84 @@
 import { type NextApiRequest, type NextApiResponse } from "next";
-import { getAllTemplates, makeSlackKudo } from "~/server/services/kudoService";
+import {
+  getAllTemplates,
+  getChosenTemplate,
+  makeSlackKudo,
+} from "~/server/services/kudoService";
 // import { openModal } from "~/server/services/slackService";
 import { env } from "~/env.mjs";
 import {
   WebClient,
   type FilesUploadResponse,
   PlainTextOption,
+  Block,
 } from "@slack/web-api";
+
+interface Payload {
+  type: string;
+  user: {
+    id: string;
+    username: string;
+    name: string;
+    team_id: string;
+  };
+  api_app_id: string;
+  token: string;
+  container: { type: string; view_id: string };
+  trigger_id: string;
+  team: { id: string; domain: string };
+  enterprise: string;
+  is_enterprise_install: boolean;
+  view: {
+    id: string;
+    team_id: string;
+    type: string;
+    blocks: object[];
+    private_metadata: string;
+    callback_id: string;
+    state: {
+      values: {
+        section678: {
+          templateName: {
+            type: string;
+            selected_option: {
+              text: { type: string; text: string; emoji: boolean };
+              value: string;
+            };
+          };
+        };
+      };
+    };
+    hash: string;
+    title: { type: string; text: string; emoji: boolean };
+    clear_on_close: boolean;
+    notify_on_close: boolean;
+    close: string;
+    submit: { type: string; text: string; emoji: boolean };
+    previous_view_id: string;
+    root_view_id: string;
+    app_id: string;
+    external_id: string;
+    app_installed_team_id: string;
+    bot_id: string;
+  };
+  actions: [
+    {
+      type: string;
+      action_id: string;
+      block_id: string;
+      selected_option: {
+        text: { type: string; text: string; emoji: boolean };
+        value: string;
+      };
+      placeholder: {
+        type: string;
+        text: string;
+        emoji: boolean;
+      };
+      action_ts: string;
+    }
+  ];
+}
 
 interface body {
   text: string;
@@ -16,17 +88,25 @@ interface body {
   user_name: string;
   challenge: string;
   trigger_id: string;
+  payload?: Payload;
+}
+
+interface Content {
+  type: number;
+  id: string;
+  text: string;
 }
 
 export default async function handler(
   req: NextApiRequest,
   res: NextApiResponse
 ) {
-  console.log("erin");
-
   res.status(200);
   console.log(req.body);
-
+  const payload = (req.body as body).payload;
+  if (payload) {
+    await sendSecondModal(payload);
+  }
   const text: string = (req.body as body).text;
   const channel: string = (req.body as body).channel_id;
   const trigger_id: string = (req.body as body).trigger_id;
@@ -92,7 +172,7 @@ export default async function handler(
   //     console.error("Error uploading file to Slack:", error);
   //   }
   // } else {
-  await sendFirstModal(trigger_id);
+  // await sendFirstModal(trigger_id);
 
   // await slackClient.views.update({
   //   trigger_id: trigger_id,
@@ -143,6 +223,98 @@ export default async function handler(
   // }
   res.end();
 }
+const sendSecondModal = async (payload: Payload) => {
+  const templates = getAllTemplates();
+
+  const slackClient: WebClient = new WebClient(env.SLACK_APP_TOKEN);
+  const names: PlainTextOption[] = (await templates).map((t) => {
+    return {
+      text: { type: "plain_text", text: t.name },
+      value: t.name,
+    };
+  });
+  const chosenTemplate = getChosenTemplate(
+    payload.actions[0].selected_option.value
+  );
+  const content: Content[] = (await chosenTemplate)
+    ?.content as unknown as Content[];
+  console.log(content);
+
+  const texts = content
+    ?.filter((c: Content) => c?.type === 0)
+    .map((t) => {
+      return {
+        type: "input",
+        element: {
+          type: "plain_text_input",
+          initial_value: t.text,
+        },
+        label: {
+          type: "plain_text",
+          text: "Input " + t.id,
+        },
+      } as Block;
+    });
+
+  await slackClient.views.update({
+    token: payload.token,
+    view_id: payload.view.id,
+    hash: payload.view.hash,
+
+    trigger_id: payload.trigger_id,
+    view: {
+      type: "modal",
+      callback_id: "modal-identifier",
+      title: {
+        type: "plain_text",
+        text: "Make your kudo!",
+      },
+      blocks: [
+        {
+          type: "section",
+          block_id: "section678",
+          text: {
+            type: "mrkdwn",
+            text: "Pick a template",
+          },
+          accessory: {
+            action_id: "templateName",
+            type: "static_select",
+            placeholder: {
+              type: "plain_text",
+              text: payload.actions[0].selected_option.value,
+            },
+            options: names,
+          },
+        },
+        {
+          type: "section",
+          text: {
+            type: "mrkdwn",
+            text: "*Enter your input:*",
+          },
+        },
+        ...texts,
+        {
+          type: "section",
+          block_id: "section-identifier",
+          accessory: {
+            type: "button",
+            text: {
+              type: "plain_text",
+              text: "Next",
+            },
+            action_id: "button-identifier",
+          },
+        },
+      ],
+      submit: {
+        type: "plain_text",
+        text: "Send",
+      },
+    },
+  });
+};
 
 const sendFirstModal = async (trigger_id: string) => {
   const templates = getAllTemplates();
@@ -195,10 +367,6 @@ const sendFirstModal = async (trigger_id: string) => {
         //   },
         // },
       ],
-      submit: {
-        type: "plain_text",
-        text: "Send",
-      },
     },
   });
 };

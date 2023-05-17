@@ -39,10 +39,12 @@ const inputGetByIdSorted = object({
 
 const inputLike = object({
   id: string(),
+  userId: string(),
   liked: boolean(),
 });
 const inputComment = object({
   id: string(),
+  userId: string(),
   comment: string(),
 });
 const inputGetImagesByIds = object({
@@ -173,17 +175,19 @@ export const kudoRouter = createTRPCRouter({
         await createPusherKudo(kudo);
         const sender = await findUserById(input.userId);
         const session = await getSessionById(input.sessionId);
-        const speaker = await findUserById(session.speakerId);
 
-        await sendnotification(
-          ctx.prisma,
-          sender.displayName +
-            " sent you a kudo for your session about " +
-            session.title,
-          "/kudo/" + kudo.id,
-          speaker.id,
-          sender.id
+        const notificationPromises = session.speakerId.map((id) =>
+          sendnotification(
+            ctx.prisma,
+            sender.displayName +
+              " sent you a kudo for your session about " +
+              session.title,
+            "/kudo/" + kudo.id,
+            id,
+            sender.id
+          )
         );
+        await Promise.all(notificationPromises);
       }
       return kudo;
     }),
@@ -212,18 +216,18 @@ export const kudoRouter = createTRPCRouter({
       });
 
       if (kudo) {
-        const sender = await findUserById(kudo.userId);
+        const sender = await findUserById(input.userId);
         const session = await getSessionById(kudo.sessionId);
-        const speaker = await findUserById(session.speakerId);
+        const receiver = await findUserById(kudo.userId);
 
         await sendnotification(
           ctx.prisma,
-          speaker.displayName +
+          sender.displayName +
             " liked the kudo you send for the session about " +
             session.title,
           "/kudo/" + kudo.id,
-          sender.id,
-          speaker.id
+          receiver.id,
+          sender.id
         );
       } else {
         throw new TRPCError({
@@ -246,18 +250,18 @@ export const kudoRouter = createTRPCRouter({
         },
       });
       if (kudo) {
-        const sender = await findUserById(kudo.userId);
+        const sender = await findUserById(input.userId);
         const session = await getSessionById(kudo.sessionId);
-        const speaker = await findUserById(session.speakerId);
+        const receiver = await findUserById(kudo.userId);
 
         await sendnotification(
           ctx.prisma,
-          speaker.displayName +
+          sender.displayName +
             " commented on the kudo you send for the session about " +
             session.title,
           "/kudo/" + kudo.id,
-          sender.id,
-          speaker.id
+          receiver.id,
+          sender.id
         );
       } else {
         throw new TRPCError({

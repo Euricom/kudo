@@ -34,17 +34,23 @@ export function sortTitle({ sessions, sort }: SessionArray) {
   return sorted;
 }
 export function sortSpeaker({ sessions, sort }: SessionArray) {
-  const sorted = sessions.reduce((previous, current) => {
-    if (previous[previous.length - 1]?.speakerId !== current.speakerId) {
-      return [
-        ...previous,
-        {
-          speakerId: current.speakerId,
-          sessions: sessions.filter((s) => s.speakerId === current.speakerId),
-        },
-      ];
-    } else return previous;
-  }, [] as NewSessionSpeaker[]);
+  const sorted: NewSessionSpeaker[] = sessions.reduce(
+    (previous: NewSessionSpeaker[], current: Session) => {
+      const speakerIds = current.speakerId.filter(
+        (speakerId) => !previous.find((p) => p.speakerId === speakerId)
+      );
+      console.log(speakerIds);
+
+      const speakers = speakerIds.map((speakerId) => ({
+        speakerId: speakerId,
+        sessions: sessions.filter((s) => s.speakerId.includes(speakerId)),
+      }));
+
+      return [...previous, ...speakers];
+    },
+    [] as NewSessionSpeaker[]
+  );
+
   if (sort === SortPosibillities.SpeakerD) {
     return sorted.reverse();
   }
@@ -54,22 +60,22 @@ export function sortSpeaker({ sessions, sort }: SessionArray) {
 export async function getAllSessions() {
   const result = (await fetch(`${env.SESSION_URL}`).then((result) =>
     result.json()
-  )) as SessionArray;
-  return result.sessions;
+  )) as Session[];
+  return result;
 }
 
 export async function getSessionsBySpeaker(id: string) {
   return await fetch(`${env.SESSION_URL}`)
     .then((result) => result.json())
-    .then((result: SessionArray) =>
-      result.sessions.filter((r: Session) => r.speakerId === id)
+    .then((result: Session[]) =>
+      result.filter((r: Session) => r.speakerId.includes(id))
     );
 }
 
-export async function getSessionById(id: string) {
+export async function getSessionById(id: string): Promise<Session> {
   return (await fetch(`${env.SESSION_URL}`)
     .then((result) => result.json())
-    .then((result: SessionArray) =>
-      result.sessions.find((r) => r.id.toString() === id)
+    .then((result: Session[]) =>
+      result.find((r) => r.id.toString() === id)
     )) as Session;
 }

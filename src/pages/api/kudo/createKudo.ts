@@ -25,6 +25,7 @@ export default async function handler(
   console.log("erin");
 
   res.status(200).end();
+  console.log(req.body);
 
   const text: string = (req.body as body).text;
   const channel: string = (req.body as body).channel_id;
@@ -33,24 +34,7 @@ export default async function handler(
 
   const slackClient: WebClient = new WebClient(userId ?? env.SLACK_APP_TOKEN);
 
-  const base64 = await makeSlackKudo(text);
-
-  // Initialize the Slack Web Client
-
-  // Send the file to the appropriate channel
-  try {
-    await slackClient.files.uploadV2({
-      channels: "C054FAZS2FN",
-      file: Buffer.from(base64, "base64"),
-      filename: "kudo.jpg",
-      title: "Mooie kudo jonge",
-    });
-  } catch (error) {
-    console.error("Error uploading file to Slack:", error);
-  }
   //Direct message werkt niet
-  console.log(channel);
-
   // if (channel.startsWith("D")) {
   //   res
   //     .status(200)
@@ -60,6 +44,34 @@ export default async function handler(
   // }
 
   //info over channel opvragen
+  let channelInfoResponse;
+  try {
+    channelInfoResponse = await slackClient.conversations.info({
+      channel: channel,
+    });
+  } catch (e) {
+    res.status(200).json("Something went wrong, this channel was not found.");
+    res.end();
+  }
+  if (!channelInfoResponse?.ok) {
+    res.status(200).json("Something went wrong, this channel was not found.");
+    res.end();
+  } else if (!channelInfoResponse.channel?.is_channel) {
+    res
+      .status(200)
+      .json(
+        "Something went wrong, you can not send kudos in a private message, Sorry!"
+      );
+    res.end();
+  }
+  if (!channelInfoResponse?.channel?.is_member) {
+    await slackClient.conversations.join({
+      channel: channel,
+    });
+  }
+  //
+  //
+  //
   if (text !== "") {
     const base64 = await makeSlackKudo(text);
 
@@ -77,33 +89,6 @@ export default async function handler(
       console.error("Error uploading file to Slack:", error);
     }
   } else {
-    let channelInfoResponse;
-    try {
-      channelInfoResponse = await slackClient.conversations.info({
-        channel: channel,
-      });
-    } catch (e) {
-      res.status(200).json("Something went wrong, this channel was not found.");
-      res.end();
-    }
-
-    if (!channelInfoResponse?.ok) {
-      res.status(200).json("Something went wrong, this channel was not found.");
-      res.end();
-    } else if (!channelInfoResponse.channel?.is_channel) {
-      res
-        .status(200)
-        .json(
-          "Something went wrong, you can not send kudos in a private message, Sorry!"
-        );
-      res.end();
-    }
-    //Als bot geen lid is van channel, join de channel.
-    if (!channelInfoResponse?.channel?.is_member) {
-      await slackClient.conversations.join({
-        channel: channel,
-      });
-    }
     const templates = getAllTemplates();
     const names: PlainTextOption[] = (await templates).map((t) => {
       return {

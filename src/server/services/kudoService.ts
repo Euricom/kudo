@@ -180,6 +180,7 @@ export async function makeSlackKudo(message: string) {
             "https://github.githubassets.com/images/icons/emoji/unicode/" +
             d.unified +
             ".png?v8";
+          //andere url: https://raw.githubusercontent.com/EmojiTwo/emojitwo/master/+ d.unified +/0023.png
         })
 
         .catch((e) => console.log(e));

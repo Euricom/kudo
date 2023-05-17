@@ -86,6 +86,9 @@ const New: NextPage<{
         return (
           <>
             <div className="w-full">
+              <h2 className="bg-base-300 p-2 dark:bg-secondary">
+                All Sessions
+              </h2>
               {filtering(sortTitle({ sessions: sessions, sort: sort })).map(
                 (s) => (
                   <SessionListItem key={s.id} session={s} />

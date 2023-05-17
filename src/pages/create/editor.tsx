@@ -30,6 +30,7 @@ import { type TRPCError } from "@trpc/server";
 import { type Kudo } from "@prisma/client";
 import EditorButton from "~/components/editor/buttons/EditorButton";
 import useEyeDropper from "use-eye-dropper";
+import { AiOutlineLoading3Quarters } from "react-icons/ai";
 
 export function getServerSideProps(context: {
   query: { template: string; session: string; anonymous: string };
@@ -138,6 +139,7 @@ const Editor: NextPage<{
     }
     if (user && user.id && user.name)
       try {
+        toast.info("Creating Kudo...");
         const image = await createImage({
           dataUrl: stage.toDataURL({ pixelRatio: 1 / stage.scaleX() }),
         });
@@ -147,6 +149,7 @@ const Editor: NextPage<{
           userId: user.id,
           anonymous: anonymous === "true" ? true : false,
         });
+        toast.success("Kudo created!");
         await router.replace("/out");
       } catch (e) {
         toast.error((e as TRPCError).message);
@@ -257,7 +260,7 @@ const Editor: NextPage<{
                 onChange={(e) => setThickness(parseInt(e.target.value))}
               />
             </div>
-            <div className="mt-3 flex align-middle">
+            <div className="drawgrid mt-3 grid">
               <div className="flex flex-col justify-around">
                 <button onClick={() => setSelectedButton(EditorFunctions.Draw)}>
                   <BiPencil size={30} />
@@ -384,7 +387,18 @@ const Editor: NextPage<{
           anonymous={anonymous === "true" ? true : false}
         />
       </main>
-      <FAB text={"Send"} icon={<FiSend />} onClick={() => void submit()} />
+      <FAB
+        text={selectedButton === EditorFunctions.Submit ? "In process" : "Send"}
+        icon={
+          selectedButton === EditorFunctions.Submit ? (
+            <AiOutlineLoading3Quarters />
+          ) : (
+            <FiSend />
+          )
+        }
+        onClick={() => void submit()}
+        disabled={selectedButton === EditorFunctions.Submit}
+      />
     </>
   );
 };

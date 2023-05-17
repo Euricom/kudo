@@ -14,6 +14,12 @@ body {
   --lig: 50%;
 }
 
+.drawgrid {
+  grid-template-areas: 'tools brush';
+  grid-template-columns: 1fr 4fr;
+  min-height: 15vh;
+}
+
 .slider-h {
   background: linear-gradient(
     to right,

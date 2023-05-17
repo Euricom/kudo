@@ -30,6 +30,7 @@ export type KudoProps = {
 };
 
 export type FabProps = {
+  disabled?: boolean;
   text?: string;
   icon?: React.ReactNode;
   url?: string;

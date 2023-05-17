@@ -27,7 +27,6 @@ import data from "@emoji-mart/data";
 import Picker from "@emoji-mart/react";
 import { toast } from "react-toastify";
 import { type TRPCError } from "@trpc/server";
-import { type Kudo } from "@prisma/client";
 import EditorButton from "~/components/editor/buttons/EditorButton";
 import useEyeDropper from "use-eye-dropper";
 import { AiOutlineLoading3Quarters } from "react-icons/ai";

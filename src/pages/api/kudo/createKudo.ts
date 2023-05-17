@@ -28,9 +28,25 @@ export default async function handler(
   const text: string = (req.body as body).text;
   const channel: string = (req.body as body).channel_id;
   const trigger_id: string = (req.body as body).trigger_id;
+  const userId = (req.body as body).user_id;
 
-  const slackClient: WebClient = new WebClient(env.SLACK_APP_TOKEN);
+  const slackClient: WebClient = new WebClient(userId ?? env.SLACK_APP_TOKEN);
 
+  const base64 = await makeSlackKudo(text);
+
+  // Initialize the Slack Web Client
+
+  // Send the file to the appropriate channel
+  try {
+    await slackClient.files.uploadV2({
+      channels: "C054FAZS2FN",
+      file: Buffer.from(base64, "base64"),
+      filename: "kudo.jpg",
+      title: "Mooie kudo jonge",
+    });
+  } catch (error) {
+    console.error("Error uploading file to Slack:", error);
+  }
   //Direct message werkt niet
   console.log(channel);
 
@@ -47,11 +63,10 @@ export default async function handler(
     const base64 = await makeSlackKudo(text);
 
     // Initialize the Slack Web Client
-    const slackClient = new WebClient(env.SLACK_APP_TOKEN);
 
     // Send the file to the appropriate channel
     try {
-      await slackClient.files.upload({
+      await slackClient.files.uploadV2({
         channels: channel,
         file: Buffer.from(base64, "base64"),
         filename: "kudo.jpg",

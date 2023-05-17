@@ -112,10 +112,10 @@ export default async function handler(
   const trigger_id: string = (req.body as body).trigger_id;
   const userId = (req.body as body).user_id;
 
-  // const personalClient: WebClient = new WebClient(
-  //   userId ?? env.SLACK_APP_TOKEN
-  // );
-  // const slackClient: WebClient = new WebClient(env.SLACK_APP_TOKEN);
+  const personalClient: WebClient = new WebClient(
+    userId ?? env.SLACK_APP_TOKEN
+  );
+  const slackClient: WebClient = new WebClient(env.SLACK_APP_TOKEN);
 
   //Direct message werkt niet
   // if (channel.startsWith("D")) {
@@ -155,72 +155,72 @@ export default async function handler(
   //
   //
   //
-  // if (text !== "") {
-  //   const base64 = await makeSlackKudo(text);
+  if (text !== "") {
+    const base64 = await makeSlackKudo(text);
 
-  //   // Initialize the Slack Web Client
+    // Initialize the Slack Web Client
 
-  //   // Send the file to the appropriate channel
-  //   try {
-  //     await personalClient.files.uploadV2({
-  //       channels: channel,
-  //       file: Buffer.from(base64, "base64"),
-  //       filename: "kudo.jpg",
-  //       title: "Mooie kudo!",
-  //     });
-  //   } catch (error) {
-  //     console.error("Error uploading file to Slack:", error);
-  //   }
-  // } else {
-  // await sendFirstModal(trigger_id);
+    // Send the file to the appropriate channel
+    try {
+      await personalClient.files.uploadV2({
+        channels: channel,
+        file: Buffer.from(base64, "base64"),
+        filename: "kudo.jpg",
+        title: "Mooie kudo!",
+      });
+    } catch (error) {
+      console.error("Error uploading file to Slack:", error);
+    }
+  } else {
+    await sendFirstModal(trigger_id);
 
-  // await slackClient.views.update({
-  //   trigger_id: trigger_id,
-  //   view: {
-  //     type: "modal",
-  //     callback_id: "modal-identifier",
-  //     title: {
-  //       type: "plain_text",
-  //       text: "Make your kudo!",
-  //     },
-  //     blocks: [
-  //       {
-  //         type: "section",
-  //         block_id: "section678",
-  //         text: {
-  //           type: "mrkdwn",
-  //           text: "Pick a template",
-  //         },
-  //         accessory: {
-  //           action_id: "templateName",
-  //           type: "static_select",
-  //           placeholder: {
-  //             type: "plain_text",
-  //             text: "Select an item",
-  //           },
-  //           options: names,
-  //         },
-  //       },
-  //       {
-  //         type: "section",
-  //         block_id: "section-identifier",
-  //         accessory: {
-  //           type: "button",
-  //           text: {
-  //             type: "plain_text",
-  //             text: "Next",
-  //           },
-  //           action_id: "button-identifier",
-  //         },
-  //       },
-  //     ],
-  //     submit: {
-  //       type: "plain_text",
-  //       text: "Send",
-  //     },
-  //   },
-  // });
-  // }
+    // await slackClient.views.update({
+    //   trigger_id: trigger_id,
+    //   view: {
+    //     type: "modal",
+    //     callback_id: "modal-identifier",
+    //     title: {
+    //       type: "plain_text",
+    //       text: "Make your kudo!",
+    //     },
+    //     blocks: [
+    //       {
+    //         type: "section",
+    //         block_id: "section678",
+    //         text: {
+    //           type: "mrkdwn",
+    //           text: "Pick a template",
+    //         },
+    //         accessory: {
+    //           action_id: "templateName",
+    //           type: "static_select",
+    //           placeholder: {
+    //             type: "plain_text",
+    //             text: "Select an item",
+    //           },
+    //           options: names,
+    //         },
+    //       },
+    //       {
+    //         type: "section",
+    //         block_id: "section-identifier",
+    //         accessory: {
+    //           type: "button",
+    //           text: {
+    //             type: "plain_text",
+    //             text: "Next",
+    //           },
+    //           action_id: "button-identifier",
+    //         },
+    //       },
+    //     ],
+    //     submit: {
+    //       type: "plain_text",
+    //       text: "Send",
+    //     },
+    //   },
+    // });
+  }
   res.end();
 }
 const sendSecondModal = async (payload: Payload) => {

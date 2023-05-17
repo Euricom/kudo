@@ -77,34 +77,8 @@ const Editor: NextPage<{
   const [font, setFont] = useState<string>("Arial");
   const [thickness, setThickness] = useState<number>(5);
   const [selectedEmoji, setSelectedEmoji] = useState<EmojiObject>();
-  //API
-  const trpcContext = api.useContext();
 
-  const { mutateAsync: createKudo } = api.kudos.createKudo.useMutation({
-    //Nog nakijken of dit effectief iets doet
-    onMutate: async (newEntry) => {
-      await trpcContext.kudos.getKudosByUserId.cancel();
-
-      trpcContext.kudos.getKudosByUserId.setData(
-        { id: user?.id ?? "" },
-        (prevEntries?: Kudo[]) => {
-          const entry = {
-            ...newEntry,
-            id: "000000",
-            liked: false,
-            comment: "",
-            flagged: false,
-          };
-          prevEntries?.push(entry);
-          return prevEntries ?? [entry];
-        }
-      );
-    },
-    // Always refetch after error or success, so we have an up to date list
-    onSettled: async () => {
-      await trpcContext.kudos.getKudosByUserId.invalidate();
-    },
-  });
+  const { mutateAsync: createKudo } = api.kudos.createKudo.useMutation({});
   const { mutateAsync: createImage } = api.kudos.createKudoImage.useMutation();
   const templateQuery = api.templates.getTemplateById.useQuery({ id: id });
   const template = templateQuery.data;

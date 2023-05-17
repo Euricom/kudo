@@ -60,22 +60,22 @@ export function sortSpeaker({ sessions, sort }: SessionArray) {
 export async function getAllSessions() {
   const result = (await fetch(`${env.SESSION_URL}`).then((result) =>
     result.json()
-  )) as SessionArray;
-  return result.sessions;
+  )) as Session[];
+  return result;
 }
 
 export async function getSessionsBySpeaker(id: string) {
   return await fetch(`${env.SESSION_URL}`)
     .then((result) => result.json())
-    .then((result: SessionArray) =>
-      result.sessions.filter((r: Session) => r.speakerId.includes(id))
+    .then((result: Session[]) =>
+      result.filter((r: Session) => r.speakerId.includes(id))
     );
 }
 
 export async function getSessionById(id: string): Promise<Session> {
   return (await fetch(`${env.SESSION_URL}`)
     .then((result) => result.json())
-    .then((result: SessionArray) =>
-      result.sessions.find((r) => r.id.toString() === id)
+    .then((result: Session[]) =>
+      result.find((r) => r.id.toString() === id)
     )) as Session;
 }

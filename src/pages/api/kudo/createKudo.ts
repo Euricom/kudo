@@ -32,7 +32,10 @@ export default async function handler(
   const trigger_id: string = (req.body as body).trigger_id;
   const userId = (req.body as body).user_id;
 
-  const slackClient: WebClient = new WebClient(userId ?? env.SLACK_APP_TOKEN);
+  const personalClient: WebClient = new WebClient(
+    userId ?? env.SLACK_APP_TOKEN
+  );
+  const slackClient: WebClient = new WebClient(env.SLACK_APP_TOKEN);
 
   //Direct message werkt niet
   // if (channel.startsWith("D")) {
@@ -79,7 +82,7 @@ export default async function handler(
 
     // Send the file to the appropriate channel
     try {
-      await slackClient.files.uploadV2({
+      await personalClient.files.uploadV2({
         channels: channel,
         file: Buffer.from(base64, "base64"),
         filename: "kudo.jpg",

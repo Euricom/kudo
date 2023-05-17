@@ -225,6 +225,9 @@ export default async function handler(
   res.end();
 }
 const sendSecondModal = async (payload: Payload) => {
+  console.log("Hier komt hij: ");
+  console.log(payload);
+
   const templates = getAllTemplates();
 
   const slackClient: WebClient = new WebClient(env.SLACK_APP_TOKEN);

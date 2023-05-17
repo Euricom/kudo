@@ -105,7 +105,8 @@ export default async function handler(
   console.log(req.body);
   const payload = (req.body as body).payload;
   if (payload) {
-    await sendSecondModal(payload);
+    console.log(payload);
+    await sendSecondModal(req.body as Payload);
   }
   const text: string = (req.body as body).text;
   const channel: string = (req.body as body).channel_id;

@@ -98,10 +98,10 @@ const Out: NextPage<{ filterIn: string; sortIn: SortPosibillities }> = ({
                     ?.title.toLowerCase()
                     .includes(filter?.toLowerCase() ?? "") ||
                   users
-                    .find(
-                      (u) =>
-                        u.id ===
-                        sessions.find((s) => s.id == k.sessionId)?.speakerId
+                    .find((u) =>
+                      sessions
+                        .find((s) => s.id == k.sessionId)
+                        ?.speakerId.includes(u.id)
                     )
                     ?.displayName.toLowerCase()
                     .includes(filter?.toLowerCase() ?? "")

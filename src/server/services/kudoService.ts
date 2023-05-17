@@ -57,21 +57,25 @@ export const findAllKudosSortedByUserId = async (
     case SortPosibillities.SpeakerA:
       return kudos.sort((a, b) =>
         (users.find(
-          (u) => u.id === sessions?.find((s) => s.id === a.sessionId)?.speakerId
+          //Kan zijn dat dit nog niet klopt omdat er meerdere speakers zijn
+          (u) =>
+            sessions
+              ?.find((s) => s.id === a.sessionId)
+              ?.speakerId.includes(u.id)
         )?.displayName ?? "a") <
-        (users.find(
-          (u) => u.id === sessions?.find((s) => s.id === b.sessionId)?.speakerId
+        (users.find((u) =>
+          sessions?.find((s) => s.id === b.sessionId)?.speakerId.includes(u.id)
         )?.displayName ?? "b")
           ? 1
           : -1
       );
     case SortPosibillities.SpeakerD:
       return kudos.sort((a, b) =>
-        (users.find(
-          (u) => u.id === sessions?.find((s) => s.id === a.sessionId)?.speakerId
+        (users.find((u) =>
+          sessions?.find((s) => s.id === a.sessionId)?.speakerId.includes(u.id)
         )?.displayName ?? "a") >
-        (users.find(
-          (u) => u.id === sessions?.find((s) => s.id === b.sessionId)?.speakerId
+        (users.find((u) =>
+          sessions?.find((s) => s.id === b.sessionId)?.speakerId.includes(u.id)
         )?.displayName ?? "b")
           ? 1
           : -1

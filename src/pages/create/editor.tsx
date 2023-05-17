@@ -27,10 +27,9 @@ import data from "@emoji-mart/data";
 import Picker from "@emoji-mart/react";
 import { toast } from "react-toastify";
 import { type TRPCError } from "@trpc/server";
-import { type Kudo } from "@prisma/client";
 import EditorButton from "~/components/editor/buttons/EditorButton";
-import useWindowDimensions from "~/hooks/useWindowDimensions";
 import useEyeDropper from "use-eye-dropper";
+import { AiOutlineLoading3Quarters } from "react-icons/ai";
 
 export function getServerSideProps(context: {
   query: { template: string; session: string; anonymous: string };
@@ -55,7 +54,6 @@ const Editor: NextPage<{
   anonymous: string;
 }> = ({ id, sessionId, anonymous }) => {
   const router = useRouter();
-  const width = useWindowDimensions()?.width;
   const user = useSession().data?.user;
   //UseStates
   const [selectedButton, setSelectedButton] = useState<EditorFunctions>();
@@ -79,43 +77,14 @@ const Editor: NextPage<{
   const [font, setFont] = useState<string>("Arial");
   const [thickness, setThickness] = useState<number>(5);
   const [selectedEmoji, setSelectedEmoji] = useState<EmojiObject>();
-  //API
-  const trpcContext = api.useContext();
-  const { mutateAsync: createKudo } = api.kudos.createKudo.useMutation({
-    //Nog nakijken of dit effectief iets doet
-    onMutate: async (newEntry) => {
-      await trpcContext.kudos.getKudosByUserId.cancel();
 
-      trpcContext.kudos.getKudosByUserId.setData(
-        { id: user?.id ?? "" },
-        (prevEntries?: Kudo[]) => {
-          const entry = {
-            ...newEntry,
-            id: "000000",
-            liked: false,
-            comment: "",
-            flagged: false,
-          };
-          prevEntries?.push(entry);
-          return prevEntries ?? [entry];
-        }
-      );
-    },
-    // Always refetch after error or success, so we have an up to date list
-    onSettled: async () => {
-      await trpcContext.kudos.getKudosByUserId.invalidate();
-    },
-  });
+  const { mutateAsync: createKudo } = api.kudos.createKudo.useMutation({});
   const { mutateAsync: createImage } = api.kudos.createKudoImage.useMutation();
   const templateQuery = api.templates.getTemplateById.useQuery({ id: id });
   const template = templateQuery.data;
   const sessionQuery = api.sessions.getSessionById.useQuery({ id: sessionId });
   const session = sessionQuery.data;
 
-  const volledigeSpeaker = api.users.getUserById.useQuery({
-    id: /*session?.speakerId ?? */ "18d332af-2d5b-49e5-8c42-9168b3910f97",
-  }).data;
-  const slackMessage = api.slack.sendMessageToSlack.useMutation();
   const body = document.querySelector("body");
   function setHSL() {
     body?.style.setProperty("--hue", hue.toString());
@@ -133,7 +102,6 @@ const Editor: NextPage<{
     sessionQuery.isLoading ||
     !user ||
     !session ||
-    !volledigeSpeaker ||
     !template
   ) {
     return <LoadingBar />;
@@ -168,8 +136,9 @@ const Editor: NextPage<{
     if (!stage) {
       return;
     }
-    if (user && user.id && user.name && volledigeSpeaker)
+    if (user && user.id && user.name)
       try {
+        toast.info("Creating Kudo...");
         const image = await createImage({
           dataUrl: stage.toDataURL({ pixelRatio: 1 / stage.scaleX() }),
         });
@@ -179,16 +148,7 @@ const Editor: NextPage<{
           userId: user.id,
           anonymous: anonymous === "true" ? true : false,
         });
-        await slackMessage
-          .mutateAsync({
-            text: user.name.toString() + " heeft je een kudo gestuurd!",
-            channel:
-              "@" +
-              volledigeSpeaker?.givenName +
-              "." +
-              volledigeSpeaker.surname.toLowerCase().replace(" ", ""),
-          })
-          .catch((e) => console.log(e));
+        toast.success("Kudo created!");
         await router.replace("/out");
       } catch (e) {
         toast.error((e as TRPCError).message);
@@ -299,7 +259,7 @@ const Editor: NextPage<{
                 onChange={(e) => setThickness(parseInt(e.target.value))}
               />
             </div>
-            <div className="mt-3 flex align-middle">
+            <div className="drawgrid mt-3 grid">
               <div className="flex flex-col justify-around">
                 <button onClick={() => setSelectedButton(EditorFunctions.Draw)}>
                   <BiPencil size={30} />
@@ -426,7 +386,18 @@ const Editor: NextPage<{
           anonymous={anonymous === "true" ? true : false}
         />
       </main>
-      <FAB text={"Send"} icon={<FiSend />} onClick={() => void submit()} />
+      <FAB
+        text={selectedButton === EditorFunctions.Submit ? "In process" : "Send"}
+        icon={
+          selectedButton === EditorFunctions.Submit ? (
+            <AiOutlineLoading3Quarters />
+          ) : (
+            <FiSend />
+          )
+        }
+        onClick={() => void submit()}
+        disabled={selectedButton === EditorFunctions.Submit}
+      />
     </>
   );
 };

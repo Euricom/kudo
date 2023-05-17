@@ -5,6 +5,7 @@ import {
   type AADResponseUsers,
   type User,
   type SessionArray,
+  type Session,
 } from "~/types";
 import { type PrismaClient } from "@prisma/client";
 import { TRPCError } from "@trpc/server";
@@ -65,6 +66,12 @@ export const findUserById = async (id: string): Promise<User> => {
   return user;
 };
 
+export const findUserByIds = async (ids: string[]): Promise<User[]> => {
+  const userPromises = ids.map((id) => findUserById(id));
+  const users = await Promise.all(userPromises);
+  return users;
+};
+
 export const findUserByName = async (id: string): Promise<User | undefined> => {
   const users = await findAllUsers();
   return users.find((user) => user.displayName === id);
@@ -77,13 +84,13 @@ export const findRelevantUsers = async (ctx: {
   const kudos = await ctx.prisma.kudo.findMany({});
   const sessions = (await fetch(`${env.SESSION_URL}`).then((result) =>
     result.json()
-  )) as SessionArray;
+  )) as Session[];
 
   const usersWcount = users.map((user) => {
     return {
       user: user,
       sessionCount:
-        sessions.sessions?.filter((session) => session.speakerId === user.id)
+        sessions?.filter((session) => session.speakerId.includes(user.id))
           .length ?? 0,
       sendKudoCount:
         kudos?.filter((kudo) => kudo.userId === user.id).length ?? 0,

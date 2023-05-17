@@ -24,7 +24,8 @@ export default async function handler(
 ) {
   console.log("erin");
 
-  res.status(200);
+  res.status(200).end();
+
   const text: string = (req.body as body).text;
   const channel: string = (req.body as body).channel_id;
   const trigger_id: string = (req.body as body).trigger_id;

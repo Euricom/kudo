@@ -4,7 +4,6 @@ import { prisma } from "../db";
 import { findAllUsers } from "./userService";
 import { getAllSessions } from "./sessionService";
 import { TRPCError } from "@trpc/server";
-import img from "~/../public/png/1f599-1f3fe.png";
 import { createCanvas } from "canvas";
 import { Image } from "canvas";
 import data from "@emoji-mart/data";
@@ -144,11 +143,8 @@ export async function makeSlackKudo(message: string) {
 
   context.fillStyle = template.color;
   context.fillRect(0, 0, width, height);
-  context.fillStyle = "#000000";
 
   shapes.map(async (s) => {
-    console.log(s);
-
     if (s.type === 5) {
       s.fill ? (context.fillStyle = s.fill) : "";
       context.beginPath();
@@ -173,12 +169,9 @@ export async function makeSlackKudo(message: string) {
       }
       context.stroke();
     } else if (s.type === 1) {
-      console.log(s);
-
       const img = new Image();
       await getEmojiDataFromNative(s.text)
         .then((d: emojiData) => {
-          console.log(d);
           img.src =
             "https://github.githubassets.com/images/icons/emoji/unicode/" +
             d.unified +
@@ -186,8 +179,6 @@ export async function makeSlackKudo(message: string) {
         })
 
         .catch((e) => console.log(e));
-
-      const textWidth = context.measureText(s.text ?? "fout").width;
       img.onload = () => {
         context.drawImage(
           img,

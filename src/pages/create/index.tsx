@@ -200,7 +200,7 @@ const SessionListItem = ({ session }: { session: Session }) => {
         }
       >
         <div className="flex flex-col gap-3">
-          <h2 className="card-title text-lg" data-cy="SessionTitle">
+          <h2 className="text-left text-lg font-bold" data-cy="SessionTitle">
             {session.title}
           </h2>
           <div className="flex w-full items-center justify-between text-sm">

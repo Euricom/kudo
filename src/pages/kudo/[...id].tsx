@@ -130,7 +130,7 @@ const KudoDetail: NextPage<{ id: string }> = ({ id }) => {
     });
 
   async function handleclick() {
-    if (user?.id === session?.speakerId && kudo && kudo.id) {
+    if (session?.speakerId.includes(user?.id ?? "") && kudo && kudo.id) {
       try {
         if (kudo.liked) {
           await likeKudoById({
@@ -154,7 +154,7 @@ const KudoDetail: NextPage<{ id: string }> = ({ id }) => {
   }
 
   async function handleSubmit() {
-    if (user?.id === session?.speakerId && kudo && kudo.id) {
+    if (session?.speakerId.includes(user?.id ?? "") && kudo && kudo.id) {
       try {
         setEdit(false);
         await commentKudoById({
@@ -204,10 +204,14 @@ const KudoDetail: NextPage<{ id: string }> = ({ id }) => {
   }
 
   async function flag() {
-    if (user?.id === session?.speakerId && kudo?.flagged === false) {
+    if (
+      session?.speakerId.includes(user?.id ?? "") &&
+      kudo?.flagged === false
+    ) {
       try {
         await flagKudoById({
           id: kudo?.id ?? "error",
+          userId: user?.id ?? "error",
           flagged: !kudo?.flagged,
         });
       } catch (e) {
@@ -217,6 +221,7 @@ const KudoDetail: NextPage<{ id: string }> = ({ id }) => {
       try {
         await flagKudoById({
           id: kudo?.id ?? "error",
+          userId: user?.id ?? "error",
           flagged: !kudo?.flagged,
         });
       } catch (e) {

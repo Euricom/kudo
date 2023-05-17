@@ -53,6 +53,7 @@ const inputGetImagesByIds = object({
 
 const inputFlag = object({
   id: string(),
+  userId: string(),
   flagged: boolean(),
 });
 
@@ -285,15 +286,14 @@ export const kudoRouter = createTRPCRouter({
       });
       if (kudo) {
         const sender = await findUserById(kudo.userId);
-        const session = await getSessionById(kudo.sessionId);
-        const speaker = await findUserById(session.speakerId);
+        const receiver = await findUserById(input.userId);
 
         sendnotificationsToAdmins(
           ctx.prisma,
           "Kudo send by " +
             sender.displayName +
             " is reported by " +
-            speaker.displayName,
+            receiver.displayName,
           "/kudo/" + kudo.id,
           sender.id
         );

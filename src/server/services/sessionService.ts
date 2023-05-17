@@ -4,6 +4,7 @@ import {
   type NewSessionSpeaker,
   type SessionArray,
   type Session,
+  type SessionDetail,
 } from "~/types";
 import { env } from "~/env.mjs";
 
@@ -72,8 +73,8 @@ export async function getSessionsBySpeaker(id: string) {
     );
 }
 
-export async function getSessionById(id: string): Promise<Session> {
-  return (await fetch(`${env.SESSION_URL}/${id}}`).then((result) =>
+export async function getSessionById(id: string): Promise<SessionDetail> {
+  return (await fetch(`${env.SESSION_URL}/${id}`).then((result) =>
     result.json()
-  )) as Session;
+  )) as SessionDetail;
 }

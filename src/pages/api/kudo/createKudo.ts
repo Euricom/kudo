@@ -233,9 +233,12 @@ const sendSecondModal = async (payload: Payload) => {
       value: t.name,
     };
   });
-  const chosenTemplate = getChosenTemplate(
-    payload.actions[0].selected_option.value
-  );
+  console.log(payload.actions[0]?.selected_option.value);
+  console.log(payload.actions[0].selected_option.value);
+  const value = payload.actions[0].selected_option.value ?? "Fire";
+  console.log(value);
+
+  const chosenTemplate = getChosenTemplate(value);
   const content: Content[] = (await chosenTemplate)
     ?.content as unknown as Content[];
   console.log(content);

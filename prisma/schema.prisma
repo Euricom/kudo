@@ -62,7 +62,8 @@ model User {
     image         String?
     accounts      Account[]
     sessions      Session[] 
-    role          String?     
+    role          String?   
+    access_token  String?  
 }
 
 model VerificationToken {

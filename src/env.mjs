@@ -27,6 +27,8 @@ const server = z.object({
   PUSHER_KEY: z.string(),
   PUSHER_SECRET: z.string(),
   SLACK_APP_TOKEN: z.string(),
+  clientId: z.string(),
+  clientSecret: z.string(),
 });
 
 /**
@@ -34,11 +36,9 @@ const server = z.object({
  * built with invalid env vars. To expose them to the client, prefix them with `NEXT_PUBLIC_`.
  */
 const client = z.object(
-  /** @satisfies {Record<`NEXT_PUBLIC_${string}`, import('zod').ZodType>} */ (
-    {
-      NEXT_PUBLIC_PUSHER_KEY: z.string(),
-    }
-  ),
+  /** @satisfies {Record<`NEXT_PUBLIC_${string}`, import('zod').ZodType>} */ ({
+    NEXT_PUBLIC_PUSHER_KEY: z.string(),
+  })
 );
 
 /**
@@ -61,6 +61,8 @@ const processEnv = {
   PUSHER_SECRET: process.env.PUSHER_SECRET,
   NEXT_PUBLIC_PUSHER_KEY: process.env.NEXT_PUBLIC_PUSHER_KEY,
   SLACK_APP_TOKEN: process.env.SLACK_APP_TOKEN,
+  clientId: process.env.clientId,
+  clientSecret: process.env.clientSecret,
   // NEXT_PUBLIC_CLIENTVAR: process.env.NEXT_PUBLIC_CLIENTVAR,
 };
 

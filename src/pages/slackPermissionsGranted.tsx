@@ -3,25 +3,35 @@ import { NavigationBarContent } from "~/components/navigation/NavBarTitle";
 import { UtilButtonsContent } from "~/hooks/useUtilButtons";
 import Head from "next/head";
 import { useEffect } from "react";
+import { api } from "~/utils/api";
+import { useSession } from "next-auth/react";
 
 interface SlackProps {
   code?: string;
-  state?: string;
+  state: string;
 }
 export function getServerSideProps(context: {
   query: { code?: string; state?: string };
 }) {
   return {
     props: {
-      code: context.query.code ?? "",
+      code: context.query.code,
       state: context.query.state ?? "",
     },
   };
 }
 const Slack: NextPage<SlackProps> = ({ code, state }) => {
-  useEffect(() => {
-    console.log("Access Token:", code);
-  }, [code]);
+  const update = api.slack.updateUserWithAccessToken.useMutation();
+  const userid = useSession().data?.user.id;
+  if (userid && code) {
+    update
+      .mutateAsync({
+        code: code,
+        userId: userid,
+      })
+      .catch(console.error);
+  }
+
   return (
     <>
       <Head>
@@ -31,7 +41,7 @@ const Slack: NextPage<SlackProps> = ({ code, state }) => {
           content="You are not authorised to access previous page."
         />
       </Head>
-      <NavigationBarContent>Unauthorised</NavigationBarContent>
+      <NavigationBarContent>Permissions granted!</NavigationBarContent>
       <UtilButtonsContent>
         <></>
       </UtilButtonsContent>

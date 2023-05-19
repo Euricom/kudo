@@ -118,6 +118,26 @@ export default async function handler(
   );
   const slackClient: WebClient = new WebClient(env.SLACK_APP_TOKEN);
 
+  await slackClient.chat.postMessage({
+    channel: channel,
+    text: "testPersoonlijk",
+    as_user: true,
+  });
+  await slackClient.chat.postMessage({
+    channel: channel,
+    text: "testPersoonlijk2",
+    username: (req.body as body).user_name,
+  });
+  await personalClient.chat.postMessage({
+    channel: channel,
+    text: "testPersoonlijk3",
+    username: userId,
+  });
+  await personalClient.chat.postMessage({
+    channel: channel,
+    text: "testPersoonlijk3",
+    username: (req.body as body).user_name,
+  });
   //Direct message werkt niet
   // if (channel.startsWith("D")) {
   //   res

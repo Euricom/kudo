@@ -460,7 +460,7 @@ const sendAuthenticationModal = async (trigger_id: string) => {
       callback_id: "modal-identifier",
       title: {
         type: "plain_text",
-        text: "Click the link to go to the authentication page:",
+        text: "Click the link!",
       },
       blocks: [
         {

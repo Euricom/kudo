@@ -164,6 +164,7 @@ export type KonvaCanvasProps = {
   template: Template;
   thickness?: number;
   color: string;
+  templateName?: string;
   fontFamily?: string;
   emoji?: EmojiObject;
   anonymous?: boolean;

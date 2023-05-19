@@ -32,6 +32,7 @@ const KonvaCanvas = ({
   color,
   fontFamily,
   emoji,
+  templateName,
   anonymous,
   setFunction,
   setStage,
@@ -183,7 +184,7 @@ const KonvaCanvas = ({
     selectShape(null);
     const image = await createImage({ dataUrl: stageRef.current.toDataURL() });
     await createTemplate({
-      name: v4(),
+      name: templateName ?? "Unnamed",
       color: template.color,
       image: image.id,
       content: shapes,
@@ -195,6 +196,7 @@ const KonvaCanvas = ({
     template.color,
     setFunction,
     createImage,
+    templateName,
   ]);
   const handleMouseDown = () => {
     if (

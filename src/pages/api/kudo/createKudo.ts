@@ -475,6 +475,7 @@ const sendAuthenticationModal = async (trigger_id: string) => {
               type: "plain_text",
               text: "Go to Destination",
             },
+            action_id: "open_destination",
             url: "https://slack.com/oauth/v2/authorize?scope=&user_scope=files:write,chat:write&client_id=5141846691238.5170475885331", // Replace with the destination URL
           },
         },

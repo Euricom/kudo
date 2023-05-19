@@ -1,15 +1,28 @@
 import { env } from "~/env.mjs";
 import { prisma } from "../db";
+import { WebClient } from "@slack/web-api";
 
 export const updateUserWithAccessToken = async (
   code: string,
   userId: string
 ) => {
+  console.log(env.clientId);
+  console.log(env.clientSecret);
+  console.log(code);
+
+  const slackClient: WebClient = new WebClient(env.SLACK_APP_TOKEN);
   const data = {
     client_id: env.clientId,
     client_secret: env.clientSecret,
     code: code,
   };
+  try {
+    await slackClient.oauth.v2.access(data);
+  } catch (e) {
+    console.log(e);
+  }
+  //   console.log(res);
+
   const url = "https://slack.com/api/oauth.v2.access";
   await fetch(url, {
     method: "POST",

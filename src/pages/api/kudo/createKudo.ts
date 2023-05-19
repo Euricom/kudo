@@ -117,6 +117,9 @@ export default async function handler(
   const personalClient: WebClient = new WebClient(
     "xoxp-5141846691238-5133909828375-5200979736101-298d5831ae1427b9a9921402db3a2d07"
   );
+  const user = await slackClient.users.profile.get({
+    user: userId,
+  });
   try {
     await personalClient.chat.postMessage({
       channel: channel,
@@ -127,10 +130,11 @@ export default async function handler(
     console.log(e);
   }
   try {
-    await personalClient.chat.postMessage({
+    await slackClient.chat.postMessage({
       channel: channel,
       text: "testPersoonlijk3",
-      username: userId,
+      username: "Jona.Deneve",
+      icon_url: user.profile?.image_original,
     });
   } catch (e) {
     console.log(e);

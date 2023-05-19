@@ -18,6 +18,15 @@ export const updateUserWithAccessToken = async (
     }),
   })
     .then((res) => res.json())
+    .then((res) => console.log(res));
+
+  await fetch(url, {
+    method: "POST",
+    body: JSON.stringify({
+      data,
+    }),
+  })
+    .then((res) => res.json())
     .then(async (response: { access_token: string }) => {
       const access_token = response.access_token;
       await prisma.user.update({

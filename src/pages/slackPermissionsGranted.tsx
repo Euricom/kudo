@@ -23,14 +23,21 @@ export function getServerSideProps(context: {
 const Slack: NextPage<SlackProps> = ({ code, state }) => {
   const update = api.slack.updateUserWithAccessToken.useMutation();
   const userid = useSession().data?.user.id;
-  if (userid && code) {
-    update
-      .mutateAsync({
-        code: code,
-        userId: userid,
-      })
-      .catch(console.error);
-  }
+  console.log("1");
+
+  useEffect(() => {
+    if (userid && code) {
+      console.log(userid);
+      console.log(code);
+      console.log(update);
+      update
+        .mutateAsync({
+          code: code,
+          userId: userid,
+        })
+        .catch(console.error);
+    }
+  }, [code, userid]);
 
   return (
     <>
@@ -42,9 +49,6 @@ const Slack: NextPage<SlackProps> = ({ code, state }) => {
         />
       </Head>
       <NavigationBarContent>Permissions granted!</NavigationBarContent>
-      <UtilButtonsContent>
-        <></>
-      </UtilButtonsContent>
       <main className="flex h-full flex-col items-center justify-center gap-4">
         <div className="text-3xl">
           Well done, you succesfully gave permissions to Slack to send

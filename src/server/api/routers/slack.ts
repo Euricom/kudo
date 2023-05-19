@@ -56,33 +56,4 @@ export const slackRouter = createTRPCRouter({
         }),
       }).then((res) => res.json())) as SlackResponse;
     }),
-
-  updateUserWithAccessToken: protectedProcedure
-    .input(inputUpdateAccessToken)
-    .mutation(async ({ ctx, input }) => {
-      const data = {
-        client_id: env.clientId,
-        client_secret: env.clientSecret,
-        code: input.code,
-      };
-      const url = "https://slack.com/api/oauth.v2.access";
-      await fetch(url, {
-        method: "POST",
-        body: JSON.stringify({
-          data,
-        }),
-      })
-        .then((res) => res.json())
-        .then(async (response: { access_token: string }) => {
-          const access_token = response.access_token;
-          await ctx.prisma.user.update({
-            where: {
-              id: input.userId,
-            },
-            data: {
-              access_token: access_token,
-            },
-          });
-        });
-    }),
 });

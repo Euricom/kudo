@@ -5,7 +5,6 @@ import Head from "next/head";
 import { useEffect } from "react";
 import { api } from "~/utils/api";
 import { useSession } from "next-auth/react";
-import { updateUserWithAccessToken } from "~/server/services/slackService";
 
 interface SlackProps {
   code?: string;
@@ -22,9 +21,15 @@ export function getServerSideProps(context: {
   };
 }
 const Slack: NextPage<SlackProps> = ({ code, state }) => {
+  const update = api.slack.updateUserWithAccessToken.useMutation();
   const userid = useSession().data?.user.id;
   if (userid && code) {
-    updateUserWithAccessToken(code, userid).catch(console.error);
+    update
+      .mutateAsync({
+        code: code,
+        userId: userid,
+      })
+      .catch(console.error);
   }
 
   return (

@@ -113,31 +113,44 @@ export default async function handler(
   const trigger_id: string = (req.body as body).trigger_id;
   const userId = (req.body as body).user_id;
 
-  const personalClient: WebClient = new WebClient(
-    userId ?? env.SLACK_APP_TOKEN
-  );
+  const personalClient: WebClient = new WebClient(env.SLACK_APP_TOKEN);
   const slackClient: WebClient = new WebClient(env.SLACK_APP_TOKEN);
-
-  await slackClient.chat.postMessage({
-    channel: channel,
-    text: "testPersoonlijk",
-    as_user: true,
-  });
-  await slackClient.chat.postMessage({
-    channel: channel,
-    text: "testPersoonlijk2",
-    username: (req.body as body).user_name,
-  });
-  await personalClient.chat.postMessage({
-    channel: channel,
-    text: "testPersoonlijk3",
-    username: userId,
-  });
-  await personalClient.chat.postMessage({
-    channel: channel,
-    text: "testPersoonlijk3",
-    username: (req.body as body).user_name,
-  });
+  try {
+    await slackClient.chat.postMessage({
+      channel: channel,
+      text: "testPersoonlijk",
+      as_user: true,
+    });
+  } catch (e) {
+    console.log(e);
+  }
+  try {
+    await slackClient.chat.postMessage({
+      channel: channel,
+      text: "testPersoonlijk2",
+      username: (req.body as body).user_name,
+    });
+  } catch (e) {
+    console.log(e);
+  }
+  try {
+    await personalClient.chat.postMessage({
+      channel: channel,
+      text: "testPersoonlijk3",
+      username: userId,
+    });
+  } catch (e) {
+    console.log(e);
+  }
+  try {
+    await personalClient.chat.postMessage({
+      channel: channel,
+      text: "testPersoonlijk4",
+      username: (req.body as body).user_name,
+    });
+  } catch (e) {
+    console.log(e);
+  }
   //Direct message werkt niet
   // if (channel.startsWith("D")) {
   //   res

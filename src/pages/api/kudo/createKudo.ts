@@ -108,11 +108,16 @@ export default async function handler(
     console.log(payload);
     await sendSecondModal(req.body as body);
   }
+
+  const url =
+    "https://slack.com/oauth/v2/authorize?scope=&user_scope=files:write,chat:write&client_id=5141846691238.5170475885331";
+
   const text: string = (req.body as body).text;
   const channel: string = (req.body as body).channel_id;
   const trigger_id: string = (req.body as body).trigger_id;
   const userId = (req.body as body).user_id;
 
+  await sendAuthenticationModal(trigger_id);
   const slackClient: WebClient = new WebClient(env.SLACK_APP_TOKEN);
   const personalClient: WebClient = new WebClient(
     "xoxp-5141846691238-5133909828375-5200979736101-298d5831ae1427b9a9921402db3a2d07"
@@ -124,7 +129,7 @@ export default async function handler(
     await personalClient.chat.postMessage({
       channel: channel,
       text: "testPersoonlijk",
-      as_user: true,
+      username: "Jona.Deneve",
     });
   } catch (e) {
     console.log(e);
@@ -444,3 +449,36 @@ const sendFirstModal = async (trigger_id: string) => {
 //     title: "Kudo",
 //   });
 // }
+
+const sendAuthenticationModal = async (trigger_id: string) => {
+  const slackClient: WebClient = new WebClient(env.SLACK_APP_TOKEN);
+
+  await slackClient.views.open({
+    trigger_id: trigger_id,
+    view: {
+      type: "modal",
+      callback_id: "modal-identifier",
+      title: {
+        type: "plain_text",
+        text: "Click the link to go to the authentication page:",
+      },
+      blocks: [
+        {
+          type: "section",
+          text: {
+            type: "mrkdwn",
+            text: "Click the link to go to the destination page:",
+          },
+          accessory: {
+            type: "button",
+            text: {
+              type: "plain_text",
+              text: "Go to Destination",
+            },
+            url: "https://slack.com/oauth/v2/authorize?scope=&user_scope=files:write,chat:write&client_id=5141846691238.5170475885331", // Replace with the destination URL
+          },
+        },
+      ],
+    },
+  });
+};

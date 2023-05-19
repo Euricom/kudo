@@ -114,7 +114,9 @@ export default async function handler(
   const userId = (req.body as body).user_id;
 
   const personalClient: WebClient = new WebClient(env.SLACK_APP_TOKEN);
-  const slackClient: WebClient = new WebClient(env.SLACK_APP_TOKEN);
+  const slackClient: WebClient = new WebClient(
+    "xoxp-5141846691238-5133909828375-5200979736101-298d5831ae1427b9a9921402db3a2d07"
+  );
   try {
     await slackClient.chat.postMessage({
       channel: channel,

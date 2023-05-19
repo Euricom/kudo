@@ -122,10 +122,10 @@ const Flagged: NextPage<{ searchtext: string; sortIn: SortPosibillities }> = ({
                     ?.title.toLowerCase()
                     .includes(search?.toLowerCase() ?? "") ||
                   usersWCount
-                    ?.find(
-                      (u) =>
-                        u.user.id ===
-                        sessions.find((s) => s.id === k.sessionId)?.speakerId
+                    ?.find((u) =>
+                      sessions
+                        .find((s) => s.id === k.sessionId)
+                        ?.speakerId.includes(u.user.id)
                     )
                     ?.user.displayName.toLowerCase()
                     .includes(search?.toLowerCase() ?? "")

@@ -1,54 +1,54 @@
-import axios from "axios";
 import { env } from "~/env.mjs";
+import { prisma } from "../db";
+import { WebClient } from "@slack/web-api";
 
-export async function openModal(triggerId: string) {
-  const url = "https://slack.com/api/views.open";
-  const token = env.SLACK_APP_TOKEN;
+export const updateUserWithAccessToken = async (
+  code: string,
+  userId: string
+) => {
+  console.log(env.clientId);
+  console.log(env.clientSecret);
+  console.log(code);
 
-  const body = {
-    trigger_id: triggerId,
-    view: {
-      type: "modal",
-      callback_id: "modal-identifier",
-      title: {
-        type: "plain_text",
-        text: "Just a modal",
-      },
-      blocks: [
-        {
-          type: "section",
-          block_id: "section-identifier",
-          text: {
-            type: "mrkdwn",
-            text: "*Welcome* to ~my~ Block Kit _modal_!",
-          },
-          accessory: {
-            type: "button",
-            text: {
-              type: "plain_text",
-              text: "Just a button",
-            },
-            action_id: "button-identifier",
-          },
+  const slackClient: WebClient = new WebClient(env.SLACK_APP_TOKEN);
+  const data = {
+    client_id: env.clientId,
+    client_secret: env.clientSecret,
+    code: code,
+  };
+  try {
+    await slackClient.oauth.v2.access(data);
+  } catch (e) {
+    console.log(e);
+  }
+  //   console.log(res);
+
+  const url = "https://slack.com/api/oauth.v2.access";
+  await fetch(url, {
+    method: "POST",
+    body: JSON.stringify({
+      data,
+    }),
+  })
+    .then((res) => res.json())
+    .then((res) => console.log(res));
+
+  await fetch(url, {
+    method: "POST",
+    body: JSON.stringify({
+      data,
+    }),
+  })
+    .then((res) => res.json())
+    .then(async (response: { access_token: string }) => {
+      const access_token = response.access_token;
+      await prisma.user.update({
+        where: {
+          id: userId,
         },
-      ],
-    },
-  };
-
-  const config = {
-    headers: {
-      "Content-Type": "application/x-www-form-urlencoded",
-      Authorization: `Bearer ${token}`,
-    },
-  };
-
-  const response = await axios.post(url, body, config);
-
-  // const response = (await fetch(url, {
-  //   method: "POST",
-  //   headers: ,
-  //   body: body,
-  // }).then((res) => res.json())) as SlackResponse;
-
-  return response;
-}
+        data: {
+          access_token: access_token,
+        },
+      });
+    });
+};

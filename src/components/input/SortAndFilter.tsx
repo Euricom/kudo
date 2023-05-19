@@ -16,6 +16,7 @@ function useVisibleSort() {
         "/speaker/[...id]",
         "/all/sessions",
         "/all/flagged",
+        "/create",
       ],
     },
     {
@@ -26,15 +27,16 @@ function useVisibleSort() {
         "/speaker/[...id]",
         "/all/sessions",
         "/all/flagged",
+        "/create",
       ],
     },
     {
       sort: SortPosibillities.SpeakerA,
-      routes: ["/out", "/all", "/all/sessions", "/all/flagged"],
+      routes: ["/out", "/all", "/all/sessions", "/all/flagged", "/create"],
     },
     {
       sort: SortPosibillities.SpeakerD,
-      routes: ["/out", "/all", "/all/sessions", "/all/flagged"],
+      routes: ["/out", "/all", "/all/sessions", "/all/flagged", "/create"],
     },
     {
       sort: SortPosibillities.TitleA,
@@ -44,6 +46,7 @@ function useVisibleSort() {
         "/speaker/[...id]",
         "/all/sessions",
         "/all/flagged",
+        "/create",
       ],
     },
     {
@@ -54,6 +57,7 @@ function useVisibleSort() {
         "/speaker/[...id]",
         "/all/sessions",
         "/all/flagged",
+        "/create",
       ],
     },
   ].filter((item) => item.routes.includes(router.pathname));
@@ -97,7 +101,7 @@ const SortAndFilter = ({
             className="input w-full rounded-full bg-transparent p-3 focus:outline-none"
           />
         </div>
-        <div className="dropdown dropdown-end">
+        <div className="dropdown-end dropdown">
           <label
             tabIndex={0}
             className="btn-primary btn-circle btn m-1"

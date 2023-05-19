@@ -4,8 +4,21 @@ import { prisma } from "../db";
 import { findAllUsers } from "./userService";
 import { getAllSessions } from "./sessionService";
 import { TRPCError } from "@trpc/server";
-
 import { createCanvas } from "canvas";
+import { Image } from "canvas";
+import data from "@emoji-mart/data";
+import { init, getEmojiDataFromNative } from "emoji-mart";
+
+type emojiData = {
+  aliases: string[];
+  id: string;
+  keywords: string[];
+  name: string;
+  native: string;
+  shortcodes: string;
+  skin: number;
+  unified: string;
+};
 
 export const findAllKudosSortedByUserId = async (
   userid: string,
@@ -44,21 +57,25 @@ export const findAllKudosSortedByUserId = async (
     case SortPosibillities.SpeakerA:
       return kudos.sort((a, b) =>
         (users.find(
-          (u) => u.id === sessions?.find((s) => s.id === a.sessionId)?.speakerId
+          //Kan zijn dat dit nog niet klopt omdat er meerdere speakers zijn
+          (u) =>
+            sessions
+              ?.find((s) => s.id === a.sessionId)
+              ?.speakerId.includes(u.id)
         )?.displayName ?? "a") <
-        (users.find(
-          (u) => u.id === sessions?.find((s) => s.id === b.sessionId)?.speakerId
+        (users.find((u) =>
+          sessions?.find((s) => s.id === b.sessionId)?.speakerId.includes(u.id)
         )?.displayName ?? "b")
           ? 1
           : -1
       );
     case SortPosibillities.SpeakerD:
       return kudos.sort((a, b) =>
-        (users.find(
-          (u) => u.id === sessions?.find((s) => s.id === a.sessionId)?.speakerId
+        (users.find((u) =>
+          sessions?.find((s) => s.id === a.sessionId)?.speakerId.includes(u.id)
         )?.displayName ?? "a") >
-        (users.find(
-          (u) => u.id === sessions?.find((s) => s.id === b.sessionId)?.speakerId
+        (users.find((u) =>
+          sessions?.find((s) => s.id === b.sessionId)?.speakerId.includes(u.id)
         )?.displayName ?? "b")
           ? 1
           : -1
@@ -100,6 +117,7 @@ export function getFirstImageById() {
 }
 
 export async function makeSlackKudo(message: string) {
+  await init({ data });
   const template = await prisma.template
     .findMany({
       where: {
@@ -126,11 +144,11 @@ export async function makeSlackKudo(message: string) {
 
   const canvas = createCanvas(width, height);
   const context = canvas.getContext("2d");
+
   context.fillStyle = template.color;
   context.fillRect(0, 0, width, height);
-  context.fillStyle;
 
-  shapes.forEach((s) => {
+  shapes.map(async (s) => {
     if (s.type === 5) {
       s.fill ? (context.fillStyle = s.fill) : "";
       context.beginPath();
@@ -154,6 +172,27 @@ export async function makeSlackKudo(message: string) {
         }
       }
       context.stroke();
+    } else if (s.type === 1) {
+      const img = new Image();
+      await getEmojiDataFromNative(s.text)
+        .then((d: emojiData) => {
+          img.src =
+            "https://github.githubassets.com/images/icons/emoji/unicode/" +
+            d.unified +
+            ".png?v8";
+          //andere url: https://raw.githubusercontent.com/EmojiTwo/emojitwo/master/+ d.unified +/0023.png
+        })
+
+        .catch((e) => console.log(e));
+      img.onload = () => {
+        context.drawImage(
+          img,
+          (s.x ?? 0) + 750 - ((s.fontSize ?? 90) * ((s.scale?.x ?? 2) - 1)) / 2,
+          (s.y ?? 0) + 500 - ((s.fontSize ?? 90) * ((s.scale?.x ?? 2) - 1)) / 2,
+          (s.fontSize ?? 90) * ((s.scale?.x ?? 2) - 1),
+          (s.fontSize ?? 90) * ((s.scale?.y ?? 2) - 1)
+        );
+      };
     } else {
       let text = s.text;
       if (s.id === "bodyText") {
@@ -172,7 +211,7 @@ export async function makeSlackKudo(message: string) {
       );
     }
   });
-
+  await delay(3000);
   const buffer = canvas.toBuffer("image/jpeg");
   const base64String = btoa(String.fromCharCode(...new Uint8Array(buffer)));
 
@@ -192,3 +231,15 @@ const shuffle = (array: Template[]) => {
   }
   return array;
 };
+
+export async function getAllTemplates() {
+  return await prisma.template.findMany({});
+}
+export async function getChosenTemplate(name: string) {
+  return await prisma.template.findFirst({
+    where: {
+      name: name,
+    },
+  });
+}
+const delay = (ms: number) => new Promise((res) => setTimeout(res, ms));

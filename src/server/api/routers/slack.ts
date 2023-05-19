@@ -1,10 +1,16 @@
 import { createTRPCRouter, protectedProcedure } from "~/server/api/trpc";
 import { object, string } from "zod";
 import { env } from "~/env.mjs";
+import { prisma } from "~/server/db";
+import { updateUserWithAccessToken } from "~/server/services/slackService";
 
 const inputSendMessage = object({
   text: string(),
   channel: string(),
+});
+const inputUpdateAccessToken = object({
+  code: string(),
+  userId: string(),
 });
 
 interface SlackResponse {
@@ -50,5 +56,11 @@ export const slackRouter = createTRPCRouter({
           text: input.text,
         }),
       }).then((res) => res.json())) as SlackResponse;
+    }),
+
+  updateUserWithAccessToken: protectedProcedure
+    .input(inputUpdateAccessToken)
+    .mutation(async ({ input }) => {
+      await updateUserWithAccessToken(input.code, input.userId);
     }),
 });

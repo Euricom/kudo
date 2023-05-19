@@ -30,6 +30,7 @@ export type KudoProps = {
 };
 
 export type FabProps = {
+  disabled?: boolean;
   text?: string;
   icon?: React.ReactNode;
   url?: string;
@@ -49,8 +50,14 @@ export type Session = {
   id: string;
   title: string;
   date: string;
-  speakerId: string;
-  speaker?: User;
+  speakerId: string[];
+};
+
+export type SessionDetail = {
+  id: string;
+  title: string;
+  date: string[];
+  speakerId: string[];
 };
 
 export type SessionArray = {
@@ -168,6 +175,7 @@ export type KonvaCanvasProps = {
 export type Shapes = {
   type: CanvasShapes;
   id: string;
+  index?: number;
   x?: number;
   y?: number;
   scale?: Vector2d;

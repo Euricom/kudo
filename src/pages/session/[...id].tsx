@@ -64,7 +64,10 @@ const Session: NextPage<{ id: string; initialKudos: Kudo[] }> = ({
 
   useEffect(() => {
     if (sessionQuery.isLoading) return;
-    if (user?.role !== UserRole.ADMIN && user?.id !== session?.speakerId)
+    if (
+      user?.role !== UserRole.ADMIN &&
+      !session?.speakerId.includes(user?.id ?? "")
+    )
       router.replace("/403").catch((e) => toast.error((e as Error).message));
   }, [user, router, session?.speakerId, sessionQuery.isLoading]);
 
@@ -93,10 +96,7 @@ const Session: NextPage<{ id: string; initialKudos: Kudo[] }> = ({
     if (downloadPromises?.length ?? 0 > 0) {
       await Promise.all(downloadPromises ?? []);
       const zipBlob = await zip.generateAsync({ type: "blob" });
-      FileSaver.saveAs(
-        zipBlob,
-        `Kudo's from ${session?.title} - ${session?.date}.zip`
-      );
+      FileSaver.saveAs(zipBlob, `Kudo's from ${session?.title}.zip`);
     }
   };
 

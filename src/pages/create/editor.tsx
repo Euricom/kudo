@@ -27,19 +27,17 @@ import data from "@emoji-mart/data";
 import Picker from "@emoji-mart/react";
 import { toast } from "react-toastify";
 import { type TRPCError } from "@trpc/server";
-import { type Kudo } from "@prisma/client";
 import EditorButton from "~/components/editor/buttons/EditorButton";
-import useWindowDimensions from "~/hooks/useWindowDimensions";
 import useEyeDropper from "use-eye-dropper";
+import { AiOutlineLoading3Quarters } from "react-icons/ai";
 
 export function getServerSideProps(context: {
-  query: { template: string; session: string; anonymous: string };
+  query: { template: string; session: string };
 }) {
   return {
     props: {
       id: context.query.template,
       sessionId: context.query.session,
-      anonymous: context.query.anonymous,
     },
   };
 }
@@ -52,27 +50,25 @@ const KonvaCanvas = dynamic(
 const Editor: NextPage<{
   id: string;
   sessionId: string;
-  anonymous: string;
-}> = ({ id, sessionId, anonymous }) => {
+}> = ({ id, sessionId }) => {
   const router = useRouter();
-  const width = useWindowDimensions()?.width;
   const user = useSession().data?.user;
   //UseStates
   const [selectedButton, setSelectedButton] = useState<EditorFunctions>();
   const [stage, setStage] = useState<Konva.Stage>();
-  const [emojiDropdownState, setEmojiDropdownState] = useState<boolean>(false);
   const [hue, setHue] = useState<number>(0);
   const [saturation, setSaturation] = useState<number>(100);
   const [lightness, setLightness] = useState<number>(50);
   const [color, setColor] = useState<string>("#000000");
+
   const [templateName, setTemplateName] = useState<string | undefined>(
     undefined
   );
+  const [anonymous, setAnonymous] = useState<boolean>(false);
+
   const { open } = useEyeDropper();
   const pickColor = async () => {
-    if (width < 1024) {
-      document.getElementById("Modal-" + EditorFunctions.Color)?.click();
-    }
+    document.getElementById("Modal-" + EditorFunctions.Color)?.click();
     await new Promise((res) => setTimeout(res, 100));
     open()
       .then((color) => {
@@ -85,44 +81,14 @@ const Editor: NextPage<{
   const [font, setFont] = useState<string>("Arial");
   const [thickness, setThickness] = useState<number>(5);
   const [selectedEmoji, setSelectedEmoji] = useState<EmojiObject>();
-  //API
-  const trpcContext = api.useContext();
 
-  const { mutateAsync: createKudo } = api.kudos.createKudo.useMutation({
-    //Nog nakijken of dit effectief iets doet
-    onMutate: async (newEntry) => {
-      await trpcContext.kudos.getKudosByUserId.cancel();
-
-      trpcContext.kudos.getKudosByUserId.setData(
-        { id: user?.id ?? "" },
-        (prevEntries?: Kudo[]) => {
-          const entry = {
-            ...newEntry,
-            id: "000000",
-            liked: false,
-            comment: "",
-            flagged: false,
-          };
-          prevEntries?.push(entry);
-          return prevEntries ?? [entry];
-        }
-      );
-    },
-    // Always refetch after error or success, so we have an up to date list
-    onSettled: async () => {
-      await trpcContext.kudos.getKudosByUserId.invalidate();
-    },
-  });
+  const { mutateAsync: createKudo } = api.kudos.createKudo.useMutation({});
   const { mutateAsync: createImage } = api.kudos.createKudoImage.useMutation();
   const templateQuery = api.templates.getTemplateById.useQuery({ id: id });
   const template = templateQuery.data;
   const sessionQuery = api.sessions.getSessionById.useQuery({ id: sessionId });
   const session = sessionQuery.data;
 
-  const volledigeSpeaker = api.users.getUserById.useQuery({
-    id: /*session?.speakerId ?? */ "18d332af-2d5b-49e5-8c42-9168b3910f97",
-  }).data;
-  const slackMessage = api.slack.sendMessageToSlack.useMutation();
   const body = document.querySelector("body");
   function setHSL() {
     body?.style.setProperty("--hue", hue.toString());
@@ -140,15 +106,18 @@ const Editor: NextPage<{
     sessionQuery.isLoading ||
     !user ||
     !session ||
-    !volledigeSpeaker ||
     !template
   ) {
     return <LoadingBar />;
   }
 
+  function changeFont(font: string) {
+    document.getElementById("Modal-" + EditorFunctions.Text)?.click();
+    setFont(font);
+  }
+
   const handleEmoji = () => {
     try {
-      setEmojiDropdownState(!emojiDropdownState);
       setSelectedButton(EditorFunctions.PreSticker);
     } catch (e) {
       toast.error((e as Error).message);
@@ -156,12 +125,9 @@ const Editor: NextPage<{
   };
 
   function onClickEmoji(emoji: EmojiObject) {
-    if (width < 1024) {
-      document.getElementById("Modal-" + EditorFunctions.PreSticker)?.click();
-    }
+    document.getElementById("Modal-" + EditorFunctions.PreSticker)?.click();
     setSelectedEmoji(emoji);
     setSelectedButton(EditorFunctions.PostSticker);
-    setEmojiDropdownState(false);
   }
 
   const submit = async () => {
@@ -174,8 +140,9 @@ const Editor: NextPage<{
     if (!stage) {
       return;
     }
-    if (user && user.id && user.name && volledigeSpeaker)
+    if (user && user.id && user.name)
       try {
+        toast.info("Creating Kudo...");
         const image = await createImage({
           dataUrl: stage.toDataURL({ pixelRatio: 1 / stage.scaleX() }),
         });
@@ -183,18 +150,9 @@ const Editor: NextPage<{
           image: image.id,
           sessionId: sessionId,
           userId: user.id,
-          anonymous: anonymous === "true" ? true : false,
+          anonymous: anonymous,
         });
-        await slackMessage
-          .mutateAsync({
-            text: user.name.toString() + " heeft je een kudo gestuurd!",
-            channel:
-              "@" +
-              volledigeSpeaker?.givenName +
-              "." +
-              volledigeSpeaker.surname.toLowerCase().replace(" ", ""),
-          })
-          .catch((e) => console.log(e));
+        toast.success("Kudo created!");
         await router.replace("/out");
       } catch (e) {
         toast.error((e as TRPCError).message);
@@ -297,7 +255,7 @@ const Editor: NextPage<{
             <select
               className="select-bordered select min-w-min max-w-xs"
               value={font}
-              onChange={(e) => setFont(e.target.value)}
+              onChange={(e) => changeFont(e.target.value)}
             >
               {Fonts.sort((a, b) => (b < a ? 1 : -1)).map((f) => (
                 <option style={{ fontFamily: f }} key={f}>
@@ -342,16 +300,16 @@ const Editor: NextPage<{
                 onChange={(e) => setThickness(parseInt(e.target.value))}
               />
             </div>
-            <div className="mt-3 flex align-middle">
+            <div className="drawgrid mt-3 grid">
               <div className="flex flex-col justify-around">
-                <BiPencil
-                  size={30}
-                  onClick={() => setSelectedButton(EditorFunctions.Draw)}
-                />
-                <BiEraser
-                  size={30}
+                <button onClick={() => setSelectedButton(EditorFunctions.Draw)}>
+                  <BiPencil size={30} />
+                </button>
+                <button
                   onClick={() => setSelectedButton(EditorFunctions.Erase)}
-                />
+                >
+                  <BiEraser size={30} />
+                </button>
               </div>
               <li className="pointer-events-none flex h-full flex-grow items-center justify-center p-2">
                 {selectedButton == EditorFunctions.Erase ? (
@@ -442,86 +400,6 @@ const Editor: NextPage<{
                 </button>
               </div>
             </div>
-            {/* <div className="slider-container flex w-60 flex-col gap-4 align-middle">
-              <label className="label w-fit gap-4 text-xs">
-                <h1 className="font-bold">Color</h1>
-                {hue}
-              </label>
-              <input
-                type="range"
-                min="0"
-                id="h"
-                name="h"
-                max="360"
-                value={hue}
-                onChange={(h) => void setHue(parseInt(h.target.value))}
-                className="slider-h"
-              />
-              <label className="label w-fit gap-4 text-xs">
-                <h1 className="font-bold">Saturation</h1>
-                {saturation}
-              </label>
-              <input
-                type="range"
-                min="0"
-                max="100"
-                id="s"
-                name="s"
-                value={saturation}
-                onChange={(s) => void setSaturation(parseInt(s.target.value))}
-                className="slider-s"
-              />
-              <label className="label w-fit gap-4 text-xs">
-                <h1 className="font-bold">Brightness</h1>
-                {lightness}
-              </label>
-              <input
-                type="range"
-                min="0"
-                max="100"
-                id="l"
-                name="l"
-                value={lightness}
-                onChange={(l) => void setLightness(parseInt(l.target.value))}
-                className="slider-l"
-              /> */}
-            {/* <Slider-Color-Picker /> */}
-            {/* <ChromePicker
-                  color={color}
-                  disableAlpha={true}
-                  onChange={handleColorChange}
-                  className="mt-2 h-full"
-                /> */}
-            {/* <ColorSlider defaultValue={color} channel="red" />
-                <ColorSlider
-                  channel={"hue"}
-                  value={color}
-                  onChange={(v) =>
-                    void handleColorChange("#" + v.toHexInt().toString())
-                  }
-                />
-                <ColorSlider
-                  channel={"saturation"}
-                  value={color}
-                  onChange={(v) =>
-                    void handleColorChange("#" + v.toHexInt().toString())
-                  }
-                />
-                <ColorSlider
-                  channel={"lightness"}
-                  value={color}
-                  onChange={(v) =>
-                    void handleColorChange("#" + v.toHexInt().toString())
-                  }
-                />
-                <ColorSlider
-                  channel="alpha"
-                  value={color}
-                  onChange={(v) =>
-                    void handleColorChange("#" + v.toHexInt().toString())
-                  }
-                /> */}
-            {/* </div> */}
           </EditorButton>
           <EditorButton
             type={EditorFunctions.Undo}
@@ -547,10 +425,21 @@ const Editor: NextPage<{
           setFunction={setSelectedButton}
           setStage={setStage}
           emoji={selectedEmoji}
-          anonymous={anonymous === "true" ? true : false}
+          anonymous={anonymous}
         />
       </main>
-      <FAB text={"Send"} icon={<FiSend />} onClick={() => void submit()} />
+      <FAB
+        text={selectedButton === EditorFunctions.Submit ? "In process" : "Send"}
+        icon={
+          selectedButton === EditorFunctions.Submit ? (
+            <AiOutlineLoading3Quarters />
+          ) : (
+            <FiSend />
+          )
+        }
+        onClick={() => void submit()}
+        disabled={selectedButton === EditorFunctions.Submit}
+      />
     </>
   );
 };

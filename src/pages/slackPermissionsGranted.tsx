@@ -5,13 +5,23 @@ import Head from "next/head";
 import { useEffect } from "react";
 
 interface SlackProps {
-  accessToken: string;
+  code?: string;
+  state?: string;
 }
-
-const Slack: NextPage<SlackProps> = ({ accessToken }) => {
+export function getServerSideProps(context: {
+  query: { code?: string; state?: string };
+}) {
+  return {
+    props: {
+      code: context.query.code ?? "",
+      state: context.query.state ?? "",
+    },
+  };
+}
+const Slack: NextPage<SlackProps> = ({ code, state }) => {
   useEffect(() => {
-    console.log("Access Token:", accessToken);
-  }, [accessToken]);
+    console.log("Access Token:", code);
+  }, [code]);
   return (
     <>
       <Head>
@@ -28,7 +38,7 @@ const Slack: NextPage<SlackProps> = ({ accessToken }) => {
       <main className="flex h-full flex-col items-center justify-center gap-4">
         <div className="text-3xl">
           Well done, you succesfully gave permissions to Slack to send
-          kudo&apos;s. This is your token: ${accessToken}
+          kudo&apos;s. This is your token: {code}
         </div>
         <div className="text-3xl">
           Open Slack again and use /kudo to send your first kudo!

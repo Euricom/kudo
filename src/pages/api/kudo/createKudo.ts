@@ -460,20 +460,20 @@ const sendAuthenticationModal = async (trigger_id: string) => {
       callback_id: "modal-identifier",
       title: {
         type: "plain_text",
-        text: "Click the link!",
+        text: "Permissions!",
       },
       blocks: [
         {
           type: "section",
           text: {
             type: "mrkdwn",
-            text: "Click the link to go to the destination page:",
+            text: "Click this button to go to give permisions, then you can send kudo's:",
           },
           accessory: {
             type: "button",
             text: {
               type: "plain_text",
-              text: "Go to Destination",
+              text: "Click here",
             },
             action_id: "open_destination",
             url: "https://slack.com/oauth/v2/authorize?scope=&user_scope=files:write,chat:write&client_id=5141846691238.5170475885331", // Replace with the destination URL

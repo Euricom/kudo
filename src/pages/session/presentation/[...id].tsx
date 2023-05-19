@@ -147,7 +147,7 @@ const Presentation: NextPage<{ id: string; initialKudos: Kudo[] }> = ({
             value={
               "https://" +
               window.location.hostname +
-              "/create?session=" +
+              "/create/templates?session=" +
               session?.id
             }
             logoImage={icon.src}
@@ -175,7 +175,7 @@ const Presentation: NextPage<{ id: string; initialKudos: Kudo[] }> = ({
               value={
                 "https://" +
                 window.location.hostname +
-                "/create?session=" +
+                "/create/templates?session=" +
                 session?.id
               }
               logoImage={icon.src}

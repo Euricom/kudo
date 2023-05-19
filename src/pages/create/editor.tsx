@@ -32,13 +32,12 @@ import useEyeDropper from "use-eye-dropper";
 import { AiOutlineLoading3Quarters } from "react-icons/ai";
 
 export function getServerSideProps(context: {
-  query: { template: string; session: string; anonymous: string };
+  query: { template: string; session: string };
 }) {
   return {
     props: {
       id: context.query.template,
       sessionId: context.query.session,
-      anonymous: context.query.anonymous,
     },
   };
 }
@@ -51,8 +50,7 @@ const KonvaCanvas = dynamic(
 const Editor: NextPage<{
   id: string;
   sessionId: string;
-  anonymous: string;
-}> = ({ id, sessionId, anonymous }) => {
+}> = ({ id, sessionId }) => {
   const router = useRouter();
   const user = useSession().data?.user;
   //UseStates
@@ -62,6 +60,7 @@ const Editor: NextPage<{
   const [saturation, setSaturation] = useState<number>(100);
   const [lightness, setLightness] = useState<number>(50);
   const [color, setColor] = useState<string>("#000000");
+  const [anonymous, setAnonymous] = useState<boolean>(false);
   const { open } = useEyeDropper();
   const pickColor = async () => {
     document.getElementById("Modal-" + EditorFunctions.Color)?.click();
@@ -146,7 +145,7 @@ const Editor: NextPage<{
           image: image.id,
           sessionId: sessionId,
           userId: user.id,
-          anonymous: anonymous === "true" ? true : false,
+          anonymous: anonymous,
         });
         toast.success("Kudo created!");
         await router.replace("/out");
@@ -383,7 +382,7 @@ const Editor: NextPage<{
           setFunction={setSelectedButton}
           setStage={setStage}
           emoji={selectedEmoji}
-          anonymous={anonymous === "true" ? true : false}
+          anonymous={anonymous}
         />
       </main>
       <FAB

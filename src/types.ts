@@ -53,6 +53,13 @@ export type Session = {
   speakerId: string[];
 };
 
+export type SessionDetail = {
+  id: string;
+  title: string;
+  date: string[];
+  speakerId: string[];
+};
+
 export type SessionArray = {
   sessions: Session[];
   sort?: SortPosibillities;

@@ -96,10 +96,7 @@ const Session: NextPage<{ id: string; initialKudos: Kudo[] }> = ({
     if (downloadPromises?.length ?? 0 > 0) {
       await Promise.all(downloadPromises ?? []);
       const zipBlob = await zip.generateAsync({ type: "blob" });
-      FileSaver.saveAs(
-        zipBlob,
-        `Kudo's from ${session?.title} - ${session?.date}.zip`
-      );
+      FileSaver.saveAs(zipBlob, `Kudo's from ${session?.title}.zip`);
     }
   };
 

@@ -479,6 +479,10 @@ const sendAuthenticationModal = async (trigger_id: string) => {
           },
         },
       ],
+      submit: {
+        type: "plain_text",
+        text: "Send",
+      },
     },
   });
 };

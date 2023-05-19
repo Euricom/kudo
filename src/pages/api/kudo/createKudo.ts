@@ -113,24 +113,15 @@ export default async function handler(
   const trigger_id: string = (req.body as body).trigger_id;
   const userId = (req.body as body).user_id;
 
-  const personalClient: WebClient = new WebClient(env.SLACK_APP_TOKEN);
-  const slackClient: WebClient = new WebClient(
+  const slackClient: WebClient = new WebClient(env.SLACK_APP_TOKEN);
+  const personalClient: WebClient = new WebClient(
     "xoxp-5141846691238-5133909828375-5200979736101-298d5831ae1427b9a9921402db3a2d07"
   );
   try {
-    await slackClient.chat.postMessage({
+    await personalClient.chat.postMessage({
       channel: channel,
       text: "testPersoonlijk",
       as_user: true,
-    });
-  } catch (e) {
-    console.log(e);
-  }
-  try {
-    await slackClient.chat.postMessage({
-      channel: channel,
-      text: "testPersoonlijk2",
-      username: (req.body as body).user_name,
     });
   } catch (e) {
     console.log(e);
@@ -203,6 +194,7 @@ export default async function handler(
         file: Buffer.from(base64, "base64"),
         filename: "kudo.jpg",
         title: "Mooie kudo!",
+        as_user: true,
       });
     } catch (error) {
       console.error("Error uploading file to Slack:", error);

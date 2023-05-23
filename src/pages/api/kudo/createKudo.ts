@@ -12,6 +12,8 @@ import {
   PlainTextOption,
   Block,
 } from "@slack/web-api";
+import { findUserByName } from "~/server/services/userService";
+import { log } from "console";
 
 interface Payload {
   type: string;
@@ -109,50 +111,26 @@ export default async function handler(
     await sendSecondModal(req.body as body);
   }
 
-  const url =
-    "https://slack.com/oauth/v2/authorize?scope=&user_scope=files:write,chat:write&client_id=5141846691238.5170475885331";
-
   const text: string = (req.body as body).text;
   const channel: string = (req.body as body).channel_id;
   const trigger_id: string = (req.body as body).trigger_id;
   const userId = (req.body as body).user_id;
 
-  await sendAuthenticationModal(trigger_id);
   const slackClient: WebClient = new WebClient(env.SLACK_APP_TOKEN);
   const personalClient: WebClient = new WebClient(
     "xoxp-5141846691238-5133909828375-5200979736101-298d5831ae1427b9a9921402db3a2d07"
   );
-  const user = await slackClient.users.profile.get({
+
+  const slackUser = await slackClient.users.profile.get({
     user: userId,
   });
-  try {
-    await personalClient.chat.postMessage({
-      channel: channel,
-      text: "testPersoonlijk",
-      username: "Jona.Deneve",
-    });
-  } catch (e) {
-    console.log(e);
-  }
-  try {
-    await slackClient.chat.postMessage({
-      channel: channel,
-      text: "testPersoonlijk3",
-      username: "Jona.Deneve",
-      icon_url: user.profile?.image_original,
-    });
-  } catch (e) {
-    console.log(e);
-  }
-  try {
-    await personalClient.chat.postMessage({
-      channel: channel,
-      text: "testPersoonlijk4",
-      username: (req.body as body).user_name,
-    });
-  } catch (e) {
-    console.log(e);
-  }
+  const name = slackUser.profile?.real_name ?? "";
+  console.log(name);
+
+  const user = await findUserByName(name);
+
+  await sendAuthenticationModal(trigger_id, user?.id ?? "");
+
   //Direct message werkt niet
   // if (channel.startsWith("D")) {
   //   res
@@ -450,7 +428,7 @@ const sendFirstModal = async (trigger_id: string) => {
 //   });
 // }
 
-const sendAuthenticationModal = async (trigger_id: string) => {
+const sendAuthenticationModal = async (trigger_id: string, user_id: string) => {
   const slackClient: WebClient = new WebClient(env.SLACK_APP_TOKEN);
 
   await slackClient.views.open({
@@ -476,7 +454,9 @@ const sendAuthenticationModal = async (trigger_id: string) => {
               text: "Click here",
             },
             action_id: "open_destination",
-            url: "https://slack.com/oauth/v2/authorize?scope=&user_scope=files:write,chat:write&client_id=5141846691238.5170475885331", // Replace with the destination URL
+            url:
+              "https://slack.com/oauth/v2/authorize?scope=&user_scope=files:write,chat:write&client_id=5141846691238.5170475885331&state=" +
+              user_id,
           },
         },
       ],

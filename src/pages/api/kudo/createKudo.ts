@@ -17,6 +17,7 @@ import {
   findUserByNameForSlack,
 } from "~/server/services/userService";
 import { log } from "console";
+import { json } from "stream/consumers";
 
 interface Payload {
   type: string;
@@ -93,7 +94,7 @@ interface body {
   user_name: string;
   challenge: string;
   trigger_id: string;
-  payload?: Payload;
+  payload?: string;
 }
 
 interface Content {
@@ -108,19 +109,20 @@ export default async function handler(
 ) {
   res.status(200);
   console.log(req.body);
-  const payload = (req.body as body).payload;
-  const type = (req.body as body).payload?.type;
-  console.log(type);
-  console.log(payload?.type);
-  console.log(payload);
+  const payloadString = (req.body as body).payload;
+  console.log(typeof payloadString);
 
-  if (type === "view_submission") {
-    console.log("we zijn er!");
-
+  if (payloadString) {
+    const payload: Payload = JSON.parse(payloadString) as Payload;
     console.log(payload);
-    await sendSecondModal(req.body as body);
-  }
 
+    if (payload.type === "view_submission") {
+      console.log("we zijn er!");
+
+      console.log(payload);
+      await sendSecondModal(req.body as body);
+    }
+  }
   const text: string = (req.body as body).text;
   const channel: string = (req.body as body).channel_id;
   const trigger_id: string = (req.body as body).trigger_id;

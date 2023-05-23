@@ -108,18 +108,11 @@ export default async function handler(
   res: NextApiResponse
 ) {
   res.status(200);
-  console.log(req.body);
   const payloadString = (req.body as body).payload;
-  console.log(typeof payloadString);
-
   if (payloadString) {
     const payload: Payload = JSON.parse(payloadString) as Payload;
-    console.log(payload);
-
     if (payload.type === "view_submission") {
       console.log("we zijn er!");
-
-      console.log(payload);
       await sendSecondModal(payload);
     }
   }
@@ -249,11 +242,8 @@ const sendSecondModal = async (payload: Payload) => {
     });
 
   await slackClient.views.update({
-    token: payload.token,
     view_id: payload.view.id,
     hash: payload.view.hash,
-
-    trigger_id: payload.trigger_id,
     view: {
       type: "modal",
       callback_id: "modal-identifier",

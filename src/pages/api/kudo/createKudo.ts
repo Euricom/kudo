@@ -11,6 +11,7 @@ import {
   type FilesUploadResponse,
   PlainTextOption,
   Block,
+  WebClientEvent,
 } from "@slack/web-api";
 import {
   findUserByName,
@@ -308,6 +309,37 @@ const sendFirstModal = async (trigger_id: string) => {
       value: t.name,
     };
   });
+  // slackClient.on()  ("block_actions", async (payload) => {
+  //   const action = payload.actions[0];
+  //   const selectedOption = action.selected_option;
+  //   if (action.action_id === "templateName") {
+  //     const viewId = payload.view.id;
+  //     const updatedView = await slackClient.views.update({
+  //       view_id: viewId,
+  //       view: {
+  //         // Update the existing view with additional blocks or modifications
+  //         ...payload.view,
+  //         blocks: [
+  //           ...payload.view.blocks,
+  //           // Add new blocks or modify existing ones based on the selected option
+  //           // Example: Expand the modal with additional information based on the selected option
+  //           {
+  //             type: "section",
+  //             block_id: "additionalInfo",
+  //             text: {
+  //               type: "mrkdwn",
+  //               text: `You selected: ${selectedOption.text.text}`,
+  //             },
+  //           },
+  //         ],
+  //       },
+  //     });
+  //     return {
+  //       response_action: "update",
+  //       view: updatedView,
+  //     };
+  //   }
+  // });
 
   await slackClient.views.open({
     trigger_id: trigger_id,
@@ -336,23 +368,23 @@ const sendFirstModal = async (trigger_id: string) => {
             options: names,
           },
         },
-        // {
-        //   type: "section",
-        //   block_id: "section-identifier",
-        //   accessory: {
-        //     type: "button",
-        //     text: {
-        //       type: "plain_text",
-        //       text: "Next",
-        //     },
-        //     action_id: "button-identifier",
-        //   },
-        // },
+        {
+          type: "section",
+          block_id: "section-identifier",
+          accessory: {
+            type: "button",
+            text: {
+              type: "plain_text",
+              text: "Next",
+            },
+            action_id: "button-identifier",
+          },
+        },
       ],
-      submit: {
-        type: "plain_text",
-        text: "Send",
-      },
+      // submit: {
+      //   type: "plain_text",
+      //   text: "Send",
+      // },
     },
   });
 };

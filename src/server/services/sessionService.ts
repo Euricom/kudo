@@ -62,15 +62,16 @@ export async function getAllSessions() {
   const result = (await fetch(`${env.SESSION_URL}`).then((result) =>
     result.json()
   )) as Session[];
-  return result;
+  const mockdata = (await fetch(`${env.NEXTAUTH_URL}/api/sessions`).then(
+    (result) => result.json()
+  )) as Session[];
+  return result.concat(mockdata);
 }
 
 export async function getSessionsBySpeaker(id: string) {
-  return await fetch(`${env.SESSION_URL}`)
-    .then((result) => result.json())
-    .then((result: Session[]) =>
-      result.filter((r: Session) => r.speakerId.includes(id))
-    );
+  return await getAllSessions().then((result: Session[]) =>
+    result.filter((r: Session) => r.speakerId.includes(id))
+  );
 }
 
 export async function getSessionById(id: string): Promise<SessionDetail> {

@@ -1,14 +1,9 @@
 import { env } from "~/env.mjs";
 import * as msal from "@azure/msal-node";
-import {
-  type UserWCount,
-  type AADResponseUsers,
-  type User,
-  type SessionArray,
-  type Session,
-} from "~/types";
+import { type UserWCount, type AADResponseUsers, type User } from "~/types";
 import { type PrismaClient } from "@prisma/client";
 import { TRPCError } from "@trpc/server";
+import { getAllSessions } from "./sessionService";
 
 const msalConfig = {
   auth: {
@@ -82,9 +77,7 @@ export const findRelevantUsers = async (ctx: {
 }): Promise<UserWCount[]> => {
   const users = await findAllUsers();
   const kudos = await ctx.prisma.kudo.findMany({});
-  const sessions = (await fetch(`${env.SESSION_URL}`).then((result) =>
-    result.json()
-  )) as Session[];
+  const sessions = await getAllSessions();
 
   const usersWcount = users.map((user) => {
     return {
@@ -94,16 +87,11 @@ export const findRelevantUsers = async (ctx: {
           .length ?? 0,
       sendKudoCount:
         kudos?.filter((kudo) => kudo.userId === user.id).length ?? 0,
-      receiveKudoCount:
-        kudos?.filter((kudo) => kudo.userId === user.id).length ?? 0,
     };
   });
 
   return usersWcount.filter(
-    (user) =>
-      user.sessionCount > 0 ||
-      user.sendKudoCount > 0 ||
-      user.receiveKudoCount > 0
+    (user) => user.sessionCount > 0 || user.sendKudoCount > 0
   );
 };
 

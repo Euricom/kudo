@@ -23,13 +23,12 @@ const CanvasSticker = ({
   const shapeRef = useRef<Konva.Text>() as MutableRefObject<Konva.Text>;
   const trRef =
     useRef<Konva.Transformer>() as MutableRefObject<Konva.Transformer>;
-  const isScaling = useRef(false);
-  const setTitle = useSetTitle();
 
   const viewport = useWindowDimensions().width;
 
   const [lastDist, setLastDist] = useState(0);
   const [lastAngle, setLastAngle] = useState(0);
+  const isScaling = useRef(false);
 
   function getDistance(p1: Vector2d, p2: Vector2d) {
     return Math.sqrt(Math.pow(p2.x - p1.x, 2) + Math.pow(p2.y - p1.y, 2));

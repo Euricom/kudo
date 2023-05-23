@@ -252,6 +252,7 @@ export type RectangleProps = {
   onSelect: () => void;
   onChange: (shapeProps: Shapes) => void;
   onDelete: (id: string) => void;
+  onChangeEnd: (shapeProps: Shapes) => void;
 };
 
 export const Fonts = [

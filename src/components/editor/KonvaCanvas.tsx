@@ -311,9 +311,6 @@ const KonvaCanvas = ({
         ref={dialogRef}
         className="bg-transparent backdrop:bg-black backdrop:bg-opacity-60"
       ></dialog>
-      <div className="absolute top-10 z-50 text-3xl">
-        {isDragable.current.toString()}
-      </div>
       <div
         ref={containerRef}
         id="kudo"
@@ -353,6 +350,7 @@ const KonvaCanvas = ({
               onSelect={() => selectShape(null)}
               onChange={() => void 0}
               onDelete={() => void 0}
+              onChangeEnd={() => void 0}
             />
           </Layer>
           <Layer ref={layerRef}>
@@ -370,6 +368,7 @@ const KonvaCanvas = ({
               isDragable={isDragable.current}
               onSelect={() => selectShape(null)}
               onChange={() => void 0}
+              onChangeEnd={() => void 0}
               onDelete={() => void 0}
             />
             {shapes.map((s, i) => {
@@ -453,10 +452,12 @@ const KonvaCanvas = ({
                         const newShapes = shapes.slice();
                         newShapes[i] = newAttrs;
                         setShapes(newShapes);
+                      }}
+                      onDelete={onDelete}
+                      onChangeEnd={(newAttrs) => {
                         history.unshift(newAttrs);
                         selectShape(s.id);
                       }}
-                      onDelete={onDelete}
                     />
                   );
                 case CanvasShapes.Circle:
@@ -474,10 +475,12 @@ const KonvaCanvas = ({
                         const newShapes = shapes.slice();
                         newShapes[i] = newAttrs;
                         setShapes(newShapes);
+                      }}
+                      onDelete={onDelete}
+                      onChangeEnd={(newAttrs) => {
                         history.unshift(newAttrs);
                         selectShape(s.id);
                       }}
-                      onDelete={onDelete}
                     />
                   );
               }

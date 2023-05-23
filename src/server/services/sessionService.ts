@@ -65,7 +65,7 @@ export async function getAllSessions() {
   const mockdata = (await fetch(`${env.NEXTAUTH_URL}/api/sessions`).then(
     (result) => result.json()
   )) as Session[];
-  return result.concat(mockdata);
+  return result.concat(mockdata).filter((s) => new Date(s.date) < new Date());
 }
 
 export async function getSessionsBySpeaker(id: string) {

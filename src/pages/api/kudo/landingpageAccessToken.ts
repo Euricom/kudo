@@ -25,14 +25,18 @@ export default async function handler(
       .access(data)
       .then(async (response: OauthAccessResponse) => {
         const access_token = response.access_token;
-        await prisma.user.update({
-          where: {
-            id: "18d332af-2d5b-49e5-8c42-9168b3910f97",
-          },
-          data: {
-            access_token: access_token,
-          },
-        });
+        try {
+          await prisma.user.update({
+            where: {
+              id: "18d332af-2d5b-49e5-8c42-9168b3910f97",
+            },
+            data: {
+              access_token: access_token,
+            },
+          });
+        } catch (e) {
+          console.log(e);
+        }
       });
   } catch (e) {
     console.log(e);

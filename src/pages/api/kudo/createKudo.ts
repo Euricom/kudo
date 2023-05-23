@@ -111,7 +111,7 @@ export default async function handler(
   console.log(req.body);
   const payload = (req.body as body).payload;
   console.log((req.body as body).payload);
-  console.log(payload.type);
+  console.log(payload?.type);
   console.log(payload);
 
   if (payload && payload.type === "view_submission") {

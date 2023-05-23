@@ -228,6 +228,18 @@ const sendSecondModal = async (payload: Payload) => {
   const texts = content
     ?.filter((c: Content) => c?.type === 0)
     .map((t) => {
+      console.log({
+        type: "input",
+        element: {
+          type: "plain_text_input",
+          initial_value: t.text,
+        },
+        label: {
+          type: "plain_text",
+          text: "Input " + t.id,
+        },
+      } as Block);
+
       return {
         type: "input",
         element: {
@@ -277,18 +289,6 @@ const sendSecondModal = async (payload: Payload) => {
           },
         },
         ...texts,
-        {
-          type: "section",
-          block_id: "section-identifier",
-          accessory: {
-            type: "button",
-            text: {
-              type: "plain_text",
-              text: "Next",
-            },
-            action_id: "button-identifier",
-          },
-        },
       ],
       submit: {
         type: "plain_text",

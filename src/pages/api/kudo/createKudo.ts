@@ -113,7 +113,7 @@ export default async function handler(
   const payloadString = (req.body as body).payload;
   if (payloadString) {
     const payload: Payload = JSON.parse(payloadString) as Payload;
-    if (payload.type === "view_submission") {
+    if (payload.type === "block_actions") {
       console.log("we zijn er!");
       await sendSecondModal(payload);
     }
@@ -369,20 +369,6 @@ const sendFirstModal = async (trigger_id: string) => {
             options: names,
           },
         },
-        {
-          type: "actions",
-          block_id: "next-button",
-          elements: [
-            {
-              type: "button",
-              text: {
-                type: "plain_text",
-                text: "Next",
-              },
-              action_id: "button-identifier",
-            },
-          ],
-        },
       ],
       // submit: {
       //   type: "plain_text",
@@ -391,35 +377,6 @@ const sendFirstModal = async (trigger_id: string) => {
     },
   });
 };
-
-// type Payload = {
-//   view: {
-//     state: {
-//       kudotext: {
-//         value: string
-//       }
-//     },
-//     private_metadata: string,
-//   },
-// }
-
-// async function handleViewSubmission(payload: Payload) {
-//   const { view } = payload;
-//   const kudoText = view.state.kudotext.value;
-//   const channelId = view.private_metadata;
-
-//   // Generate the kudo image
-//   const base64 = await makeSlackKudo(kudoText);
-
-//   // Upload the image to Slack
-//   const slackClient = new WebClient(env.SLACK_APP_TOKEN);
-//   await slackClient.files.upload({
-//     channels: channelId,
-//     file: Buffer.from(base64, "base64"),
-//     filename: "kudo.jpg",
-//     title: "Kudo",
-//   });
-// }
 
 const sendAuthenticationModal = async (trigger_id: string, user_id: string) => {
   const slackClient: WebClient = new WebClient(env.SLACK_APP_TOKEN);

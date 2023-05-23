@@ -130,10 +130,10 @@ export default async function handler(
   //   user: userId,
   // });
   // console.log("hier is de name");
-  // const name = slackUser.profile?.real_name?.replace(".", " ") ?? "";
+  // const name = slackUser.profile?.real_name? ?? "";
   // console.log(name);
 
-  const user = await findUserByNameForSlack(userName);
+  const user = await findUserByNameForSlack(userName.replace(".", " "));
 
   console.log(user?.id);
   if (user && !user.access_token) {

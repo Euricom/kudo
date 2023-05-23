@@ -1,8 +1,15 @@
-import React, { useRef, type MutableRefObject, useEffect } from "react";
+import React, {
+  useRef,
+  type MutableRefObject,
+  useEffect,
+  useState,
+} from "react";
 import { Transformer, Text } from "react-konva";
 import type Konva from "konva";
 import { EditorFunctions, type CanvasStickerProps } from "~/types";
 import useWindowDimensions from "~/hooks/useWindowDimensions";
+import { type Vector2d } from "konva/lib/types";
+import { useSetTitle } from "~/components/navigation/NavBarTitle";
 
 const CanvasSticker = ({
   shapeProps,
@@ -16,8 +23,23 @@ const CanvasSticker = ({
   const shapeRef = useRef<Konva.Text>() as MutableRefObject<Konva.Text>;
   const trRef =
     useRef<Konva.Transformer>() as MutableRefObject<Konva.Transformer>;
+  const isScaling = useRef(false);
+  const setTitle = useSetTitle();
 
   const viewport = useWindowDimensions().width;
+
+  const [lastDist, setLastDist] = useState(0);
+  const [lastAngle, setLastAngle] = useState(0);
+
+  function getDistance(p1: Vector2d, p2: Vector2d) {
+    return Math.sqrt(Math.pow(p2.x - p1.x, 2) + Math.pow(p2.y - p1.y, 2));
+  }
+  function getAngle(p1: Vector2d, p2: Vector2d) {
+    const deltaX = p2.x - p1.x;
+    const deltaY = p2.y - p1.y;
+    const radians = Math.atan2(deltaY, deltaX);
+    return radians * (180 / Math.PI);
+  }
 
   useEffect(() => {
     if (isSelected) {
@@ -64,6 +86,48 @@ const CanvasSticker = ({
             x: e.target.x(),
             y: e.target.y(),
           });
+        }}
+        onTouchMove={(e) => {
+          e.evt.preventDefault();
+          const touch1 = e.evt.touches[0];
+          const touch2 = e.evt.touches[1];
+          if (touch1 && touch2) {
+            shapeRef.current?.stopDrag();
+            const p1 = {
+              x: touch1.clientX,
+              y: touch1.clientY,
+            };
+            const p2 = {
+              x: touch2.clientX,
+              y: touch2.clientY,
+            };
+            const dist = getDistance(p1, p2);
+            setLastDist(dist);
+            const angle = getAngle(p1, p2);
+            setLastAngle(angle);
+            if (!isScaling.current) {
+              isScaling.current = true;
+              return;
+            }
+            const scale = (shapeProps.scale?.x ?? 1) * (dist / lastDist);
+            const rotation = angle - lastAngle + (shapeProps.rotation ?? 0);
+            onChange({
+              ...shapeProps,
+              rotation: rotation,
+              scale: {
+                x: scale,
+                y: scale,
+              },
+            });
+          } else {
+            shapeRef.current?.startDrag();
+          }
+        }}
+        onTouchEnd={() => {
+          onChangeEnd(shapeProps);
+          isScaling.current = false;
+          setLastDist(0);
+          setLastAngle(0);
         }}
         onTransform={() => {
           // transformer is changing scale of the node

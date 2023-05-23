@@ -218,6 +218,7 @@ export type CanvasTextProps = {
   isSelected: boolean;
   editorFunction: EditorFunctions;
   dialog?: HTMLDialogElement;
+  isDragable: boolean;
   onSelect: () => void;
   onChange: (shapeProps: Shapes) => void;
   onDelete: (id: string) => void;
@@ -247,6 +248,7 @@ export type RectangleProps = {
   shapeProps: Shapes;
   isSelected: boolean;
   editorFunction: EditorFunctions;
+  isDragable: boolean;
   onSelect: () => void;
   onChange: (shapeProps: Shapes) => void;
   onDelete: (id: string) => void;

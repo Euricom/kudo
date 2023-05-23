@@ -11,6 +11,7 @@ const CanvasText = ({
   isSelected,
   editorFunction,
   dialog,
+  isDragable,
   onSelect,
   onChange,
   onDelete,
@@ -83,6 +84,7 @@ const CanvasText = ({
         {...shapeProps}
         draggable={
           shapeProps.draggable &&
+          isDragable &&
           EditorFunctions.Draw !== editorFunction &&
           EditorFunctions.Erase !== editorFunction
         }

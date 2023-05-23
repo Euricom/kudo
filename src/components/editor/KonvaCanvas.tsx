@@ -44,6 +44,7 @@ const KonvaCanvas = ({
   const backgroundRef = useRef<Konva.Layer>() as MutableRefObject<Konva.Layer>;
   const dialogRef = useRef<HTMLDialogElement>(null);
   const isDrawing = useRef(false);
+  const isDragable = useRef(true);
   const user = useSession().data?.user;
   const { mutateAsync: createTemplate } =
     api.templates.createTemplate.useMutation();
@@ -200,6 +201,7 @@ const KonvaCanvas = ({
     templateName,
   ]);
   const handleMouseDown = () => {
+    isDragable.current = true;
     if (
       editorFunction === EditorFunctions.Draw ||
       editorFunction === EditorFunctions.Erase
@@ -264,6 +266,11 @@ const KonvaCanvas = ({
       setLine([]);
     }
     isDrawing.current = false;
+    isDragable.current = true;
+  };
+
+  const handleTouchMove = (e: KonvaEventObject<TouchEvent>) => {
+    handleMouseMove();
   };
 
   useEffect(() => {
@@ -298,66 +305,15 @@ const KonvaCanvas = ({
     }
   }, [editorFunction, undo, saveTemplate, addSticker, setFunction]);
 
-  useEffect(() => {
-    function getDistance(p1: Vector2d, p2: Vector2d) {
-      return Math.sqrt(Math.pow(p2.x - p1.x, 2) + Math.pow(p2.y - p1.y, 2));
-    }
-
-    function getCenter(p1: Vector2d, p2: Vector2d) {
-      return {
-        x: (p1.x + p2.x) / 2,
-        y: (p1.y + p2.y) / 2,
-      };
-    }
-    const stage = stageRef.current;
-    let lastDist = 0;
-    stage.on("touchmove", (e) => {
-      e.evt.preventDefault();
-      const touch1 = e.evt.touches[0];
-      const touch2 = e.evt.touches[1];
-
-      if (touch1 && touch2) {
-        const p1 = {
-          x: touch1.clientX,
-          y: touch1.clientY,
-        };
-        const p2 = {
-          x: touch2.clientX,
-          y: touch2.clientY,
-        };
-
-        const dist = getDistance(p1, p2);
-
-        if (!lastDist) {
-          lastDist = dist;
-        }
-
-        const scale = stage.scaleX() * (dist / lastDist);
-
-        setShapes((s) =>
-          s.map((shape) => {
-            if (shape.id === selectedId) {
-              shape.scale = { x: scale, y: scale };
-            }
-            return shape;
-          })
-        );
-      }
-    });
-    stage.on("touchend", function () {
-      lastDist = 0;
-    });
-    return () => {
-      stage.off("touchmove touchend");
-    };
-  }, [selectedId, setShapes]);
-
   return (
     <>
       <dialog
         ref={dialogRef}
         className="bg-transparent backdrop:bg-black backdrop:bg-opacity-60"
       ></dialog>
+      <div className="absolute top-10 z-50 text-3xl">
+        {isDragable.current.toString()}
+      </div>
       <div
         ref={containerRef}
         id="kudo"
@@ -376,7 +332,7 @@ const KonvaCanvas = ({
           onMousemove={handleMouseMove}
           onMouseup={handleMouseUp}
           onTouchStart={handleMouseDown}
-          onTouchMove={handleMouseMove}
+          onTouchMove={handleTouchMove}
           onTouchEnd={handleMouseUp}
           onClick={clickListener}
           onTap={clickListener}
@@ -393,6 +349,7 @@ const KonvaCanvas = ({
               }}
               isSelected={false}
               editorFunction={EditorFunctions.None}
+              isDragable={isDragable.current}
               onSelect={() => selectShape(null)}
               onChange={() => void 0}
               onDelete={() => void 0}
@@ -410,6 +367,7 @@ const KonvaCanvas = ({
               }}
               isSelected={false}
               editorFunction={EditorFunctions.None}
+              isDragable={isDragable.current}
               onSelect={() => selectShape(null)}
               onChange={() => void 0}
               onDelete={() => void 0}
@@ -442,6 +400,7 @@ const KonvaCanvas = ({
                       isSelected={s.id === selectedId}
                       editorFunction={editorFunction ?? EditorFunctions.None}
                       dialog={dialogRef.current ?? undefined}
+                      isDragable={isDragable.current}
                       onSelect={() => {
                         selectShape(s.id);
                       }}
@@ -486,6 +445,7 @@ const KonvaCanvas = ({
                       shapeProps={s}
                       isSelected={s.id === selectedId}
                       editorFunction={editorFunction ?? EditorFunctions.None}
+                      isDragable={isDragable.current}
                       onSelect={() => {
                         selectShape(s.id);
                       }}
@@ -506,6 +466,7 @@ const KonvaCanvas = ({
                       shapeProps={s}
                       isSelected={s.id === selectedId}
                       editorFunction={editorFunction ?? EditorFunctions.None}
+                      isDragable={isDragable.current}
                       onSelect={() => {
                         selectShape(s.id);
                       }}

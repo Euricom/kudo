@@ -8,6 +8,7 @@ const Rectangle = ({
   shapeProps,
   isSelected,
   editorFunction,
+  isDragable,
   onSelect,
   onChange,
   onDelete,
@@ -47,6 +48,7 @@ const Rectangle = ({
         {...shapeProps}
         draggable={
           shapeProps.draggable &&
+          isDragable &&
           EditorFunctions.Draw !== editorFunction &&
           EditorFunctions.Erase !== editorFunction
         }

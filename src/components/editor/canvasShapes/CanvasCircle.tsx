@@ -8,6 +8,7 @@ const CanvasCircle = ({
   shapeProps,
   isSelected,
   editorFunction,
+  isDragable,
   onSelect,
   onChange,
   onDelete,
@@ -38,6 +39,7 @@ const CanvasCircle = ({
         {...shapeProps}
         draggable={
           shapeProps.draggable &&
+          isDragable &&
           EditorFunctions.Draw !== editorFunction &&
           EditorFunctions.Erase !== editorFunction
         }

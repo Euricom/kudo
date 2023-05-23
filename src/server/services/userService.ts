@@ -4,6 +4,8 @@ import { type UserWCount, type AADResponseUsers, type User } from "~/types";
 import { type PrismaClient } from "@prisma/client";
 import { TRPCError } from "@trpc/server";
 import { getAllSessions } from "./sessionService";
+import { prisma } from "../db";
+
 
 const msalConfig = {
   auth: {
@@ -70,6 +72,17 @@ export const findUserByIds = async (ids: string[]): Promise<User[]> => {
 export const findUserByName = async (id: string): Promise<User | undefined> => {
   const users = await findAllUsers();
   return users.find((user) => user.displayName === id);
+};
+
+export const findUserByNameForSlack = async (name: string) => {
+  return prisma.user.findFirst({
+    where: {
+      name: {
+        contains: name,
+        mode: "insensitive",
+      },
+    },
+  });
 };
 
 export const findRelevantUsers = async (ctx: {

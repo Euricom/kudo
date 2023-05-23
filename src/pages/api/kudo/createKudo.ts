@@ -156,19 +156,6 @@ const sendSecondModal = async (payload: Payload) => {
   const texts = content
     ?.filter((c: Content) => c?.type === 0)
     .map((t) => {
-      console.log({
-        type: "input",
-        block_id: t.id,
-        element: {
-          type: "plain_text_input",
-          initial_value: t.text,
-        },
-        label: {
-          type: "plain_text",
-          text: "Input " + t.id,
-        },
-      } as Block);
-
       return {
         type: "input",
         element: {
@@ -299,16 +286,26 @@ const sendKudo = async (payload: Payload) => {
   const userName = payload.user.name;
   const channelIDK = payload.view.private_metadata;
   console.log(channelIDK);
+  const value =
+    payload.view.state.values.section678.templateName.selected_option.value;
+  console.log(value);
+
+  const messages = [
+    {
+      id: "headerText",
+      text: "beetje proberen",
+    },
+  ];
 
   const channel = "C054FAZS2FN";
-  const text = "Probeersels";
 
   if (userName) {
     const user = await findUserByNameForSlack(userName.replace(".", " "));
     if (!user || !user.access_token) {
     } else {
       const personalClient: WebClient = new WebClient(user.access_token);
-      const base64 = await makeSlackKudo(text);
+
+      const base64 = await makeSlackKudo(value, messages);
       try {
         await personalClient.files.uploadV2({
           channels: channel,

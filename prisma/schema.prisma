@@ -93,7 +93,7 @@ model Kudo {
 model Template {
     id            String      @id @default(cuid())
     color         String   
-    name          String
+    name          String      @unique
     content       Json[]      @db.Json
     image         String
 }

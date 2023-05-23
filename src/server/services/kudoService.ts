@@ -116,21 +116,34 @@ export function getFirstImageById() {
   });
 }
 
-export async function makeSlackKudo(message: string) {
+type Messages = {
+  id: string;
+  text: string;
+};
+
+export async function makeSlackKudo(
+  templateName: string,
+  messages: Messages[]
+) {
   await init({ data });
   const template = await prisma.template
-    .findMany({
+    .findUnique({
       where: {
-        color: {
-          not: "#ffffff",
-        },
-        //lokaal = clhakn1pv0008un18bjfbwr8j online = clhheejmu0002s5fufgxruzpy
-        // id: {
-        //   not: "clh8viadu0006ungku0w7hvs9",
-        // },
+        name: templateName,
       },
     })
-    .then((t) => shuffle(t)[0]);
+    .catch(async (e) => {
+      await prisma.template
+        .findMany({
+          where: {
+            color: {
+              not: "#FFFFFF",
+            },
+          },
+        })
+        .then((t) => shuffle(t)[0]);
+    });
+
   if (!template) {
     throw new TRPCError({
       code: "NOT_FOUND",
@@ -195,9 +208,12 @@ export async function makeSlackKudo(message: string) {
       };
     } else {
       let text = s.text;
-      if (s.id === "bodyText") {
-        text = message;
-      }
+      messages.forEach((m) => {
+        if (m.id === s.id) {
+          text = m.text;
+        }
+      });
+
       s.fill ? (context.fillStyle = s.fill) : "";
       context.font =
         ((s.fontSize ?? 90) * ((s.scale?.y ?? 2) - 1)).toString() +

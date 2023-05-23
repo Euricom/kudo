@@ -109,10 +109,14 @@ export default async function handler(
 ) {
   res.status(200);
   console.log(req.body);
-  const payload = req.body as body;
+  const payload = (req.body as body).payload;
   console.log((req.body as body).payload);
+  console.log(payload.type);
+  console.log(payload);
 
   if (payload && payload.type === "view_submission") {
+    console.log("we zijn er!");
+
     console.log(payload);
     await sendSecondModal(req.body as body);
   }

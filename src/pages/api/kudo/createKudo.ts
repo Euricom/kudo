@@ -120,7 +120,7 @@ export default async function handler(
       console.log("we zijn er!");
 
       console.log(payload);
-      await sendSecondModal(req.body as body);
+      await sendSecondModal(payload);
     }
   }
   const text: string = (req.body as body).text;
@@ -207,9 +207,8 @@ export default async function handler(
 
   res.end();
 }
-const sendSecondModal = async (body: body) => {
+const sendSecondModal = async (payload: Payload) => {
   console.log("Hier komt hij: ");
-  const payload = body.payload as Payload;
   console.log(payload);
 
   const templates = getAllTemplates();

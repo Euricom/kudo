@@ -12,7 +12,10 @@ import {
   PlainTextOption,
   Block,
 } from "@slack/web-api";
-import { findUserByName } from "~/server/services/userService";
+import {
+  findUserByName,
+  findUserByNameForSlack,
+} from "~/server/services/userService";
 import { log } from "console";
 
 interface Payload {
@@ -124,12 +127,14 @@ export default async function handler(
   const slackUser = await slackClient.users.profile.get({
     user: userId,
   });
-  const name = slackUser.profile?.real_name ?? "";
+  const name = slackUser.profile?.real_name?.replace(".", " ") ?? "";
   console.log(name);
 
-  const user = await findUserByName(name);
+  const user = await findUserByNameForSlack(name);
 
-  await sendAuthenticationModal(trigger_id, user?.id ?? "");
+  if (user && !user.access_token) {
+    await sendAuthenticationModal(trigger_id, user?.id ?? "");
+  }
 
   //Direct message werkt niet
   // if (channel.startsWith("D")) {

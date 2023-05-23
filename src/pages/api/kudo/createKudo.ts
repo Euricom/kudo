@@ -369,12 +369,8 @@ const sendFirstModal = async (trigger_id: string) => {
           },
         },
         {
-          type: "section",
-          block_id: "section-identifier",
-          text: {
-            type: "mrkdwn",
-            text: "",
-          },
+          type: "actions",
+          block_id: "next-button",
           accessory: {
             type: "button",
             text: {

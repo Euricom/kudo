@@ -1,5 +1,6 @@
 import { WebClient } from "@slack/web-api";
 import { NextApiRequest, NextApiResponse } from "next";
+import { useRouter } from "next/router";
 import { env } from "~/env.mjs";
 
 type QueryContent = {
@@ -18,10 +19,12 @@ export default async function handler(
     code: (req.query as QueryContent).code,
   };
   try {
-    await slackClient.oauth.v2.access(data);
+    await slackClient.oauth.v2.access(data).then((res) => console.log(res));
   } catch (e) {
     console.log(e);
   }
 
   console.log(data);
+
+  res.redirect("/slack_permissions_granted");
 }

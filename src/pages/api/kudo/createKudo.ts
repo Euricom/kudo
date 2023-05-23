@@ -371,14 +371,16 @@ const sendFirstModal = async (trigger_id: string) => {
         {
           type: "actions",
           block_id: "next-button",
-          accessory: {
-            type: "button",
-            text: {
-              type: "plain_text",
-              text: "Next",
+          elements: [
+            {
+              type: "button",
+              text: {
+                type: "plain_text",
+                text: "Next",
+              },
+              action_id: "button-identifier",
             },
-            action_id: "button-identifier",
-          },
+          ],
         },
       ],
       // submit: {

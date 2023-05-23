@@ -127,11 +127,13 @@ export default async function handler(
   const slackUser = await slackClient.users.profile.get({
     user: userId,
   });
+  console.log("hier is de name");
   const name = slackUser.profile?.real_name?.replace(".", " ") ?? "";
   console.log(name);
 
   const user = await findUserByNameForSlack(name);
 
+  console.log(user?.id);
   if (user && !user.access_token) {
     await sendAuthenticationModal(trigger_id, user?.id ?? "");
   }

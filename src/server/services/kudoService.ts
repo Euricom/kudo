@@ -127,22 +127,12 @@ export async function makeSlackKudo(
 ) {
   await init({ data });
   const template = await prisma.template
-    .findUnique({
+    .findMany({
       where: {
         name: templateName,
       },
     })
-    .catch(async (e) => {
-      await prisma.template
-        .findMany({
-          where: {
-            color: {
-              not: "#FFFFFF",
-            },
-          },
-        })
-        .then((t) => shuffle(t)[0]);
-    });
+    .then((t) => shuffle(t)[0]);
 
   if (!template) {
     throw new TRPCError({

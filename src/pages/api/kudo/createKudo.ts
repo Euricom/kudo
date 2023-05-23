@@ -175,14 +175,32 @@ const sendSecondModal = async (payload: Payload) => {
     view: {
       type: "modal",
       callback_id: "modal-identifier",
+      private_metadata: payload.view.private_metadata,
       title: {
         type: "plain_text",
         text: "Make your kudo!",
       },
       blocks: [
-        ...payload.view.blocks,
         {
           type: "section",
+          block_id: "section678",
+          text: {
+            type: "mrkdwn",
+            text: "Pick a template",
+          },
+          accessory: {
+            action_id: "templateName",
+            type: "static_select",
+            placeholder: {
+              type: "plain_text",
+              text: "Select an item",
+            },
+            options: names,
+          },
+        },
+        {
+          type: "section",
+          block_id: "sectionInputs",
           text: {
             type: "mrkdwn",
             text: "Schrijf een leuk tekstje:",

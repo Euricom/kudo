@@ -18,6 +18,8 @@ export default async function handler(
     client_secret: env.clientSecret,
     code: (req.query as QueryContent).code,
   };
+  console.log("dit zou het id moeten zijn");
+  console.log((req.query as QueryContent).state);
   try {
     await slackClient.oauth.v2
       .access(data)

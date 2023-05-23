@@ -2,7 +2,7 @@ import { WebClient } from "@slack/web-api";
 import { NextApiRequest, NextApiResponse } from "next";
 import { env } from "~/env.mjs";
 
-type body = {
+type QueryContent = {
   code: string;
   state: string;
 };
@@ -15,7 +15,7 @@ export default async function handler(
   const data = {
     client_id: env.clientId,
     client_secret: env.clientSecret,
-    code: (req.body as body).code,
+    code: (req.query as QueryContent).code,
   };
   try {
     await slackClient.oauth.v2.access(data);

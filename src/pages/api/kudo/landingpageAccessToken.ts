@@ -37,10 +37,8 @@ export default async function handler(
     await slackClient.oauth.v2
       .access(data)
       .then(async (response: OauthV2AccessResponse) => {
-        const access_token1 = response.access_token;
-        const access_token2 = response.authed_user?.access_token;
-        console.log(access_token1);
-        console.log(access_token2);
+        const access_token = response.authed_user?.access_token;
+        console.log(access_token);
 
         try {
           await prisma.user.update({
@@ -48,7 +46,7 @@ export default async function handler(
               id: (req.query as QueryContent).state,
             },
             data: {
-              access_token: access_token2,
+              access_token: access_token,
             },
           });
         } catch (e) {

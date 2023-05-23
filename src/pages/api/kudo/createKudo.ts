@@ -4,7 +4,6 @@ import {
   getChosenTemplate,
   makeSlackKudo,
 } from "~/server/services/kudoService";
-// import { openModal } from "~/server/services/slackService";
 import { env } from "~/env.mjs";
 import { WebClient, type PlainTextOption, type Block } from "@slack/web-api";
 import { findUserByNameForSlack } from "~/server/services/userService";
@@ -166,6 +165,7 @@ const sendSecondModal = async (payload: Payload) => {
         },
       } as Block;
     });
+  console.log(texts);
 
   await slackClient.views.update({
     view_id: payload.view.id,
@@ -310,9 +310,13 @@ const sendKudo = async (payload: Payload) => {
     console.log(blockId);
 
     const blockValues = payload.view.state.values[blockId];
+    console.log(blockValues);
+
     if (blockValues) {
       const actionId = Object.keys(blockValues)[0];
+      console.log(actionId);
       const selectedOption = blockValues[actionId ?? ""]?.selected_option;
+      console.log(selectedOption);
       if (selectedOption) {
         return {
           id: blockId,

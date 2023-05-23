@@ -136,7 +136,10 @@ export default async function handler(
   const user = await findUserByNameForSlack(userName.replace(".", " "));
 
   console.log(user?.id);
-  if (user && !user.access_token) {
+  if (!user) {
+    res.send("er ging iets fout");
+    res.end();
+  } else if (user && !user.access_token) {
     await sendAuthenticationModal(trigger_id, user?.id ?? "");
   }
 

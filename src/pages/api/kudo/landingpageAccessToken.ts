@@ -23,26 +23,35 @@ export default async function handler(
   try {
     await slackClient.oauth.v2
       .access(data)
-      .then(async (response: OauthAccessResponse) => {
-        const access_token = response.access_token;
-        console.log(access_token);
-
-        try {
-          await prisma.user.update({
-            where: {
-              id: "18d332af-2d5b-49e5-8c42-9168b3910f97",
-            },
-            data: {
-              access_token: access_token,
-            },
-          });
-        } catch (e) {
-          console.log(e);
-        }
+      .then((response: OauthAccessResponse) => {
+        console.log(response);
       });
   } catch (e) {
     console.log(e);
   }
+  // try {
+  //   await slackClient.oauth.v2
+  //     .access(data)
+  //     .then(async (response: OauthAccessResponse) => {
+  //       const access_token = response.access_token;
+  //       console.log(access_token);
+
+  //       try {
+  //         await prisma.user.update({
+  //           where: {
+  //             id: "18d332af-2d5b-49e5-8c42-9168b3910f97",
+  //           },
+  //           data: {
+  //             access_token: access_token,
+  //           },
+  //         });
+  //       } catch (e) {
+  //         console.log(e);
+  //       }
+  //     });
+  // } catch (e) {
+  //   console.log(e);
+  // }
 
   console.log(data);
 

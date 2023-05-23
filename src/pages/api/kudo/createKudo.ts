@@ -109,13 +109,8 @@ export default async function handler(
   res.status(200);
   console.log(req.body);
   const payload = (req.body as body).payload;
-  if (
-    payload &&
-    payload.view.state.values.section678.templateName.selected_option.value
-  ) {
-    console.log(
-      payload.view.state.values.section678.templateName.selected_option.value
-    );
+  if (payload && payload.type === "view_submission") {
+    console.log(payload.view);
     console.log(payload);
     await sendSecondModal(req.body as body);
   }

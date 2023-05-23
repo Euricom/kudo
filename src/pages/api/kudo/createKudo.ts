@@ -94,7 +94,6 @@ interface body {
   challenge: string;
   trigger_id: string;
   payload?: Payload;
-  type?: string;
 }
 
 interface Content {
@@ -110,11 +109,12 @@ export default async function handler(
   res.status(200);
   console.log(req.body);
   const payload = (req.body as body).payload;
-  console.log((req.body as body).payload);
+  const type = (req.body as body).payload?.type;
+  console.log(type);
   console.log(payload?.type);
   console.log(payload);
 
-  if (payload && payload.type === "view_submission") {
+  if (type === "view_submission") {
     console.log("we zijn er!");
 
     console.log(payload);

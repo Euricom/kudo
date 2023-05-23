@@ -25,6 +25,8 @@ export default async function handler(
       .access(data)
       .then(async (response: OauthAccessResponse) => {
         const access_token = response.access_token;
+        console.log(access_token);
+
         try {
           await prisma.user.update({
             where: {

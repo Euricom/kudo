@@ -123,7 +123,7 @@ type Messages = {
 
 export async function makeSlackKudo(
   templateName: string,
-  messages: Messages[]
+  messages: (Messages | undefined)[]
 ) {
   await init({ data });
   const template = await prisma.template
@@ -198,8 +198,8 @@ export async function makeSlackKudo(
       };
     } else {
       let text = s.text;
-      messages.forEach((m) => {
-        if (m.id === s.id) {
+      messages?.forEach((m) => {
+        if (m && m.id === s.id) {
           text = m.text;
         }
       });

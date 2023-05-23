@@ -33,8 +33,8 @@ interface Payload {
     callback_id: string;
     state: {
       values: {
-        section678: {
-          templateName: {
+        [blockId: string]: {
+          [actionId: string]: {
             type: string;
             selected_option: {
               text: { type: string; text: string; emoji: boolean };
@@ -108,7 +108,6 @@ export default async function handler(
       await sendKudo(payload);
     }
   }
-  const text: string = (req.body as body).text;
   const channel: string = (req.body as body).channel_id;
   const trigger_id: string = (req.body as body).trigger_id;
   const userName = (req.body as body).user_name;
@@ -141,12 +140,9 @@ const sendSecondModal = async (payload: Payload) => {
       value: t.name,
     };
   });
-  console.log(payload.actions);
-  // console.log(payload.actions[0]);
-  // console.log(payload.actions[0].selected_option.value);
   const value =
-    payload.view.state.values.section678.templateName.selected_option.value;
-  console.log(value);
+    payload.view.state.values.section678?.templateName?.selected_option.value ??
+    "Fire";
 
   const chosenTemplate = getChosenTemplate(value);
   const content: Content[] = (await chosenTemplate)
@@ -158,9 +154,11 @@ const sendSecondModal = async (payload: Payload) => {
     .map((t) => {
       return {
         type: "input",
+        block_id: t.id,
         element: {
           type: "plain_text_input",
           initial_value: t.text,
+          action_id: "text_input",
         },
         label: {
           type: "plain_text",
@@ -302,20 +300,29 @@ const sendAuthenticationModal = async (trigger_id: string, user_id: string) => {
 
 const sendKudo = async (payload: Payload) => {
   const userName = payload.user.name;
-  const channelIDK = payload.view.private_metadata;
-  console.log(channelIDK);
+  const channel = payload.view.private_metadata;
   const value =
-    payload.view.state.values.section678.templateName.selected_option.value;
+    payload.view.state.values.section678?.templateName?.selected_option.value ??
+    "Fire";
   console.log(value);
 
-  const messages = [
-    {
-      id: "headerText",
-      text: "beetje proberen",
-    },
-  ];
+  const messages = Object.keys(payload.view.state.values).map((blockId) => {
+    console.log(blockId);
 
-  const channel = "C054FAZS2FN";
+    const blockValues = payload.view.state.values[blockId];
+    if (blockValues) {
+      const actionId = Object.keys(blockValues)[0];
+      const selectedOption = blockValues[actionId ?? ""]?.selected_option;
+      if (selectedOption) {
+        return {
+          id: blockId,
+          text: selectedOption.value,
+        };
+      }
+    }
+  });
+
+  console.log(messages);
 
   if (userName) {
     const user = await findUserByNameForSlack(userName.replace(".", " "));

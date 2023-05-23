@@ -10,6 +10,10 @@ export const updateUserWithAccessToken = async (
   console.log(env.clientSecret);
   console.log(code);
 
+  const formData = new FormData();
+  formData.append("client_id", env.clientId);
+  formData.append("client_secret", env.clientSecret);
+  formData.append("code", code);
   const slackClient: WebClient = new WebClient(env.SLACK_APP_TOKEN);
   const data = {
     client_id: env.clientId,
@@ -26,18 +30,17 @@ export const updateUserWithAccessToken = async (
   const url = "https://slack.com/api/oauth.v2.access";
   await fetch(url, {
     method: "POST",
-    body: JSON.stringify({
-      data,
-    }),
+    headers: {
+      "Content-Type": "application/x-www-form-urlencoded",
+    },
+    body: new URLSearchParams(data).toString(),
   })
     .then((res) => res.json())
     .then((res) => console.log(res));
 
   await fetch(url, {
     method: "POST",
-    body: JSON.stringify({
-      data,
-    }),
+    body: formData,
   })
     .then((res) => res.json())
     .then(async (response: { access_token: string }) => {

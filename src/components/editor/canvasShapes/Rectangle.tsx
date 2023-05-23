@@ -52,6 +52,11 @@ const Rectangle = ({
           EditorFunctions.Draw !== editorFunction &&
           EditorFunctions.Erase !== editorFunction
         }
+        onDragMove={(e) => {
+          if ((e.evt as TouchEvent).touches?.length > 1) {
+            shapeRef.current?.stopDrag();
+          }
+        }}
         onDragEnd={(e) => {
           onChange({
             ...shapeProps,

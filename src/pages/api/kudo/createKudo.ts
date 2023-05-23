@@ -94,6 +94,7 @@ interface body {
   challenge: string;
   trigger_id: string;
   payload?: Payload;
+  type?: string;
 }
 
 interface Content {
@@ -112,7 +113,6 @@ export default async function handler(
   console.log((req.body as body).payload);
 
   if (payload && payload.type === "view_submission") {
-    console.log(payload.view);
     console.log(payload);
     await sendSecondModal(req.body as body);
   }

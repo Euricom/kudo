@@ -108,7 +108,9 @@ export default async function handler(
 ) {
   res.status(200);
   console.log(req.body);
-  const payload = (req.body as body).payload;
+  const payload = req.body as body;
+  console.log((req.body as body).payload);
+
   if (payload && payload.type === "view_submission") {
     console.log(payload.view);
     console.log(payload);
@@ -118,48 +120,38 @@ export default async function handler(
   const text: string = (req.body as body).text;
   const channel: string = (req.body as body).channel_id;
   const trigger_id: string = (req.body as body).trigger_id;
-  const userId = (req.body as body).user_id;
   const userName = (req.body as body).user_name;
-  console.log(userName);
 
-  const slackClient: WebClient = new WebClient(env.SLACK_APP_TOKEN);
+  if (userName) {
+    const user = await findUserByNameForSlack(userName.replace(".", " "));
 
-  // const slackUser = await slackClient.users.profile.get({
-  //   user: userId,
-  // });
-  // console.log("hier is de name");
-  // const name = slackUser.profile?.real_name? ?? "";
-  // console.log(name);
-
-  const user = await findUserByNameForSlack(userName.replace(".", " "));
-
-  console.log(user?.id);
-  if (!user) {
-    res.send("er ging iets fout");
-    res.end();
-  } else if (user && !user.access_token) {
-    await sendAuthenticationModal(trigger_id, user?.id ?? "");
-    res.end();
-  } else if (user?.access_token) {
-    const personalClient: WebClient = new WebClient(user?.access_token);
-    if (text !== "") {
-      const base64 = await makeSlackKudo(text);
-      try {
-        await personalClient.files.uploadV2({
-          channels: channel,
-          file: Buffer.from(base64, "base64"),
-          filename: "kudo.jpg",
-          title: "Mooie kudo!",
-          as_user: true,
-        });
-      } catch (error) {
-        console.error("Error uploading file to Slack:", error);
+    console.log(user?.id);
+    if (!user) {
+      res.send("er ging iets fout");
+      res.end();
+    } else if (user && !user.access_token) {
+      await sendAuthenticationModal(trigger_id, user?.id ?? "");
+      res.end();
+    } else if (user?.access_token) {
+      const personalClient: WebClient = new WebClient(user?.access_token);
+      if (text !== "") {
+        const base64 = await makeSlackKudo(text);
+        try {
+          await personalClient.files.uploadV2({
+            channels: channel,
+            file: Buffer.from(base64, "base64"),
+            filename: "kudo.jpg",
+            title: "Mooie kudo!",
+            as_user: true,
+          });
+        } catch (error) {
+          console.error("Error uploading file to Slack:", error);
+        }
+      } else {
+        await sendFirstModal(trigger_id);
       }
-    } else {
-      await sendFirstModal(trigger_id);
     }
   }
-
   // await slackClient.views.update({
   //   trigger_id: trigger_id,
   //   view: {

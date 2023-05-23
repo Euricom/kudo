@@ -6,19 +6,8 @@ import {
 } from "~/server/services/kudoService";
 // import { openModal } from "~/server/services/slackService";
 import { env } from "~/env.mjs";
-import {
-  WebClient,
-  type FilesUploadResponse,
-  PlainTextOption,
-  Block,
-  WebClientEvent,
-} from "@slack/web-api";
-import {
-  findUserByName,
-  findUserByNameForSlack,
-} from "~/server/services/userService";
-import { log } from "console";
-import { json } from "stream/consumers";
+import { WebClient, type PlainTextOption, type Block } from "@slack/web-api";
+import { findUserByNameForSlack } from "~/server/services/userService";
 
 interface Payload {
   type: string;
@@ -39,7 +28,7 @@ interface Payload {
     id: string;
     team_id: string;
     type: string;
-    blocks: object[];
+    blocks: Block[];
     private_metadata: string;
     callback_id: string;
     state: {
@@ -108,14 +97,15 @@ export default async function handler(
   req: NextApiRequest,
   res: NextApiResponse
 ) {
-  res.status(200);
   console.log(req.body);
   const payloadString = (req.body as body).payload;
   if (payloadString) {
     const payload: Payload = JSON.parse(payloadString) as Payload;
     if (payload.type === "block_actions") {
-      console.log("we zijn er!");
       await sendSecondModal(payload);
+    }
+    if (payload.type === "view_submission") {
+      await sendKudo(payload);
     }
   }
   const text: string = (req.body as body).text;
@@ -134,78 +124,14 @@ export default async function handler(
       await sendAuthenticationModal(trigger_id, user?.id ?? "");
       res.end();
     } else if (user?.access_token) {
-      const personalClient: WebClient = new WebClient(user?.access_token);
-      if (text !== "") {
-        const base64 = await makeSlackKudo(text);
-        try {
-          await personalClient.files.uploadV2({
-            channels: channel,
-            file: Buffer.from(base64, "base64"),
-            filename: "kudo.jpg",
-            title: "Mooie kudo!",
-            as_user: true,
-          });
-        } catch (error) {
-          console.error("Error uploading file to Slack:", error);
-        }
-      } else {
-        await sendFirstModal(trigger_id);
-      }
+      await sendFirstModal(trigger_id, channel);
+      res.end();
     }
   }
-  // await slackClient.views.update({
-  //   trigger_id: trigger_id,
-  //   view: {
-  //     type: "modal",
-  //     callback_id: "modal-identifier",
-  //     title: {
-  //       type: "plain_text",
-  //       text: "Make your kudo!",
-  //     },
-  //     blocks: [
-  //       {
-  //         type: "section",
-  //         block_id: "section678",
-  //         text: {
-  //           type: "mrkdwn",
-  //           text: "Pick a template",
-  //         },
-  //         accessory: {
-  //           action_id: "templateName",
-  //           type: "static_select",
-  //           placeholder: {
-  //             type: "plain_text",
-  //             text: "Select an item",
-  //           },
-  //           options: names,
-  //         },
-  //       },
-  //       {
-  //         type: "section",
-  //         block_id: "section-identifier",
-  //         accessory: {
-  //           type: "button",
-  //           text: {
-  //             type: "plain_text",
-  //             text: "Next",
-  //           },
-  //           action_id: "button-identifier",
-  //         },
-  //       },
-  //     ],
-  //     submit: {
-  //       type: "plain_text",
-  //       text: "Send",
-  //     },
-  //   },
-  // });
 
   res.end();
 }
 const sendSecondModal = async (payload: Payload) => {
-  console.log("Hier komt hij: ");
-  console.log(payload);
-
   const templates = getAllTemplates();
 
   const slackClient: WebClient = new WebClient(env.SLACK_APP_TOKEN);
@@ -232,6 +158,7 @@ const sendSecondModal = async (payload: Payload) => {
     .map((t) => {
       console.log({
         type: "input",
+        block_id: t.id,
         element: {
           type: "plain_text_input",
           initial_value: t.text,
@@ -266,28 +193,12 @@ const sendSecondModal = async (payload: Payload) => {
         text: "Make your kudo!",
       },
       blocks: [
-        {
-          type: "section",
-          block_id: "section678",
-          text: {
-            type: "mrkdwn",
-            text: "Pick a template",
-          },
-          accessory: {
-            action_id: "templateName",
-            type: "static_select",
-            placeholder: {
-              type: "plain_text",
-              text: value,
-            },
-            options: names,
-          },
-        },
+        ...payload.view.blocks,
         {
           type: "section",
           text: {
             type: "mrkdwn",
-            text: "*Enter your input:*",
+            text: "Schrijf een leuk tekstje:",
           },
         },
         ...texts,
@@ -300,7 +211,7 @@ const sendSecondModal = async (payload: Payload) => {
   });
 };
 
-const sendFirstModal = async (trigger_id: string) => {
+const sendFirstModal = async (trigger_id: string, channel_id: string) => {
   const templates = getAllTemplates();
 
   const slackClient: WebClient = new WebClient(env.SLACK_APP_TOKEN);
@@ -310,37 +221,6 @@ const sendFirstModal = async (trigger_id: string) => {
       value: t.name,
     };
   });
-  // slackClient.on()  ("block_actions", async (payload) => {
-  //   const action = payload.actions[0];
-  //   const selectedOption = action.selected_option;
-  //   if (action.action_id === "templateName") {
-  //     const viewId = payload.view.id;
-  //     const updatedView = await slackClient.views.update({
-  //       view_id: viewId,
-  //       view: {
-  //         // Update the existing view with additional blocks or modifications
-  //         ...payload.view,
-  //         blocks: [
-  //           ...payload.view.blocks,
-  //           // Add new blocks or modify existing ones based on the selected option
-  //           // Example: Expand the modal with additional information based on the selected option
-  //           {
-  //             type: "section",
-  //             block_id: "additionalInfo",
-  //             text: {
-  //               type: "mrkdwn",
-  //               text: `You selected: ${selectedOption.text.text}`,
-  //             },
-  //           },
-  //         ],
-  //       },
-  //     });
-  //     return {
-  //       response_action: "update",
-  //       view: updatedView,
-  //     };
-  //   }
-  // });
 
   await slackClient.views.open({
     trigger_id: trigger_id,
@@ -352,6 +232,14 @@ const sendFirstModal = async (trigger_id: string) => {
         text: "Make your kudo!",
       },
       blocks: [
+        {
+          type: "input",
+          block_id: "channel_id",
+          element: {
+            type: "plain_text_input",
+            initial_value: channel_id,
+          },
+        },
         {
           type: "section",
           block_id: "section678",
@@ -370,10 +258,6 @@ const sendFirstModal = async (trigger_id: string) => {
           },
         },
       ],
-      // submit: {
-      //   type: "plain_text",
-      //   text: "Send",
-      // },
     },
   });
 };
@@ -416,4 +300,30 @@ const sendAuthenticationModal = async (trigger_id: string, user_id: string) => {
       },
     },
   });
+};
+
+const sendKudo = async (payload: Payload) => {
+  const userName = payload.user.name;
+  const channel = "C054FAZS2FN";
+  const text = "Probeersels";
+
+  if (userName) {
+    const user = await findUserByNameForSlack(userName.replace(".", " "));
+    if (!user || !user.access_token) {
+    } else {
+      const personalClient: WebClient = new WebClient(user.access_token);
+      const base64 = await makeSlackKudo(text);
+      try {
+        await personalClient.files.uploadV2({
+          channels: channel,
+          file: Buffer.from(base64, "base64"),
+          filename: "kudo.jpg",
+          title: "Mooie kudo!",
+          as_user: true,
+        });
+      } catch (error) {
+        console.error("Error uploading file to Slack:", error);
+      }
+    }
+  }
 };

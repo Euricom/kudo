@@ -227,19 +227,12 @@ const sendFirstModal = async (trigger_id: string, channel_id: string) => {
     view: {
       type: "modal",
       callback_id: "modal-identifier",
+      private_metadata: channel_id,
       title: {
         type: "plain_text",
         text: "Make your kudo!",
       },
       blocks: [
-        {
-          type: "input",
-          block_id: "channel_id",
-          element: {
-            type: "plain_text_input",
-            initial_value: channel_id,
-          },
-        },
         {
           type: "section",
           block_id: "section678",
@@ -304,6 +297,9 @@ const sendAuthenticationModal = async (trigger_id: string, user_id: string) => {
 
 const sendKudo = async (payload: Payload) => {
   const userName = payload.user.name;
+  const channelIDK = payload.view.private_metadata;
+  console.log(channelIDK);
+
   const channel = "C054FAZS2FN";
   const text = "Probeersels";
 

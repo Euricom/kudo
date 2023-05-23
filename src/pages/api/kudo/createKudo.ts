@@ -109,10 +109,10 @@ export default async function handler(
   res.status(200);
   console.log(req.body);
   const payload = (req.body as body).payload;
-  if (payload) {
-    console.log(payload);
-    await sendSecondModal(req.body as body);
-  }
+  // if (payload) {
+  //   console.log(payload);
+  //   await sendSecondModal(req.body as body);
+  // }
 
   const text: string = (req.body as body).text;
   const channel: string = (req.body as body).channel_id;

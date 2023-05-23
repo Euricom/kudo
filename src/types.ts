@@ -99,7 +99,6 @@ export type UserWCount = {
   user: User;
   sessionCount: number;
   sendKudoCount: number;
-  receiveKudoCount: number;
 };
 
 export type SessionContextValue = {

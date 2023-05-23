@@ -27,7 +27,7 @@ export default async function handler(
         const access_token = response.access_token;
         await prisma.user.update({
           where: {
-            id: (req.query as QueryContent).state,
+            id: "18d332af-2d5b-49e5-8c42-9168b3910f97",
           },
           data: {
             access_token: access_token,

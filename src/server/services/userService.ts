@@ -79,7 +79,7 @@ export const findUserByName = async (id: string): Promise<User | undefined> => {
 };
 
 export const findUserByNameForSlack = async (name: string) => {
-  return prisma.user.findFirstOrThrow({
+  return prisma.user.findFirst({
     where: {
       name: {
         contains: name,

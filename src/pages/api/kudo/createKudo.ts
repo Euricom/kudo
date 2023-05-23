@@ -39,6 +39,8 @@ interface Payload {
               text: { type: string; text: string; emoji: boolean };
               value: string;
             };
+            text: { type: string; text: string; emoji: boolean };
+            value: string;
           };
         };
       };
@@ -313,14 +315,15 @@ const sendKudo = async (payload: Payload) => {
     console.log(blockValues);
 
     if (blockValues) {
-      const actionId = Object.keys(blockValues)[0];
+      const actionId = Object.keys(blockValues)[0] ?? "";
       console.log(actionId);
-      const selectedOption = blockValues[actionId ?? ""]?.selected_option;
-      console.log(selectedOption);
-      if (selectedOption) {
+      const value = blockValues[actionId]?.value;
+      console.log(value);
+
+      if (value) {
         return {
           id: blockId,
-          text: selectedOption.value,
+          text: value,
         };
       }
     }

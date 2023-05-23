@@ -118,20 +118,22 @@ export default async function handler(
   const channel: string = (req.body as body).channel_id;
   const trigger_id: string = (req.body as body).trigger_id;
   const userId = (req.body as body).user_id;
+  const userName = (req.body as body).user_name;
+  console.log(userName);
 
   const slackClient: WebClient = new WebClient(env.SLACK_APP_TOKEN);
   const personalClient: WebClient = new WebClient(
     "xoxp-5141846691238-5133909828375-5200979736101-298d5831ae1427b9a9921402db3a2d07"
   );
 
-  const slackUser = await slackClient.users.profile.get({
-    user: userId,
-  });
-  console.log("hier is de name");
-  const name = slackUser.profile?.real_name?.replace(".", " ") ?? "";
-  console.log(name);
+  // const slackUser = await slackClient.users.profile.get({
+  //   user: userId,
+  // });
+  // console.log("hier is de name");
+  // const name = slackUser.profile?.real_name?.replace(".", " ") ?? "";
+  // console.log(name);
 
-  const user = await findUserByNameForSlack(name);
+  const user = await findUserByNameForSlack(userName);
 
   console.log(user?.id);
   if (user && !user.access_token) {

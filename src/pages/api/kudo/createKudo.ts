@@ -109,6 +109,7 @@ export default async function handler(
   res: NextApiResponse
 ) {
   res.status(200);
+  console.log(req.body);
   const payloadString = (req.body as body).payload;
   if (payloadString) {
     const payload: Payload = JSON.parse(payloadString) as Payload;

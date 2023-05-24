@@ -339,45 +339,51 @@ const sendAuthenticationModal = async (trigger_id: string, user_id: string) => {
 };
 
 const sendKudo = async (payload: Payload) => {
-  const userName = payload.user.name;
-  console.log(userName);
-  const channel = payload.view.private_metadata;
-  console.log(channel);
+  const userId = payload.user.id;
+  const slackClient: WebClient = new WebClient(env.SLACK_APP_TOKEN);
+  const name = await slackClient.users.info({
+    user: userId,
+  });
+  console.log(name.user?.profile);
 
-  const value =
-    payload.view.state.values.section678?.templateName?.selected_option.value ??
-    "Fire";
-  console.log(value);
+  if (name.user?.profile?.real_name) {
+    const user = await findUserByNameForSlack(name.user?.profile?.real_name);
 
-  const messages = Object.keys(payload.view.state.values)
-    .map((blockId) => {
-      console.log(blockId);
-      const id = blockId.split(" ");
-      console.log(id);
+    const channel = payload.view.private_metadata;
+    console.log(channel);
 
-      const blockValues = payload.view.state.values[blockId];
-      console.log(blockValues);
+    const value =
+      payload.view.state.values.section678?.templateName?.selected_option
+        .value ?? "Fire";
+    console.log(value);
 
-      if (blockValues && id[1]) {
-        const actionId = Object.keys(blockValues)[0] ?? "";
-        console.log(actionId);
-        const value = blockValues[actionId]?.value;
-        console.log(value);
+    const messages = Object.keys(payload.view.state.values)
+      .map((blockId) => {
+        console.log(blockId);
+        const id = blockId.split(" ");
+        console.log(id);
 
-        if (value) {
-          return {
-            id: id[1],
-            text: value,
-          };
+        const blockValues = payload.view.state.values[blockId];
+        console.log(blockValues);
+
+        if (blockValues && id[1]) {
+          const actionId = Object.keys(blockValues)[0] ?? "";
+          console.log(actionId);
+          const value = blockValues[actionId]?.value;
+          console.log(value);
+
+          if (value) {
+            return {
+              id: id[1],
+              text: value,
+            };
+          }
         }
-      }
-    })
-    .filter((message) => message !== null);
+      })
+      .filter((message) => message !== null);
 
-  console.log(messages);
+    console.log(messages);
 
-  if (userName) {
-    const user = await findUserByNameForSlack(userName.replace(".", " "));
     if (!user || !user.access_token) {
     } else {
       const personalClient: WebClient = new WebClient(user.access_token);

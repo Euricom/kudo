@@ -210,6 +210,7 @@ export async function makeSlackKudo(
         "px " +
         (s.fontFamily ?? "Arial").toString();
       const textWidth = context.measureText(text ?? "fout").width;
+
       context.fillText(
         text ?? "fout",
         (s.x ?? 0) + 750 - textWidth / 2,

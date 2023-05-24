@@ -109,10 +109,11 @@ export default async function handler(
       res.send({
         response_action: "clear",
       });
+      await sendKudo(payload);
+      console.log("erna!");
 
       res.end();
     }
-    await sendKudo(payload);
   }
   const channel: string = (req.body as body).channel_id;
   const trigger_id: string = (req.body as body).trigger_id;
@@ -300,6 +301,8 @@ const sendAuthenticationModal = async (trigger_id: string, user_id: string) => {
 const sendKudo = async (payload: Payload) => {
   const userName = payload.user.name;
   const channel = payload.view.private_metadata;
+  console.log(channel);
+
   const value =
     payload.view.state.values.section678?.templateName?.selected_option.value ??
     "Fire";

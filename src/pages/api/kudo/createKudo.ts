@@ -185,7 +185,6 @@ const sendSecondModal = async (payload: Payload) => {
         text: "Make your kudo!",
       },
       blocks: [
-        ...payload.view.blocks,
         {
           type: "section",
           block_id: "section678",
@@ -201,14 +200,6 @@ const sendSecondModal = async (payload: Payload) => {
               text: "Select an item",
             },
             options: names,
-          },
-        },
-        {
-          type: "section",
-          block_id: "sectionInputs",
-          text: {
-            type: "mrkdwn",
-            text: "Schrijf een leuk tekstje:",
           },
         },
         ...texts,

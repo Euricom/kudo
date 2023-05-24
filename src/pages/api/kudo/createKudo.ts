@@ -104,6 +104,7 @@ export default async function handler(
     const payload: Payload = JSON.parse(payloadString) as Payload;
     if (payload.type === "block_actions") {
       await sendSecondModal(payload);
+      res.end();
     }
     if (payload.type === "view_submission") {
       await sentThirdModal(payload);
@@ -116,37 +117,37 @@ export default async function handler(
       });
       res.end();
     }
-  }
-  const channel: string = (req.body as body).channel_id;
-  const trigger_id: string = (req.body as body).trigger_id;
-  const userId = (req.body as body).user_id;
+  } else {
+    const channel: string = (req.body as body).channel_id;
+    const trigger_id: string = (req.body as body).trigger_id;
+    const userId = (req.body as body).user_id;
 
-  const slackClient: WebClient = new WebClient(env.SLACK_APP_TOKEN);
-  const name = await slackClient.users.info({
-    user: userId,
-  });
-  console.log(name.user?.profile);
+    const slackClient: WebClient = new WebClient(env.SLACK_APP_TOKEN);
+    const name = await slackClient.users.info({
+      user: userId,
+    });
+    console.log(name.user?.profile);
 
-  if (name.user?.profile?.real_name) {
-    const user = await findUserByNameForSlack(
-      name.user?.profile?.real_name.replace(".", " ")
-    );
+    if (name.user?.profile?.real_name) {
+      const user = await findUserByNameForSlack(name.user?.profile?.real_name);
 
-    console.log(user?.id);
-    if (!user) {
-      res.send(
-        "Kan het zijn dat u nog niet ingelogd bent op de website: surf naar https://euricom-kudos.netlify.app/ om een account aan te maken!"
-      );
-      res.end();
-    } else if (user && !user.access_token) {
-      await sendAuthenticationModal(trigger_id, user?.id ?? "");
-      res.end();
-    } else if (user?.access_token) {
-      await sendFirstModal(trigger_id, channel);
-      res.end();
+      console.log(user?.id);
+      if (!user) {
+        res.send(
+          "Kan het zijn dat u nog niet ingelogd bent op de website: surf naar https://euricom-kudos.netlify.app/ om een account aan te maken!"
+        );
+        res.end();
+      } else if (user && !user.access_token) {
+        await sendAuthenticationModal(trigger_id, user?.id ?? "");
+        res.end();
+      } else if (user?.access_token) {
+        console.log("in first modal");
+
+        await sendFirstModal(trigger_id, channel);
+        res.end();
+      }
     }
   }
-
   res.end();
 }
 
@@ -339,6 +340,7 @@ const sendAuthenticationModal = async (trigger_id: string, user_id: string) => {
 
 const sendKudo = async (payload: Payload) => {
   const userName = payload.user.name;
+  console.log(userName);
   const channel = payload.view.private_metadata;
   console.log(channel);
 

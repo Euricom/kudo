@@ -17,6 +17,8 @@ const tokenRequest = {
   scopes: ["https://graph.microsoft.com/.default"],
 };
 
+type QueryMode = "default" | "insensitive";
+
 const getToken = async () => {
   const authenticationResult: msal.AuthenticationResult | null =
     await new msal.ConfidentialClientApplication(
@@ -83,23 +85,18 @@ export const findUserByNameForSlack = async (name: string) => {
     },
   });
   if (!user?.id) {
-    const names = name.split("  ");
+    const names = name.split(" ").map((n) => {
+      return {
+        name: {
+          contains: n,
+          mode: "insensitive" as QueryMode,
+        },
+      };
+    });
+
     user = await prisma.user.findFirst({
       where: {
-        AND: [
-          {
-            name: {
-              contains: names[0],
-              mode: "insensitive",
-            },
-          },
-          {
-            name: {
-              contains: names[1],
-              mode: "insensitive",
-            },
-          },
-        ],
+        AND: names,
       },
     });
   }

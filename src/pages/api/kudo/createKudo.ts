@@ -134,7 +134,9 @@ export default async function handler(
 
     console.log(user?.id);
     if (!user) {
-      res.send("er ging iets fout");
+      res.send(
+        "Kan het zijn dat u nog niet ingelogd bent op de website: surf naar https://euricom-kudos.netlify.app/ om een account aan te maken!"
+      );
       res.end();
     } else if (user && !user.access_token) {
       await sendAuthenticationModal(trigger_id, user?.id ?? "");

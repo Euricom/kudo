@@ -106,13 +106,14 @@ export default async function handler(
       await sendSecondModal(payload);
     }
     if (payload.type === "view_submission") {
-      res.send({
-        response_action: "clear",
-      });
+      await sendSecondModal(payload);
 
       console.log("ervoor!");
       await sendKudo(payload);
       console.log("erna!");
+      res.send({
+        response_action: "clear",
+      });
       res.end();
     }
   }

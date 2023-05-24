@@ -165,6 +165,7 @@ export async function makeSlackKudo(
       context.fill();
     } else if (s.type === 2) {
       context.strokeStyle = s.color ?? "";
+      context.lineCap = "round";
       console.log(s.color);
 
       context.lineWidth = (s.thickness ?? 50) + 5;

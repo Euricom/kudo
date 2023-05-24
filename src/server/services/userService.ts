@@ -6,7 +6,6 @@ import { TRPCError } from "@trpc/server";
 import { getAllSessions } from "./sessionService";
 import { prisma } from "../db";
 
-
 const msalConfig = {
   auth: {
     clientId: env.AZURE_AD_CLIENT_ID,
@@ -75,7 +74,7 @@ export const findUserByName = async (id: string): Promise<User | undefined> => {
 };
 
 export const findUserByNameForSlack = async (name: string) => {
-  return prisma.user.findFirst({
+  let user = await prisma.user.findFirst({
     where: {
       name: {
         contains: name,
@@ -83,6 +82,28 @@ export const findUserByNameForSlack = async (name: string) => {
       },
     },
   });
+  if (!user?.id) {
+    const names = name.split("  ");
+    user = await prisma.user.findFirst({
+      where: {
+        AND: [
+          {
+            name: {
+              contains: names[0],
+              mode: "insensitive",
+            },
+          },
+          {
+            name: {
+              contains: names[1],
+              mode: "insensitive",
+            },
+          },
+        ],
+      },
+    });
+  }
+  return user;
 };
 
 export const findRelevantUsers = async (ctx: {

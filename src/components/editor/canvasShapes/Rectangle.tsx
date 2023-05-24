@@ -14,11 +14,12 @@ const Rectangle = ({
   shapeProps,
   isSelected,
   editorFunction,
-  isDragable,
+  isScalable,
   onSelect,
   onChange,
   onDelete,
   onChangeEnd,
+  setScalingShape,
 }: RectangleProps) => {
   const shapeRef = useRef<Konva.Rect>() as MutableRefObject<Konva.Rect>;
   const trRef =
@@ -74,7 +75,7 @@ const Rectangle = ({
         {...shapeProps}
         draggable={
           shapeProps.draggable &&
-          isDragable &&
+          isScalable &&
           EditorFunctions.Draw !== editorFunction &&
           EditorFunctions.Erase !== editorFunction
         }
@@ -84,10 +85,12 @@ const Rectangle = ({
           }
         }}
         onTouchMove={(e) => {
+          if (!isScalable) return;
           e.evt.preventDefault();
           const touch1 = e.evt.touches[0];
           const touch2 = e.evt.touches[1];
           if (touch1 && touch2) {
+            setScalingShape(shapeProps.id);
             shapeRef.current?.stopDrag();
             const p1 = {
               x: touch1.clientX,

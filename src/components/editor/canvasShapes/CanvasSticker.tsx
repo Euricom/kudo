@@ -9,16 +9,17 @@ import type Konva from "konva";
 import { EditorFunctions, type CanvasStickerProps } from "~/types";
 import useWindowDimensions from "~/hooks/useWindowDimensions";
 import { type Vector2d } from "konva/lib/types";
-import { useSetTitle } from "~/components/navigation/NavBarTitle";
 
 const CanvasSticker = ({
   shapeProps,
   isSelected,
   editorFunction,
+  isScalable,
   onSelect,
   onChange,
   onDelete,
   onChangeEnd,
+  setScalingShape,
 }: CanvasStickerProps) => {
   const shapeRef = useRef<Konva.Text>() as MutableRefObject<Konva.Text>;
   const trRef =
@@ -92,10 +93,12 @@ const CanvasSticker = ({
           });
         }}
         onTouchMove={(e) => {
+          if (!isScalable) return;
           e.evt.preventDefault();
           const touch1 = e.evt.touches[0];
           const touch2 = e.evt.touches[1];
           if (touch1 && touch2) {
+            setScalingShape(shapeProps.id);
             shapeRef.current?.stopDrag();
             const p1 = {
               x: touch1.clientX,

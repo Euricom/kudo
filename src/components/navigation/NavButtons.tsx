@@ -19,7 +19,7 @@ const NavButtons = () => {
   return (
     <>
       <div
-        className="dropdown dropdown-bottom mx-auto w-full"
+        className="dropdown-bottom dropdown mx-auto w-full"
         data-cy="NavButtons"
       >
         <label
@@ -44,7 +44,10 @@ const NavButtons = () => {
             className="dropdown-content menu rounded-box mx-auto w-full max-w-lg justify-center gap-1 bg-base-200 p-2 shadow"
           >
             {sessions?.length !== 0 ? (
-              <li className={`border-b-2 ${path === "/" ? "text-accent" : ""}`}>
+              <li
+                key="In"
+                className={`border-b-2 ${path === "/" ? "text-accent" : ""}`}
+              >
                 <Link href="/" data-cy="In" onClick={() => setState(false)}>
                   My Kudos
                 </Link>
@@ -52,13 +55,14 @@ const NavButtons = () => {
             ) : (
               ""
             )}
-            <li className={path === "/out" ? "text-accent" : ""}>
+            <li key="Out" className={path === "/out" ? "text-accent" : ""}>
               <Link href="/out" data-cy="Out" onClick={() => setState(false)}>
                 Sent Kudos
               </Link>
             </li>
             {user?.role === UserRole.ADMIN ? (
               <li
+                key="All"
                 className={`border-t-2 ${
                   path.includes("/all") ? "text-accent" : ""
                 }`}

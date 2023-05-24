@@ -129,7 +129,9 @@ export default async function handler(
     console.log(name.user?.profile);
 
     if (name.user?.profile?.real_name) {
-      const user = await findUserByNameForSlack(name.user?.profile?.real_name);
+      const user = await findUserByNameForSlack(
+        name.user?.profile?.real_name.replace(".", " ")
+      );
 
       console.log(user?.id);
       if (!user) {
@@ -347,7 +349,9 @@ const sendKudo = async (payload: Payload) => {
   console.log(name.user?.profile);
 
   if (name.user?.profile?.real_name) {
-    const user = await findUserByNameForSlack(name.user?.profile?.real_name);
+    const user = await findUserByNameForSlack(
+      name.user?.profile?.real_name.replace(".", " ")
+    );
 
     const channel = payload.view.private_metadata;
     console.log(channel);

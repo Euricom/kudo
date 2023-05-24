@@ -159,7 +159,7 @@ const sendSecondModal = async (payload: Payload) => {
     .map((t) => {
       return {
         type: "input",
-        block_id: t.id,
+        // block_id: t.id,
         element: {
           type: "plain_text_input",
           initial_value: t.text,

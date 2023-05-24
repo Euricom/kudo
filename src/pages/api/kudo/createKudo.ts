@@ -106,7 +106,7 @@ export default async function handler(
       await sendSecondModal(payload);
     }
     if (payload.type === "view_submission") {
-      await sendSecondModal(payload);
+      await sentThirdModal(payload);
 
       console.log("ervoor!");
       await sendKudo(payload);
@@ -139,6 +139,33 @@ export default async function handler(
 
   res.end();
 }
+
+const sentThirdModal = async (payload: Payload) => {
+  const slackClient: WebClient = new WebClient(env.SLACK_APP_TOKEN);
+  await slackClient.views.update({
+    view_id: payload.view.id,
+    hash: payload.view.hash,
+    view: {
+      type: "modal",
+      callback_id: "modal-identifier",
+      private_metadata: payload.view.private_metadata,
+      title: {
+        type: "plain_text",
+        text: "Make your kudo!",
+      },
+      blocks: [
+        {
+          type: "section",
+          block_id: "section678",
+          text: {
+            type: "mrkdwn",
+            text: "De Kudo wordt aangemaakt!",
+          },
+        },
+      ],
+    },
+  });
+};
 const sendSecondModal = async (payload: Payload) => {
   const templates = getAllTemplates();
 

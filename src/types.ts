@@ -217,20 +217,24 @@ export type CanvasTextProps = {
   isSelected: boolean;
   editorFunction: EditorFunctions;
   dialog?: HTMLDialogElement;
+  isScalable: boolean;
   onSelect: () => void;
   onChange: (shapeProps: Shapes) => void;
   onDelete: (id: string) => void;
   onChangeEnd: (shapeProps: Shapes) => void;
+  setScalingShape: (shape: string | null) => void;
 };
 
 export type CanvasStickerProps = {
   shapeProps: Shapes;
   isSelected: boolean;
   editorFunction: EditorFunctions;
+  isScalable: boolean;
   onSelect: () => void;
   onChange: (shapeProps: Shapes) => void;
   onDelete: (id: string) => void;
   onChangeEnd: (shapeProps: Shapes) => void;
+  setScalingShape: (shape: string | null) => void;
 };
 
 export type CanvasImageProps = {
@@ -246,9 +250,12 @@ export type RectangleProps = {
   shapeProps: Shapes;
   isSelected: boolean;
   editorFunction: EditorFunctions;
+  isScalable: boolean;
   onSelect: () => void;
   onChange: (shapeProps: Shapes) => void;
   onDelete: (id: string) => void;
+  onChangeEnd: (shapeProps: Shapes) => void;
+  setScalingShape: (shape: string | null) => void;
 };
 
 export const Fonts = [

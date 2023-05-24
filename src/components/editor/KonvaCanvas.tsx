@@ -24,6 +24,7 @@ import CanvasSticker from "./canvasShapes/CanvasSticker";
 import CanvasCircle from "./canvasShapes/CanvasCircle";
 import { api } from "~/utils/api";
 import { useSession } from "next-auth/react";
+import { type Vector2d } from "konva/lib/types";
 
 const KonvaCanvas = ({
   editorFunction,
@@ -66,6 +67,7 @@ const KonvaCanvas = ({
     ) as unknown as Shapes[]) ?? []
   );
   const [selectedId, selectShape] = useState<string | null>(null);
+  const [scalingShape, setScalingShape] = useState<string | null>(null);
   const { current: history } = useRef<Shapes[]>(
     (
       [...template.content, senderNode].filter(Boolean) as unknown as Shapes[]
@@ -338,9 +340,12 @@ const KonvaCanvas = ({
               }}
               isSelected={false}
               editorFunction={EditorFunctions.None}
+              isScalable={false}
               onSelect={() => selectShape(null)}
               onChange={() => void 0}
               onDelete={() => void 0}
+              onChangeEnd={() => void 0}
+              setScalingShape={() => void 0}
             />
           </Layer>
           <Layer ref={layerRef}>
@@ -355,9 +360,12 @@ const KonvaCanvas = ({
               }}
               isSelected={false}
               editorFunction={EditorFunctions.None}
+              isScalable={false}
               onSelect={() => selectShape(null)}
               onChange={() => void 0}
+              onChangeEnd={() => void 0}
               onDelete={() => void 0}
+              setScalingShape={() => void 0}
             />
             {shapes.map((s, i) => {
               switch (s.type) {
@@ -387,6 +395,7 @@ const KonvaCanvas = ({
                       isSelected={s.id === selectedId}
                       editorFunction={editorFunction ?? EditorFunctions.None}
                       dialog={dialogRef.current ?? undefined}
+                      isScalable={!scalingShape || scalingShape === s.id}
                       onSelect={() => {
                         selectShape(s.id);
                       }}
@@ -396,10 +405,12 @@ const KonvaCanvas = ({
                         setShapes(newShapes);
                       }}
                       onChangeEnd={(newAttrs) => {
+                        setScalingShape(null);
                         history.unshift(newAttrs);
                         selectShape(s.id);
                       }}
                       onDelete={onDelete}
+                      setScalingShape={setScalingShape}
                     />
                   );
                 case CanvasShapes.Sticker:
@@ -408,6 +419,8 @@ const KonvaCanvas = ({
                       key={i}
                       shapeProps={s}
                       isSelected={s.id === selectedId}
+                      editorFunction={editorFunction ?? EditorFunctions.None}
+                      isScalable={!scalingShape || scalingShape === s.id}
                       onSelect={() => {
                         selectShape(s.id);
                       }}
@@ -417,11 +430,12 @@ const KonvaCanvas = ({
                         setShapes(newShapes);
                       }}
                       onChangeEnd={(newAttrs) => {
+                        setScalingShape(null);
                         history.unshift(newAttrs);
                         selectShape(s.id);
                       }}
                       onDelete={onDelete}
-                      editorFunction={editorFunction ?? EditorFunctions.None}
+                      setScalingShape={setScalingShape}
                     />
                   );
                 case CanvasShapes.Rect:
@@ -431,6 +445,7 @@ const KonvaCanvas = ({
                       shapeProps={s}
                       isSelected={s.id === selectedId}
                       editorFunction={editorFunction ?? EditorFunctions.None}
+                      isScalable={!scalingShape || scalingShape === s.id}
                       onSelect={() => {
                         selectShape(s.id);
                       }}
@@ -438,10 +453,14 @@ const KonvaCanvas = ({
                         const newShapes = shapes.slice();
                         newShapes[i] = newAttrs;
                         setShapes(newShapes);
+                      }}
+                      onDelete={onDelete}
+                      onChangeEnd={(newAttrs) => {
+                        setScalingShape(null);
                         history.unshift(newAttrs);
                         selectShape(s.id);
                       }}
-                      onDelete={onDelete}
+                      setScalingShape={setScalingShape}
                     />
                   );
                 case CanvasShapes.Circle:
@@ -451,6 +470,7 @@ const KonvaCanvas = ({
                       shapeProps={s}
                       isSelected={s.id === selectedId}
                       editorFunction={editorFunction ?? EditorFunctions.None}
+                      isScalable={!scalingShape || scalingShape === s.id}
                       onSelect={() => {
                         selectShape(s.id);
                       }}
@@ -458,10 +478,14 @@ const KonvaCanvas = ({
                         const newShapes = shapes.slice();
                         newShapes[i] = newAttrs;
                         setShapes(newShapes);
+                      }}
+                      onDelete={onDelete}
+                      onChangeEnd={(newAttrs) => {
+                        setScalingShape(null);
                         history.unshift(newAttrs);
                         selectShape(s.id);
                       }}
-                      onDelete={onDelete}
+                      setScalingShape={setScalingShape}
                     />
                   );
               }

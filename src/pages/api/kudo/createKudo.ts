@@ -107,6 +107,10 @@ export default async function handler(
     }
     if (payload.type === "view_submission") {
       await sendKudo(payload);
+      res.send({
+        response_action: "clear",
+      });
+      res.end();
     }
   }
   const channel: string = (req.body as body).channel_id;
@@ -181,6 +185,7 @@ const sendSecondModal = async (payload: Payload) => {
         text: "Make your kudo!",
       },
       blocks: [
+        ...payload.view.blocks,
         {
           type: "section",
           block_id: "section678",
@@ -308,26 +313,28 @@ const sendKudo = async (payload: Payload) => {
     "Fire";
   console.log(value);
 
-  const messages = Object.keys(payload.view.state.values).map((blockId) => {
-    console.log(blockId);
+  const messages = Object.keys(payload.view.state.values)
+    .map((blockId) => {
+      console.log(blockId);
 
-    const blockValues = payload.view.state.values[blockId];
-    console.log(blockValues);
+      const blockValues = payload.view.state.values[blockId];
+      console.log(blockValues);
 
-    if (blockValues) {
-      const actionId = Object.keys(blockValues)[0] ?? "";
-      console.log(actionId);
-      const value = blockValues[actionId]?.value;
-      console.log(value);
+      if (blockValues) {
+        const actionId = Object.keys(blockValues)[0] ?? "";
+        console.log(actionId);
+        const value = blockValues[actionId]?.value;
+        console.log(value);
 
-      if (value) {
-        return {
-          id: blockId,
-          text: value,
-        };
+        if (value) {
+          return {
+            id: blockId,
+            text: value,
+          };
+        }
       }
-    }
-  });
+    })
+    .filter((message) => message !== null);
 
   console.log(messages);
 
@@ -340,7 +347,7 @@ const sendKudo = async (payload: Payload) => {
       const base64 = await makeSlackKudo(value, messages);
       try {
         await personalClient.files.uploadV2({
-          channels: channel,
+          channel_id: channel,
           file: Buffer.from(base64, "base64"),
           filename: "kudo.jpg",
           title: "Mooie kudo!",

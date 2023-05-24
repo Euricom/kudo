@@ -106,12 +106,13 @@ export default async function handler(
       await sendSecondModal(payload);
     }
     if (payload.type === "view_submission") {
-      await sendKudo(payload);
       res.send({
         response_action: "clear",
       });
+
       res.end();
     }
+    await sendKudo(payload);
   }
   const channel: string = (req.body as body).channel_id;
   const trigger_id: string = (req.body as body).trigger_id;

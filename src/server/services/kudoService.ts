@@ -200,10 +200,10 @@ export async function makeSlackKudo(
         );
       };
     } else {
-      let text = s.text;
+      let text = [s.text];
       messages?.forEach((m) => {
         if (m && m.id === s.id) {
-          text = m.text;
+          text[0] = m.text;
         }
       });
 
@@ -212,13 +212,34 @@ export async function makeSlackKudo(
         ((s.fontSize ?? 90) * (s.scale?.y ?? 1)).toString() +
         "px " +
         (s.fontFamily ?? "Arial").toString();
-      const textWidth = context.measureText(text ?? "fout").width;
+      let textWidth = context.measureText(text[0] ?? "fout").width;
 
-      context.fillText(
-        text ?? "fout",
-        (s.x ?? 0) + 750 - textWidth / 2,
-        (s.y ?? 0) + 500 + (s.fontSize ?? 0) / 3
-      );
+      while (textWidth > width) {
+        const array: string[] = [];
+        text.map((t) => {
+          const splitsing = t?.split(" ");
+          const lengte = splitsing?.length ?? 0;
+          const string1 = splitsing?.filter((t, i) => i < lengte / 2).join(" ");
+          const string2 = splitsing
+            ?.filter((t, i) => i >= lengte / 2)
+            .join(" ");
+          array.push(string1 ?? "");
+          array.push(string2 ?? "");
+        });
+        text = array;
+        const widthArray: number[] = text.map(
+          (t) => context.measureText(t ?? "fout").width
+        );
+        textWidth = Math.min(...widthArray);
+      }
+
+      text.forEach((t, i) => {
+        context.fillText(
+          t ?? "fout",
+          (s.x ?? 0) + 750 - textWidth / 2,
+          (s.y ?? 0) + 500 + (s.fontSize ?? 0) / 3 + (s.fontSize ?? 0) * i
+        );
+      });
     }
   });
   await delay(2000);

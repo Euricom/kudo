@@ -346,7 +346,7 @@ const KonvaCanvas = ({
               }}
               isSelected={false}
               editorFunction={EditorFunctions.None}
-              isDragable={isDragable.current}
+              isDragable={false}
               onSelect={() => selectShape(null)}
               onChange={() => void 0}
               onDelete={() => void 0}
@@ -365,7 +365,7 @@ const KonvaCanvas = ({
               }}
               isSelected={false}
               editorFunction={EditorFunctions.None}
-              isDragable={isDragable.current}
+              isDragable={false}
               onSelect={() => selectShape(null)}
               onChange={() => void 0}
               onChangeEnd={() => void 0}

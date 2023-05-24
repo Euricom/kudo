@@ -183,12 +183,14 @@ const sendSecondModal = async (payload: Payload) => {
   const templates = getAllTemplates();
 
   const slackClient: WebClient = new WebClient(env.SLACK_APP_TOKEN);
-  const names: PlainTextOption[] = (await templates).map((t) => {
-    return {
-      text: { type: "plain_text", text: t.name },
-      value: t.name,
-    };
-  });
+  const names: PlainTextOption[] = (await templates)
+    .filter((t) => t.content.length !== 0)
+    .map((t) => {
+      return {
+        text: { type: "plain_text", text: t.name },
+        value: t.name,
+      };
+    });
   const value =
     payload.view.state.values.section678?.templateName?.selected_option.value ??
     "Fire";
@@ -260,12 +262,14 @@ const sendFirstModal = async (trigger_id: string, channel_id: string) => {
   const templates = getAllTemplates();
 
   const slackClient: WebClient = new WebClient(env.SLACK_APP_TOKEN);
-  const names: PlainTextOption[] = (await templates).map((t) => {
-    return {
-      text: { type: "plain_text", text: t.name },
-      value: t.name,
-    };
-  });
+  const names: PlainTextOption[] = (await templates)
+    .filter((t) => t.content.length !== 0)
+    .map((t) => {
+      return {
+        text: { type: "plain_text", text: t.name },
+        value: t.name,
+      };
+    });
 
   await slackClient.views.open({
     trigger_id: trigger_id,

@@ -218,7 +218,7 @@ export async function makeSlackKudo(
       );
     }
   });
-  await delay(3000);
+  await delay(1000);
   const buffer = canvas.toBuffer("image/jpeg");
   const base64String = btoa(String.fromCharCode(...new Uint8Array(buffer)));
 

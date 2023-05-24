@@ -164,9 +164,11 @@ export async function makeSlackKudo(
       );
       context.fill();
     } else if (s.type === 2) {
+      context.strokeStyle = s.color ?? "";
+      console.log(s.color);
+
+      context.lineWidth = s.thickness ?? 50;
       context.beginPath();
-      context.fillStyle = s.color ?? "";
-      context.lineWidth = s.thickness ?? 5;
       if (s.points) {
         for (let i = 0; i < s.points?.length ?? 0; i = i + 2) {
           context.lineTo(
@@ -191,12 +193,8 @@ export async function makeSlackKudo(
       img.onload = () => {
         context.drawImage(
           img,
-          (s.x ?? 0) +
-            750 -
-            ((s.fontSize ?? 200) * ((s.scale?.x ?? 2) - 1)) / 2,
-          (s.y ?? 0) +
-            500 -
-            ((s.fontSize ?? 200) * ((s.scale?.x ?? 2) - 1)) / 2,
+          (s.x ?? 0) + 750 - ((s.fontSize ?? 200) * (s.scale?.x ?? 2)) / 2,
+          (s.y ?? 0) + 500 - ((s.fontSize ?? 200) * (s.scale?.x ?? 1)) / 2,
           (s.fontSize ?? 200) * (s.scale?.x ?? 1),
           (s.fontSize ?? 200) * (s.scale?.y ?? 1)
         );

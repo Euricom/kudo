@@ -76,7 +76,17 @@ const Session: NextPage<{ id: string; initialKudos: Kudo[] }> = ({
   }
 
   if (!session) {
-    return <>404</>;
+    return (
+      <>
+        <NavigationBarContent>No session found</NavigationBarContent>
+        <main
+          className="flex h-full flex-col items-center justify-center text-lg"
+          data-cy="Session"
+        >
+          There was no session found with id: {id}.
+        </main>
+      </>
+    );
   }
 
   const downloadZip = async () => {

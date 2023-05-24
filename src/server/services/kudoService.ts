@@ -167,7 +167,7 @@ export async function makeSlackKudo(
       context.strokeStyle = s.color ?? "";
       console.log(s.color);
 
-      context.lineWidth = s.thickness ?? 50;
+      context.lineWidth = (s.thickness ?? 50) + 5;
       context.beginPath();
       if (s.points) {
         for (let i = 0; i < s.points?.length ?? 0; i = i + 2) {
@@ -183,17 +183,14 @@ export async function makeSlackKudo(
       await getEmojiDataFromNative(s.text)
         .then((d: emojiData) => {
           img.src =
-            "https://github.githubassets.com/images/icons/emoji/unicode/" +
-            d.unified +
-            ".png?v8";
-          //andere url: https://raw.githubusercontent.com/EmojiTwo/emojitwo/master/+ d.unified +/0023.png
+            "https://raw.githubusercontent.com/EmojiTwo/emojitwo/master/+ d.unified +/0023.png";
+          //andere url: "https://github.githubassets.com/images/icons/emoji/unicode/" + d.unified +".png?v8"
         })
-
         .catch((e) => console.log(e));
       img.onload = () => {
         context.drawImage(
           img,
-          (s.x ?? 0) + 750 - ((s.fontSize ?? 200) * (s.scale?.x ?? 2)) / 2,
+          (s.x ?? 0) + 750 - ((s.fontSize ?? 200) * (s.scale?.x ?? 1)) / 2,
           (s.y ?? 0) + 500 - ((s.fontSize ?? 200) * (s.scale?.x ?? 1)) / 2,
           (s.fontSize ?? 200) * (s.scale?.x ?? 1),
           (s.fontSize ?? 200) * (s.scale?.y ?? 1)
@@ -209,7 +206,7 @@ export async function makeSlackKudo(
 
       s.fill ? (context.fillStyle = s.fill) : "";
       context.font =
-        ((s.fontSize ?? 90) * ((s.scale?.y ?? 2) - 1)).toString() +
+        ((s.fontSize ?? 90) * (s.scale?.y ?? 1)).toString() +
         "px " +
         (s.fontFamily ?? "Arial").toString();
       const textWidth = context.measureText(text ?? "fout").width;

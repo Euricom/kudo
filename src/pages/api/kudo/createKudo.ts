@@ -109,11 +109,11 @@ export default async function handler(
       res.send({
         response_action: "clear",
       });
-      res.end();
 
       console.log("ervoor!");
       await sendKudo(payload);
       console.log("erna!");
+      res.end();
     }
   }
   const channel: string = (req.body as body).channel_id;

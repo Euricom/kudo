@@ -54,7 +54,7 @@ const SessionList = ({ sessions, filterIn, sortIn }: SessionListProps) => {
       case SortPosibillities.TitleD:
         return (
           <>
-            <div className="flex w-full flex-wrap gap-4">
+            <div key="SortByTitle" className="flex w-full flex-wrap gap-4">
               {filtering(sortTitle({ sessions: sessions, sort: sort })).map(
                 (s) => (
                   <SessionCard key={s.id} session={s} />

@@ -101,7 +101,7 @@ const SortAndFilter = ({
             className="input w-full rounded-full bg-transparent p-3 focus:outline-none"
           />
         </div>
-        <div className="dropdown-end dropdown">
+        <div className="dropdown dropdown-end">
           <label
             tabIndex={0}
             className="btn-primary btn-circle btn m-1"

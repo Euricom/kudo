@@ -75,9 +75,9 @@ export async function getSessionsBySpeaker(id: string) {
 }
 
 export async function getSessionById(id: string): Promise<SessionDetail> {
-  const result = await fetch(`${env.SESSION_URL}/${id}`).then(
-    (result) => result.json() as Promise<SessionDetail>
-  );
+  // const result = await fetch(`${env.SESSION_URL}/${id}`).then(
+  //   (result) => result.json() as Promise<SessionDetail>
+  // );
   const mockdata = await fetch(`${env.NEXTAUTH_URL}/api/sessions/${id}`)
     .then((result) => result.json())
     .then((result: Session) => {
@@ -87,5 +87,5 @@ export async function getSessionById(id: string): Promise<SessionDetail> {
       } as SessionDetail;
     });
 
-  return result || mockdata;
+  return /*result || */ mockdata;
 }

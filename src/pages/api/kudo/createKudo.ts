@@ -159,12 +159,11 @@ const sendSecondModal = async (payload: Payload) => {
     .map((t) => {
       return {
         type: "input",
-        block_id: t.id,
+        block_id: value + " " + t.id,
         element: {
           type: "plain_text_input",
           initial_value: t.text,
           action_id: "text_input",
-          value: t.text,
         },
         label: {
           type: "plain_text",
@@ -308,11 +307,13 @@ const sendKudo = async (payload: Payload) => {
   const messages = Object.keys(payload.view.state.values)
     .map((blockId) => {
       console.log(blockId);
+      const id = blockId.split(" ");
+      console.log(id);
 
       const blockValues = payload.view.state.values[blockId];
       console.log(blockValues);
 
-      if (blockValues) {
+      if (blockValues && id[1]) {
         const actionId = Object.keys(blockValues)[0] ?? "";
         console.log(actionId);
         const value = blockValues[actionId]?.value;
@@ -320,7 +321,7 @@ const sendKudo = async (payload: Payload) => {
 
         if (value) {
           return {
-            id: blockId,
+            id: id[1],
             text: value,
           };
         }

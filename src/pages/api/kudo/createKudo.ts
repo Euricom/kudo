@@ -119,7 +119,14 @@ export default async function handler(
   }
   const channel: string = (req.body as body).channel_id;
   const trigger_id: string = (req.body as body).trigger_id;
+  const userId = (req.body as body).user_id;
   const userName = (req.body as body).user_name;
+
+  const slackClient: WebClient = new WebClient(env.SLACK_APP_TOKEN);
+  const name = await slackClient.users.info({
+    user: userId,
+  });
+  console.log(name.user?.profile);
 
   if (userName) {
     const user = await findUserByNameForSlack(userName.replace(".", " "));

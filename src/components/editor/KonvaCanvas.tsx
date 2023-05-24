@@ -267,10 +267,6 @@ const KonvaCanvas = ({
     isDrawing.current = false;
   };
 
-  const handleTouchMove = (e: KonvaEventObject<TouchEvent>) => {
-    handleMouseMove();
-  };
-
   useEffect(() => {
     setStage(stageRef.current);
     layerRef.current.offset({
@@ -327,7 +323,7 @@ const KonvaCanvas = ({
           onMousemove={handleMouseMove}
           onMouseup={handleMouseUp}
           onTouchStart={handleMouseDown}
-          onTouchMove={handleTouchMove}
+          onTouchMove={handleMouseMove}
           onTouchEnd={handleMouseUp}
           onClick={clickListener}
           onTap={clickListener}

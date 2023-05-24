@@ -187,9 +187,9 @@ const Editor: NextPage<{
         <title>eKudo - Editor</title>
         <meta name="description" content="Editor to make a Kudo." />
       </Head>
-      {/* <NavigationBarContent>
+      <NavigationBarContent>
         <h1>Editor: {session.title}</h1>
-      </NavigationBarContent> */}
+      </NavigationBarContent>
       <UtilButtonsContent>
         {user?.role === UserRole.ADMIN && (
           <>

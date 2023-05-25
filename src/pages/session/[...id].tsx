@@ -75,7 +75,7 @@ const Session: NextPage<{ id: string; initialKudos: Kudo[] }> = ({
     return <LoadingBar />;
   }
 
-  if (!session) {
+  if (!session || !session.id) {
     return (
       <>
         <NavigationBarContent>No session found</NavigationBarContent>

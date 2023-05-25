@@ -74,9 +74,7 @@ export async function getSessionsBySpeaker(id: string) {
   );
 }
 
-export async function getSessionById(
-  id: string
-): Promise<SessionDetail | undefined> {
+export async function getSessionById(id: string): Promise<SessionDetail> {
   const mockdata = (await getAllSessions()).find((s) => s.id === id);
 
   if (!mockdata) {
@@ -86,7 +84,7 @@ export async function getSessionById(
       );
       return result;
     } catch (e) {
-      return undefined;
+      return {} as SessionDetail;
     }
   }
   return {

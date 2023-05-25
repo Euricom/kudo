@@ -78,14 +78,12 @@ export async function getSessionById(id: string): Promise<SessionDetail> {
   // const result = await fetch(`${env.SESSION_URL}/${id}`).then(
   //   (result) => result.json() as Promise<SessionDetail>
   // );
-  const mockdata = await fetch(`${env.NEXTAUTH_URL}/api/sessions/${id}`)
-    .then((result) => result.json())
-    .then((result: Session) => {
-      return {
-        ...result,
-        date: [result.date],
-      } as SessionDetail;
-    });
+  const mockdata = (await getAllSessions()).find((s) => s.id === id);
 
-  return /*result || */ mockdata;
+  return {
+    ...mockdata,
+    date: [mockdata?.date],
+  } as SessionDetail;
+
+  // return /*result || */ mockdata;
 }

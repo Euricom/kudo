@@ -98,7 +98,6 @@ export default async function handler(
   req: NextApiRequest,
   res: NextApiResponse
 ) {
-  console.log(req.body);
   const payloadString = (req.body as body).payload;
   if (payloadString) {
     const payload: Payload = JSON.parse(payloadString) as Payload;
@@ -109,9 +108,7 @@ export default async function handler(
     if (payload.type === "view_submission") {
       await sentThirdModal(payload);
 
-      console.log("ervoor!");
       await sendKudo(payload);
-      console.log("erna!");
       res.send({
         response_action: "clear",
       });
@@ -126,14 +123,11 @@ export default async function handler(
     const name = await slackClient.users.info({
       user: userId,
     });
-    console.log(name.user?.profile);
 
     if (name.user?.profile?.real_name) {
       const user = await findUserByNameForSlack(
         name.user?.profile?.real_name.replace(".", " ")
       );
-
-      console.log(user?.id);
       if (!user) {
         res.send(
           "Kan het zijn dat u nog niet ingelogd bent op de website: surf naar https://euricom-kudos.netlify.app/ om een account aan te maken!"
@@ -143,8 +137,6 @@ export default async function handler(
         await sendAuthenticationModal(trigger_id, user?.id ?? "");
         res.end();
       } else if (user?.access_token) {
-        console.log("in first modal");
-
         await sendFirstModal(trigger_id, channel);
         res.end();
       }
@@ -198,7 +190,6 @@ const sendSecondModal = async (payload: Payload) => {
   const chosenTemplate = getChosenTemplate(value);
   const content: Content[] = (await chosenTemplate)
     ?.content as unknown as Content[];
-  console.log(content);
 
   const texts = content
     ?.filter((c: Content) => c?.type === 0)
@@ -217,7 +208,6 @@ const sendSecondModal = async (payload: Payload) => {
         },
       } as Block;
     });
-  console.log(texts);
 
   await slackClient.views.update({
     view_id: payload.view.id,
@@ -350,7 +340,6 @@ const sendKudo = async (payload: Payload) => {
   const name = await slackClient.users.info({
     user: userId,
   });
-  console.log(name.user?.profile);
 
   if (name.user?.profile?.real_name) {
     const user = await findUserByNameForSlack(
@@ -358,28 +347,19 @@ const sendKudo = async (payload: Payload) => {
     );
 
     const channel = payload.view.private_metadata;
-    console.log(channel);
 
     const value =
       payload.view.state.values.section678?.templateName?.selected_option
         .value ?? "Fire";
-    console.log(value);
-
     const messages = Object.keys(payload.view.state.values)
       .map((blockId) => {
-        console.log(blockId);
         const id = blockId.split(" ");
-        console.log(id);
 
         const blockValues = payload.view.state.values[blockId];
-        console.log(blockValues);
 
         if (blockValues && id[1]) {
           const actionId = Object.keys(blockValues)[0] ?? "";
-          console.log(actionId);
           const value = blockValues[actionId]?.value;
-          console.log(value);
-
           if (value) {
             return {
               id: id[1],
@@ -389,8 +369,6 @@ const sendKudo = async (payload: Payload) => {
         }
       })
       .filter((message) => message !== null);
-
-    console.log(messages);
 
     if (!user || !user.access_token) {
     } else {

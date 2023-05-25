@@ -65,7 +65,7 @@ const Editor: NextPage<{
   const [templateName, setTemplateName] = useState<string | undefined>(
     undefined
   );
-  const [anonymous, setAnonymous] = useState<boolean>(false);
+  const [anonymous] = useState<boolean>(false);
 
   const { open } = useEyeDropper();
   const pickColor = async () => {
@@ -76,7 +76,7 @@ const Editor: NextPage<{
         hexToHSL(color.sRGBHex);
       })
       .catch((e) => {
-        console.log(e);
+        console.error(e);
       });
   };
   const [font, setFont] = useState<string>("Arial");

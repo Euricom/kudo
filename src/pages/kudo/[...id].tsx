@@ -56,32 +56,7 @@ const KudoDetail: NextPage<{ id: string }> = ({ id }) => {
     ids: session?.speakerId ?? [],
   }).data;
 
-  const { mutate: deleteKudo } = api.kudos.deleteKudoById
-    .useMutation
-    // {
-    // onMutate: async (newEntry) => {
-    //   await trpcContext.kudos.getKudosByUserId.cancel();
-    //   trpcContext.kudos.getKudosByUserId.setData(
-    //     { id: kudo?.userId },
-    //     (prevEntries) => {
-    //       const entry = prevEntries?.find((entry) => entry.id === newEntry.id);
-    //       console.log(prevEntries);
-    //       console.log(entry);
-    //       console.log(kudo?.userId);
-    //       console.log(newEntry.id);
-    //       if (entry) {
-    //         return prevEntries?.filter((e) => e !== entry);
-    //       }
-
-    //       return prevEntries;
-    //     }
-    //   );
-    // },
-    // onSettled: async () => {
-    //   await trpcContext.kudos.getKudoById.invalidate();
-    // },
-    // }
-    ();
+  const { mutate: deleteKudo } = api.kudos.deleteKudoById.useMutation();
   const { mutate: deleteImage } = api.kudos.deleteImageById.useMutation();
   const { mutateAsync: likeKudoById, isLoading: loadingLike } =
     api.kudos.likeKudoById.useMutation({

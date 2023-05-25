@@ -40,8 +40,6 @@ export function sortSpeaker({ sessions, sort }: SessionArray) {
       const speakerIds = current.speakerId.filter(
         (speakerId) => !previous.find((p) => p.speakerId === speakerId)
       );
-      console.log(speakerIds);
-
       const speakers = speakerIds.map((speakerId) => ({
         speakerId: speakerId,
         sessions: sessions.filter((s) => s.speakerId.includes(speakerId)),

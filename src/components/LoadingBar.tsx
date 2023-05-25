@@ -1,5 +1,4 @@
 import Head from "next/head";
-import Image from "next/image";
 
 const LoadingBar = () => {
   return (
@@ -8,10 +7,8 @@ const LoadingBar = () => {
         <title>eKudo - Loading...</title>
         <meta name="description" content="Loading the page, please wait..." />
       </Head>
-      <div className="grid w-full place-items-center">
-        <div className="relative aspect-square w-1/6">
-          <Image src="/images/Eurilogo.gif" alt="Loading" fill />
-        </div>
+      <div className="grid h-screen place-items-center">
+        <progress className="progress progress-primary w-56"></progress>
       </div>
     </>
   );

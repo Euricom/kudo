@@ -24,7 +24,6 @@ import CanvasSticker from "./canvasShapes/CanvasSticker";
 import CanvasCircle from "./canvasShapes/CanvasCircle";
 import { api } from "~/utils/api";
 import { useSession } from "next-auth/react";
-import { type Vector2d } from "konva/lib/types";
 
 const KonvaCanvas = ({
   editorFunction,

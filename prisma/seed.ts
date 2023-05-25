@@ -1,5 +1,5 @@
 import { PrismaClient } from "@prisma/client";
-import { CanvasShapes } from "../src/types";
+// import { CanvasShapes } from "../src/types";
 const prisma = new PrismaClient();
 
 async function main() {

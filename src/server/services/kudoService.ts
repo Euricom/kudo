@@ -35,7 +35,6 @@ export const findAllKudosSortedByUserId = async (
   const sessions = await getAllSessions();
   const users = await findAllUsers();
   if (!kudos || !users) {
-    console.log("No kudos or users found");
     return [];
   }
 
@@ -166,7 +165,6 @@ export async function makeSlackKudo(
     } else if (s.type === 2) {
       context.strokeStyle = s.color ?? "";
       context.lineCap = "round";
-      console.log(s.color);
 
       context.lineWidth = (s.thickness ?? 50) + 5;
       context.beginPath();
@@ -189,7 +187,7 @@ export async function makeSlackKudo(
             ".png?v8";
           //andere url: "https://raw.githubusercontent.com/EmojiTwo/emojitwo/master/+ d.unified +/0023.png"
         })
-        .catch((e) => console.log(e));
+        .catch((e) => console.error(e));
       img.onload = () => {
         context.drawImage(
           img,

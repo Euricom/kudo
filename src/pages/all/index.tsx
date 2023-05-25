@@ -93,7 +93,7 @@ const Users: NextPage<{
               })
             }
           >
-            Flagged
+            Reported
           </span>
         </div>
         <SortAndFilter

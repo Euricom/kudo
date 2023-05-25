@@ -103,7 +103,7 @@ const Flagged: NextPage<{ searchtext: string; sortIn: SortPosibillities }> = ({
           >
             By session
           </span>
-          <span className="badge-accent badge">Flagged</span>
+          <span className="badge-accent badge">Reported</span>
         </div>
         <SortAndFilter
           setSort={setSort}
@@ -112,7 +112,7 @@ const Flagged: NextPage<{ searchtext: string; sortIn: SortPosibillities }> = ({
         />
         <div className="flex h-full w-fit flex-wrap justify-center gap-4">
           {kudos.length == 0 ? (
-            <h1>No flagged Kudos yet</h1>
+            <h1>No reported Kudos yet</h1>
           ) : (
             kudos
               .filter(

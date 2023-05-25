@@ -74,7 +74,7 @@ const Sessions: NextPage<{ searchtext: string; sortIn: SortPosibillities }> = ({
               })
             }
           >
-            Flagged
+            Reported
           </span>
         </div>
         <SessionList

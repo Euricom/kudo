@@ -173,7 +173,7 @@ const KonvaCanvas = ({
       x: pos.x,
       y: pos.y,
       draggable: true,
-      fontSize: (stageDimensions?.height ?? 0) / 5,
+      fontSize: (stageDimensions?.height ?? 0) / 3,
     };
     history.unshift(sticker);
     setShapes((s) => [...s, sticker]);

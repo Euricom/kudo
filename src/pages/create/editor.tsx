@@ -30,6 +30,7 @@ import { type TRPCError } from "@trpc/server";
 import EditorButton from "~/components/editor/buttons/EditorButton";
 import useEyeDropper from "use-eye-dropper";
 import { AiOutlineLoading3Quarters } from "react-icons/ai";
+import useWindowDimensions from "~/hooks/useWindowDimensions";
 
 export function getServerSideProps(context: {
   query: { template: string; session: string };
@@ -88,6 +89,7 @@ const Editor: NextPage<{
   const template = templateQuery.data;
   const sessionQuery = api.sessions.getSessionById.useQuery({ id: sessionId });
   const session = sessionQuery.data;
+  const width = useWindowDimensions().width;
 
   const body = document.querySelector("body");
   function setHSL() {
@@ -391,14 +393,16 @@ const Editor: NextPage<{
                 max="100"
                 value={lightness}
               />
-              <div className="flex justify-end">
-                <button
-                  className="mt-2 rounded border border-gray-400 p-2"
-                  onClick={() => void pickColor()}
-                >
-                  <BsEyedropper />
-                </button>
-              </div>
+              {width > 1024 && (
+                <div className="flex justify-end">
+                  <button
+                    className="mt-2 rounded border border-gray-400 p-2"
+                    onClick={() => void pickColor()}
+                  >
+                    <BsEyedropper />
+                  </button>
+                </div>
+              )}
             </div>
           </EditorButton>
           <EditorButton

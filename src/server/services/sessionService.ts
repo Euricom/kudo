@@ -74,12 +74,17 @@ export async function getSessionsBySpeaker(id: string) {
   );
 }
 
-export async function getSessionById(id: string): Promise<SessionDetail> {
+export async function getSessionById(
+  id: string
+): Promise<SessionDetail | undefined> {
   // const result = await fetch(`${env.SESSION_URL}/${id}`).then(
   //   (result) => result.json() as Promise<SessionDetail>
   // );
   const mockdata = (await getAllSessions()).find((s) => s.id === id);
 
+  if (!mockdata) {
+    return undefined;
+  }
   return {
     ...mockdata,
     date: [mockdata?.date],

@@ -19,7 +19,7 @@ export default function handler(req: NextApiRequest, res: NextApiResponse) {
     {
       id: "c",
       title: "UX/UI",
-      date: new Date(2023, now.getMonth(), now.getDay(), 5, 0),
+      date: new Date("05/26/2023"),
       speakerId: ["18d332af-2d5b-49e5-8c42-9168b3910f97"],
     },
     {

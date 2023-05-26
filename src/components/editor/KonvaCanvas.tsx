@@ -149,7 +149,7 @@ const KonvaCanvas = ({
       fontFamily: fontFamily ?? "Arial",
       x: pos.x,
       y: pos.y,
-      fontSize: (stageDimensions?.height ?? 0) / 15,
+      fontSize: (stageDimensions?.height ?? 0) / 5,
       draggable: true,
     };
 

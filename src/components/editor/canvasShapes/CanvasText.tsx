@@ -10,7 +10,8 @@ import { editText } from "../editText";
 import { EditorFunctions, type CanvasTextProps, type Shapes } from "~/types";
 import useWindowDimensions from "~/hooks/useWindowDimensions";
 import { type Vector2d } from "konva/lib/types";
-import { toast } from "react-toastify";
+import { useSetTitle } from "~/components/navigation/NavBarTitle";
+import useTimer from "~/hooks/useTimer";
 
 const CanvasText = ({
   shapeProps,
@@ -33,6 +34,8 @@ const CanvasText = ({
   const [lastDist, setLastDist] = useState(0);
   const [lastAngle, setLastAngle] = useState(0);
   const isScaling = useRef(false);
+
+  const { startTimer, stopTimer } = useTimer();
 
   function getDistance(p1: Vector2d, p2: Vector2d) {
     return Math.sqrt(Math.pow(p2.x - p1.x, 2) + Math.pow(p2.y - p1.y, 2));
@@ -79,15 +82,12 @@ const CanvasText = ({
   };
 
   const handleClick = () => {
-    toast.info("Click on the text to edit it");
     if (
       EditorFunctions.Draw === editorFunction ||
       EditorFunctions.Erase === editorFunction
     ) {
       return;
     }
-
-    toast.info("Editing text");
     onSelect();
     if (viewport > 1024) {
       if (isSelected) onEditText();
@@ -105,7 +105,6 @@ const CanvasText = ({
     <React.Fragment>
       <Text
         onClick={handleClick}
-        onTap={handleClick}
         ref={shapeRef}
         {...shapeProps}
         draggable={
@@ -119,17 +118,11 @@ const CanvasText = ({
             shapeRef.current?.stopDrag();
           }
         }}
-        // onTouchStart={(e) => {
-        //   if (!isScalable) return;
-        //   e.evt.preventDefault();
-        //   const touch1 = e.evt.touches[0];
-        //   const touch2 = e.evt.touches[1];
-        //   if (touch1 && touch2) {
-        //     return;
-        //   } else {
-        //     handleClick();
-        //   }
-        // }}
+        onTouchStart={() => {
+          if (!isScalable) return;
+          console.log("touch start");
+          startTimer();
+        }}
         onTouchMove={(e) => {
           if (!isScalable) return;
           e.evt.preventDefault();
@@ -165,10 +158,23 @@ const CanvasText = ({
               },
             });
           } else {
-            shapeRef.current?.startDrag();
+            if (
+              shapeProps.draggable &&
+              isScalable &&
+              EditorFunctions.Draw !== editorFunction &&
+              EditorFunctions.Erase !== editorFunction
+            ) {
+              shapeRef.current?.startDrag();
+            }
           }
         }}
         onTouchEnd={() => {
+          const time = stopTimer();
+          console.log("time", time);
+
+          if (time < 100) {
+            handleClick();
+          }
           onChangeEnd(shapeProps);
           isScaling.current = false;
           setLastDist(0);

@@ -84,44 +84,10 @@ export default function handler(req: NextApiRequest, res: NextApiResponse) {
       speakerId: ["18d332af-2d5b-49e5-8c42-9168b3910f97"],
     },
     {
-      id: "n",
-      title: "Best component library",
-      date: new Date("10/20/2022"),
-      speakerId: [
-        "046df486-1162-4d77-9165-b7b9d20efaca",
-        "18d332af-2d5b-49e5-8c42-9168b3910f97",
-      ],
-    },
-    {
-      id: "o",
-      title:
-        "Is the business analyst still relevant in Agile Is the business analyst still relevant in Agile",
-      date: new Date("9/20/2022"),
-      speakerId: ["046df486-1162-4d77-9165-b7b9d20efaca"],
-    },
-    {
       id: "p",
       title: "Agile vs Scrum",
       date: new Date("9/8/2022"),
       speakerId: ["63061de7-0a1f-471f-b9bd-5db02536157b"],
-    },
-    {
-      id: "q",
-      title: "Functional analysis",
-      date: new Date("8/4/2022"),
-      speakerId: ["046df486-1162-4d77-9165-b7b9d20efaca"],
-    },
-    {
-      id: "r",
-      title: "Tailwind vs CSS",
-      date: new Date("7/5/2022"),
-      speakerId: ["046df486-1162-4d77-9165-b7b9d20efaca"],
-    },
-    {
-      id: "s",
-      title: "Aren't relational databases the best",
-      date: new Date("10/07/2022"),
-      speakerId: ["046df486-1162-4d77-9165-b7b9d20efaca"],
     },
     {
       id: "t",

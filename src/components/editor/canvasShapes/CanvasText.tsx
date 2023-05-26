@@ -10,6 +10,7 @@ import { editText } from "../editText";
 import { EditorFunctions, type CanvasTextProps, type Shapes } from "~/types";
 import useWindowDimensions from "~/hooks/useWindowDimensions";
 import { type Vector2d } from "konva/lib/types";
+import { toast } from "react-toastify";
 
 const CanvasText = ({
   shapeProps,
@@ -78,12 +79,15 @@ const CanvasText = ({
   };
 
   const handleClick = () => {
+    toast.info("Click on the text to edit it");
     if (
       EditorFunctions.Draw === editorFunction ||
       EditorFunctions.Erase === editorFunction
     ) {
       return;
     }
+
+    toast.info("Editing text");
     onSelect();
     if (viewport > 1024) {
       if (isSelected) onEditText();
@@ -115,6 +119,17 @@ const CanvasText = ({
             shapeRef.current?.stopDrag();
           }
         }}
+        // onTouchStart={(e) => {
+        //   if (!isScalable) return;
+        //   e.evt.preventDefault();
+        //   const touch1 = e.evt.touches[0];
+        //   const touch2 = e.evt.touches[1];
+        //   if (touch1 && touch2) {
+        //     return;
+        //   } else {
+        //     handleClick();
+        //   }
+        // }}
         onTouchMove={(e) => {
           if (!isScalable) return;
           e.evt.preventDefault();

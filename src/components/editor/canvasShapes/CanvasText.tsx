@@ -120,7 +120,6 @@ const CanvasText = ({
         }}
         onTouchStart={() => {
           if (!isScalable) return;
-          console.log("touch start");
           startTimer();
         }}
         onTouchMove={(e) => {
@@ -170,8 +169,6 @@ const CanvasText = ({
         }}
         onTouchEnd={() => {
           const time = stopTimer();
-          console.log("time", time);
-
           if (time < 100) {
             handleClick();
           }

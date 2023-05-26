@@ -127,7 +127,14 @@ const CanvasSticker = ({
               },
             });
           } else {
-            shapeRef.current?.startDrag();
+            if (
+              shapeProps.draggable &&
+              isScalable &&
+              EditorFunctions.Draw !== editorFunction &&
+              EditorFunctions.Erase !== editorFunction
+            ) {
+              shapeRef.current?.startDrag();
+            }
           }
         }}
         onTouchEnd={() => {

@@ -338,18 +338,20 @@ const KudoDetail: NextPage<{ id: string }> = ({ id }) => {
                           <AiOutlineEdit size={15} />
                         </button>
                       </h1>
-                      <div className="chat-image avatar">
-                        <div className="relative w-10 rounded-full">
-                          <Image
-                            className="rounded-full"
-                            src={
-                              "/api/images/" + (sender?.id ?? "fout").toString()
-                            }
-                            alt="Profile picture"
-                            fill
-                          />
+                      {speaker?.map((s) => (
+                        <div key={s.id} className="chat-image avatar">
+                          <div className="relative w-10 rounded-full">
+                            <Image
+                              className="rounded-full"
+                              src={
+                                "/api/images/" + (s?.id ?? "fout").toString()
+                              }
+                              alt="Profile picture"
+                              fill
+                            />
+                          </div>
                         </div>
-                      </div>
+                      ))}
                     </div>
                   </>
                 )}

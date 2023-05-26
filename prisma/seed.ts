@@ -231,7 +231,7 @@ async function main() {
     data: {
       id: "testKudo",
       image: kudoImage.id,
-      sessionId: "3",
+      sessionId: "c",
       userId: "cdb23f58-65db-4b6b-b132-cf2d13d08e76",
       anonymous: false,
     },

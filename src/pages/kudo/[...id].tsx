@@ -343,7 +343,7 @@ const KudoDetail: NextPage<{ id: string }> = ({ id }) => {
                           <Image
                             className="rounded-full"
                             src={
-                              "/api/images/" + (user?.id ?? "fout").toString()
+                              "/api/images/" + (sender?.id ?? "fout").toString()
                             }
                             alt="Profile picture"
                             fill

@@ -8,18 +8,31 @@ import {
 } from "~/types";
 import { env } from "~/env.mjs";
 
+function formatDate(date: string | undefined) {
+  if (!date) return;
+  const d = new Date(date);
+  return [d.getFullYear(), d.getMonth(), d.getDate()].join("-");
+}
+
 export function sortDate({ sessions, sort }: SessionArray) {
   sessions.sort((a, b) => (a.date > b.date ? -1 : 1));
   const sorted = sessions.reduce((previous, current) => {
-    if (previous[previous.length - 1]?.date !== current.date) {
+    if (
+      formatDate(previous[previous.length - 1]?.date) !==
+      formatDate(current.date)
+    ) {
       return [
         ...previous,
         {
           date: current.date,
-          sessions: sessions.filter((s) => s.date === current.date),
+          sessions: sessions.filter(
+            (s) => formatDate(s.date) === formatDate(current.date)
+          ),
         },
       ];
-    } else return previous;
+    } else {
+      return previous;
+    }
   }, [] as NewSessionDate[]);
 
   if (sort === SortPosibillities.DateA) {

@@ -331,12 +331,14 @@ const KudoDetail: NextPage<{ id: string }> = ({ id }) => {
                         data-cy="comment"
                       >
                         {comment}
-                        <button
-                          className="self-center"
-                          onClick={() => setEdit(true)}
-                        >
-                          <AiOutlineEdit size={15} />
-                        </button>
+                        {session.speakerId.includes(user?.id ?? "fout") && (
+                          <button
+                            className="self-center"
+                            onClick={() => setEdit(true)}
+                          >
+                            <AiOutlineEdit size={15} />
+                          </button>
+                        )}
                       </h1>
                       {speaker?.map((s) => (
                         <div key={s.id} className="chat-image avatar">

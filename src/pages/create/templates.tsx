@@ -89,6 +89,7 @@ const Templates: NextPage<{
               <Image
                 className="absolute h-full"
                 src={images?.find((i) => i.id === x.image)?.dataUrl ?? ""}
+                loader={({ src }) => src}
                 width={320}
                 height={208}
                 alt={`Template ${x.name}`}

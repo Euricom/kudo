@@ -39,7 +39,7 @@ const Home: NextPage<{ filter: string; sort: SortPosibillities }> = ({
   }
 
   if (sessions.length === 0) {
-    router.replace("/create").catch((e) => toast.error((e as Error).message));
+    router.replace("/out").catch((e) => toast.error((e as Error).message));
   }
 
   return (

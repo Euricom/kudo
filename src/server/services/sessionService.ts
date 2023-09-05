@@ -4,9 +4,7 @@ import {
   type NewSessionSpeaker,
   type SessionArray,
   type Session,
-  type SessionDetail,
 } from "~/types";
-import { env } from "~/env.mjs";
 
 function formatDate(date: string | undefined) {
   if (!date) return;
@@ -69,7 +67,7 @@ export function sortSpeaker({ sessions, sort }: SessionArray) {
   return sorted;
 }
 
-export async function getAllSessions() {
+export async function getAllSessions(): Promise<Session[]> {
   return fetch(
     "https://euri-event-management-api.azurewebsites.net/api/v1/Timeslot/4"
   )
@@ -88,30 +86,16 @@ export async function getAllSessions() {
           speakerId: session.speakers.map((x: any) => x.uuid),
         }))
     );
-
-  const result = (await fetch(`${env.SESSION_URL}`).then((result) =>
-    result.json()
-  )) as Session[];
-  const mockdata = (await fetch(`${env.NEXTAUTH_URL}/api/sessions`).then(
-    (result) => result.json()
-  )) as Session[];
-  return result.concat(mockdata).filter((s) => new Date(s.date) < new Date());
 }
 
 export async function getSessionsBySpeaker(id: string) {
-  return await getAllSessions().then((result: Session[]) =>
+  return getAllSessions().then((result: Session[]) =>
     result.filter((r: Session) => r.speakerId.includes(id))
   );
 }
 
-export async function getSessionById(id: string): Promise<SessionDetail> {
-  console.log(id);
-  try {
-    const result = await getAllSessions().then((sessions) =>
-      sessions.find((y) => y.id == id)
-    );
-    return result;
-  } catch (e) {
-    return {} as SessionDetail;
-  }
+export async function getSessionById(id: string): Promise<Session | null> {
+  return getAllSessions().then(
+    (sessions) => sessions.find((y) => y.id == id) || null
+  );
 }

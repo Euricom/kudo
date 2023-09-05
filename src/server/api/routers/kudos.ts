@@ -176,7 +176,11 @@ export const kudoRouter = createTRPCRouter({
         await createPusherKudo(kudo);
         const sender = await findUserById(input.userId);
         const session = await getSessionById(input.sessionId);
-        console.log(session);
+
+        if (!session) {
+          throw new TRPCError({ code: "NOT_FOUND", message: "session" });
+        }
+
         const notificationPromises = session.speakerId.map((id) =>
           sendnotification(
             ctx.prisma,
@@ -216,27 +220,29 @@ export const kudoRouter = createTRPCRouter({
         },
       });
 
-      if (kudo) {
-        const sender = await findUserById(input.userId);
-        const session = await getSessionById(kudo.sessionId);
-        const receiver = await findUserById(kudo.userId);
-
-        await sendnotification(
-          ctx.prisma,
-          sender.displayName +
-            " liked the kudo you send for the session about " +
-            session.title,
-          "/kudo/" + kudo.id,
-          receiver.id,
-          sender.id
-        );
-      } else {
+      if (!kudo) {
         throw new TRPCError({
-          code: "INTERNAL_SERVER_ERROR",
-          message:
-            "An unexpected error occurred with your like, please try again later.",
+          code: "NOT_FOUND",
+          message: "Kudo not found",
         });
       }
+
+      const sender = await findUserById(input.userId);
+      const session = await getSessionById(kudo.sessionId);
+      const receiver = await findUserById(kudo.userId);
+
+      if (!session) {
+        throw new TRPCError({ code: "NOT_FOUND", message: "session" });
+      }
+      await sendnotification(
+        ctx.prisma,
+        sender.displayName +
+          " liked the kudo you send for the session about " +
+          session.title,
+        "/kudo/" + kudo.id,
+        receiver.id,
+        sender.id
+      );
     }),
 
   commentKudoById: protectedProcedure
@@ -254,6 +260,10 @@ export const kudoRouter = createTRPCRouter({
         const sender = await findUserById(input.userId);
         const session = await getSessionById(kudo.sessionId);
         const receiver = await findUserById(kudo.userId);
+
+        if (!session) {
+          throw new TRPCError({ code: "NOT_FOUND", message: "session" });
+        }
 
         await sendnotification(
           ctx.prisma,

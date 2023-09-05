@@ -7,9 +7,9 @@ cloudinary.config({
   api_secret: env.CLOUDINARY_API_SECRET,
 });
 
-export async function uploadImage(base64: string) {
+export function uploadImage(base64: string) {
   return new Promise<string>((resolve, reject) => {
-    cloudinary.uploader.upload(base64, (err, res) => {
+    void cloudinary.uploader.upload(base64, (err, res) => {
       if (err) reject(err);
 
       if (res) return resolve(res.secure_url);

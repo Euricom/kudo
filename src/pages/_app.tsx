@@ -23,7 +23,7 @@ const MyApp: AppType<{ session: Session | null }> = ({
   return (
     <>
       <Head>
-        <title>eKudo - Geef je collega's feedback</title>
+        <title>eKudo - Geef je collega&apos;s feedback</title>
         <meta name="description" content="eKudo app" />
         <link rel="shortcut icon" href={(Logo as StaticImageData).src} />
       </Head>

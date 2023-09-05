@@ -96,6 +96,14 @@ export const findAllKudosSortedByUserId = async (
   }
 };
 
+export function getKudoById(kudoId: string) {
+  return prisma.kudo.findUnique({
+    where: {
+      id: kudoId,
+    },
+  });
+}
+
 export function getKudosBySessionId(sessionId: string) {
   return prisma.kudo.findMany({
     where: {

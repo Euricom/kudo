@@ -1,7 +1,6 @@
 import { createTRPCRouter, protectedProcedure } from "~/server/api/trpc";
 import { boolean, nativeEnum, object, optional, string } from "zod";
 import { type Kudo, type Image } from "@prisma/client";
-import { v2 as cloudinary } from "cloudinary";
 import {
   findAllKudosSortedByUserId,
   getKudosBySessionId,

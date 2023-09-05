@@ -1,6 +1,7 @@
 import { createTRPCRouter, protectedProcedure } from "~/server/api/trpc";
 import { boolean, nativeEnum, object, optional, string } from "zod";
 import { type Kudo, type Image } from "@prisma/client";
+import { v2 as cloudinary } from "cloudinary";
 import {
   findAllKudosSortedByUserId,
   getKudosBySessionId,
@@ -17,6 +18,7 @@ import {
 } from "~/server/services/notificationService";
 import { findUserById } from "~/server/services/userService";
 import { getSessionById } from "~/server/services/sessionService";
+import { uploadImage } from "~/server/services/image-service";
 
 const createKudoInput = object({
   image: string(),
@@ -200,9 +202,18 @@ export const kudoRouter = createTRPCRouter({
   createKudoImage: protectedProcedure
     .input(createImageInput)
     .mutation(async ({ input, ctx }): Promise<Image> => {
+      let url;
+      try {
+        url = await uploadImage(input.dataUrl);
+      } catch {
+        throw new TRPCError({
+          code: "INTERNAL_SERVER_ERROR",
+          message: "Could not save image",
+        });
+      }
       const image = await ctx.prisma.image.create({
         data: {
-          dataUrl: input.dataUrl,
+          dataUrl: url,
         },
       });
       return image;

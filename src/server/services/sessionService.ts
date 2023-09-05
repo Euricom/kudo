@@ -80,7 +80,7 @@ export async function getAllSessions(): Promise<Session[]> {
             a.concat(
               b.sessions.map((x: EventApiTypes.Session) => ({
                 ...x,
-                date: b.start,
+                date: b.start.slice(0, -1), // Event API geef foutief UTC tijden terug ipv lokale tijden. trim Z van de datum om lokale tijd te bekomen
               }))
             ),
           [] as (EventApiTypes.Session & { date: string })[]

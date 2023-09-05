@@ -267,6 +267,7 @@ const KudoDetail: NextPage<{ id: string }> = ({ id }) => {
               fill
               alt="Kudo"
               data-id={kudo.id}
+              loader={({ src }) => src}
             />
           </div>
 

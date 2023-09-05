@@ -48,6 +48,7 @@ const KudoCard = ({ kudo, isPresentation }: KudoProps) => {
             src={image}
             width={320}
             height={208}
+            loader={({ src }) => src}
             alt="Kudo"
           />
         </Link>

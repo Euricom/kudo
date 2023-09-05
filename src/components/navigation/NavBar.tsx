@@ -47,7 +47,7 @@ function useVisibleStartNavbarActions() {
     {
       Component: logo,
       key: "logo",
-      routes: ["/", "/out", "/all", "/all/sessions", "/all/flagged"],
+      routes: ["/"],
     },
     {
       Component: () => <NavButtons />,

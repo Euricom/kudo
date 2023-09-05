@@ -28,6 +28,9 @@ const server = z.object({
   SLACK_APP_TOKEN: z.string(),
   clientId: z.string(),
   clientSecret: z.string(),
+  CLOUDINARY_CLOUDNAME: z.string(),
+  CLOUDINARY_API_KEY: z.string(),
+  CLOUDINARY_API_SECRET: z.string(),
 });
 
 /**
@@ -61,7 +64,9 @@ const processEnv = {
   SLACK_APP_TOKEN: process.env.SLACK_APP_TOKEN,
   clientId: process.env.clientId,
   clientSecret: process.env.clientSecret,
-  // NEXT_PUBLIC_CLIENTVAR: process.env.NEXT_PUBLIC_CLIENTVAR,
+  CLOUDINARY_CLOUDNAME: process.env.CLOUDINARY_CLOUDNAME,
+  CLOUDINARY_API_KEY: process.env.CLOUDINARY_API_KEY,
+  CLOUDINARY_API_SECRET: process.env.CLOUDINARY_API_SECRET,
 };
 
 // Don't touch the part below

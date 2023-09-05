@@ -113,7 +113,6 @@ const Session: NextPage<{ id: string; initialKudos: Kudo[] }> = ({
   return (
     <>
       <Head>
-        <title>eKudo - Session</title>
         <meta
           name="description"
           content="Page where you can see all Kudo's from a Session."

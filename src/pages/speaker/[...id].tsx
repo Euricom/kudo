@@ -43,7 +43,6 @@ const Speaker: NextPage<{ id: string }> = ({ id }) => {
   return (
     <>
       <Head>
-        <title>eKudo - Speaker</title>
         <meta
           name="description"
           content="See all sessions of a certain speaker."

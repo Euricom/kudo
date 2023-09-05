@@ -176,7 +176,7 @@ export const kudoRouter = createTRPCRouter({
         await createPusherKudo(kudo);
         const sender = await findUserById(input.userId);
         const session = await getSessionById(input.sessionId);
-
+        console.log(session);
         const notificationPromises = session.speakerId.map((id) =>
           sendnotification(
             ctx.prisma,

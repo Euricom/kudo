@@ -15,7 +15,7 @@ function formatDate(date: string | undefined) {
 }
 
 export function sortDate({ sessions, sort }: SessionArray) {
-  sessions.sort((a, b) => (a.date > b.date ? -1 : 1));
+  sessions.sort((a, b) => (a.date > b.date ? 1 : -1));
   const sorted = sessions.reduce((previous, current) => {
     if (
       formatDate(previous[previous.length - 1]?.date) !==
@@ -70,6 +70,25 @@ export function sortSpeaker({ sessions, sort }: SessionArray) {
 }
 
 export async function getAllSessions() {
+  return fetch(
+    "https://euri-event-management-api.azurewebsites.net/api/v1/Timeslot/4"
+  )
+    .then((resp) => resp.json())
+    .then((events: any[]) =>
+      events
+        .reduce(
+          (a, b) =>
+            a.concat(b.sessions.map((x: any) => ({ ...x, date: b.start }))),
+          []
+        )
+        .map((session: any) => ({
+          id: session.id,
+          date: session.date,
+          title: session.topic,
+          speakerId: session.speakers.map((x: any) => x.uuid),
+        }))
+    );
+
   const result = (await fetch(`${env.SESSION_URL}`).then((result) =>
     result.json()
   )) as Session[];
@@ -86,20 +105,13 @@ export async function getSessionsBySpeaker(id: string) {
 }
 
 export async function getSessionById(id: string): Promise<SessionDetail> {
-  const mockdata = (await getAllSessions()).find((s) => s.id === id);
-
-  if (!mockdata) {
-    try {
-      const result = await fetch(`${env.SESSION_URL}/${id}`).then(
-        (result) => result.json() as Promise<SessionDetail>
-      );
-      return result;
-    } catch (e) {
-      return {} as SessionDetail;
-    }
+  console.log(id);
+  try {
+    const result = await getAllSessions().then((sessions) =>
+      sessions.find((y) => y.id == id)
+    );
+    return result;
+  } catch (e) {
+    return {} as SessionDetail;
   }
-  return {
-    ...mockdata,
-    date: [mockdata?.date],
-  } as SessionDetail;
 }

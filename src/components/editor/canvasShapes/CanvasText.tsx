@@ -10,7 +10,6 @@ import { editText } from "../editText";
 import { EditorFunctions, type CanvasTextProps, type Shapes } from "~/types";
 import useWindowDimensions from "~/hooks/useWindowDimensions";
 import { type Vector2d } from "konva/lib/types";
-import { useSetTitle } from "~/components/navigation/NavBarTitle";
 import useTimer from "~/hooks/useTimer";
 
 const CanvasText = ({

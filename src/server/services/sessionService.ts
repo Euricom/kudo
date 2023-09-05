@@ -5,6 +5,7 @@ import {
   type SessionArray,
   type Session,
 } from "~/types";
+import type * as EventApiTypes from "../events-api/types";
 
 function formatDate(date: string | undefined) {
   if (!date) return;
@@ -69,23 +70,28 @@ export function sortSpeaker({ sessions, sort }: SessionArray) {
 
 export async function getAllSessions(): Promise<Session[]> {
   return fetch(
-    "https://euri-event-management-api.azurewebsites.net/api/v1/Timeslot/4"
+    "https://euri-event-management-api.azurewebsites.net/api/v1/Timeslot/4" // 4 = event
   )
     .then((resp) => resp.json())
-    .then((events: any[]) =>
-      events
+    .then((timeslots: EventApiTypes.TimeSlot[]) =>
+      timeslots
         .reduce(
           (a, b) =>
-            a.concat(b.sessions.map((x: any) => ({ ...x, date: b.start }))),
-          []
+            a.concat(
+              b.sessions.map((x: EventApiTypes.Session) => ({
+                ...x,
+                date: b.start,
+              }))
+            ),
+          [] as (EventApiTypes.Session & { date: string })[]
         )
-        .map((session: any) => ({
+        .map((session) => ({
           id: session.id,
           date: session.date,
           title: session.topic,
-          speakerId: session.speakers.map((x: any) => x.uuid),
+          speakerId: session.speakers.map((x: EventApiTypes.Speaker) => x.uuid),
         }))
-    );
+    ) as Promise<Session[]>;
 }
 
 export async function getSessionsBySpeaker(id: string) {
